@@ -1,6 +1,8 @@
 import { ReactNode, useEffect, useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { RowSelectionType } from 'antd/es/table/interface';
+
 import FilterControls from './FilterControls';
 import { RenderButtonProps } from './WithRowSelection';
 import ListingScrollNavControl from './ListingScrollNavControl';
@@ -22,12 +24,14 @@ export default function DefaultListView({
   brainRegionSource,
   renderButton,
   onCellClick,
+  selectionType,
 }: {
   enableDownload?: boolean;
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
   onCellClick?: OnCellClick;
+  selectionType?: RowSelectionType;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
@@ -77,6 +81,7 @@ export default function DefaultListView({
                 loading={data.state === 'loading'}
                 renderButton={renderButton}
                 onCellClick={onCellClick}
+                selectionType={selectionType}
               />
               <ListingScrollNavControl<HTMLDivElement>
                 extraRightSpace={displayControlPanel ? 480 : 0}

@@ -23,22 +23,11 @@ export type ProjectResponse = VlmResponse<{ project: Project }>;
 
 export type Project = {
   id: string;
+  nexus_project_id: string;
   name: string;
   description: string;
   budget: number;
   created_at: string;
   updated_at: string;
-  virtual_lab: {
-    id: string;
-    name: string;
-    description: string;
-  };
-  owner: {
-    id: string;
-    username: string;
-    created_at: string;
-    first_name: string;
-    last_name: string;
-    name: string;
-  };
+  virtual_lab_id: string;
 };

@@ -18,28 +18,27 @@ export default function VirtualLabTeamTable({ users }: Props) {
 
   const columns = [
     {
-      title: 'Icon',
-      key: 'icon',
-      dataIndex: 'name',
-      render: (_: any, record: VirtualLabMember) => (
-        <VirtualLabMemberIcon
-          firstName={record.first_name}
-          lastName={record.last_name}
-          role={record.role}
-        />
-      ),
-    },
-    {
       title: 'name',
       dataIndex: 'name',
       key: 'name',
-      render: (name: string) => <span className="font-bold">{name}</span>,
+      render: (_: string, record: VirtualLabMember) => (
+        <div>
+          <span>
+            <VirtualLabMemberIcon
+              firstName={record.first_name}
+              lastName={record.last_name}
+              role={record.role}
+            />
+          </span>
+          <span className="ml-4 inline-block font-bold">{`${record.first_name} ${record.last_name}`}</span>
+        </div>
+      ),
     },
     {
       title: 'Last active',
       dataIndex: 'last_active',
       key: 'last_active',
-      render: () => <span className="text-primary-3">Active N/A</span>,
+      render: () => <span className="text-primary-3" />, // Empty element for now, to be included when 'active' info is available
     },
     {
       title: 'Action',
@@ -62,7 +61,7 @@ export default function VirtualLabTeamTable({ users }: Props) {
           <Select
             suffixIcon={<DownOutlined style={{ color: 'white' }} />}
             defaultValue={role}
-            style={{ width: 200 }}
+            style={{ width: 200, marginLeft: 300, float: 'right' }}
             onChange={() => {}}
             options={roleOptions}
           />
@@ -78,7 +77,7 @@ export default function VirtualLabTeamTable({ users }: Props) {
           <span>Total members</span>
           <span className="font-bold">{users.length}</span>
         </div>
-        <div role="button" className="flex w-[150px] justify-between border border-primary-7 p-3">
+        <div role="button" className="flex w-[220px] justify-between border border-primary-7 p-3">
           <span className="font-bold">Invite member</span>
           <PlusOutlined />
         </div>

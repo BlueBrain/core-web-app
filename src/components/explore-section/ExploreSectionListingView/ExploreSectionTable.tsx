@@ -3,6 +3,7 @@ import { ConfigProvider, Table, TableProps } from 'antd';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
 import { ColumnGroupType, ColumnType, TableRef } from 'antd/es/table';
+import { RowSelectionType } from 'antd/es/table/interface';
 
 import LoadMoreButton from './LoadMoreButton';
 import usePathname from '@/hooks/pathname';
@@ -160,6 +161,7 @@ export function BaseTable({
 
   if (hasError) return <div>Something went wrong</div>;
   if (!columns?.length) return null;
+
   return (
     <ConfigProvider theme={{ hashed: false }}>
       <Table
@@ -222,6 +224,7 @@ export default function ExploreSectionTable({
   loading,
   renderButton,
   onCellClick,
+  selectionType,
 }: TableProps<ExploreESHit<ExploreSectionResource>> & {
   enableDownload?: boolean;
   dataType: DataType;
@@ -229,13 +232,18 @@ export default function ExploreSectionTable({
   renderButton?: (props: RenderButtonProps) => ReactNode;
   brainRegionSource: ExploreDataBrainRegionSource;
   onCellClick?: OnCellClick;
+  selectionType?: RowSelectionType;
 }) {
   const [displayLoadMoreBtn, setDisplayLoadMoreBtn] = useState(false);
   const toggleDisplayMore = (value?: boolean) => setDisplayLoadMoreBtn((state) => value ?? !state);
   return (
     <>
       {enableDownload ? (
-        <WithRowSelection renderButton={renderButton ?? defaultRenderButton} dataType={dataType}>
+        <WithRowSelection
+          renderButton={renderButton ?? defaultRenderButton}
+          dataType={dataType}
+          selectionType={selectionType}
+        >
           {(rowSelection) => (
             <BaseTable
               columns={columns}

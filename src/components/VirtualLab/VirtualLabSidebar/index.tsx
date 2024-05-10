@@ -8,7 +8,7 @@ import { useAtomValue } from 'jotai';
 import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
-import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabDetailAtomFamily, virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
@@ -30,12 +30,12 @@ function VirtualLabTitle({ virtualLabId }: Props) {
 }
 
 function UsersAmount({ virtualLabId }: Props) {
-  const virtualLab = useAtomValue(
-    useMemo(() => unwrap(virtualLabDetailAtomFamily(virtualLabId)), [virtualLabId])
+  const users = useAtomValue(
+    useMemo(() => unwrap(virtualLabMembersAtomFamily(virtualLabId)), [virtualLabId])
   );
 
-  if (virtualLab) {
-    return <>{virtualLab.users.length} members</>;
+  if (users) {
+    return <>{users.length} members</>;
   }
   return null;
 }
