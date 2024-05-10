@@ -11,6 +11,7 @@ type Props = {
   name: string;
   description: string;
   bottomElements: ReactNode;
+  supertitle?: string | null;
   withLink?: boolean;
   withEditButton?: boolean;
 };
@@ -20,6 +21,7 @@ export default function VirtualLabBanner({
   description,
   id,
   bottomElements,
+  supertitle = 'Virtual Lab Name',
   withLink = false,
   withEditButton = false,
 }: Props) {
@@ -36,7 +38,7 @@ export default function VirtualLabBanner({
       <div className="z-[1000] flex flex-row justify-between">
         <div className="flex max-w-[70%] flex-col gap-2">
           <div>
-            <div className="text-primary-2">Virtual Lab name</div>
+            <div className="text-primary-2">{supertitle}</div>
             {withLink ? (
               <Link className="text-5xl font-bold" href={`${labUrl}/overview`}>
                 {name}
