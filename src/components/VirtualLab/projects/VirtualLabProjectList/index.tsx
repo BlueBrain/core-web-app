@@ -7,6 +7,7 @@ import { ComponentProps, ReactElement, useMemo, useState } from 'react';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
+import VirtualLabMemberIcon from '../../VirtualLabMemberIcon';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
@@ -111,6 +112,7 @@ function NewProjectModalForm({
   members: VirtualLabMember[];
 }) {
   const [selectedMembers, setSelectedMembers] = useAtom(selectedMembersAtom);
+
   return (
     <Form form={form} layout="vertical" style={{ paddingBlockStart: 40 }}>
       <ConfigProvider
@@ -135,20 +137,32 @@ function NewProjectModalForm({
               verticalLabelMargin: 0,
               verticalLabelPadding: 0,
             },
+            Select: {
+              colorText: 'text-primary-8',
+              colorBorder: 'transparent',
+            },
           },
         }}
       >
         {formItems.map(NewProjectModalInput)}
         {selectedMembers.map((member) => (
-          <div key={member.id}>
-            <div key={member.id}>{member.name}</div>
+          <div key={member.id} className="text-primary-8">
+            <VirtualLabMemberIcon
+              role={member.role}
+              firstName={member.first_name}
+              lastName={member.last_name}
+            />
+            <div key={member.id} className="ml-5 inline-block font-bold">
+              {member.name}
+            </div>
             <Select
-              style={{ width: 200 }}
-              value={member.role}
+              style={{ width: 200, top: 7 }}
+              defaultValue={member.role}
               onChange={(v) => {
                 const m = members.find((m_) => m_.id === v);
                 if (m) setSelectedMembers([...selectedMembers, { ...member, role: v }]);
               }}
+              className="float-right inline-block"
             >
               <Option value="admin">Admin</Option>
               <Option value="member">Member</Option>
@@ -162,12 +176,15 @@ function NewProjectModalForm({
             const m = members.find((member) => member.id === v);
             if (m) setSelectedMembers([...selectedMembers, m]);
           }}
+          className="mt-5"
         >
-          {members.map((member) => (
-            <Option value={member.id} key={member.id}>
-              {member.name}
-            </Option>
-          ))}
+          {members
+            .filter((m) => !selectedMembers.map((s) => s.id).includes(m.id))
+            .map((member) => (
+              <Option value={member.id} key={member.id}>
+                {member.name}
+              </Option>
+            ))}
         </Select>
       </ConfigProvider>
     </Form>
