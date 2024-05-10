@@ -1,15 +1,8 @@
-import { useMemo } from 'react';
-import { useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
-import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
+import { ReactNode } from 'react';
+import { EditOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
-import VirtualLabStatistic from '../VirtualLabStatistic';
-import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { basePath } from '@/config';
-import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
-import Brain from '@/components/icons/Brain';
-import { formatDate } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 import styles from './virtual-lab-banner.module.css';
 
@@ -17,9 +10,7 @@ type Props = {
   id: string;
   name: string;
   description: string;
-  createdAt?: string;
-  simulationExperiments?: string;
-  buildModels?: string;
+  bottomElements: ReactNode;
   withLink?: boolean;
   withEditButton?: boolean;
 };
@@ -27,16 +18,11 @@ type Props = {
 export default function VirtualLabBanner({
   name,
   description,
-  createdAt,
   id,
-  simulationExperiments,
-  buildModels,
+  bottomElements,
   withLink = false,
   withEditButton = false,
 }: Props) {
-  const users = useAtomValue(useMemo(() => unwrap(virtualLabMembersAtomFamily(id)), [id]));
-
-  const iconStyle = { color: '#69C0FF' };
   const labUrl = generateLabUrl(id);
 
   return (
@@ -63,45 +49,7 @@ export default function VirtualLabBanner({
         </div>
         {withEditButton && <EditOutlined />}
       </div>
-      <div className="flex gap-5">
-        {buildModels && (
-          <VirtualLabStatistic
-            icon={<Brain style={iconStyle} />}
-            title="Builds"
-            detail={buildModels}
-          />
-        )}
-
-        {simulationExperiments && (
-          <VirtualLabStatistic
-            icon={<StatsEditIcon style={iconStyle} />}
-            title="Simulation experiments"
-            detail={simulationExperiments}
-          />
-        )}
-
-        {users && (
-          <VirtualLabStatistic
-            icon={<UserOutlined style={iconStyle} />}
-            title="Members"
-            detail={users?.length || 0}
-          />
-        )}
-        {users && (
-          <VirtualLabStatistic
-            icon={<MembersGroupIcon style={iconStyle} />}
-            title="Admin"
-            detail={users?.find((user) => user.role === 'admin')?.name || '-'}
-          />
-        )}
-        {createdAt && (
-          <VirtualLabStatistic
-            icon={<CalendarOutlined style={iconStyle} />}
-            title="Creation date"
-            detail={formatDate(createdAt)}
-          />
-        )}
-      </div>
+      {bottomElements}
     </div>
   );
 }

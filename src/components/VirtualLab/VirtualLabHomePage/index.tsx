@@ -4,6 +4,7 @@ import { unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 
 import VirtualLabBanner from '../VirtualLabBanner';
+import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
@@ -21,6 +22,7 @@ export default function VirtualLabHomePage({ id }: Props) {
   const virtualLabDetail = useAtomValue(unwrap(virtualLabDetailAtomFamily(id)));
   const virtualLabUsers = useAtomValue(unwrap(virtualLabMembersAtomFamily(id)));
   const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
+
   if (virtualLabDetail) {
     return (
       <div className="pb-5">
@@ -30,10 +32,10 @@ export default function VirtualLabHomePage({ id }: Props) {
             id={virtualLabDetail.id}
             name={virtualLabDetail.name}
             description={virtualLabDetail.description}
-            createdAt={virtualLabDetail.created_at}
-            simulationExperiments="N/A"
-            buildModels="N/A"
             withEditButton
+            bottomElements={
+              <VirtualLabMainStatistics id={id} created_at={virtualLabDetail.created_at} />
+            }
           />
         </div>
         <BudgetPanel total={virtualLabDetail.budget} totalSpent={300} remaining={350} />
