@@ -228,7 +228,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
                   },
                 ]}
                 name="settings" // TODO: Check whether this prop is necessary.
-                onFinish={updateVirtualLab}
+                onValuesChange={updateVirtualLab}
               />
             ),
             label: 'Lab Settings',
