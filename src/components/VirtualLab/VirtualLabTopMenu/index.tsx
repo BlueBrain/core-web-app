@@ -1,13 +1,14 @@
-import { useEffect, useRef, ReactNode } from 'react';
-import { UserOutlined } from '@ant-design/icons';
+import { useEffect, useRef, ReactNode, useState } from 'react';
+import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { Modal } from 'antd';
+import { Button, Modal, Select } from 'antd';
 import { useSetAtom } from 'jotai';
-import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
+import { projectTopMenuRefAtom, virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
 import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '@/components/VirtualLab/create';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 type Props = {
   extraItems?: ReactNode[];
@@ -19,6 +20,9 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
 
   const { isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
+  const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
+  const [virtualLabId, setVirtualLabId] = useState('');
+  const virtualLabs = useUnwrappedValue(virtualLabsOfUserAtom);
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
@@ -39,7 +43,19 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
             <span className="font-bold">{session?.user.name}</span>
             <UserOutlined className="mr-2 text-primary-4" />
           </div>
-          {extraItems}
+
+          <div className="z-1 fixed font-bold text-primary-8" style={{ bottom: 20, right: 20 }}>
+            <Button
+              disabled={!virtualLabs || virtualLabs.results.length === 0}
+              className="mr-2 w-52 border-none font-bold text-primary-8"
+              style={{ borderRadius: 0, fontSize: 12, height: 40 }}
+              onClick={() => setIsProjectModalVisible(true)}
+            >
+              Create Project
+              <PlusOutlined className="relative bottom-1 left-3" />
+            </Button>
+            {extraItems}
+          </div>
         </div>
       </div>
       <Modal
@@ -53,6 +69,27 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
         {currentStep === 'information' && <VirtualLabCreateInformation />}
         {currentStep === 'plan' && <VirtualLabCreatePlan />}
       </Modal>
+      <Modal
+        title={null}
+        open={isProjectModalVisible}
+        onCancel={() => setIsProjectModalVisible(false)}
+        width={500}
+        okButtonProps={{ style: { display: 'none' } }}
+        closable
+      >
+        <span className="my-3 block font-bold text-primary-8">Project Location</span>
+        <Select
+          style={{ width: 200 }}
+          options={
+            virtualLabs && [
+              { label: '-', value: '' },
+              ...virtualLabs.results.map((vl) => ({ label: vl.name, value: vl.id })),
+            ]
+          }
+          onChange={(v) => setVirtualLabId(v)}
+        />
+      </Modal>
+      <NewProject
     </>
   );
 }

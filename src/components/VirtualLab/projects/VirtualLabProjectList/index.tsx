@@ -132,7 +132,7 @@ function NewProjectModalForm({ form }: { form: FormInstance }) {
   );
 }
 
-function NewProjectModal({
+export function NewProjectModal({
   onFail,
   onSuccess,
   virtualLabId,

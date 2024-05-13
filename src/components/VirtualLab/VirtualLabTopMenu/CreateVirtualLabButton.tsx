@@ -7,8 +7,8 @@ export function CreateVirtualLabButton() {
 
   return (
     <Button
-      className="z-1 fixed w-52 border-none font-bold text-primary-8"
-      style={{ bottom: 20, right: 20, borderRadius: 0, fontSize: 12, height: 40 }}
+      className="w-52 border-none font-bold text-primary-8"
+      style={{ borderRadius: 0, fontSize: 12, height: 40 }}
       size="small"
       onClick={showModal}
     >
