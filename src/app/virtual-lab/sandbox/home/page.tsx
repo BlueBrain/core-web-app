@@ -1,6 +1,8 @@
 'use client';
 
 import { UserOutlined } from '@ant-design/icons';
+import { useAtomValue } from 'jotai';
+import { unwrap } from 'jotai/utils';
 
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 import VirtualLabBanner from '@/components/VirtualLab/VirtualLabBanner';
@@ -9,10 +11,11 @@ import VirtualLabStatistic from '@/components/VirtualLab/VirtualLabStatistic';
 import { StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
+import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 
 function SandboxStatistics() {
   const iconStyle = { color: '#69C0FF' };
-
+  const totalUsers = useAtomValue(unwrap(virtualLabTotalUsersAtom));
   return (
     <div className="flex gap-5">
       <VirtualLabStatistic
@@ -39,7 +42,7 @@ function SandboxStatistics() {
         key="2"
         icon={<UserOutlined style={iconStyle} />}
         title="Members"
-        detail={0}
+        detail={totalUsers || 0}
       />
     </div>
   );
