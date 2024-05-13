@@ -24,8 +24,6 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
   const [, setOpen] = useAtom(newProjectModalOpenAtom);
   const [virtualLabId, setVirtualLabId] = useAtom(virtualLabIdAtom);
-
-  const { isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
   const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
   const virtualLabs = useUnwrappedValue(virtualLabsOfUserAtom);
   const notification = useNotification();
@@ -50,8 +48,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
             <UserOutlined className="mr-2 text-primary-4" />
           </div>
 
-          <div className="z-1 fixed font-bold text-primary-8" style={{ bottom: 20, right: 20 }}>
-            <Button
+          {/* <Button
               disabled={!virtualLabs || virtualLabs.results.length === 0}
               className="mr-2 w-52 border-none font-bold text-primary-8"
               style={{ borderRadius: 0, fontSize: 12, height: 40 }}
@@ -59,22 +56,11 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
             >
               Create Project
               <PlusOutlined className="relative bottom-1 left-3" />
-            </Button>
-            {extraItems}
-          </div>
+            </Button> */}
+          {extraItems}
         </div>
       </div>
-      <Modal
-        title={null}
-        open={isModalVisible}
-        width={800}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        {currentStep === 'information' && <VirtualLabCreateInformation />}
-        {currentStep === 'plan' && <VirtualLabCreatePlan />}
-      </Modal>
+
       <Modal
         title={null}
         open={isProjectModalVisible}
