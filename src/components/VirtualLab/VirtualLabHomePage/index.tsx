@@ -3,6 +3,7 @@
 import { unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 
+import VirtualLabCTABanner from '../VirtualLabCTABanner';
 import VirtualLabBanner from '../VirtualLabBanner';
 import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
 import BudgetPanel from './BudgetPanel';
@@ -39,6 +40,10 @@ export default function VirtualLabHomePage({ id }: Props) {
           />
         </div>
         <BudgetPanel total={virtualLabDetail.budget} totalSpent={300} remaining={350} />
+        <VirtualLabCTABanner
+          title="Create your first project"
+          subtitle="In order to start exploring brain regions, building models and simulate neuron, create a project"
+        />
         <DiscoverObpPanel />
         <div>
           <div className="my-5 text-lg font-bold uppercase">Members</div>
