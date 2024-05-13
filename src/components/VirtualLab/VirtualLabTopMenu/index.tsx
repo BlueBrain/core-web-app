@@ -6,11 +6,9 @@ import { Button, Modal, Select } from 'antd';
 import { useAtom, useSetAtom } from 'jotai';
 
 import { newProjectModalOpenAtom, virtualLabIdAtom } from '../state';
-import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import { projectTopMenuRefAtom, virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
 
 import { useUnwrappedValue } from '@/hooks/hooks';
-import useNotification from '@/hooks/notifications';
 
 type Props = {
   extraItems?: ReactNode[];
@@ -24,7 +22,6 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   const [virtualLabId, setVirtualLabId] = useAtom(virtualLabIdAtom);
   const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
   const virtualLabs = useUnwrappedValue(virtualLabsOfUserAtom);
-  const notification = useNotification();
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
@@ -87,11 +84,6 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
           onChange={(v) => setVirtualLabId(v)}
         />
       </Modal>
-      <NewProjectModal
-        virtualLabId={virtualLabId}
-        onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
-        onSuccess={() => notification.success(`New project has been created.`)}
-      />
     </>
   );
 }
