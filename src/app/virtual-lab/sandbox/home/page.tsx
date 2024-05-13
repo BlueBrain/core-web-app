@@ -1,3 +1,5 @@
+'use client';
+
 import { UserOutlined } from '@ant-design/icons';
 
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
@@ -6,6 +8,7 @@ import VirtualLabCTABanner from '@/components/VirtualLab/VirtualLabCTABanner';
 import VirtualLabStatistic from '@/components/VirtualLab/VirtualLabStatistic';
 import { StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
+import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
 
 function SandboxStatistics() {
   const iconStyle = { color: '#69C0FF' };
@@ -54,6 +57,9 @@ export default function VirtualLabSandboxHomePage() {
       />
       <VirtualLabCTABanner />
       <DiscoverObpPanel />
+      <div className="flex justify-end">
+        <CreateVirtualLabButton extraClasses="bg-white rounded-none text-primary-8" key={2} />
+      </div>
     </div>
   );
 }

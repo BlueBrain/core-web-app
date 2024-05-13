@@ -10,6 +10,7 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { ModalStateProvider } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 export default function VirtualLabSandboxLayout({ children }: { children: ReactNode }) {
   const currentPage = usePathname().split('/').pop();
@@ -36,8 +37,10 @@ export default function VirtualLabSandboxLayout({ children }: { children: ReactN
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="ml-6">
           <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
-            <VirtualLabTopMenu />
-            {children}
+            <ModalStateProvider>
+              <VirtualLabTopMenu />
+              {children}
+            </ModalStateProvider>
           </Suspense>
         </div>
       </ErrorBoundary>
