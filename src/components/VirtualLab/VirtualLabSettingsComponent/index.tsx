@@ -80,9 +80,9 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
       const { data } = await patchVirtualLab(formData, id, token);
       const { virtual_lab: virtualLab } = data;
 
-      setVirtualLabDetail(
+      return setVirtualLabDetail(
         new Promise((resolve) => {
-          resolve(virtualLab);
+          return resolve(virtualLab);
         })
       );
     },
