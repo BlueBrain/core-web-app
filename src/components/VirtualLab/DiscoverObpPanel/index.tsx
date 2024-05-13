@@ -1,3 +1,4 @@
+import DiscoverLinks from './DiscoverLinks';
 import DiscoverObpItem from './DiscoverObpItem';
 import { basePath } from '@/config';
 
@@ -5,7 +6,7 @@ export default function DiscoverObpPanel() {
   return (
     <div className="mt-10 flex flex-col gap-5">
       <div className="font-bold uppercase">Discover OBP</div>
-      <div className="flex flex-row gap-3">
+      <div className="flex w-full flex-row gap-3">
         <DiscoverObpItem
           imagePath={`${basePath}/images/virtual-lab/obp_full_brain_blue.png`}
           title="Explore"
@@ -21,8 +22,14 @@ export default function DiscoverObpPanel() {
               </li>
             </ul>
           }
-          buttonText="Discover Explore"
-          buttonHref="/"
+          bottomElement={
+            <DiscoverLinks
+              topLink="https://google.com"
+              topText="How can I explore the brain?"
+              bottomLink="https://google.com"
+              bottomText="Start exploring"
+            />
+          }
         />
         <DiscoverObpItem
           imagePath={`${basePath}/images/virtual-lab/obp_vl_build.png`}
@@ -39,8 +46,14 @@ export default function DiscoverObpPanel() {
               </li>
             </ul>
           }
-          buttonText="Discover Models"
-          buttonHref="/"
+          bottomElement={
+            <DiscoverLinks
+              topLink="https://google.com"
+              topText="How can I build models?"
+              bottomLink="https://google.com"
+              bottomText="View models"
+            />
+          }
         />
         <DiscoverObpItem
           imagePath={`${basePath}/images/virtual-lab/obp_vl_simulate.png`}
@@ -57,8 +70,14 @@ export default function DiscoverObpPanel() {
               </li>
             </ul>
           }
-          buttonText="Discover Simulations"
-          buttonHref="/"
+          bottomElement={
+            <DiscoverLinks
+              topLink="https://google.com"
+              topText="How can I launch simulations?"
+              bottomLink="https://google.com"
+              bottomText="View simulations"
+            />
+          }
         />
       </div>
     </div>
