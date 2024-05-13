@@ -1,13 +1,12 @@
-import { ReactNode, useState } from 'react';
-import { Button, ConfigProvider, Form, Input, Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { ReactNode, useReducer, useState } from 'react';
+import debounce from 'lodash/debounce';
+import { Button, ConfigProvider, Form, Input } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { ConfigProviderProps } from 'antd/lib/config-provider';
-import { ButtonProps } from 'antd/lib/button/button';
 import { FormProps } from 'antd/lib/form/Form';
 import type { FormItemProps } from 'antd/lib/form/FormItem';
 import type { InputProps } from 'antd/lib/input/Input';
 import type { TextAreaProps } from 'antd/lib/input/TextArea';
-import merge from 'lodash/merge';
 
 import useNotification from '@/hooks/notifications';
 import { VirtualLab } from '@/types/virtual-lab/lab';
@@ -22,7 +21,7 @@ type InformationForm = { name: string; description: string; reference_email: str
 
 export const renderInput: (props: InputProps) => ReactNode = ({
   disabled,
-  name,
+  // name,
   placeholder,
   style,
   title,
@@ -30,12 +29,12 @@ export const renderInput: (props: InputProps) => ReactNode = ({
 }) => {
   return (
     <Input
-      className={disabled ? '' : 'font-bold'}
+      // className={disabled ? '' : 'font-bold'} // TODO: Is this property necessary if Form.Item already disabled?
       disabled={disabled}
-      name={name}
+      // name={name} // TODO: Is this necessary?
       placeholder={placeholder}
       required
-      style={{ ...style, borderTop: 'none', borderRight: 'none', borderLeft: 'none' }}
+      style={{ ...style, border: 'none' }}
       title={title}
       type={type}
     />
@@ -43,7 +42,7 @@ export const renderInput: (props: InputProps) => ReactNode = ({
 };
 
 export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
-  className,
+  // className,
   disabled,
   placeholder,
   style,
@@ -52,11 +51,11 @@ export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
   return (
     <Input.TextArea
       autoSize
-      className={classNames(className, disabled ? '' : 'font-bold')}
+      className={disabled ? '' : 'font-bold'}
       disabled={disabled}
       placeholder={placeholder}
       required
-      style={{ ...style, borderTop: 'none', borderRight: 'none', borderLeft: 'none' }}
+      style={{ ...style, border: 'none' }}
       title={title}
     />
   );
@@ -65,87 +64,101 @@ export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
 function SettingsFormItem({
   children,
   className,
-  disabled,
-  name,
   label,
+  name,
   required,
-  rules,
+  // rules,
+  validateStatus,
 }: Omit<FormItemProps, 'children'> & {
   children: (props: InputProps & TextAreaProps) => ReactNode;
-  disabled: InputProps['disabled'];
 }) {
-  return (
-    <Form.Item
-      name={name}
-      label={required ? `${label}*` : label}
-      validateTrigger="onBlur"
-      rules={[{ ...rules, required }]}
-      className={classNames(`w-full pt-8`, className)}
-      required={required}
-    >
-      {children({
-        disabled,
-        name,
-        placeholder: `${label}...`,
-      })}
-    </Form.Item>
+  const [disabled, dispatch] = useReducer(
+    (state: boolean, { type }: { type: 'toggle' }): boolean => {
+      return type === 'toggle' ? !state : state;
+    },
+    true // Disabled by default
   );
-}
 
-function SettingsFormButton({ children, className, ...buttonProps }: ButtonProps) {
   return (
-    <Button
-      className={classNames('h-14 rounded-none font-semibold', className)}
-      title="Save Changes"
-      {...buttonProps} // eslint-disable-line react/jsx-props-no-spreading
+    <ConfigProvider
+      theme={{
+        components: {
+          Button: {
+            defaultGhostColor: disabled ? '#69C0FF' : 'white',
+            defaultGhostBorderColor: 'transparent',
+          },
+        },
+      }}
     >
-      {children}
-    </Button>
+      <div
+        className={classNames(
+          `border-b-1 flex w-full items-center justify-between gap-4 border border-x-0 border-t-0 pt-8`,
+          disabled ? 'border-primary-3' : 'border-white',
+          className
+        )}
+      >
+        <Form.Item
+          name={name}
+          label={required ? `${label}*` : label}
+          // validateTrigger="onBlur" // TODO: Remove this?
+          // rules={[{ ...rules, required }]} // TODO: Remove this?
+          required={required}
+          style={{ width: '100%' }}
+          hasFeedback={validateStatus === 'validating'}
+          validateStatus={validateStatus}
+        >
+          {children({
+            disabled,
+            name,
+            placeholder: `${label}...`,
+          })}
+        </Form.Item>
+        <Button ghost icon={<EditOutlined />} onClick={() => dispatch({ type: 'toggle' })} />
+      </div>
+    </ConfigProvider>
   );
 }
 
 function SettingsForm({
   children,
   className,
-  theme,
   ...formProps
 }: FormProps & {
   theme?: ConfigProviderProps['theme'];
 }) {
   return (
     <ConfigProvider
-      theme={merge(
-        {
-          components: {
-            Button: {
-              colorBgContainer: '#00B212',
-              colorBgContainerDisabled: '#00B212', // Same as colorBgContainer
-              colorTextDisabled: '#262626',
-              defaultShadow: 'none',
-            },
-            Form: {
-              labelColor: '#69C0FF',
-              itemMarginBottom: 0,
-              verticalLabelPadding: 0,
-            },
-            Input: {
-              activeBg: 'transparent',
-              borderRadius: 0,
-              colorBgContainer: 'transparent',
-              colorText: '#fff',
-              colorTextDisabled: '#fff',
-              colorTextPlaceholder: '#8C8C8C',
-              // Antd uses `fontSizeLG` when no suffix/prefix icons are shown, and `fontSize` when these icons are shown. In both these cases, we want the same font size for our UI.
-              fontSize: 16,
-              fontSizeLG: 16,
-              hoverBorderColor: 'transparent',
-              paddingInline: 0,
-              paddingBlock: 10,
-            },
+      theme={{
+        components: {
+          Button: {
+            colorBgContainer: '#00B212',
+            colorBgContainerDisabled: '#00B212', // Same as colorBgContainer
+            // colorBorder: 'transparent', TODO: Figure-out how to remove the border
+            colorTextDisabled: '#262626',
+            defaultShadow: 'none',
+          },
+          Form: {
+            controlHeight: 22, // Removing this will cause labels to jump when toggling disabled
+            labelColor: '#69C0FF',
+            itemMarginBottom: 0,
+            verticalLabelPadding: 0,
+          },
+          Input: {
+            activeBg: 'transparent',
+            borderRadius: 0,
+            colorBgContainer: 'transparent',
+            colorText: '#fff',
+            colorTextDisabled: '#fff',
+            colorTextPlaceholder: '#8C8C8C',
+            // Antd uses `fontSizeLG` when no suffix/prefix icons are shown, and `fontSize` when these icons are shown. In both these cases, we want the same font size for our UI.
+            fontSize: 16,
+            fontSizeLG: 16,
+            hoverBorderColor: 'transparent',
+            paddingInline: 0,
+            paddingBlock: 10,
           },
         },
-        theme
-      )}
+      }}
     >
       <Form
         className={classNames('px-[28px]', className)}
@@ -171,8 +184,8 @@ export default function FormPanel({
   items: Array<RenderInputProps>;
   onValuesChange: (values: Partial<VirtualLab>) => Promise<void>; // Modify typing to allow for Promise return.
 }) {
-  const [disabled, setDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [validateStatus, setValidatStatus] = useState({});
+
   const [serverError, setServerError] = useState<string | null>(null);
 
   const [form] = Form.useForm<InformationForm>();
@@ -182,105 +195,43 @@ export default function FormPanel({
   const formItems = items.map(({ name: formItemName, ...formItemProps }) => (
     <SettingsFormItem
       key={formItemName}
-      disabled={disabled}
       name={formItemName}
+      validateStatus={
+        !!formItemName && Object.hasOwn(validateStatus, formItemName) ? 'validating' : ''
+      }
       {...formItemProps} // eslint-disable-line react/jsx-props-no-spreading
     />
   ));
-
-  const submitBlock = (
-    <div className="col-span-2 flex items-center justify-end gap-2 py-4">
-      <SettingsFormButton
-        className="bg-neutral-3 text-neutral-7"
-        disabled={loading}
-        htmlType="button"
-        onClick={() => {
-          form.resetFields();
-
-          setDisabled(true);
-        }}
-      >
-        Cancel
-      </SettingsFormButton>
-
-      <Form.Item>
-        <SettingsFormButton
-          className="text-primary-8"
-          disabled={disabled || loading}
-          htmlType="submit"
-          onClick={() => {
-            setLoading(true);
-
-            // form.submit();
-          }}
-        >
-          {loading ? <Spin size="small" indicator={<LoadingOutlined />} /> : 'Save'}
-        </SettingsFormButton>
-      </Form.Item>
-    </div>
-  );
-
-  const editBlock = (
-    <div className="col-span-2 flex items-center justify-end gap-2 py-4">
-      {!!serverError && <p className="text-white">{`Something went wrong. ${serverError}`}</p>}
-      <SettingsFormButton
-        className="bg-neutral-3 text-neutral-7"
-        htmlType="button"
-        onClick={() => setDisabled(false)}
-      >
-        Edit virtual lab information
-      </SettingsFormButton>
-    </div>
-  );
-
-  if (disabled) {
-    return (
-      <SettingsForm
-        className={className}
-        form={form}
-        initialValues={initialValues}
-        name={name} // TODO: Check whether this prop is necessary.
-        theme={{
-          components: {
-            Input: { colorBorder: 'white' },
-          },
-        }}
-      >
-        {formItems}
-        {editBlock}
-      </SettingsForm>
-    );
-  }
 
   return (
     <SettingsForm
       className={className}
       form={form}
       initialValues={initialValues}
+      labelAlign="left"
       name={name} // TODO: Check whether this prop is necessary.
-      onValuesChange={async (values) => {
+      onValuesChange={debounce(async (values) => {
+        setValidatStatus(values);
+
         return onValuesChange(values)
           .then(() => {
             setServerError(null);
-            notification.success(`Virtual Lab has been updated.`);
+
+            const entries = Object.entries(values);
+
+            entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
           })
           .catch((error) => {
             setServerError(error);
             form.resetFields();
           })
           .finally(() => {
-            setLoading(false);
-            setDisabled(true);
+            setValidatStatus({});
           });
-      }}
-      theme={{
-        components: {
-          Input: { colorBorder: '#69C0FF' },
-        },
-      }}
+      }, 600)}
     >
       {formItems}
-      {submitBlock}
+      {!!serverError && <p className="text-white">{`Something went wrong. ${serverError}`}</p>}
     </SettingsForm>
   );
 }
