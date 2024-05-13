@@ -1,22 +1,21 @@
 import { useEffect, useRef, ReactNode, useState } from 'react';
-import { PlusOutlined, SettingTwoTone, UserOutlined } from '@ant-design/icons';
+import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button, Modal, Select } from 'antd';
-import { atom, useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
+
+import { newProjectModalOpenAtom, virtualLabIdAtom } from '../state';
+import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import { projectTopMenuRefAtom, virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
 import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '@/components/VirtualLab/create';
 import { useUnwrappedValue } from '@/hooks/hooks';
-import { NewProjectModal } from '../projects/VirtualLabProjectList';
 
 type Props = {
   extraItems?: ReactNode[];
 };
-
-export const newProjectModalOpenAtom = atom(false);
-export const virtualLabIdAtom = atom('');
 
 export default function VirtualLabTopMenu({ extraItems }: Props) {
   const { data: session } = useSession();
@@ -77,11 +76,25 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
       <Modal
         title={null}
         open={isProjectModalVisible}
-        onCancel={() => setIsProjectModalVisible(false)}
-        onOk={() => {
-          setIsProjectModalVisible(false);
-          setOpen(true);
-        }}
+        footer={
+          <div>
+            <Button key="back" onClick={() => setIsProjectModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button
+              key="submit"
+              type="primary"
+              onClick={() => {
+                setIsProjectModalVisible(false);
+                setVirtualLabId(virtualLabId);
+                setOpen(true);
+              }}
+              disabled={!virtualLabId}
+            >
+              OK
+            </Button>
+          </div>
+        }
         width={500}
         closable
       >

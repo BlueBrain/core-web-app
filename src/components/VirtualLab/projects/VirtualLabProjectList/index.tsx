@@ -2,15 +2,15 @@ import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Modal, Spin, Form, Input } from 'antd';
 import { FormInstance } from 'antd/lib/form/Form';
 import { ComponentProps, ReactElement, useState } from 'react';
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
+import { newProjectModalOpenAtom } from '../../state';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
-import { newProjectModalOpenAtom } from '../../VirtualLabTopMenu';
 
 function NewProjectModalFooter({
   close,
