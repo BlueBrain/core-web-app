@@ -51,6 +51,7 @@ export default function PaymentMethodsList({ virtualLabId }: Props) {
           cardholderName={pm.cardholder_name}
           cardNumber={pm.card_number}
           virtualLabId={virtualLabId}
+          default={pm.default}
         />
       ))}
     </div>

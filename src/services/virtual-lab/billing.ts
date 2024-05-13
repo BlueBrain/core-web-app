@@ -22,6 +22,15 @@ type AddVirtualLabPaymentMethodResponse = {
   };
 };
 
+type DeletedVirtualLabPaymentMethodResponse = {
+  data: {
+    virtual_lab_id: string;
+    payment_method_id: string;
+    deleted: boolean;
+    deleted_at: string;
+  };
+};
+
 export type SetupIntentResponse = {
   data: {
     id: string;
@@ -90,6 +99,25 @@ export async function updateDefaultPaymentMethodToVirtualLab(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ payment_method_id: paymentMethodId }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function deletePaymentMethodToVirtualLab(
+  id: string,
+  token: string,
+  paymentMethodId: string
+): Promise<DeletedVirtualLabPaymentMethodResponse> {
+  const response = await fetch(
+    `${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods/${paymentMethodId}`,
+    {
+      method: 'DELETE',
+      headers: createVLApiHeaders(token),
     }
   );
 
