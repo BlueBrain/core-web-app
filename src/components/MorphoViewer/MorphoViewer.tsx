@@ -1,17 +1,20 @@
 'use client';
 
 /* eslint-disable no-param-reassign */
-import { GizmoCanvas, MorphologyCanvas } from '@bbp/morphoviewer';
 import { FullscreenOutlined } from '@ant-design/icons';
+import { GizmoCanvas, MorphologyCanvas } from '@bbp/morphoviewer';
 import { useEffect, useRef } from 'react';
 
 import { ColorRamp } from './ColorRamp';
-import { Settings } from './Settings';
 import { Scalebar } from './Scalebar';
+import { Settings } from './Settings';
 import { Warning } from './Warning';
 import { useMorphoViewerSettings } from './hooks/settings';
 import { useSignal } from './hooks/signal';
+import { fetchSomaFromNeuroMorphoViz } from './neuro-morpho-viz-service';
+import { useSessionAtomValue } from '@/hooks/hooks';
 import { classNames } from '@/util/utils';
+import { logError } from '@/util/logger';
 
 import styles from './morpho-viewer.module.css';
 
@@ -21,9 +24,11 @@ export interface MorphoViewerProps {
    * Text content of a SWC file.
    */
   swc: string;
+  contentUrl?: string;
 }
 
-export function MorphoViewer({ className, swc }: MorphoViewerProps) {
+export function MorphoViewer({ className, swc, contentUrl }: MorphoViewerProps) {
+  const session = useSessionAtomValue();
   const refDiv = useRef<HTMLDivElement | null>(null);
   const refMorphoCanvas = useRef(new MorphologyCanvas());
   const morphoCanvas = refMorphoCanvas.current;
@@ -36,6 +41,16 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   useEffect(() => {
     morphoCanvas.canvas = refCanvas.current;
     morphoCanvas.swc = swc;
+    if (contentUrl) {
+      fetchSomaFromNeuroMorphoViz(contentUrl, session?.accessToken)
+        .then((data) => {
+          if (!data) return;
+
+          morphoCanvas.somaGLB = data;
+          morphoCanvas.paint();
+        })
+        .catch((err) => logError(err));
+    }
     gizmoCanvas.attachCamera(morphoCanvas.camera);
     const handleWarning = () => {
       setWarning(true);
@@ -46,7 +61,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
       morphoCanvas.eventMouseWheelWithoutCtrl.removeListener(handleWarning);
       gizmoCanvas.eventTipClick.removeListener(morphoCanvas.interpolateCamera);
     };
-  }, [morphoCanvas, gizmoCanvas, setWarning, swc]);
+  }, [morphoCanvas, gizmoCanvas, setWarning, swc, contentUrl, session?.accessToken]);
 
   const handleFullscreen = () => {
     const div = refDiv.current;

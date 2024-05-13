@@ -52,7 +52,11 @@ function MorphoViewerLoader({ resource }: { resource: ReconstructedNeuronMorphol
   switch (state) {
     case 'hasData':
       return morphologyData.data ? (
-        <MorphoViewer className="min-h-[75%]" swc={morphologyData.data} />
+        <MorphoViewer
+          className="min-h-[75%]"
+          swc={morphologyData.data}
+          contentUrl={findSwcContentUrl(resource)}
+        />
       ) : (
         <div>No data...</div>
       );
@@ -63,4 +67,17 @@ function MorphoViewerLoader({ resource }: { resource: ReconstructedNeuronMorphol
     default:
       throw Error(`Unknown state for morphologyData: "${state}"!`);
   }
+}
+
+function findSwcContentUrl(resource: ReconstructedNeuronMorphology): string | undefined {
+  const distributions = Array.isArray(resource.distribution)
+    ? resource.distribution
+    : [resource.distribution];
+  for (const distribution of distributions) {
+    if (distribution.encodingFormat === 'application/swc') {
+      return distribution.contentUrl;
+    }
+  }
+  // There is no SWC content URL in this resource.
+  return undefined;
 }
