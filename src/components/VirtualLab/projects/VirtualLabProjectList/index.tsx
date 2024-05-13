@@ -4,7 +4,7 @@ import { FormInstance } from 'antd/lib/form/Form';
 import { ComponentProps, ReactElement, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
+import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import { newProjectModalOpenAtom } from '../../state';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
@@ -169,30 +169,16 @@ export function NewProjectModal({
   };
 
   return (
-    <>
-      <Modal
-        footer={
-          <NewProjectModalFooter
-            close={() => setOpen(false)}
-            loading={loading}
-            onSubmit={onSubmit}
-          />
-        }
-        onCancel={() => setOpen(false)}
-        open={open}
-        styles={{ mask: { backgroundColor: '#0050B3D9' } }}
-      >
-        <NewProjectModalForm form={form} />
-      </Modal>
-      <button
-        type="button"
-        className="flex w-[200px] justify-between border border-primary-7 p-3"
-        onClick={() => setOpen(true)}
-      >
-        <span className="font-bold">New project</span>
-        <PlusOutlined />
-      </button>
-    </>
+    <Modal
+      footer={
+        <NewProjectModalFooter close={() => setOpen(false)} loading={loading} onSubmit={onSubmit} />
+      }
+      onCancel={() => setOpen(false)}
+      open={open}
+      styles={{ mask: { backgroundColor: '#0050B3D9' } }}
+    >
+      <NewProjectModalForm form={form} />
+    </Modal>
   );
 }
 

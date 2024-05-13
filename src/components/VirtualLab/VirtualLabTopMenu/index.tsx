@@ -12,6 +12,7 @@ import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStat
 
 import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '@/components/VirtualLab/create';
 import { useUnwrappedValue } from '@/hooks/hooks';
+import useNotification from '@/hooks/notifications';
 
 type Props = {
   extraItems?: ReactNode[];
@@ -27,6 +28,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   const { isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
   const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
   const virtualLabs = useUnwrappedValue(virtualLabsOfUserAtom);
+  const notification = useNotification();
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
@@ -110,7 +112,11 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
           onChange={(v) => setVirtualLabId(v)}
         />
       </Modal>
-      <NewProjectModal virtualLabId={virtualLabId} onSuccess={() => {}} onFail={() => {}} />
+      <NewProjectModal
+        virtualLabId={virtualLabId}
+        onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
+        onSuccess={() => notification.success(`New project has been created.`)}
+      />
     </>
   );
 }
