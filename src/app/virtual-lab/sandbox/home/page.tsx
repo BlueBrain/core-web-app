@@ -57,7 +57,7 @@ export default function VirtualLabSandboxHomePage() {
       />
       <VirtualLabCTABanner />
       <DiscoverObpPanel />
-      <div className="flex justify-end">
+      <div className="mb-5 flex justify-end">
         <CreateVirtualLabButton extraClasses="bg-white rounded-none text-primary-8" key={2} />
       </div>
     </div>
