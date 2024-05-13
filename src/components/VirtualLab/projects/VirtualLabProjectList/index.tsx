@@ -184,14 +184,16 @@ export function NewProjectModal({
       >
         <NewProjectModalForm form={form} />
       </Modal>
-      <button
-        type="button"
-        className="flex w-[200px] justify-between border border-primary-7 p-3"
-        onClick={() => setOpen(true)}
-      >
-        <span className="font-bold">New project</span>
-        <PlusOutlined />
-      </button>
+      <div className="fixed bottom-5 right-7">
+        <Button
+          className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
+          onClick={() => setOpen(true)}
+        >
+          <span className="relative text-primary-8">
+            Create Project <PlusOutlined className="relative left-3" />
+          </span>
+        </Button>
+      </div>
     </>
   );
 }
