@@ -7,6 +7,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import VirtualLabSidebar from '@/components/VirtualLab/VirtualLabSidebar';
+import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
+import { ModalStateProvider } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 export default function VirtualLabPageLayout({
   children,
@@ -15,6 +17,7 @@ export default function VirtualLabPageLayout({
   children: ReactNode;
   params: { virtualLabId: string };
 }) {
+  const extraHeaderItems: ReactNode[] = [<CreateVirtualLabButton key={1} />];
   return (
     <div className="inset-0 z-0 grid h-screen w-full grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 p-10 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -27,8 +30,10 @@ export default function VirtualLabPageLayout({
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="ml-6">
           <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
-            <VirtualLabTopMenu />
-            {children}
+            <ModalStateProvider>
+              <VirtualLabTopMenu extraItems={extraHeaderItems} />
+              {children}
+            </ModalStateProvider>
           </Suspense>
         </div>
       </ErrorBoundary>

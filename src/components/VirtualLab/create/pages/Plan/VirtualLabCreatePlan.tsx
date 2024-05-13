@@ -17,7 +17,7 @@ export interface VirtualLabCreatePlanProps {
 
 export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
   const [lab, updateLab] = useCurrentVirtualLab();
-  const [billingValid, setBillingValid] = useState(false);
+  const [billingValid, _] = useState(false);
   const virtualLabPlansLoadable = useAtomValue(loadable(virtualLabPlansAtom));
 
   if (virtualLabPlansLoadable.state === 'loading') {
@@ -42,7 +42,6 @@ export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
             onSelect={() => updateLab({ plan_id: plan.id })}
           />
         ))}
-        {lab.plan_id && <InputBillingInfo onValidityChange={setBillingValid} />}
       </Main>
     </Layout>
   );
