@@ -1,8 +1,9 @@
 'use client';
 
-import { UserOutlined } from '@ant-design/icons';
+import { LoadingOutlined, UserOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
+import { loadable } from 'jotai/utils';
+import { Spin } from 'antd';
 
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 import VirtualLabBanner from '@/components/VirtualLab/VirtualLabBanner';
@@ -13,9 +14,21 @@ import Brain from '@/components/icons/Brain';
 import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
 import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 
+function VirtualLabTotalUsers() {
+  const totalUsers = useAtomValue(loadable(virtualLabTotalUsersAtom));
+
+  if (totalUsers.state === 'loading') {
+    return <Spin indicator={<LoadingOutlined />} />;
+  }
+
+  if (totalUsers.state === 'hasData') {
+    return totalUsers.data;
+  }
+  return null;
+}
+
 function SandboxStatistics() {
   const iconStyle = { color: '#69C0FF' };
-  const totalUsers = useAtomValue(unwrap(virtualLabTotalUsersAtom));
   return (
     <div className="flex gap-5">
       <VirtualLabStatistic
@@ -42,7 +55,7 @@ function SandboxStatistics() {
         key="2"
         icon={<UserOutlined style={iconStyle} />}
         title="Members"
-        detail={totalUsers || 0}
+        detail={<VirtualLabTotalUsers />}
       />
     </div>
   );
