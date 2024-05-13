@@ -1,5 +1,5 @@
 import { useEffect, useRef, ReactNode, useState } from 'react';
-import { PlusOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button, Modal, Select } from 'antd';
@@ -8,9 +8,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { newProjectModalOpenAtom, virtualLabIdAtom } from '../state';
 import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import { projectTopMenuRefAtom, virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
-import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
-import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '@/components/VirtualLab/create';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import useNotification from '@/hooks/notifications';
 
@@ -48,15 +46,6 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
             <UserOutlined className="mr-2 text-primary-4" />
           </div>
 
-          {/* <Button
-              disabled={!virtualLabs || virtualLabs.results.length === 0}
-              className="mr-2 w-52 border-none font-bold text-primary-8"
-              style={{ borderRadius: 0, fontSize: 12, height: 40 }}
-              onClick={() => setIsProjectModalVisible(true)}
-            >
-              Create Project
-              <PlusOutlined className="relative bottom-1 left-3" />
-            </Button> */}
           {extraItems}
         </div>
       </div>
