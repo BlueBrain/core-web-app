@@ -1,22 +1,31 @@
 'use client';
 
-import { LoadingOutlined } from '@ant-design/icons';
-import { Modal, Spin, Switch } from 'antd';
-import { useAtomValue } from 'jotai';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Modal, Select, Spin, Switch } from 'antd';
+import { useAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useCallback, useState } from 'react';
 
 import { ModalStateProvider, useModalState } from '../create/contexts/ModalStateContext';
 import { CreateVirtualLabButton } from '../VirtualLabTopMenu/CreateVirtualLabButton';
 import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '../create';
+import { newProjectModalOpenAtom, virtualLabIdAtom } from '../state';
+import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import VirtualLabAndProject from './VirtualLabAndProject';
 import DashboardTotals from './DashboardTotals';
 import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
+
+import useNotification from '@/hooks/notifications';
+import { Project } from '@/types/virtual-lab/projects';
 
 function VirtualLabDashboard() {
   const virtualLabs = useAtomValue(loadable(virtualLabsOfUserAtom));
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
   const { isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
+  const [, setOpen] = useAtom(newProjectModalOpenAtom);
+  const [virtualLabId, setVirtualLabId] = useAtom(virtualLabIdAtom);
+  const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
+  const notification = useNotification();
 
   const renderVirtualLabs = useCallback(() => {
     if (virtualLabs.state === 'loading') {
@@ -55,8 +64,17 @@ function VirtualLabDashboard() {
             <DashboardTotals />
           </div>
           {renderVirtualLabs()}
-
-          <CreateVirtualLabButton />
+          <div className="fixed bottom-5 right-7">
+            <Button
+              className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
+              onClick={() => setIsProjectModalVisible(true)}
+            >
+              <span className="relative text-primary-8">
+                Create Project <PlusOutlined className="relative left-3" />
+              </span>
+            </Button>
+            <CreateVirtualLabButton />
+          </div>
         </div>
       </div>
       <Modal
@@ -70,6 +88,53 @@ function VirtualLabDashboard() {
         {currentStep === 'information' && <VirtualLabCreateInformation />}
         {currentStep === 'plan' && <VirtualLabCreatePlan />}
       </Modal>
+
+      {virtualLabs.state === 'hasData' && virtualLabs.data && (
+        <>
+          <Modal
+            title={null}
+            open={isProjectModalVisible}
+            footer={
+              <div>
+                <Button key="back" onClick={() => setIsProjectModalVisible(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  key="submit"
+                  type="primary"
+                  onClick={() => {
+                    setIsProjectModalVisible(false);
+                    setVirtualLabId(virtualLabId);
+                    setOpen(true);
+                  }}
+                  disabled={!virtualLabId}
+                >
+                  OK
+                </Button>
+              </div>
+            }
+            width={500}
+            onCancel={() => setIsProjectModalVisible(false)}
+          >
+            <span className="my-3 block font-bold text-primary-8">Project Location</span>
+            <Select
+              style={{ width: 200 }}
+              options={[
+                { label: '-', value: '' },
+                ...virtualLabs.data.results.map((vl) => ({ label: vl.name, value: vl.id })),
+              ]}
+              onChange={(v) => setVirtualLabId(v)}
+            />
+          </Modal>
+          <NewProjectModal
+            onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
+            onSuccess={(newProject: Project) => {
+              notification.success(`${newProject.name} has been created.`);
+            }}
+            virtualLabId={virtualLabId}
+          />
+        </>
+      )}
     </>
   );
 }
