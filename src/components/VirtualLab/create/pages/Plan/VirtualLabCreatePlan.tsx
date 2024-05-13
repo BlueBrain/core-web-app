@@ -16,7 +16,7 @@ export interface VirtualLabCreatePlanProps {
 
 export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
   const [lab, updateLab] = useCurrentVirtualLab();
-  const [billingValid, _] = useState(false);
+  const [billingValid, ] = useState(false);
   const virtualLabPlansLoadable = useAtomValue(loadable(virtualLabPlansAtom));
 
   if (virtualLabPlansLoadable.state === 'loading') {
