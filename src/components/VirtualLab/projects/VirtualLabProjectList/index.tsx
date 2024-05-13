@@ -1,10 +1,8 @@
-'use client';
-
 import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Modal, Spin, Form, Input } from 'antd';
 import { FormInstance } from 'antd/lib/form/Form';
 import { ComponentProps, ReactElement, useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
@@ -12,6 +10,7 @@ import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
+import { newProjectModalOpenAtom } from '../../VirtualLabTopMenu';
 
 function NewProjectModalFooter({
   close,
@@ -141,7 +140,7 @@ export function NewProjectModal({
   onSuccess: (newProject: Project) => void;
   virtualLabId: string;
 }) {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useAtom(newProjectModalOpenAtom);
   const [loading, setLoading] = useState(false);
   const session = useSession();
 

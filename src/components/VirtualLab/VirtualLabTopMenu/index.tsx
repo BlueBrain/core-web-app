@@ -1,27 +1,32 @@
 import { useEffect, useRef, ReactNode, useState } from 'react';
-import { PlusOutlined, UserOutlined } from '@ant-design/icons';
+import { PlusOutlined, SettingTwoTone, UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button, Modal, Select } from 'antd';
-import { useSetAtom } from 'jotai';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom, virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
 import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '@/components/VirtualLab/create';
 import { useUnwrappedValue } from '@/hooks/hooks';
+import { NewProjectModal } from '../projects/VirtualLabProjectList';
 
 type Props = {
   extraItems?: ReactNode[];
 };
 
+export const newProjectModalOpenAtom = atom(false);
+export const virtualLabIdAtom = atom('');
+
 export default function VirtualLabTopMenu({ extraItems }: Props) {
   const { data: session } = useSession();
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
+  const [, setOpen] = useAtom(newProjectModalOpenAtom);
+  const [virtualLabId, setVirtualLabId] = useAtom(virtualLabIdAtom);
 
   const { isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
   const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
-  const [virtualLabId, setVirtualLabId] = useState('');
   const virtualLabs = useUnwrappedValue(virtualLabsOfUserAtom);
 
   useEffect(() => {
@@ -73,8 +78,11 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
         title={null}
         open={isProjectModalVisible}
         onCancel={() => setIsProjectModalVisible(false)}
+        onOk={() => {
+          setIsProjectModalVisible(false);
+          setOpen(true);
+        }}
         width={500}
-        okButtonProps={{ style: { display: 'none' } }}
         closable
       >
         <span className="my-3 block font-bold text-primary-8">Project Location</span>
@@ -89,7 +97,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
           onChange={(v) => setVirtualLabId(v)}
         />
       </Modal>
-      <NewProject
+      <NewProjectModal virtualLabId={virtualLabId} onSuccess={() => {}} onFail={() => {}} />
     </>
   );
 }
