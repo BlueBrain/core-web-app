@@ -1,7 +1,12 @@
 import { basePath } from '@/config';
 import styles from './virtual-lab-cta-banner.module.css';
 
-export default function VirtualLabCTABanner() {
+type Props = {
+  title: string;
+  subtitle: string;
+};
+
+export default function VirtualLabCTABanner({ title, subtitle }: Props) {
   return (
     <div className="relative mt-10 flex rounded-xl bg-gradient-to-r from-[#345D36] to-[#6DC371] p-8">
       <div
@@ -11,11 +16,8 @@ export default function VirtualLabCTABanner() {
         }}
       />
       <div className="flex flex-col gap-2">
-        <h4 className="text-2xl font-bold">Create your first project</h4>
-        <p>
-          In order to start exploring brain regions, building models and simulate neuron, create a
-          project
-        </p>
+        <h4 className="text-2xl font-bold">{title}</h4>
+        <p>{subtitle}</p>
       </div>
     </div>
   );
