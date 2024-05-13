@@ -83,6 +83,7 @@ export function LabLinkComponent({ lab }: LabProps) {
         content={virtualLabLoadable.data?.name}
         href={lab.href}
         styles={lab.styles}
+        expanded
       />
     );
   }
