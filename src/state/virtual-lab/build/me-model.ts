@@ -10,4 +10,4 @@ export const morphologyTypeAtom = atom<MEModelMorphologyType>('reconstructed');
 
 export const selectedMModelAtom = atom<ReconstructedNeuronMorphology | null>(null);
 
-export const eModelPickedAtom = atom<ESeModel | null>(null);
+export const selectedEModelAtom = atom<ESeModel | null>(null);
