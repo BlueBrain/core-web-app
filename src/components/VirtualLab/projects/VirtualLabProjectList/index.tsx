@@ -261,7 +261,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
           onClick={() => setOpen(true)}
         >
           <span className="relative text-primary-8">
-            Create Project <PlusOutlined className="relative left-3 top-[0.1rem]" />
+            Create project <PlusOutlined className="relative left-3 top-[0.1rem]" />
           </span>
         </Button>
       </div>

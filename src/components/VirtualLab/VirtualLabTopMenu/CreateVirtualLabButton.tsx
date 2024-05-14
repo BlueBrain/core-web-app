@@ -24,7 +24,7 @@ function CreateVirtualLabButtonContent() {
         onClick={showModal}
       >
         <span className="relative text-primary-8">
-          Create Virtual Lab <PlusOutlined className="relative left-3 top-[0.1rem]" />
+          Create virtual lab <PlusOutlined className="relative left-3 top-[0.1rem]" />
         </span>
       </Button>
       <Modal
