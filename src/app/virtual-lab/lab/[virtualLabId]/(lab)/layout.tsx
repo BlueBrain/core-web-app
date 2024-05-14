@@ -8,7 +8,6 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import VirtualLabSidebar from '@/components/VirtualLab/VirtualLabSidebar';
 import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
-import { ModalStateProvider } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 export default function VirtualLabPageLayout({
   children,
@@ -30,10 +29,8 @@ export default function VirtualLabPageLayout({
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="ml-6">
           <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
-            <ModalStateProvider>
-              <VirtualLabTopMenu extraItems={extraHeaderItems} />
-              {children}
-            </ModalStateProvider>
+            <VirtualLabTopMenu extraItems={extraHeaderItems} />
+            {children}
           </Suspense>
         </div>
       </ErrorBoundary>
