@@ -11,7 +11,6 @@ import VirtualLabCTABanner from '@/components/VirtualLab/VirtualLabCTABanner';
 import VirtualLabStatistic from '@/components/VirtualLab/VirtualLabStatistic';
 import { StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
-import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
 import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 
 function VirtualLabTotalUsers() {
@@ -76,9 +75,6 @@ export default function VirtualLabSandboxHomePage() {
         subtitle="In order to start your own projects, explore brain regions, build different models and simulate"
       />
       <DiscoverObpPanel />
-      <div className="mb-5 flex justify-end">
-        <CreateVirtualLabButton extraClasses="bg-white rounded-none text-primary-8" key={2} />
-      </div>
     </div>
   );
 }

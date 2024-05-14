@@ -11,6 +11,7 @@ import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { ModalStateProvider } from '@/components/VirtualLab/create/contexts/ModalStateContext';
+import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
 
 export default function VirtualLabSandboxLayout({ children }: { children: ReactNode }) {
   const currentPage = usePathname().split('/').pop();
@@ -23,27 +24,33 @@ export default function VirtualLabSandboxLayout({ children }: { children: ReactN
   ];
 
   return (
-    <div className="inset-0 z-0 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 p-10 text-white">
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <Suspense fallback={null}>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col text-2xl font-bold">
-              <span>Open</span> <span> Brain</span> <span>Platform</span>
+    <ModalStateProvider>
+      <div className="inset-0 z-0 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 p-10 text-white">
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <Suspense fallback={null}>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col text-2xl font-bold">
+                <span>Open</span> <span> Brain</span> <span>Platform</span>
+              </div>
+              <VerticalLinks links={linkItems} currentPage={currentPage} />
             </div>
-            <VerticalLinks links={linkItems} currentPage={currentPage} />
-          </div>
-        </Suspense>
-      </ErrorBoundary>
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="ml-6">
-          <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
-            <ModalStateProvider>
+          </Suspense>
+        </ErrorBoundary>
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <div className="ml-6">
+            <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
               <VirtualLabTopMenu />
               {children}
-            </ModalStateProvider>
-          </Suspense>
-        </div>
-      </ErrorBoundary>
-    </div>
+              <div className="fixed bottom-0 right-0 m-10 flex justify-end">
+                <CreateVirtualLabButton
+                  extraClasses="bg-white hover:bg-white rounded-none text-primary-8"
+                  key={100}
+                />
+              </div>
+            </Suspense>
+          </div>
+        </ErrorBoundary>
+      </div>
+    </ModalStateProvider>
   );
 }
