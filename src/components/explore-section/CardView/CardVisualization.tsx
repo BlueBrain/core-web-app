@@ -6,12 +6,12 @@ import { LoadingOutlined, WarningOutlined } from '@ant-design/icons';
 import { DataType } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import { createHeaders } from '@/util/utils';
-import { FileDistribution } from '@/types/explore-section/es-properties';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import PreviewThumbnail from '@/components/explore-section/ExploreSectionListingView/PreviewThumbnail';
+import { useSwcContentUrl } from '@/util/content-url';
 
 type CardVisualizationProps = {
   dataType: DataType;
@@ -28,9 +28,7 @@ const swcFileAtom = atomFamily((contentUrl?: string) =>
 );
 
 export default function CardVisualization({ dataType, resource }: CardVisualizationProps) {
-  const contentUrl = resource.distribution?.find(
-    (dis: FileDistribution) => dis.encodingFormat === 'application/swc'
-  )?.contentUrl;
+  const contentUrl = useSwcContentUrl(resource.distribution);
 
   const swc = useAtomValue(useMemo(() => loadable(swcFileAtom(contentUrl)), [contentUrl]));
 

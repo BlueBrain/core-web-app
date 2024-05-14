@@ -1,16 +1,21 @@
 'use client';
 
 /* eslint-disable no-param-reassign */
-import { GizmoCanvas, MorphologyCanvas } from '@bbp/morphoviewer';
 import { FullscreenOutlined } from '@ant-design/icons';
+import { GizmoCanvas, MorphologyCanvas } from '@bbp/morphoviewer';
 import { useEffect, useRef } from 'react';
 
+import { useAccessToken } from '../experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
 import { ColorRamp } from './ColorRamp';
-import { Settings } from './Settings';
 import { Scalebar } from './Scalebar';
+import { Settings } from './Settings';
 import { Warning } from './Warning';
 import { useMorphoViewerSettings } from './hooks/settings';
 import { useSignal } from './hooks/signal';
+import { fetchSomaFromNeuroMorphoViz } from './neuro-morpho-viz-service';
+
+import useNotification from '@/hooks/notifications';
+import { logError } from '@/util/logger';
 import { classNames } from '@/util/utils';
 
 import styles from './morpho-viewer.module.css';
@@ -21,9 +26,11 @@ export interface MorphoViewerProps {
    * Text content of a SWC file.
    */
   swc: string;
+  contentUrl?: string;
 }
 
-export function MorphoViewer({ className, swc }: MorphoViewerProps) {
+export function MorphoViewer({ className, swc, contentUrl }: MorphoViewerProps) {
+  const accessToken = useAccessToken();
   const refDiv = useRef<HTMLDivElement | null>(null);
   const refMorphoCanvas = useRef(new MorphologyCanvas());
   const morphoCanvas = refMorphoCanvas.current;
@@ -32,10 +39,24 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   const refCanvas = useRef<HTMLCanvasElement | null>(null);
   const [{ isDarkMode }] = useMorphoViewerSettings(morphoCanvas);
   const [warning, setWarning] = useSignal(10000);
+  const notification = useNotification();
 
   useEffect(() => {
     morphoCanvas.canvas = refCanvas.current;
     morphoCanvas.swc = swc;
+    if (contentUrl) {
+      fetchSomaFromNeuroMorphoViz(contentUrl, accessToken)
+        .then((data) => {
+          if (!data) return;
+
+          morphoCanvas.somaGLB = data;
+          morphoCanvas.paint();
+        })
+        .catch((err) => {
+          logError('Unable to get a GLB mesh for the soma:', err);
+          notification.error('An error occured while retrieving an enhanced soma.');
+        });
+    }
     gizmoCanvas.attachCamera(morphoCanvas.camera);
     const handleWarning = () => {
       setWarning(true);
@@ -46,7 +67,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
       morphoCanvas.eventMouseWheelWithoutCtrl.removeListener(handleWarning);
       gizmoCanvas.eventTipClick.removeListener(morphoCanvas.interpolateCamera);
     };
-  }, [morphoCanvas, gizmoCanvas, setWarning, swc]);
+  }, [morphoCanvas, gizmoCanvas, setWarning, swc, contentUrl, accessToken, notification]);
 
   const handleFullscreen = () => {
     const div = refDiv.current;
