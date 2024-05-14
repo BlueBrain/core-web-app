@@ -2,20 +2,22 @@ import { PaymentElement, Elements, useElements, useStripe } from '@stripe/react-
 import {
   ComponentProps,
   FormEvent,
-  useReducer,
   useState,
   useEffect,
   useRef,
   DispatchWithoutAction,
+  ChangeEvent,
 } from 'react';
 import { Button, ConfigProvider, Spin } from 'antd';
 import { Stripe } from '@stripe/stripe-js';
 
 import { useAtomValue, useSetAtom } from 'jotai';
 import { LoadingOutlined } from '@ant-design/icons';
+import z from 'zod';
+
 import getStripe, { getErrorMessage } from './getStripe';
 import useNotification from '@/hooks/notifications';
-import { classNames } from '@/util/utils';
+import { classNames, getZodErrorPath, isStringEmpty } from '@/util/utils';
 import {
   SetupIntentResponse,
   addNewPaymentMethodToVirtualLab,
@@ -29,12 +31,22 @@ type PaymentFormProps = {
   toggleOpenStripeForm: DispatchWithoutAction;
 };
 
-type PaymentFormState = {
-  loading: boolean;
-  error: string | null;
-};
+const CardholderValidation = z.object({
+  name: z.string(),
+  email: z.string().email(),
+});
 
-function StripeInput({ title, id, name, ...props }: ComponentProps<'input'> & { title: string }) {
+type Cardholder = z.infer<typeof CardholderValidation>;
+type CardholderKeys = keyof Cardholder;
+
+function StripeInput({
+  title,
+  id,
+  name,
+  value,
+  error,
+  ...props
+}: ComponentProps<'input'> & { title: string; error: boolean }) {
   return (
     <div className="mb-3">
       <label
@@ -51,15 +63,23 @@ function StripeInput({ title, id, name, ...props }: ComponentProps<'input'> & { 
           {...props}
           id={id}
           name={name}
+          value={value}
           className={classNames(
-            'w-full rounded-[5px] border border-solid border-[#e6e6e6] bg-white p-3',
-            'shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02)]'
+            'h-[44px] w-full rounded-[5px] border  border-solid bg-white p-3',
+            error
+              ? 'test-[#df1b41] border-[#df1b41] shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02),0_0_0_1px_#df1b41]'
+              : 'border-[#e6e6e6] shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02)]'
           )}
           style={{
             transition:
               'background 0.15s ease, border 0.15s ease, box-shadow 0.15s ease, color 0.15s ease',
           }}
         />
+        {error && (
+          <p className="mt-1 text-[16px] text-[#df1b41]" role="alert">
+            Your {id} is invalid.
+          </p>
+        )}
       </label>
     </div>
   );
@@ -72,30 +92,38 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
   const { error: errorNotify } = useNotification();
   const refreshPaymentMethods = useSetAtom(virtualLabPaymentMethodsAtomFamily(virtualLabId));
   const [stripeElementsReady, setStipeElementsReady] = useState(false);
-  const [formState, setFormState] = useReducer(
-    (prev: PaymentFormState, next: Partial<PaymentFormState>) => ({
-      ...prev,
-      ...next,
-    }),
-    {
-      loading: false,
-      error: null,
+  const [formLoading, setFormLoading] = useState(false);
+  const [cardholderForm, setCardHolderForm] = useState<Cardholder>({
+    name: '',
+    email: '',
+  });
+  const [cardholderFormErrorKeys, setCardholderFormErrorKeys] = useState<Array<CardholderKeys>>([]);
+
+  const onCardholderChange = (key: string) => (e: ChangeEvent<HTMLInputElement>) =>
+    setCardHolderForm((state) => ({ ...state, [key]: e.target.value }));
+
+  const onCardholderBlur = (key: CardholderKeys) => async () => {
+    const validation = await CardholderValidation.safeParseAsync(cardholderForm);
+    if (
+      (!validation.success && getZodErrorPath(validation.error).includes(key)) ||
+      isStringEmpty(cardholderForm[key])
+    ) {
+      setCardholderFormErrorKeys((state) => [...state, key]);
+    } else {
+      setCardholderFormErrorKeys((state) => state.filter((e) => e !== key));
     }
-  );
+  };
 
   const formLoaded = stripe && elements;
-  const disableForm = !formLoaded || formState.loading;
+  const disableForm = !formLoaded || formLoading;
 
   const onStripeElementsReady = () => setStipeElementsReady(true);
 
   const handlePaymentMethodSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setFormState({ loading: true });
+    setFormLoading(true);
 
-    const target = event.currentTarget;
-    const formData = new FormData(target);
-    const name = String(formData.get('cardholder-name'));
-    const email = String(formData.get('cardholder-email'));
+    const { name, email } = cardholderForm;
 
     if (!stripe || !elements) {
       return null;
@@ -111,10 +139,7 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
       });
 
       if (error) {
-        errorNotify(error.message!);
-        setFormState({
-          error: error.message,
-        });
+        errorNotify(error.message!, undefined, 'topRight', true);
       } else if (session) {
         await addNewPaymentMethodToVirtualLab(virtualLabId, session.accessToken, {
           name,
@@ -126,12 +151,10 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
       }
     } catch (error) {
       errorNotify(getErrorMessage(error));
-      setFormState({
-        error: getErrorMessage(error),
-      });
     } finally {
-      setFormState({ loading: false });
-      target.reset();
+      setFormLoading(false);
+      setCardHolderForm({ name: '', email: '' });
+      setCardholderFormErrorKeys([]);
       elements.getElement('payment')?.clear();
     }
   };
@@ -147,19 +170,25 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
           <div className="w-full">
             <StripeInput
               type="email"
-              id="cardholder-email"
-              name="cardholder-email"
+              id="email"
+              name="email"
               title="Email"
-              required
+              value={cardholderForm.email}
+              onChange={onCardholderChange('email')}
+              error={cardholderFormErrorKeys.includes('email')}
+              onBlur={onCardholderBlur('email')}
             />
           </div>
           <div className="w-full">
             <StripeInput
               type="text"
-              id="cardholder-name"
-              name="cardholder-name"
+              id="name"
+              name="name"
               title="Cardholder name"
-              required
+              value={cardholderForm.name}
+              error={cardholderFormErrorKeys.includes('name')}
+              onChange={onCardholderChange('name')}
+              onBlur={onCardholderBlur('name')}
             />
           </div>
         </>
@@ -171,9 +200,9 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
             type="primary"
             size="large"
             htmlType="submit"
-            className="my-4 w-full rounded-md bg-[#2B75CD] text-center text-xl font-semibold capitalize text-[#A1C6EA]"
+            className="my-4 w-full rounded-md bg-primary-8 text-center text-xl font-semibold capitalize text-primary-3"
             disabled={disableForm}
-            loading={formState.loading}
+            loading={formLoading}
           >
             Save card details
           </Button>
