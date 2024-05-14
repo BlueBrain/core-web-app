@@ -9,15 +9,17 @@ type ElectrophysiologyOrMorphologyType = IdWithLabel & {
   identifier: string;
 };
 
+type EModelAnalysisImage = {
+  '@id': string;
+  about?: string;
+  identifier?: string;
+};
+
 export type ESeModel = ESHitSource & {
   eType: ElectrophysiologyOrMorphologyType;
   mType: ElectrophysiologyOrMorphologyType;
   brainRegion: BrainRegion;
-  image?: {
-    '@id': string;
-    about?: string;
-    identifier?: string;
-  }[];
+  image?: EModelAnalysisImage[] | EModelAnalysisImage;
 };
 
 export type ExploreResource = Experiment | Simulation | SimulationCampaign | ESeModel;

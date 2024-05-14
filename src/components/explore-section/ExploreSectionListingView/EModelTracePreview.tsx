@@ -38,16 +38,22 @@ export default function EModelTracePreview({
       });
     };
 
-    if (images.length === 1) {
-      const id = images[0]['@id'];
-      const url = composeUrl('file', id);
-      fetchFile(url);
-    } else if (images.length > 1) {
-      const thumbnailImgObj = images.find((i) => i.about?.endsWith('thumbnail'));
-      if (!thumbnailImgObj) {
-        throw new Error('No thumbnail image found in image array.');
+    if (Array.isArray(images)) {
+      if (images.length === 1) {
+        const id = images[0]['@id'];
+        const url = composeUrl('file', id);
+        fetchFile(url);
+      } else if (images.length > 1) {
+        const thumbnailImgObj = images.find((i) => i.about?.endsWith('thumbnail'));
+        if (!thumbnailImgObj) {
+          throw new Error('No thumbnail image found in image array.');
+        }
+        const id = thumbnailImgObj['@id'];
+        const url = composeUrl('file', id);
+        fetchFile(url);
       }
-      const id = thumbnailImgObj['@id'];
+    } else {
+      const id = images['@id'];
       const url = composeUrl('file', id);
       fetchFile(url);
     }
