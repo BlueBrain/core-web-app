@@ -85,3 +85,6 @@ export const virtualLabPlansAtom = atom<
 
   return allPlans;
 });
+
+export const newProjectModalOpenAtom = atom(false);
+export const virtualLabIdAtom = atom('');
