@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import capitalize from 'lodash/capitalize';
 import _memoize from 'lodash/memoize';
+import { ZodError } from 'zod';
 
 export function createHeaders(
   token: string,
@@ -218,3 +219,10 @@ export function setInitializationValue<T>(storageKey: string, dataToSave: T) {
   const storageKeyWithBrainModelConfigId = `${storageKey}-${brainModelConfigId}`;
   window.localStorage.setItem(storageKeyWithBrainModelConfigId, JSON.stringify(dataToSave));
 }
+
+export const isStringEmpty = (str: string) => !str.trim() || !str.trim().length;
+export const getZodErrorPath = ({ issues }: ZodError) => {
+  return issues.reduce<Array<string | number>>((acc, curr) => {
+    return [...acc, ...curr.path];
+  }, []);
+};
