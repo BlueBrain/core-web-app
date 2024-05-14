@@ -16,7 +16,7 @@ export default function PaymentMethodsList({ virtualLabId }: Props) {
 
   if (paymentMethods.state === 'loading') {
     return (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center py-4">
         <Spin size="large" indicator={<LoadingOutlined />} />
       </div>
     );
@@ -52,6 +52,7 @@ export default function PaymentMethodsList({ virtualLabId }: Props) {
           cardNumber={pm.card_number}
           virtualLabId={virtualLabId}
           default={pm.default}
+          brand={pm.brand}
         />
       ))}
     </div>
