@@ -55,7 +55,7 @@ export async function getVirtualLabPaymentMethods(
   id: string,
   token: string
 ): Promise<VirtualLabPaymentMethodsResponse> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment_methods`, {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods`, {
     method: 'GET',
     headers: createVLApiHeaders(token),
   });
@@ -70,7 +70,7 @@ export async function addNewPaymentMethodToVirtualLab(
   token: string,
   payload: NewPaymentMethodPayload
 ): Promise<AddVirtualLabPaymentMethodResponse> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment_methods`, {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods`, {
     method: 'POST',
     headers: {
       ...createVLApiHeaders(token),
