@@ -25,6 +25,7 @@ import {
 } from '@/services/virtual-lab/billing';
 import sessionAtom from '@/state/session';
 import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
+import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
 
 type PaymentFormProps = {
   virtualLabId: string;
@@ -86,7 +87,7 @@ function StripeInput({
 }
 
 export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
-  const session = useAtomValue(sessionAtom);
+  const accessToken = useAccessToken();
   const elements = useElements();
   const stripe = useStripe();
   const { error: errorNotify } = useNotification();
@@ -140,8 +141,8 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
 
       if (error) {
         errorNotify(error.message!, undefined, 'topRight', true);
-      } else if (session) {
-        await addNewPaymentMethodToVirtualLab(virtualLabId, session.accessToken, {
+      } else if (accessToken) {
+        await addNewPaymentMethodToVirtualLab(virtualLabId, accessToken, {
           name,
           email,
           setupIntentId: setupIntent.id,

@@ -1,6 +1,5 @@
 import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 
 import { PaymentMethod } from '@/types/virtual-lab/billing';
@@ -9,10 +8,10 @@ import {
   deletePaymentMethodToVirtualLab,
   updateDefaultPaymentMethodToVirtualLab,
 } from '@/services/virtual-lab/billing';
-import sessionAtom from '@/state/session';
 import useNotification from '@/hooks/notifications';
 import { basePath } from '@/config';
 import ImageWithFallback from '@/components/ImageWithFallback';
+import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
 
 type Props = Pick<
   KeysToCamelCase<PaymentMethod>,
@@ -29,7 +28,7 @@ export default function PaymentMethodCard({
   default: defaultPaymentMethod,
   brand,
 }: Props) {
-  const session = useAtomValue(sessionAtom);
+  const accessToken = useAccessToken();
   const { error: errorNotify, success: successNotify } = useNotification();
   const [isSettingDefaultLoading, setIsSettingDefaultLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -37,8 +36,8 @@ export default function PaymentMethodCard({
   const onSetDefault = (pmId: string) => async () => {
     try {
       setIsSettingDefaultLoading(true);
-      if (session) {
-        await updateDefaultPaymentMethodToVirtualLab(virtualLabId, session.accessToken, pmId);
+      if (accessToken) {
+        await updateDefaultPaymentMethodToVirtualLab(virtualLabId, accessToken, pmId);
         successNotify(
           `Success! Your card ending with ${cardNumber} is now your default payment method.`,
           undefined,
@@ -61,8 +60,8 @@ export default function PaymentMethodCard({
   const onDeletePaymentMethod = (pmId: string) => async () => {
     try {
       setIsDeleteLoading(true);
-      if (session) {
-        await deletePaymentMethodToVirtualLab(virtualLabId, session.accessToken, pmId);
+      if (accessToken) {
+        await deletePaymentMethodToVirtualLab(virtualLabId, accessToken, pmId);
         successNotify(
           `Success! Your card ending with ${cardNumber} is deleted.`,
           undefined,
