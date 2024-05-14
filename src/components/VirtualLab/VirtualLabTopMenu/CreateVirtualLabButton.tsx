@@ -5,31 +5,23 @@ import {
   ModalStateProvider,
   useModalState,
 } from '@/components/VirtualLab/create/contexts/ModalStateContext';
-import { classNames } from '@/util/utils';
 
-type Props = {
-  extraClasses?: string;
-};
-
-export function CreateVirtualLabButton({ extraClasses = 'text-white' }: Props) {
+export function CreateVirtualLabButton() {
   return (
     <ModalStateProvider>
-      <CreateVirtualLabButtonContent extraClasses={extraClasses} />
+      <CreateVirtualLabButtonContent />
     </ModalStateProvider>
   );
 }
 
-function CreateVirtualLabButtonContent({ extraClasses }: Props) {
+function CreateVirtualLabButtonContent() {
   const { showModal, isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
 
   return (
     <>
       <Button
         size="small"
-        className={classNames(
-          'h-full w-52 rounded-none border-none py-4 text-sm font-bold',
-          extraClasses
-        )}
+        className="h-full w-52 rounded-none border-none py-4 text-sm font-bold text-white"
         type="link"
         onClick={showModal}
       >
