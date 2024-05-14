@@ -19,7 +19,7 @@ export default function Billing({ virtualLabId }: Props) {
           <PaymentMethodsList virtualLabId={virtualLabId} />
           {!openStripeForm && (
             <button
-              className="mt-2 flex w-full items-center justify-between gap-3 rounded-md border border-neutral-3 !p-5 text-primary-7 hover:bg-gray-100"
+              className="mt-2 flex w-full items-center justify-between gap-3 rounded-md border border-neutral-3 !p-5 text-primary-7 hover:border-primary-0 hover:bg-primary-0"
               type="button"
               onClick={toggleOpenStripeForm}
             >

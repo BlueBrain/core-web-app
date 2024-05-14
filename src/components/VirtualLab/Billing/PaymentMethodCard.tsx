@@ -85,7 +85,7 @@ export default function PaymentMethodCard({
   return (
     <div
       id={id}
-      className="group flex h-20 w-full items-center gap-5 rounded-md border border-neutral-3 p-5 text-primary-7 hover:bg-gray-100"
+      className="group flex h-20 w-full items-center gap-5 rounded-md border border-neutral-3 p-5 text-primary-7 hover:border-primary-0 hover:bg-primary-0"
     >
       <div className="grid grid-flow-col justify-center gap-2">
         <div className="relative h-5 w-8">
