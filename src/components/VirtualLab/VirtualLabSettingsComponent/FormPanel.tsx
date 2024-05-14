@@ -21,17 +21,15 @@ type InformationForm = { name: string; description: string; reference_email: str
 
 export const renderInput: (props: InputProps) => ReactNode = ({
   disabled,
-  // name,
   placeholder,
   style,
   title,
-  type,
+  type, // TODO: Is this being used?
 }) => {
   return (
     <Input
-      // className={disabled ? '' : 'font-bold'} // TODO: Is this property necessary if Form.Item already disabled?
+      className={disabled ? '' : 'font-bold'}
       disabled={disabled}
-      // name={name} // TODO: Is this necessary?
       placeholder={placeholder}
       required
       style={{ ...style, border: 'none' }}
@@ -184,7 +182,10 @@ export default function FormPanel({
   items: Array<RenderInputProps>;
   onValuesChange: (values: Partial<VirtualLab>) => Promise<void>; // Modify typing to allow for Promise return.
 }) {
-  const [validateStatus, setValidatStatus] = useState({});
+  const [validateStatus, setValidateStatus] = useState<Record<
+    keyof VirtualLab,
+    'error' | 'validating'
+  > | null>(null);
 
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -196,42 +197,51 @@ export default function FormPanel({
     <SettingsFormItem
       key={formItemName}
       name={formItemName}
-      validateStatus={
-        !!formItemName && Object.hasOwn(validateStatus, formItemName) ? 'validating' : ''
-      }
+      validateStatus={validateStatus && !!formItemName && validateStatus[formItemName]}
       {...formItemProps} // eslint-disable-line react/jsx-props-no-spreading
     />
   ));
 
   return (
-    <SettingsForm
-      className={className}
-      form={form}
-      initialValues={initialValues}
-      labelAlign="left"
-      name={name} // TODO: Check whether this prop is necessary.
-      onValuesChange={debounce(async (values) => {
-        setValidatStatus(values);
+    <div className="flex flex-col gap-5">
+      <SettingsForm
+        className={className}
+        form={form}
+        initialValues={initialValues}
+        labelAlign="left"
+        name={name} // TODO: Check whether this prop is necessary.
+        onValuesChange={debounce(async (values: Partial<VirtualLab>) => {
+          setValidateStatus(
+            Object.fromEntries(Object.entries(values).map(([k]) => [k, 'validating']))
+          );
 
-        return onValuesChange(values)
-          .then(() => {
-            setServerError(null);
+          return onValuesChange(values)
+            .then(() => {
+              const entries = Object.entries(values);
 
-            const entries = Object.entries(values);
+              entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
 
-            entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
-          })
-          .catch((error) => {
-            setServerError(error);
-            form.resetFields();
-          })
-          .finally(() => {
-            setValidatStatus({});
-          });
-      }, 600)}
-    >
-      {formItems}
-      {!!serverError && <p className="text-white">{`Something went wrong. ${serverError}`}</p>}
-    </SettingsForm>
+              setServerError(null); // Remove error
+              setValidateStatus(null); // Reset validateStatus
+            })
+            .catch((error) => {
+              setServerError(error.message);
+
+              console.log('cause', error.cause);
+
+              const newValidateStatus = error.cause
+                ? Object.fromEntries(Object.entries(error.cause).map(([k]) => [k, 'error']))
+                : {};
+
+              console.log('newValidateStatus', newValidateStatus);
+
+              setValidateStatus(newValidateStatus);
+            });
+        }, 600)}
+      >
+        {formItems}
+      </SettingsForm>
+      {!!serverError && <p className="self-end px-8 text-xl text-error">{serverError}</p>}
+    </div>
   );
 }

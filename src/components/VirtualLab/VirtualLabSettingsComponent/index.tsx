@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
 import { Button, Collapse, ConfigProvider, Spin } from 'antd';
@@ -77,14 +77,17 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const updateVirtualLab = useCallback(
     async (formData: Partial<VirtualLab>): Promise<void> => {
-      const { data } = await patchVirtualLab(formData, id, token);
-      const { virtual_lab: virtualLab } = data;
+      return patchVirtualLab(formData, id, token)
+        .then((responseJSON) => {
+          const { data } = responseJSON;
+          const { virtual_lab: virtualLab } = data;
 
-      return setVirtualLabDetail(
-        new Promise((resolve) => {
-          return resolve(virtualLab);
+          setVirtualLabDetail(
+            new Promise((resolve) => {
+              resolve(virtualLab);
+            })
+          );
         })
-      );
     },
     [id, setVirtualLabDetail, token]
   );
