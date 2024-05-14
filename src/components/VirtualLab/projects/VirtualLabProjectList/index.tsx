@@ -5,12 +5,13 @@ import { ComponentProps, ReactElement, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { LoadingOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { newProjectModalOpenAtom } from '../../state';
+
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
+import { newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
 
 function NewProjectModalFooter({
   close,

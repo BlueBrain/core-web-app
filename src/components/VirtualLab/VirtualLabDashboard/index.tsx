@@ -9,11 +9,14 @@ import { useCallback, useState } from 'react';
 import { ModalStateProvider, useModalState } from '../create/contexts/ModalStateContext';
 import { CreateVirtualLabButton } from '../VirtualLabTopMenu/CreateVirtualLabButton';
 import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '../create';
-import { newProjectModalOpenAtom, virtualLabIdAtom } from '../state';
 import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import VirtualLabAndProject from './VirtualLabAndProject';
 import DashboardTotals from './DashboardTotals';
-import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
+import {
+  newProjectModalOpenAtom,
+  virtualLabIdAtom,
+  virtualLabsOfUserAtom,
+} from '@/state/virtual-lab/lab';
 
 import useNotification from '@/hooks/notifications';
 import { Project } from '@/types/virtual-lab/projects';
