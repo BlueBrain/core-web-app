@@ -54,9 +54,9 @@ export default function DiscoverObpPanel() {
 =======
           bottomElement={
             <DiscoverLinks
-              topLink="https://google.com"
+              topLink="/virtual-lab/tutorials/explore"
               topText="How can I explore the brain?"
-              bottomLink="https://google.com"
+              bottomLink="explore"
               bottomText="Start exploring"
             />
           }
@@ -94,9 +94,9 @@ export default function DiscoverObpPanel() {
 =======
           bottomElement={
             <DiscoverLinks
-              topLink="https://google.com"
+              topLink="/virtual-lab/tutorials/build"
               topText="How can I build models?"
-              bottomLink="https://google.com"
+              bottomLink="build"
               bottomText="View models"
             />
           }
@@ -134,9 +134,9 @@ export default function DiscoverObpPanel() {
 =======
           bottomElement={
             <DiscoverLinks
-              topLink="https://google.com"
+              topLink="/virtual-lab/tutorials/simulate"
               topText="How can I launch simulations?"
-              bottomLink="https://google.com"
+              bottomLink="simulate"
               bottomText="View simulations"
             />
           }
