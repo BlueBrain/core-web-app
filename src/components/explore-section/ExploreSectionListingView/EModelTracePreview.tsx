@@ -46,7 +46,9 @@ export default function EModelTracePreview({
       } else if (images.length > 1) {
         const thumbnailImgObj = images.find((i) => i.about?.endsWith('thumbnail'));
         if (!thumbnailImgObj) {
-          throw new Error('No thumbnail image found in image array.');
+          setSrc(null);
+          setLoading(false);
+          return;
         }
         const id = thumbnailImgObj['@id'];
         const url = composeUrl('file', id);
@@ -58,10 +60,6 @@ export default function EModelTracePreview({
       fetchFile(url);
     }
   }, [session, images, inView]);
-
-  if (!Array.isArray(images)) {
-    throw new Error('Image attribute is not an array.');
-  }
 
   if (loading) {
     return <div>Loading...</div>;
