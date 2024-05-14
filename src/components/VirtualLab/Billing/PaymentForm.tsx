@@ -99,7 +99,7 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
   });
   const [cardholderFormErrorKeys, setCardholderFormErrorKeys] = useState<Array<CardholderKeys>>([]);
 
-  const onCardholderChange = (key: string) => (e: ChangeEvent<HTMLInputElement>) =>
+  const onCardholderChange = (key: CardholderKeys) => (e: ChangeEvent<HTMLInputElement>) =>
     setCardHolderForm((state) => ({ ...state, [key]: e.target.value }));
 
   const onCardholderBlur = (key: CardholderKeys) => async () => {
