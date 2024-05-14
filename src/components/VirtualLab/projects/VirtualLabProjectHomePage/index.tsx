@@ -91,7 +91,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
               backgroundImage: `url(${basePath}/images/virtual-lab/obp_neocortex.png)`,
             }}
           />
-          <div className="z-1 flex flex-row justify-between">
+          <div className="flex flex-row justify-between">
             <div className="flex max-w-[50%] flex-col gap-2">
               <div>
                 <div className="text-primary-2">Name</div>
@@ -100,7 +100,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
               <div>{projectDetails.description}</div>
             </div>
           </div>
-          <div className="flex gap-5" style={{ zIndex: 1 }}>
+          <div className="z-10 flex gap-5">
             <VirtualLabStatistic
               icon={<EyeTargetIcon style={iconStyle} />}
               title="Explore sessions"
