@@ -70,7 +70,7 @@ function VirtualLabDashboard() {
               onClick={() => setIsProjectModalVisible(true)}
             >
               <span className="relative text-primary-8">
-                Create Project <PlusOutlined className="relative left-3" />
+                Create Project <PlusOutlined className="relative left-3 top-[0.1rem]" />
               </span>
             </Button>
             <CreateVirtualLabButton />

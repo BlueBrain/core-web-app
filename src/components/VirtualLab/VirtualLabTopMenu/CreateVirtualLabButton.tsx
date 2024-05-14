@@ -20,13 +20,12 @@ function CreateVirtualLabButtonContent() {
   return (
     <>
       <Button
-        size="small"
-        className="h-full w-52 rounded-none border-none py-4 text-sm font-bold text-white"
-        type="link"
+        className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
         onClick={showModal}
       >
-        Create Virtual Lab
-        <PlusOutlined className="relative bottom-1 left-3" />
+        <span className="relative text-primary-8">
+          Create Virtual Lab <PlusOutlined className="relative left-3 top-[0.1rem]" />
+        </span>
       </Button>
       <Modal
         title={null}
