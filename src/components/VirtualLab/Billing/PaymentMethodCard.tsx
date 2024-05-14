@@ -1,19 +1,34 @@
-import { CreditCardOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 
 import { PaymentMethod } from '@/types/virtual-lab/billing';
 import { KeysToCamelCase } from '@/util/typing';
-import { deletePaymentMethodToVirtualLab, updateDefaultPaymentMethodToVirtualLab } from '@/services/virtual-lab/billing';
+import {
+  deletePaymentMethodToVirtualLab,
+  updateDefaultPaymentMethodToVirtualLab,
+} from '@/services/virtual-lab/billing';
 import sessionAtom from '@/state/session';
 import useNotification from '@/hooks/notifications';
+import { basePath } from '@/config';
+import ImageWithFallback from '@/components/ImageWithFallback';
 
-type Props = Pick<KeysToCamelCase<PaymentMethod>, 'id' | 'cardNumber' | 'cardholderName' | 'default'> & {
+type Props = Pick<
+  KeysToCamelCase<PaymentMethod>,
+  'id' | 'cardNumber' | 'cardholderName' | 'default' | 'brand'
+> & {
   virtualLabId: string;
 };
 
-export default function PaymentMethodCard({ id, cardholderName, cardNumber, virtualLabId, default: defaultPaymentMethod }: Props) {
+export default function PaymentMethodCard({
+  id,
+  cardholderName,
+  cardNumber,
+  virtualLabId,
+  default: defaultPaymentMethod,
+  brand,
+}: Props) {
   const session = useAtomValue(sessionAtom);
   const { error: errorNotify, success: successNotify } = useNotification();
   const [isSettingDefaultLoading, setIsSettingDefaultLoading] = useState(false);
@@ -70,22 +85,30 @@ export default function PaymentMethodCard({ id, cardholderName, cardNumber, virt
   return (
     <div
       id={id}
-      className="flex group w-full items-center justify-between gap-5 rounded-md border border-neutral-3 p-5 text-primary-7 hover:bg-gray-100"
+      className="group flex h-20 w-full items-center gap-5 rounded-md border border-neutral-3 p-5 text-primary-7 hover:bg-gray-100"
     >
-      <div className="flex gap-2">
-        <CreditCardOutlined />
-        <div className="">
-          **** **** **** <strong>{cardNumber}</strong>
+      <div className="grid grid-flow-col justify-center gap-2">
+        <div className="relative h-5 w-8">
+          <ImageWithFallback
+            fill
+            alt={brand}
+            className="h-full w-full  object-fill"
+            src={`${basePath}/images/cards/${brand}.svg`}
+            fallback={`${basePath}/images/cards/unknown.svg`}
+          />
+        </div>
+        <div className="w-full min-w-max text-base">
+          **** **** **** <span>{cardNumber}</span>
         </div>
       </div>
       <div className="flex items-center gap-1">
-        <UserOutlined className="text-neutral-3" />
-        <span>{cardholderName}</span>
+        <UserOutlined className="text-base text-neutral-3" />
+        <span className="text-base">{cardholderName}</span>
       </div>
-      <div className='hidden group-hover:flex items-center justify-center self-end'>
-        {defaultPaymentMethod ? <div className='text-primary-8'>
-          Default
-        </div> :
+      <div className="ml-auto hidden items-center justify-center group-hover:flex">
+        {defaultPaymentMethod ? (
+          <div className="text-primary-8">Default</div>
+        ) : (
           <Button
             type="text"
             htmlType="button"
@@ -94,7 +117,8 @@ export default function PaymentMethodCard({ id, cardholderName, cardNumber, virt
             className="ml-auto"
           >
             Make it default
-          </Button>}
+          </Button>
+        )}
         <Button
           danger
           type="text"
