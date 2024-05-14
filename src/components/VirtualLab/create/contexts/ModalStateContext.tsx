@@ -41,6 +41,7 @@ export function ModalStateProvider({ children }: PropsWithChildren) {
   const [currentStep, setCurrentStep] = useState(STEPS[0]);
 
   const showModal = useCallback(() => {
+    console.log('🚀 ~ showModal ~ setIsModalVisible:');
     setIsModalVisible(true);
   }, []);
 

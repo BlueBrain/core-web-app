@@ -80,7 +80,7 @@ function VirtualLabDashboard() {
           </div>
         </div>
       </div>
-      <Modal
+      {/* <Modal
         title={null}
         open={isModalVisible}
         width={800}
@@ -90,7 +90,7 @@ function VirtualLabDashboard() {
       >
         {currentStep === 'information' && <VirtualLabCreateInformation />}
         {currentStep === 'plan' && <VirtualLabCreatePlan />}
-      </Modal>
+      </Modal> */}
 
       {virtualLabs.state === 'hasData' && virtualLabs.data && (
         <>
