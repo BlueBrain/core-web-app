@@ -1,23 +1,14 @@
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
-import { classNames } from '@/util/utils';
 
-type Props = {
-  extraClasses?: string;
-};
-
-export function CreateVirtualLabButton({ extraClasses = 'text-white' }: Props) {
+export function CreateVirtualLabButton() {
   const { showModal } = useModalState();
 
   return (
     <Button
+      className="h-12 w-52 rounded-none border-none text-sm font-bold text-primary-8"
       size="small"
-      className={classNames(
-        'h-12 h-full w-52 rounded-none border-none py-4 text-sm font-bold',
-        extraClasses
-      )}
-      type="link"
       onClick={showModal}
     >
       Create Virtual Lab
