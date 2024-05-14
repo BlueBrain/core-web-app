@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 
-import { mModelPickedAtom } from '@/state/virtual-lab/build/me-model';
+import { selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
 import PreviewThumbnail from '@/components/explore-section/ExploreSectionListingView/PreviewThumbnail';
@@ -9,25 +9,25 @@ import { DataType } from '@/constants/explore-section/list-views';
 const subtitleStyle = 'uppercase font-thin text-slate-600';
 
 export default function MorphologyCard() {
-  const mModelPicked = useAtomValue(mModelPickedAtom);
+  const selectedMModel = useAtomValue(selectedMModelAtom);
 
-  if (!mModelPicked) return null;
+  if (!selectedMModel) return null;
 
   return (
     <div className="border p-10">
       <div className="flex justify-between">
         <div className={classNames('text-2xl', subtitleStyle)}>M-Model</div>
-        <a href={mModelPicked['@id']} target="_blank" className="font-bold text-primary-8">
+        <a href={selectedMModel['@id']} target="_blank" className="font-bold text-primary-8">
           More details
         </a>
       </div>
 
       <div className="mt-2 flex gap-10">
-        <MorphImage morph={mModelPicked} />
+        <MorphImage morph={selectedMModel} />
         <div className="flex-grow">
           <div className={subtitleStyle}>NAME</div>
-          <div className="my-1 text-3xl font-bold text-primary-8">{mModelPicked.name}</div>
-          <MorphDetails morph={mModelPicked} />
+          <div className="my-1 text-3xl font-bold text-primary-8">{selectedMModel.name}</div>
+          <MorphDetails morph={selectedMModel} />
         </div>
       </div>
     </div>

@@ -7,4 +7,4 @@ export const meModelSectionAtom = atom<MEModelSection>('morphology');
 
 export const morphologyTypeAtom = atom<MEModelMorphologyType>('reconstructed');
 
-export const mModelPickedAtom = atom<ReconstructedNeuronMorphology | null>(null);
+export const selectedMModelAtom = atom<ReconstructedNeuronMorphology | null>(null);

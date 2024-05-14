@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
-import { mModelPickedAtom, morphologyTypeAtom } from '@/state/virtual-lab/build/me-model';
+import { selectedMModelAtom, morphologyTypeAtom } from '@/state/virtual-lab/build/me-model';
 import { Btn } from '@/components/Btn';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
@@ -14,7 +14,7 @@ import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experi
 
 export default function ReconstrucedMorphologyPage() {
   const setMorphologyType = useSetAtom(morphologyTypeAtom);
-  const setMModelPicked = useSetAtom(mModelPickedAtom);
+  const setSelectedMModel = useSetAtom(selectedMModelAtom);
   const router = useRouter();
 
   useEffect(() => setMorphologyType('reconstructed'), [setMorphologyType]);
@@ -28,10 +28,10 @@ export default function ReconstrucedMorphologyPage() {
       }
 
       const morph = selectedRows[0]._source as ReconstructedNeuronMorphology;
-      setMModelPicked(morph);
+      setSelectedMModel(morph);
       router.push('/build/me-model/electrophysiology');
     },
-    [setMModelPicked, router]
+    [setSelectedMModel, router]
   );
 
   return (
