@@ -170,32 +170,16 @@ export function NewProjectModal({
   };
 
   return (
-    <>
-      <Modal
-        footer={
-          <NewProjectModalFooter
-            close={() => setOpen(false)}
-            loading={loading}
-            onSubmit={onSubmit}
-          />
-        }
-        onCancel={() => setOpen(false)}
-        open={open}
-        styles={{ mask: { backgroundColor: '#0050B3D9' } }}
-      >
-        <NewProjectModalForm form={form} />
-      </Modal>
-      <div className="fixed bottom-5 right-7">
-        <Button
-          className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
-          onClick={() => setOpen(true)}
-        >
-          <span className="relative text-primary-8">
-            Create Project <PlusOutlined className="relative left-3" />
-          </span>
-        </Button>
-      </div>
-    </>
+    <Modal
+      footer={
+        <NewProjectModalFooter close={() => setOpen(false)} loading={loading} onSubmit={onSubmit} />
+      }
+      onCancel={() => setOpen(false)}
+      open={open}
+      styles={{ mask: { backgroundColor: '#0050B3D9' } }}
+    >
+      <NewProjectModalForm form={form} />
+    </Modal>
   );
 }
 
@@ -229,6 +213,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
   const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
   const setVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(id));
   const notification = useNotification();
+  const [, setOpen] = useAtom(newProjectModalOpenAtom);
 
   if (!virtualLabProjects) {
     return (
@@ -239,35 +224,47 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
   }
 
   return (
-    <div className="my-5">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-row justify-between">
-          <div className="flex flex-row items-center gap-8">
-            <div className="flex gap-2">
-              <span className="text-primary-3">Total projects</span>
-              <span className="font-bold">{virtualLabProjects.results.length}</span>
+    <>
+      <div className="my-5">
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-row justify-between">
+            <div className="flex flex-row items-center gap-8">
+              <div className="flex gap-2">
+                <span className="text-primary-3">Total projects</span>
+                <span className="font-bold">{virtualLabProjects.results.length}</span>
+              </div>
+              <SearchProjects />
             </div>
-            <SearchProjects />
+            <NewProjectModal
+              onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
+              onSuccess={
+                virtualLabProjects
+                  ? (newProject: Project) => {
+                      setVirtualLabProjects();
+                      notification.success(`${newProject.name} has been created.`);
+                    }
+                  : () => {}
+              }
+              virtualLabId={id}
+            />
           </div>
-          <NewProjectModal
-            onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
-            onSuccess={
-              virtualLabProjects
-                ? (newProject: Project) => {
-                    setVirtualLabProjects();
-                    notification.success(`${newProject.name} has been created.`);
-                  }
-                : () => {}
-            }
-            virtualLabId={id}
-          />
-        </div>
-        <div className="flex flex-col gap-4">
-          {virtualLabProjects.results.map((project) => (
-            <VirtualLabProjectItem key={project.id} project={project} />
-          ))}
+          <div className="flex flex-col gap-4">
+            {virtualLabProjects.results.map((project) => (
+              <VirtualLabProjectItem key={project.id} project={project} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      <div className="fixed bottom-5 right-7">
+        <Button
+          className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
+          onClick={() => setOpen(true)}
+        >
+          <span className="relative text-primary-8">
+            Create Project <PlusOutlined className="relative left-3" />
+          </span>
+        </Button>
+      </div>
+    </>
   );
 }
