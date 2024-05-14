@@ -68,8 +68,8 @@ function StripeInput({
           className={classNames(
             'h-[44px] w-full rounded-[5px] border  border-solid bg-white p-3',
             error
-              ? 'test-[#df1b41] border-[#df1b41] shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02),0_0_0_1px_#df1b41]'
-              : 'border-[#e6e6e6] shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02)]'
+              ? 'border-rose-600 shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02),0_0_0_1px_#df1b41]'
+              : 'border-neutral-200 shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02)]'
           )}
           style={{
             transition:
@@ -77,7 +77,7 @@ function StripeInput({
           }}
         />
         {error && (
-          <p className="mt-1 text-[16px] text-[#df1b41]" role="alert">
+          <p className="mt-1 text-[16px] text-rose-600" role="alert">
             Your {id} is invalid.
           </p>
         )}
