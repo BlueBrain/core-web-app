@@ -17,7 +17,6 @@ export const env = createEnv({
 
     CI_COMMIT_SHORT_SHA: z.string().optional(),
     npm_package_version: z.string().optional(),
-    STRIPE_SECRET_KEY: z.string()
   },
 
   client: {
@@ -161,6 +160,5 @@ export const env = createEnv({
     NEXT_PUBLIC_VIRTUAL_LAB_API_URL: process.env.NEXT_PUBLIC_VIRTUAL_LAB_API_URL,
 
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
   },
 });
