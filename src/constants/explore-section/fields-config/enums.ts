@@ -64,4 +64,5 @@ export enum Field {
   LongestBranchLength = 'longestBranchLength',
   EModelMorphology = 'eModelMorphology',
   EModelScore = 'eModelScore',
+  EModelResponse = 'eModelResponse',
 }
