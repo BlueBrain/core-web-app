@@ -77,9 +77,6 @@ export default function VirtualLabSandboxHomePage() {
         subtitle="In order to start your own projects, explore brain regions, build different models and simulate"
       />
       <DiscoverObpPanel />
-      <div className="mb-5 flex justify-end">
-        <CreateVirtualLabButton extraClasses="bg-white rounded-none text-primary-8" key={2} />
-      </div>
     </div>
   );
 }
