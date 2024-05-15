@@ -1,4 +1,6 @@
 import type { EModelMenuItem, MEModelMenuItem } from './e-model';
+import { ESeModel } from './explore-section/es';
+import { Entity, ResourceMetadata } from '@/types/nexus';
 
 export type { MEModelMenuItem };
 
@@ -56,3 +58,25 @@ export type DefaultMEModelType = {
   eModelValue: EModelMenuItem;
   brainRegionId: string;
 };
+
+/* ------------------------------ MEModel Build ----------------------------- */
+
+export interface MEModel extends Entity {
+  name: string;
+  description: string;
+  used: [
+    {
+      '@type': 'EModel';
+      '@id': string;
+    },
+    {
+      '@type': 'NeuronMorphology';
+      '@id': string;
+    },
+  ];
+  image?: ESeModel['image'];
+  validated: boolean;
+  status: 'initalized' | 'processing' | 'done';
+}
+
+export interface MEModelResource extends ResourceMetadata, MEModel {}
