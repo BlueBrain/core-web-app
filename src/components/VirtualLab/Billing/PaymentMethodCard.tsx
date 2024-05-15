@@ -1,7 +1,7 @@
 import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 
 import { PaymentMethod } from '@/types/virtual-lab/billing';
 import { KeysToCamelCase } from '@/util/typing';
