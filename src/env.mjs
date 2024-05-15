@@ -84,9 +84,7 @@ export const env = createEnv({
     NEXT_PUBLIC_LICENSE_ES_VIEW_ID: z.string().url(),
 
     NEXT_PUBLIC_VIRTUAL_LAB_API_URL: z.string().url(),
-
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string()
-
   },
 
   experimental__runtimeEnv: {
