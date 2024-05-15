@@ -15,7 +15,7 @@ export default function VirtualLabCTABanner({ title, subtitle }: Props) {
           backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
         }}
       />
-      <div className="flex flex-col gap-2">
+      <div className="z-[2] flex flex-col gap-2">
         <h4 className="text-2xl font-bold">{title}</h4>
         <p>{subtitle}</p>
       </div>
