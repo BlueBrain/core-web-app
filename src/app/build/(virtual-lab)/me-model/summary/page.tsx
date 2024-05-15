@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { selectedEModelAtom, selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import MorphologyCard from '@/components/build-section/virtual-lab/me-model/MorphologyCard';
 import EModelCard from '@/components/build-section/virtual-lab/me-model/EModelCard';
+import SaveButton from '@/components/build-section/virtual-lab/me-model/SaveButton';
 import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { useSessionAtomValue } from '@/hooks/hooks';
 
@@ -37,6 +38,10 @@ export default function SummaryPage() {
       <div className="text-2xl font-bold text-primary-8">Single Neuron</div>
       <MorphologyCard />
       <EModelCard />
+
+      <div>
+        <SaveButton />
+      </div>
     </div>
   );
 }
