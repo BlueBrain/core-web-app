@@ -117,6 +117,15 @@ function SettingsFormItem({
   );
 }
 
+function getValidateStatusFromValues(
+  values: Partial<VirtualLab>,
+  status: 'error' | 'validating'
+): Record<keyof VirtualLab, 'error' | 'validating'> {
+  const entries = Object.entries(values).map(([k]) => [k, status]);
+
+  return Object.fromEntries(entries);
+}
+
 function SettingsForm({
   children,
   className,
@@ -197,7 +206,9 @@ export default function FormPanel({
     <SettingsFormItem
       key={formItemName}
       name={formItemName}
-      validateStatus={validateStatus && !!formItemName && validateStatus[formItemName]}
+      validateStatus={
+        validateStatus && !!formItemName ? validateStatus[formItemName as keyof VirtualLab] : ''
+      }
       {...formItemProps} // eslint-disable-line react/jsx-props-no-spreading
     />
   ));
@@ -211,9 +222,9 @@ export default function FormPanel({
         labelAlign="left"
         name={name} // TODO: Check whether this prop is necessary.
         onValuesChange={debounce(async (values: Partial<VirtualLab>) => {
-          setValidateStatus(
-            Object.fromEntries(Object.entries(values).map(([k]) => [k, 'validating']))
-          );
+          const validating = getValidateStatusFromValues(values, 'validating');
+
+          setValidateStatus(validating);
 
           return onValuesChange(values)
             .then(() => {
@@ -227,13 +238,9 @@ export default function FormPanel({
             .catch((error) => {
               setServerError(error.message);
 
-              console.log('cause', error.cause);
-
               const newValidateStatus = error.cause
-                ? Object.fromEntries(Object.entries(error.cause).map(([k]) => [k, 'error']))
-                : {};
-
-              console.log('newValidateStatus', newValidateStatus);
+                ? getValidateStatusFromValues(error.cause, 'error')
+                : null;
 
               setValidateStatus(newValidateStatus);
             });
