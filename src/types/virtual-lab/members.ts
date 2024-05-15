@@ -22,3 +22,5 @@ export interface VirtualLabMember {
 }
 
 export type UsersResponse = VlmResponse<{ users: VirtualLabMember[] }>;
+
+export type TotalUsersResponse = VlmResponse<{ total: number }>;
