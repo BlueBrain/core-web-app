@@ -9,6 +9,7 @@ import { CollapsibleType } from 'antd/lib/collapse/CollapsePanel';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
+import Billing from '../Billing';
 import ProjectsPanel from './ProjectsPanel';
 import FormPanel, { renderInput, renderTextArea } from './FormPanel';
 import PlanPanel from './PlanPanel';
@@ -22,16 +23,6 @@ import {
 } from '@/state/virtual-lab/lab';
 import { VALID_EMAIL_REGEXP, classNames } from '@/util/utils';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
-
-const mockBilling = {
-  organization: 'EPFL',
-  firstname: 'Harry',
-  lastname: 'Anderson',
-  address: 'Chem. des Mines 9',
-  city: 'Geneva',
-  postalCode: '1202',
-  country: 'CH',
-};
 
 function ExpandIcon({ isActive }: { isActive?: boolean }) {
   return isActive ? (
@@ -293,56 +284,10 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const billing = useMemo(
     () => ({
-      children: (
-        <FormPanel
-          className="grid grid-cols-2 gap-x-6"
-          initialValues={mockBilling}
-          items={[
-            {
-              className: 'col-span-2',
-              children: renderInput,
-              label: 'Organization',
-              name: 'organization',
-              required: true,
-            },
-            {
-              children: renderInput,
-              label: 'First name',
-              name: 'firstname',
-              required: true,
-            },
-            {
-              children: renderInput,
-              label: 'Last name',
-              name: 'lastname',
-              required: true,
-            },
-            {
-              className: 'col-span-2',
-              children: renderInput,
-              label: 'Address',
-              name: 'address',
-              required: true,
-            },
-            {
-              children: renderInput,
-              label: 'City',
-              name: 'city',
-              required: true,
-            },
-            {
-              children: renderInput,
-              label: 'Country',
-              name: 'country',
-              required: true,
-            },
-          ]}
-          onFinish={() => new Promise(() => {})}
-        />
-      ),
+      children: <Billing virtualLabId={id} />,
       label: 'Billing',
     }),
-    []
+    [id]
   );
 
   const dangerZone = useMemo(

@@ -31,3 +31,30 @@ export type KeysOfType<T, V> = keyof {
 export type Unionize<T extends object> = {
   [k in keyof T]: T[k];
 };
+
+type CamelCase<S extends string> = S extends `${infer T}_${infer U}`
+  ? `${T}${Capitalize<CamelCase<U>>}`
+  : S;
+
+/**
+ * A utility type that recursively transforms the keys of an object type from
+ * snake_case to camelCase. This transformation preserves the original types
+ * of the object's properties.
+ *
+ * @template T - The type of the object to transform.
+ * @returns A new type with camelCase versions of the original keys.
+ *
+ * @example
+ * interface MyInterface {
+ *   first_name: string;
+ *   last_name: number;
+ * }
+ * type CamelCased = KeysToCamelCase<MyInterface>;
+ * CamelCased is equivalent to:
+ * { firstName: string; lastName: number; }
+ */
+export type KeysToCamelCase<T> = {
+  [K in keyof T as CamelCase<string & K>]: T[K] extends Record<string, any>
+    ? KeysToCamelCase<T[K]>
+    : T[K];
+};
