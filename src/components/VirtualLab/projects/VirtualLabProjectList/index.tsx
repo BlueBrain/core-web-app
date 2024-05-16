@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Modal, Spin, Form, Input, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form/Form';
-import { ComponentProps, ReactElement, useMemo, useState } from 'react';
+import { ComponentProps, ReactElement, useEffect, useMemo, useState } from 'react';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
@@ -9,7 +9,7 @@ import VirtualLabMemberIcon from '../../VirtualLabMemberIcon';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
-import { createProject } from '@/services/virtual-lab/projects';
+import { createProject, inviteUser } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
 import { virtualLabMembersAtomFamily, newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
