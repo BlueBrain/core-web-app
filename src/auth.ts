@@ -1,4 +1,5 @@
-import type { NextAuthOptions, TokenSet } from 'next-auth';
+import { getServerSession, type NextAuthOptions, type TokenSet } from 'next-auth';
+import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next';
 
 import { env } from '@/env.mjs';
 
@@ -124,3 +125,14 @@ export const authOptions: NextAuthOptions = {
     maxAge: 1800,
   },
 } satisfies NextAuthOptions;
+
+function auth(
+  ...args:
+    | [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']]
+    | [NextApiRequest, NextApiResponse]
+    | []
+) {
+  return getServerSession(...args, authOptions);
+}
+
+export { auth };
