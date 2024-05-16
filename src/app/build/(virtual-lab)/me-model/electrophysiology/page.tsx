@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
-import { selectedEModelAtom, meModelSectionAtom } from '@/state/virtual-lab/build/me-model';
+import { selectedEModelIdAtom, meModelSectionAtom } from '@/state/virtual-lab/build/me-model';
 import MorphologyCard from '@/components/build-section/virtual-lab/me-model/MorphologyCard';
 import { Btn } from '@/components/Btn';
 import { ESeModel, ExploreESHit, ExploreResource } from '@/types/explore-section/es';
@@ -14,7 +14,7 @@ import { usePendingValidationModal } from '@/components/build-section/virtual-la
 
 export default function ElectrophysiologyPage() {
   const setMEModelSection = useSetAtom(meModelSectionAtom);
-  const setSelectedEModel = useSetAtom(selectedEModelAtom);
+  const setSelectedEModelId = useSetAtom(selectedEModelIdAtom);
   const createMEModel = useSetAtom(createMEModelAtom);
 
   const { createModal, contextHolder } = usePendingValidationModal();
@@ -27,7 +27,7 @@ export default function ElectrophysiologyPage() {
     }
 
     const emodel = selectedRows[0]._source as ESeModel;
-    setSelectedEModel(emodel);
+    setSelectedEModelId(emodel['@id']);
     createMEModel();
     createModal();
   };

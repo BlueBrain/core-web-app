@@ -4,7 +4,7 @@ import { Empty } from 'antd';
 import { selectedEModelAtom } from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
-import { ESeModel } from '@/types/explore-section/es';
+import { EModel } from '@/types/e-model';
 
 const subtitleStyle = 'uppercase font-thin text-slate-600';
 
@@ -34,7 +34,7 @@ export default function EModelCard() {
   );
 }
 
-function Details({ emodel }: { emodel: ESeModel }) {
+function Details({ emodel }: { emodel: EModel }) {
   return (
     <div className="mt-4 grid grid-cols-3 gap-4 text-primary-8">
       <div>
@@ -49,18 +49,18 @@ function Details({ emodel }: { emodel: ESeModel }) {
 
       <div>
         <div className={subtitleStyle}>Brain Region</div>
-        <div>{emodel.brainRegion?.label || 'Unknown'}</div>
+        <div>{emodel.brainLocation?.brainRegion?.label || 'Unknown'}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>E-Type</div>
-        <div>{emodel.eType?.label || 'Unknown'}</div>
+        <div>{emodel.eType || 'Unknown'}</div>
       </div>
     </div>
   );
 }
 
-function EModelThumbnail({ emodel }: { emodel: ESeModel }) {
+function EModelThumbnail({ emodel }: { emodel: EModel }) {
   if (!emodel.image)
     return <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
 

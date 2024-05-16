@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 
 import { selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
-import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
+import { NeuronMorphology } from '@/types/e-model';
 import PreviewThumbnail from '@/components/explore-section/ExploreSectionListingView/PreviewThumbnail';
 import { DataType } from '@/constants/explore-section/list-views';
 
@@ -34,29 +34,29 @@ export default function MorphologyCard() {
   );
 }
 
-function MorphDetails({ morph }: { morph: ReconstructedNeuronMorphology }) {
+function MorphDetails({ morph }: { morph: NeuronMorphology }) {
   return (
     <div className="mt-4 grid grid-cols-3 gap-4 text-primary-8">
       <div>
         <div className={subtitleStyle}>Brain Region</div>
-        <div>{morph.brainRegion.label}</div>
+        <div>{morph.brainLocation?.brainRegion?.label || 'Unknown'}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>Species</div>
-        <div>{morph.subjectSpecies.label}</div>
+        <div>{morph.subject?.species?.label || 'Unknown'}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>License</div>
-        <a href={morph.license.identifier} target="_blank">
+        <a href={morph.license?.['@id']} target="_blank">
           Open 🔗
         </a>
       </div>
 
       <div>
         <div className={subtitleStyle}>M-Type</div>
-        <div>{morph.mType?.label}</div>
+        <div>{morph?.mType}</div>
       </div>
 
       <div>
@@ -67,7 +67,7 @@ function MorphDetails({ morph }: { morph: ReconstructedNeuronMorphology }) {
   );
 }
 
-function MorphImage({ morph }: { morph: ReconstructedNeuronMorphology }) {
+function MorphImage({ morph }: { morph: NeuronMorphology }) {
   const contentUrl = morph.distribution?.[0]?.contentUrl;
 
   if (!contentUrl)
