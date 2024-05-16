@@ -22,11 +22,11 @@ type InformationForm = { name: string; description: string; reference_email: str
 export const renderInput = ({ disabled, placeholder, style, title, type }: InputProps) => {
   return (
     <Input
-      className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
+      className={classNames('border-none !bg-transparent', disabled ? '' : 'font-bold')}
       disabled={disabled}
       placeholder={placeholder}
       required
-      style={{ ...style, border: 'none' }}
+      style={style}
       title={title}
       type={type}
     />
@@ -42,11 +42,11 @@ export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
   return (
     <Input.TextArea
       autoSize
-      className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
+      className={classNames('border-none !bg-transparent', disabled ? '' : 'font-bold')}
       disabled={disabled}
       placeholder={placeholder}
       required
-      style={{ ...style, border: 'none' }}
+      style={style}
       title={title}
     />
   );
@@ -148,6 +148,8 @@ function SettingsForm({
           },
           Input: {
             activeBg: 'transparent',
+            activeBorderColor: 'transparent',
+            activeShadow: 'none',
             borderRadius: 0,
             colorBgContainer: 'transparent',
             colorText: '#fff',
