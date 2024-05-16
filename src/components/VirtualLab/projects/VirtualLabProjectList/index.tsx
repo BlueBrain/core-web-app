@@ -11,10 +11,10 @@ import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
-import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabMembersAtomFamily, newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
-import { newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
+
 const { Option } = Select;
 
 function NewProjectModalFooter({
