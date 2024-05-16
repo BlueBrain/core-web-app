@@ -41,8 +41,7 @@ export const cellTypesByIdAtom = selectAtom<
   Promise<any> | null,
   Promise<Record<string, ClassNexus> | undefined> | null
 >(cellTypesAtom, (cellTypes) => {
-  if (!cellTypes) return null;
-
+  if (!cellTypes || !cellTypes.hits) return null;
   return cellTypes.hits.hits.reduce(
     (acc: Record<string, ClassNexus>, classObj: ClassESResponse) => {
       acc[classObj._source['@id']] = classObj._source;
@@ -57,7 +56,7 @@ export const cellTypesByLabelAtom = selectAtom<
   Promise<any> | null,
   Promise<Record<string, ClassNexus> | undefined> | null
 >(cellTypesAtom, (cellTypes) => {
-  if (!cellTypes) return null;
+  if (!cellTypes || !cellTypes.hits) return null;
 
   return cellTypes.hits.hits.reduce(
     (acc: Record<string, ClassNexus>, classObj: ClassESResponse) => {
