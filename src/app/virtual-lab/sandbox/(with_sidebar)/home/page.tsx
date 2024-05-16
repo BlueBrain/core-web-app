@@ -31,27 +31,23 @@ function SandboxStatistics() {
   return (
     <div className="flex gap-5">
       <VirtualLabStatistic
-        key="statistic-1"
         icon={<Brain style={iconStyle} />}
         title="Explore resources"
         detail="N/A"
       />
 
       <VirtualLabStatistic
-        key="statistic-2"
         icon={<StatsEditIcon style={iconStyle} />}
         title="Build models"
         detail="N/A"
       />
       <VirtualLabStatistic
-        key="statistic-3"
         icon={<StatsEditIcon style={iconStyle} />}
         title="Simulation experiments"
         detail="N/A"
       />
 
       <VirtualLabStatistic
-        key="statistic-4"
         icon={<UserOutlined style={iconStyle} />}
         title="Members"
         detail={<VirtualLabTotalUsers />}
