@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 
 import { NavButtons } from '../NavButtons';
 import { classNames } from '@/util/utils';
+import { FormHeader } from '@/components/VirtualLab/create/sub-components/FormHeader';
 
 import styles from './main.module.css';
 
@@ -17,6 +18,7 @@ export function Main({ className, canGoNext, step, children }: MainProps) {
 
   return (
     <div className={classNames(styles.main, className)}>
+      <FormHeader currentStep={step} />
       <div>{validChildren}</div>
       <footer>
         <NavButtons disabled={!canGoNext} step={step} />

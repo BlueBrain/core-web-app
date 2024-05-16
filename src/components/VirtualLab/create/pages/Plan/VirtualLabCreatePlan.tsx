@@ -32,7 +32,6 @@ export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
   return (
     <Layout className={className}>
       <Main canGoNext={lab.plan_id !== null || billingValid} step="plan">
-        <h2>Plan</h2>
         {virtualLabPlans?.map((plan) => (
           <PlanSelectButton
             key={plan.id}

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useSetAtom } from 'jotai';
 import { Button } from '../Button';
 import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
-import { Step } from './Step';
 import useNotification from '@/hooks/notifications';
 import { classNames } from '@/util/utils';
 import { createVirtualLab } from '@/services/virtual-lab/labs';
@@ -60,11 +59,6 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
         </Button>
       )}
       <hr />
-      <div>{step}</div>
-      <div>
-        <Step selected={step === 'information'} />
-        <Step selected={step === 'plan'} />
-      </div>
     </div>
   );
 }
