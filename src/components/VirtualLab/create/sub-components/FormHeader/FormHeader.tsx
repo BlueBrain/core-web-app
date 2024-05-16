@@ -13,7 +13,7 @@ export function FormHeader({ currentStep }: Props) {
           <span className={step === currentStep ? styles.activeStep : styles.inactiveStep}>
             {step}
           </span>
-          {index < STEPS.length - 1 && <span className={styles.separator}></span>}
+          {index < STEPS.length - 1 && <span className={styles.separator} />}
         </Fragment>
       ))}
     </div>
