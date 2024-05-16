@@ -19,7 +19,7 @@ import {
 import useNotification from '@/hooks/notifications';
 import { Project } from '@/types/virtual-lab/projects';
 
-function VirtualLabDashboard() {
+export default function VirtualLabDashboard() {
   const virtualLabs = useAtomValue(loadable(virtualLabsOfUserAtom));
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
   const [, setOpen] = useAtom(newProjectModalOpenAtom);
@@ -108,10 +108,7 @@ function VirtualLabDashboard() {
             <span className="my-3 block font-bold text-primary-8">Project Location</span>
             <Select
               style={{ width: 200 }}
-              options={[
-                { label: '-', value: '' },
-                ...virtualLabs.data.results.map((vl) => ({ label: vl.name, value: vl.id })),
-              ]}
+              options={virtualLabs.data.results.map((vl) => ({ label: vl.name, value: vl.id }))}
               onChange={(v) => setVirtualLabId(v)}
             />
           </Modal>
@@ -126,8 +123,4 @@ function VirtualLabDashboard() {
       )}
     </>
   );
-}
-
-export default function VirtualLabDashboardWithModalState() {
-  return <VirtualLabDashboard />;
 }
