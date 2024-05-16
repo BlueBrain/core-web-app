@@ -1,8 +1,12 @@
 import Link from 'next/link';
 
-export default function VirtualLabNavigationSidebar() {
+type Props = {
+  link: string;
+};
+
+export default function VirtualLabNavigationSidebar({ link }: Props) {
   return (
-    <Link href="/virtual-lab/sandbox/explore">
+    <Link href={link}>
       <div className="relative flex h-screen w-10 flex-col items-center justify-between bg-primary-9 pt-5 font-semibold">
         <span
           style={{

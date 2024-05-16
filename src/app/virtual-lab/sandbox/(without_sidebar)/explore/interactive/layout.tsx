@@ -11,11 +11,13 @@ import { defaultModelRelease } from '@/config';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { sectionAtom } from '@/state/application';
 import VirtualLabNavigationSidebar from '@/components/VirtualLab/VirtualLabNavigationSidebar';
+import usePathname from '@/hooks/pathname';
 
 export default function ExploreInteractiveLayout({ children }: { children: ReactNode }) {
   const setConfigId = useSetAtom(brainModelConfigIdAtom);
   useSetBrainRegionFromQuery();
-
+  const path = usePathname();
+  const previousPage = path.split('/').slice(0, -1).join('/');
   const setSection = useSetAtom(sectionAtom);
 
   // set Release 23.01 as the configuration of explore interactive
@@ -27,7 +29,7 @@ export default function ExploreInteractiveLayout({ children }: { children: React
   return (
     <div className="grid h-screen grid-cols-[min-content_min-content_auto] grid-rows-1">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <VirtualLabNavigationSidebar />
+        <VirtualLabNavigationSidebar link={previousPage} />
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <BrainRegionsSidebar />
