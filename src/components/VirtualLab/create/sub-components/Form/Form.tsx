@@ -34,6 +34,7 @@ export function Form<T extends Record<string, any>>({
     else set.add(key);
     onValidityChange(set.size === 0);
   };
+
   return (
     <form className={classNames(styles.main, className)}>
       {keys.map((key) => {

@@ -17,7 +17,7 @@ export interface NavButtonsProps {
 }
 
 export function NavButtons({ className, step, disabled }: NavButtonsProps) {
-  const { handleNext, handleCancel } = useModalState();
+  const { handleNext, handleCancel, stepTouched } = useModalState();
   const session = useSession();
   const notification = useNotification();
   const [loading, setLoading] = useState(false);
@@ -50,11 +50,11 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
         Cancel
       </Button>
       {step === 'plan' ? (
-        <Button onClick={handleCreate} disabled={disabled || loading}>
+        <Button onClick={handleCreate} disabled={disabled || loading || !stepTouched}>
           {loading ? 'Creating...' : 'Create'}
         </Button>
       ) : (
-        <Button onClick={handleNext} disabled={disabled}>
+        <Button onClick={handleNext} disabled={disabled || !stepTouched}>
           Next
         </Button>
       )}
