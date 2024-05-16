@@ -139,7 +139,6 @@ function SettingsForm({
           Button: {
             colorBgContainer: '#00B212',
             colorBgContainerDisabled: '#00B212', // Same as colorBgContainer
-            // colorBorder: 'transparent', TODO: Figure-out how to remove the border
             colorTextDisabled: '#262626',
             defaultShadow: 'none',
           },
