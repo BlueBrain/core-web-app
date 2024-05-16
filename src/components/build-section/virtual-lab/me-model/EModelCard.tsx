@@ -1,4 +1,5 @@
 import { useAtomValue } from 'jotai';
+import { Empty } from 'antd';
 
 import { selectedEModelAtom } from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
@@ -48,12 +49,12 @@ function Details({ emodel }: { emodel: ESeModel }) {
 
       <div>
         <div className={subtitleStyle}>Brain Region</div>
-        <div>{emodel.brainRegion.label || 'Unknown'}</div>
+        <div>{emodel.brainRegion?.label || 'Unknown'}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>E-Type</div>
-        <div>{emodel.eType.label}</div>
+        <div>{emodel.eType?.label || 'Unknown'}</div>
       </div>
     </div>
   );
@@ -61,9 +62,7 @@ function Details({ emodel }: { emodel: ESeModel }) {
 
 function EModelThumbnail({ emodel }: { emodel: ESeModel }) {
   if (!emodel.image)
-    return (
-      <div className="flex h-[200px] w-[200px] justify-center align-middle">E-Model thumbnail</div>
-    );
+    return <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
 
   return (
     <div className="border border-black">

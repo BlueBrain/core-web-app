@@ -1,7 +1,7 @@
 'use client';
 
 import { useSetAtom } from 'jotai';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
@@ -18,18 +18,15 @@ export default function ElectrophysiologyPage() {
 
   useEffect(() => setMEModelSection('electrophysiology'), [setMEModelSection]);
 
-  const onEModelPicked = useCallback(
-    (selectedRows: ExploreESHit<ExploreResource>[]) => {
-      if (selectedRows.length > 1) {
-        throw new Error('Multiple e-models selected for ME-Model building. Only one is allowed');
-      }
+  const onEModelPicked = (selectedRows: ExploreESHit<ExploreResource>[]) => {
+    if (selectedRows.length > 1) {
+      throw new Error('Multiple e-models selected for ME-Model building. Only one is allowed');
+    }
 
-      const emodel = selectedRows[0]._source as ESeModel;
-      setSelectedEModel(emodel);
-      router.push('/build/me-model/summary');
-    },
-    [setSelectedEModel, router]
-  );
+    const emodel = selectedRows[0]._source as ESeModel;
+    setSelectedEModel(emodel);
+    router.push('/build/me-model/summary');
+  };
 
   return (
     <>
