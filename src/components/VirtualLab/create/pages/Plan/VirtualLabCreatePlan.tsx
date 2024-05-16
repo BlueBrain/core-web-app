@@ -42,7 +42,6 @@ export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
             onSelect={() => updateLab({ plan_id: plan.id })}
           />
         ))}
-        {lab.plan_id && <InputBillingInfo onValidityChange={setBillingValid} />}
       </Main>
     </Layout>
   );
