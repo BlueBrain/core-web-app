@@ -6,11 +6,11 @@ import { useSetAtom } from 'jotai';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
-import Sidebar from '@/components/explore-section/Sidebar';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { defaultModelRelease } from '@/config';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { sectionAtom } from '@/state/application';
+import VirtualLabNavigationSidebar from '@/components/VirtualLab/VirtualLabNavigationSidebar';
 
 export default function ExploreInteractiveLayout({ children }: { children: ReactNode }) {
   const setConfigId = useSetAtom(brainModelConfigIdAtom);
@@ -27,7 +27,7 @@ export default function ExploreInteractiveLayout({ children }: { children: React
   return (
     <div className="grid h-screen grid-cols-[min-content_min-content_auto] grid-rows-1">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <Sidebar />
+        <VirtualLabNavigationSidebar />
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <BrainRegionsSidebar />
