@@ -11,7 +11,6 @@ export interface InputTextProps extends FieldType {
   onChange(value: string): void;
   onValidityChange(validity: boolean): void;
 }
-
 export function InputText({
   className,
   value,
@@ -27,6 +26,7 @@ export function InputText({
 }: InputTextProps) {
   const refInput = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState('');
+  const [touched, setTouched] = useState(false);
   const inputId = useId();
   const listId = useId();
   const list: string[] | undefined = getDataList(options);
@@ -36,12 +36,16 @@ export function InputText({
 
     onChange(input.value);
     const validity = input.checkValidity();
+
     onValidityChange(validity);
     setError(validity ? '' : input.validationMessage);
   };
   const handleMount = (input: HTMLInputElement | null) => {
     refInput.current = input;
     handleInputChange();
+  };
+  const handleBlur = () => {
+    setTouched(true);
   };
   return (
     <div className={classNames(styles.main, className)}>
@@ -50,7 +54,7 @@ export function InputText({
           {label}
           {required ? '*' : ''}
         </label>
-        {error && <div>{error}</div>}
+        {touched && error && <div>{error}</div>}
       </header>
       <input
         id={inputId}
@@ -58,11 +62,12 @@ export function InputText({
         type={type}
         list={list ? listId : undefined}
         placeholder={placeholder}
-        required={required}
+        required={required && touched}
         pattern={pattern}
         title={title}
         value={value}
         onChange={handleInputChange}
+        onBlur={handleBlur}
       />
       {list && (
         <datalist id={listId}>
