@@ -56,8 +56,6 @@ function SandboxStatistics() {
         title="Members"
         detail={<VirtualLabTotalUsers />}
       />
-      <VirtualLabCTABanner />
-      <DiscoverObpPanel />
     </div>
   );
 }
