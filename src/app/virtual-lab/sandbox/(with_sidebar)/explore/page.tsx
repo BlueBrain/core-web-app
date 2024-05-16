@@ -1,5 +1,5 @@
 import VirtualLabExploreMainPage from '@/components/VirtualLab/VirtualLabExploreMainPage';
 
-export default function VirtualLabSandboxExplorePage() {
+export default function VirtualLabProjectExplorePage() {
   return <VirtualLabExploreMainPage />;
 }
