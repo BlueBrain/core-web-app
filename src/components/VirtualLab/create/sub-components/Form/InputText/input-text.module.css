@@ -16,14 +16,15 @@
 }
 
 .main > header > label {
-  font-weight: bolder;
-  color: var(--theme-color-primary-5);
+  font-weight: 100;
+  text-transform: uppercase;
+  color: var(--theme-color-neutral-5);
 }
 
 .main > input {
   box-sizing: border-box;
   background: none;
-  color: var(--theme-color-neutral-1);
+  color: var(--theme-color-primary-5);
   font-size: 120%;
   border: 1px solid transparent;
   border-bottom: 1px solid var(--theme-color-neutral-7);
