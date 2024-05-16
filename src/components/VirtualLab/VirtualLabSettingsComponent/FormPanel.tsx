@@ -90,8 +90,6 @@ function SettingsFormItem({
         <Form.Item
           name={name}
           label={required ? `${label}*` : label}
-          // validateTrigger="onBlur" // TODO: Remove this?
-          // rules={[{ ...rules, required }]} // TODO: Remove this?
           required={required}
           style={{ width: '100%' }}
           hasFeedback={validateStatus === 'validating'}
