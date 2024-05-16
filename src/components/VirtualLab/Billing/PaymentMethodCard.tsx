@@ -1,6 +1,7 @@
 import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useState } from 'react';
+import { useSetAtom } from 'jotai';
 
 import { PaymentMethod } from '@/types/virtual-lab/billing';
 import { KeysToCamelCase } from '@/util/typing';
@@ -12,6 +13,7 @@ import useNotification from '@/hooks/notifications';
 import { basePath } from '@/config';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
+import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
 
 type Props = Pick<
   KeysToCamelCase<PaymentMethod>,
@@ -32,12 +34,14 @@ export default function PaymentMethodCard({
   const { error: errorNotify, success: successNotify } = useNotification();
   const [isSettingDefaultLoading, setIsSettingDefaultLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const refreshPaymentMethods = useSetAtom(virtualLabPaymentMethodsAtomFamily(virtualLabId));
 
   const onSetDefault = (pmId: string) => async () => {
     try {
       setIsSettingDefaultLoading(true);
       if (accessToken) {
         await updateDefaultPaymentMethodToVirtualLab(virtualLabId, accessToken, pmId);
+        refreshPaymentMethods();
         successNotify(
           `Success! Your card ending with ${cardNumber} is now your default payment method.`,
           undefined,
@@ -62,6 +66,7 @@ export default function PaymentMethodCard({
       setIsDeleteLoading(true);
       if (accessToken) {
         await deletePaymentMethodToVirtualLab(virtualLabId, accessToken, pmId);
+        refreshPaymentMethods();
         successNotify(
           `Success! Your card ending with ${cardNumber} is deleted.`,
           undefined,
@@ -91,7 +96,7 @@ export default function PaymentMethodCard({
           <ImageWithFallback
             fill
             alt={brand}
-            className="h-full w-full  object-fill"
+            className="h-full w-full object-fill"
             src={`${basePath}/images/cards/${brand}.svg`}
             fallback={`${basePath}/images/cards/unknown.svg`}
           />
@@ -104,9 +109,9 @@ export default function PaymentMethodCard({
         <UserOutlined className="text-base text-neutral-3" />
         <span className="text-base">{cardholderName}</span>
       </div>
-      <div className="ml-auto hidden items-center justify-center group-hover:flex">
+      <div className="ml-auto hidden items-center justify-center gap-2 group-hover:flex">
         {defaultPaymentMethod ? (
-          <div className="text-primary-8">Default</div>
+          <div className="select-none text-base text-primary-8">Default</div>
         ) : (
           <Button
             type="text"

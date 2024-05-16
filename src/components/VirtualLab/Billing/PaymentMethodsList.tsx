@@ -2,6 +2,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
+import orderBy from 'lodash/orderBy';
 
 import PaymentMethodCard from './PaymentMethodCard';
 import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
@@ -44,7 +45,7 @@ export default function PaymentMethodsList({ virtualLabId }: Props) {
 
   return (
     <div className="flex w-full flex-col items-center gap-2">
-      {paymentMethods.data.map((pm) => (
+      {orderBy(paymentMethods.data, ['default'], ['desc']).map((pm) => (
         <PaymentMethodCard
           key={pm.id}
           id={pm.id}
