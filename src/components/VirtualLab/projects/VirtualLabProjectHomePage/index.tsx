@@ -100,7 +100,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
               <div>{projectDetails.description}</div>
             </div>
           </div>
-          <div className="flex gap-5">
+          <div className="z-10 flex gap-5">
             <VirtualLabStatistic
               icon={<EyeTargetIcon style={iconStyle} />}
               title="Explore sessions"

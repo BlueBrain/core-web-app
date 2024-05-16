@@ -6,6 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import VirtualLabProjectItem from '../projects/VirtualLabProjectList/VirtualLabProjectItem';
 import VirtualLabBanner from '../VirtualLabBanner';
+import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 
 type Props = {
@@ -51,8 +52,8 @@ export default function VirtualLabAndProject({
         id={id}
         name={name}
         description={description}
-        createdAt={createdAt}
         withLink
+        bottomElements={<VirtualLabMainStatistics id={id} created_at={createdAt} />}
       />
       {!showOnlyLabs && <div className="ml-20 mt-5 flex flex-col gap-5">{renderProjects()}</div>}
     </div>

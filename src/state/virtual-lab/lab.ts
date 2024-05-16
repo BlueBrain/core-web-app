@@ -13,6 +13,8 @@ import {
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData } from '@/types/virtual-lab/common';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
+import { getVirtualLabPaymentMethods } from '@/services/virtual-lab/billing';
+import { PaymentMethod } from '@/types/virtual-lab/billing';
 
 export const refreshAtom = atom(0);
 
@@ -39,6 +41,17 @@ export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
     }
     const response = await getVirtualLabUsers(virtualLabId, session.accessToken);
     return response.data.users;
+  })
+);
+
+export const virtualLabPaymentMethodsAtomFamily = atomFamily((virtualLabId: string) =>
+  atomWithRefresh<Promise<Array<PaymentMethod> | undefined>>(async (get) => {
+    const session = get(sessionAtom);
+    if (!session) {
+      return;
+    }
+    const response = await getVirtualLabPaymentMethods(virtualLabId, session.accessToken);
+    return response.data.payment_methods;
   })
 );
 
@@ -85,3 +98,6 @@ export const virtualLabPlansAtom = atom<
 
   return allPlans;
 });
+
+export const newProjectModalOpenAtom = atom(false);
+export const virtualLabIdAtom = atom('');

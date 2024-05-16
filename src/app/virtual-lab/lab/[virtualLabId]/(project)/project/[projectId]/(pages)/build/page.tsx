@@ -147,7 +147,7 @@ function ScopeCarousel() {
 
 export default function VirtualLabProjectBuildPage() {
   return (
-    <div className="flex flex-col gap-10 pt-6">
+    <div className="flex flex-col gap-10 pt-14">
       <ScopeCarousel />
       <div className="flex flex-col gap-2 bg-white px-4 pt-10">
         <h3 className="text-3xl font-bold text-primary-8">Model library</h3>

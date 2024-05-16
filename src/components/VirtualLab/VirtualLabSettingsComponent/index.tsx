@@ -5,10 +5,11 @@ import { useSetAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
 import { Button, Collapse, ConfigProvider, Spin } from 'antd';
 import { CollapseProps } from 'antd/lib/collapse/Collapse';
+import { CollapsibleType } from 'antd/lib/collapse/CollapsePanel';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
-import BudgetPanel from '../VirtualLabHomePage/BudgetPanel';
+import Billing from '../Billing';
 import ProjectsPanel from './ProjectsPanel';
 import FormPanel, { renderInput, renderTextArea } from './FormPanel';
 import PlanPanel from './PlanPanel';
@@ -22,16 +23,6 @@ import {
 } from '@/state/virtual-lab/lab';
 import { VALID_EMAIL_REGEXP, classNames } from '@/util/utils';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
-
-const mockBilling = {
-  organization: 'EPFL',
-  firstname: 'Harry',
-  lastname: 'Anderson',
-  address: 'Chem. des Mines 9',
-  city: 'Geneva',
-  postalCode: '1202',
-  country: 'CH',
-};
 
 function ExpandIcon({ isActive }: { isActive?: boolean }) {
   return isActive ? (
@@ -56,6 +47,7 @@ function CustomCollapse({ className, items }: CollapseProps) {
             borderRadiusLG: 0,
             contentBg: '#002766',
             colorBorder: '#002766',
+            fontSize: 20,
           },
         },
       }}
@@ -66,9 +58,9 @@ function CustomCollapse({ className, items }: CollapseProps) {
         expandIcon={ExpandIcon}
         className={classNames(className)}
         items={items?.map((item) => ({
-          ...item,
           style: { background: '#fff' },
-          headerClass: 'color-primary-8 text-xl font-bold !items-center', // TODO: See whether there's a better way to align center.
+          headerClass: 'font-bold !items-center', // TODO: See whether there's a better way to align center.
+          ...item,
         }))}
       />
     </ConfigProvider>
@@ -114,7 +106,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
       id: 1,
       name: VirtualLabPlanType.Entry,
       description: (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 text-lg">
           <h4 className="font-bold text-primary-3">CAPABILITIES</h4>
           <ul className="list-disc pl-4">
             <li>Unlimited downloads</li>
@@ -153,13 +145,48 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     },
   ];
 
+  const header = useMemo(() => {
+    return virtualLabDetail.state === 'hasData'
+      ? {
+          collapsible: 'disabled' as CollapsibleType, // Type-casting shouldn't be necessary here, but it is for some reason.
+          showArrow: false,
+          label: (
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between bg-primary-8 text-white">
+                {virtualLabDetail.data?.name}
+                <div className="text-primary-2">
+                  Total budget: <span>$ {virtualLabDetail.data?.budget ?? 0}</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-3 bg-primary-8 text-white">
+                <div className="h-3 overflow-hidden rounded-full bg-primary-3">
+                  <div className="h-full w-[60%] bg-white" />
+                </div>
+                <div className="flex justify-between text-base font-light">
+                  <div className="flex flex-row gap-3">
+                    Total spent
+                    <span className="font-bold">$ N/A</span>
+                  </div>
+                  <div className="flex flex-row gap-3 text-primary-3">
+                    Remaining: <span className="font-bold">$ N/A</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ),
+          style: { background: '#003A8C' },
+          headerClass: '!text-white font-bold !items-center', // TODO: See whether there's a better way to align center.
+        }
+      : {};
+  }, [virtualLabDetail]);
+
   const settings = useMemo(
     () =>
       virtualLabDetail.state === 'hasData'
         ? {
             children: (
               <FormPanel
-                className="grid grid-cols-2"
+                className="grid grid-cols-2 gap-x-6"
                 initialValues={{
                   name: virtualLabDetail.data?.name,
                   reference_email: virtualLabDetail.data?.reference_email,
@@ -257,56 +284,10 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const billing = useMemo(
     () => ({
-      children: (
-        <FormPanel
-          className="grid grid-cols-2"
-          initialValues={mockBilling}
-          items={[
-            {
-              className: 'col-span-2',
-              children: renderInput,
-              label: 'Organization',
-              name: 'organization',
-              required: true,
-            },
-            {
-              children: renderInput,
-              label: 'First name',
-              name: 'firstname',
-              required: true,
-            },
-            {
-              children: renderInput,
-              label: 'Last name',
-              name: 'lastname',
-              required: true,
-            },
-            {
-              className: 'col-span-2',
-              children: renderInput,
-              label: 'Address',
-              name: 'address',
-              required: true,
-            },
-            {
-              children: renderInput,
-              label: 'City',
-              name: 'city',
-              required: true,
-            },
-            {
-              children: renderInput,
-              label: 'Country',
-              name: 'country',
-              required: true,
-            },
-          ]}
-          onFinish={() => new Promise(() => {})}
-        />
-      ),
+      children: <Billing virtualLabId={id} />,
       label: 'Billing',
     }),
-    []
+    [id]
   );
 
   const dangerZone = useMemo(
@@ -327,10 +308,10 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const collapseItems: CollapseProps['items'] = useMemo(
     () =>
-      [settings, plan, budget, billing, dangerZone].filter(
+      [header, settings, plan, budget, billing, dangerZone].filter(
         (item) => Object.keys(item).length !== 0 // Filter-out any "empty" panels (ex. DangerZone when not admin).
       ),
-    [settings, plan, budget, billing, dangerZone]
+    [header, settings, plan, budget, billing, dangerZone]
   );
 
   if (virtualLabDetail.state === 'loading') {
@@ -364,12 +345,6 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
       >
         <ArrowLeftOutlined /> Back to
       </Button>
-      <BudgetPanel
-        title={<h3 className="text-3xl font-bold">{virtualLabDetail.data?.name}</h3>}
-        total={virtualLabDetail.data?.budget ?? 0}
-        totalSpent={300}
-        remaining={350}
-      />
       <CustomCollapse className="flex flex-col gap-1 text-primary-8" items={collapseItems} />
     </div>
   );

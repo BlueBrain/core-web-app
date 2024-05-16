@@ -16,6 +16,7 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { MorphoViewer } from '@/components/MorphoViewer';
 import Morphometrics from '@/components/explore-section/Morphometrics';
 import Detail from '@/components/explore-section/Detail';
+import { useSwcContentUrl } from '@/util/content-url';
 
 export default function MorphologyDetailPage() {
   return (
@@ -45,14 +46,18 @@ function MorphoViewerLoader({ resource }: { resource: ReconstructedNeuronMorphol
     () => loadable(createMorphologyDataAtom(resource)),
     [resource]
   );
-
+  const swcContentUrl = useSwcContentUrl(resource.distribution);
   const morphologyData = useAtomValue(morphologyDataAtom);
 
   const { state } = morphologyData;
   switch (state) {
     case 'hasData':
       return morphologyData.data ? (
-        <MorphoViewer className="min-h-[75%]" swc={morphologyData.data} />
+        <MorphoViewer
+          className="min-h-[75%]"
+          swc={morphologyData.data}
+          contentUrl={swcContentUrl}
+        />
       ) : (
         <div>No data...</div>
       );

@@ -9,6 +9,7 @@ export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
     name: 'e-model',
     columns: [
       Field.Name,
+      Field.EModelResponse,
       Field.BrainRegion,
       Field.MType,
       Field.EType,
