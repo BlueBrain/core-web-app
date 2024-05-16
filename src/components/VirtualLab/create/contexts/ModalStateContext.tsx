@@ -18,7 +18,6 @@ interface ModalStateContextProps {
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-
 const ModalStateContext = createContext<ModalStateContextProps>({
   isModalVisible: false,
   currentStep: 'information',
