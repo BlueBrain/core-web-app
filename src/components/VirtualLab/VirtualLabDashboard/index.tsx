@@ -129,13 +129,15 @@ function VirtualLabDashboard() {
               onChange={(v) => setVirtualLabId(v)}
             />
           </Modal>
-          <NewProjectModal
-            onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
-            onSuccess={(newProject: Project) => {
-              notification.success(`${newProject.name} has been created.`);
-            }}
-            virtualLabId={virtualLabId}
-          />
+          {!!virtualLabId && (
+            <NewProjectModal
+              onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
+              onSuccess={(newProject: Project) => {
+                notification.success(`${newProject.name} has been created.`);
+              }}
+              virtualLabId={virtualLabId}
+            />
+          )}
         </>
       )}
     </>

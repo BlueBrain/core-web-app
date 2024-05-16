@@ -205,6 +205,7 @@ export function NewProjectModal({
   const members = useUnwrappedValue(
     virtualLabMembersAtomFamily(virtualLabId)
   ) as VirtualLabMember[];
+
   const selectedMembers = useAtomValue(selectedMembersAtom);
   const includeMembers = useMemo(
     () => selectedMembers.map((m) => ({ email: m.email, role: m.role })),
