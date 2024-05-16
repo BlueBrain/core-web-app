@@ -201,6 +201,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
                     label: 'Lab Name',
                     name: 'name',
                     required: true,
+                    rules: [{ max: 250 }],
                   },
                   {
                     className: 'col-span-2',

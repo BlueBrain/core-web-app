@@ -19,16 +19,10 @@ type RenderInputProps = Omit<FormItemProps, 'children'> & {
 
 type InformationForm = { name: string; description: string; reference_email: string };
 
-export const renderInput: (props: InputProps) => ReactNode = ({
-  disabled,
-  placeholder,
-  style,
-  title,
-  type, // TODO: Is this being used?
-}) => {
+export const renderInput = ({ disabled, placeholder, style, title, type }: InputProps) => {
   return (
     <Input
-      className={disabled ? '' : 'font-bold'}
+      className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
       disabled={disabled}
       placeholder={placeholder}
       required
@@ -40,7 +34,6 @@ export const renderInput: (props: InputProps) => ReactNode = ({
 };
 
 export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
-  // className,
   disabled,
   placeholder,
   style,
@@ -49,7 +42,7 @@ export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
   return (
     <Input.TextArea
       autoSize
-      className={disabled ? '' : 'font-bold'}
+      className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
       disabled={disabled}
       placeholder={placeholder}
       required
@@ -65,14 +58,13 @@ function SettingsFormItem({
   label,
   name,
   required,
-  // rules,
+  rules: _rules, // Available as prop, but not necessary. AndD will trickle any rules down to the inputs.
+  type,
   validateStatus,
-}: Omit<FormItemProps, 'children'> & {
-  children: (props: InputProps & TextAreaProps) => ReactNode;
-}) {
+}: RenderInputProps) {
   const [disabled, dispatch] = useReducer(
-    (state: boolean, { type }: { type: 'toggle' }): boolean => {
-      return type === 'toggle' ? !state : state;
+    (state: boolean, { action }: { action: 'toggle' }): boolean => {
+      return action === 'toggle' ? !state : state;
     },
     true // Disabled by default
   );
@@ -109,9 +101,16 @@ function SettingsFormItem({
             disabled,
             name,
             placeholder: `${label}...`,
+            type,
           })}
         </Form.Item>
-        <Button ghost icon={<EditOutlined />} onClick={() => dispatch({ type: 'toggle' })} />
+        <Button
+          ghost
+          icon={<EditOutlined />}
+          onClick={() => {
+            dispatch({ action: 'toggle' });
+          }}
+        />
       </div>
     </ConfigProvider>
   );
