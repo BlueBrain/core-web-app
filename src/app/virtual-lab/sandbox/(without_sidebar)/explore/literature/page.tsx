@@ -6,7 +6,9 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 export default async function LiteraturePage() {
   return (
     <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-      <QAContainer />
+      <div className="bg-white">
+        <QAContainer />
+      </div>
     </ErrorBoundary>
   );
 }
