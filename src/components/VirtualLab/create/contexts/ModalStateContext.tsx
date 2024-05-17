@@ -16,6 +16,7 @@ interface ModalStateContextProps {
   handleOk: () => void;
   handleNext: () => void;
   handleCancel: () => void;
+  setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   setStepTouched: (touched: boolean) => void;
 }
 
@@ -27,6 +28,7 @@ const ModalStateContext = createContext<ModalStateContextProps>({
   handleOk: () => {},
   handleNext: () => {},
   handleCancel: () => {},
+  setIsModalVisible: () => {},
   setStepTouched: () => {},
 });
 
@@ -71,22 +73,14 @@ export function ModalStateProvider({ children }: PropsWithChildren) {
       isModalVisible,
       currentStep,
       stepTouched,
+      setStepTouched,
       showModal,
       handleOk,
       handleNext,
       handleCancel,
-      setStepTouched,
+      setIsModalVisible,
     }),
-    [
-      isModalVisible,
-      currentStep,
-      stepTouched,
-      showModal,
-      handleOk,
-      handleNext,
-      handleCancel,
-      setStepTouched,
-    ]
+    [isModalVisible, currentStep, showModal, handleOk, handleNext, handleCancel, stepTouched]
   );
 
   return <ModalStateContext.Provider value={value}>{children}</ModalStateContext.Provider>;

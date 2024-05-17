@@ -17,7 +17,7 @@ export interface NavButtonsProps {
 }
 
 export function NavButtons({ className, step, disabled }: NavButtonsProps) {
-  const { handleNext, handleCancel, stepTouched } = useModalState();
+  const { handleNext, handleCancel, stepTouched, setIsModalVisible } = useModalState();
   const session = useSession();
   const notification = useNotification();
   const [loading, setLoading] = useState(false);
@@ -35,6 +35,7 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
         notification.success(`${response.data.virtual_lab.name} has been created.`);
         refresh((count) => count + 1);
         handleNext();
+        setIsModalVisible(false);
       })
       .catch((error) => {
         notification.error(`Virtual Lab creation failed: ${error}`);
