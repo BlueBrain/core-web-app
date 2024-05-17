@@ -1,4 +1,4 @@
-import { ReactNode, useReducer, useState } from 'react';
+import { ReactNode, useCallback, useReducer, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { Button, ConfigProvider, Form, Input } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
@@ -19,36 +19,43 @@ type RenderInputProps = Omit<FormItemProps, 'children'> & {
 
 type InformationForm = { name: string; description: string; reference_email: string };
 
-export const renderInput = ({ disabled, placeholder, style, title, type }: InputProps) => {
+export const renderInput = ({ disabled, onClick, placeholder, style, title, type }: InputProps) => {
   return (
     <Input
-      className={classNames('border-none !bg-transparent', disabled ? '' : 'font-bold')}
+      addonAfter={<Button ghost icon={<EditOutlined />} onClick={onClick} />}
+      className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
       disabled={disabled}
       placeholder={placeholder}
       required
       style={style}
       title={title}
       type={type}
+      variant="borderless"
     />
   );
 };
 
 export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
   disabled,
+  onClick,
   placeholder,
   style,
   title,
 }) => {
   return (
-    <Input.TextArea
-      autoSize
-      className={classNames('border-none !bg-transparent', disabled ? '' : 'font-bold')}
-      disabled={disabled}
-      placeholder={placeholder}
-      required
-      style={style}
-      title={title}
-    />
+    <div className="flex items-baseline">
+      <Input.TextArea
+        autoSize
+        className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
+        disabled={disabled}
+        placeholder={placeholder}
+        required
+        style={style}
+        title={title}
+        variant="borderless"
+      />
+      <Button ghost icon={<EditOutlined />} onClick={onClick} />
+    </div>
   );
 };
 
@@ -68,6 +75,10 @@ function SettingsFormItem({
     },
     true // Disabled by default
   );
+
+  const onClick = useCallback(() => {
+    dispatch({ action: 'toggle' });
+  }, []);
 
   return (
     <ConfigProvider
@@ -98,17 +109,11 @@ function SettingsFormItem({
           {children({
             disabled,
             name,
+            onClick,
             placeholder: `${label}...`,
             type,
           })}
         </Form.Item>
-        <Button
-          ghost
-          icon={<EditOutlined />}
-          onClick={() => {
-            dispatch({ action: 'toggle' });
-          }}
-        />
       </div>
     </ConfigProvider>
   );
@@ -148,9 +153,7 @@ function SettingsForm({
           },
           Input: {
             activeBg: 'transparent',
-            activeBorderColor: 'transparent',
             activeShadow: 'none',
-            borderRadius: 0,
             colorBgContainer: 'transparent',
             colorText: '#fff',
             colorTextDisabled: '#fff',
@@ -158,7 +161,6 @@ function SettingsForm({
             // Antd uses `fontSizeLG` when no suffix/prefix icons are shown, and `fontSize` when these icons are shown. In both these cases, we want the same font size for our UI.
             fontSize: 16,
             fontSizeLG: 16,
-            hoverBorderColor: 'transparent',
             paddingInline: 0,
             paddingBlock: 10,
           },
@@ -189,9 +191,8 @@ export default function FormPanel({
   items: Array<RenderInputProps>;
   onValuesChange: (values: Partial<VirtualLab>) => Promise<void>; // Modify typing to allow for Promise return.
 }) {
-  const [validateStatus, setValidateStatus] = useState<Record<
-    keyof VirtualLab,
-    'error' | 'validating'
+  const [validateStatus, setValidateStatus] = useState<Partial<
+    Record<keyof VirtualLab, 'error' | 'validating'>
   > | null>(null);
 
   const [serverError, setServerError] = useState<string | null>(null);
@@ -211,6 +212,33 @@ export default function FormPanel({
     />
   ));
 
+  const handleOnValuesChange = debounce(async (values: Partial<VirtualLab>) => {
+    const validating = getValidateStatusFromValues(values, 'validating');
+
+    setValidateStatus(validating);
+
+    return onValuesChange(values)
+      .then(() => {
+        const entries = Object.entries(values);
+
+        entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
+
+        setServerError(null); // Remove error
+        setValidateStatus(null); // Reset validateStatus
+      })
+      .catch((error) => {
+        setServerError(error.message);
+
+        const newValidateStatus = error.cause
+          ? getValidateStatusFromValues(error.cause, 'error')
+          : null;
+
+        setValidateStatus(newValidateStatus);
+      });
+  }, 600);
+
+  const debouncedOnValuesChange = useCallback(handleOnValuesChange, [handleOnValuesChange]);
+
   return (
     <div className="flex flex-col gap-5">
       <SettingsForm
@@ -218,31 +246,8 @@ export default function FormPanel({
         form={form}
         initialValues={initialValues}
         labelAlign="left"
-        name={name} // TODO: Check whether this prop is necessary.
-        onValuesChange={debounce(async (values: Partial<VirtualLab>) => {
-          const validating = getValidateStatusFromValues(values, 'validating');
-
-          setValidateStatus(validating);
-
-          return onValuesChange(values)
-            .then(() => {
-              const entries = Object.entries(values);
-
-              entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
-
-              setServerError(null); // Remove error
-              setValidateStatus(null); // Reset validateStatus
-            })
-            .catch((error) => {
-              setServerError(error.message);
-
-              const newValidateStatus = error.cause
-                ? getValidateStatusFromValues(error.cause, 'error')
-                : null;
-
-              setValidateStatus(newValidateStatus);
-            });
-        }, 600)}
+        name={name} // This will prefix any input IDs with the form name. Not sure whether necessary right now.
+        onValuesChange={debouncedOnValuesChange}
       >
         {formItems}
       </SettingsForm>
