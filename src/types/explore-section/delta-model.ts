@@ -13,7 +13,7 @@ type Activity = {
   followedWorkflow: IdWithType;
 };
 
-type ModelSubject = {
+export type ModelSubject = {
   '@type': 'Subject';
   species: IdWithLabel;
 };
