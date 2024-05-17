@@ -2,7 +2,6 @@
 
 import { useSetAtom } from 'jotai';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
@@ -10,11 +9,12 @@ import { selectedEModelAtom, meModelSectionAtom } from '@/state/virtual-lab/buil
 import MorphologyCard from '@/components/build-section/virtual-lab/me-model/MorphologyCard';
 import { Btn } from '@/components/Btn';
 import { ESeModel, ExploreESHit, ExploreResource } from '@/types/explore-section/es';
+import { createMEModelAtom } from '@/state/virtual-lab/build/me-model-setter';
 
 export default function ElectrophysiologyPage() {
   const setMEModelSection = useSetAtom(meModelSectionAtom);
   const setSelectedEModel = useSetAtom(selectedEModelAtom);
-  const router = useRouter();
+  const createMEModel = useSetAtom(createMEModelAtom);
 
   useEffect(() => setMEModelSection('electrophysiology'), [setMEModelSection]);
 
@@ -25,7 +25,7 @@ export default function ElectrophysiologyPage() {
 
     const emodel = selectedRows[0]._source as ESeModel;
     setSelectedEModel(emodel);
-    router.push('/build/me-model/summary');
+    createMEModel();
   };
 
   return (
