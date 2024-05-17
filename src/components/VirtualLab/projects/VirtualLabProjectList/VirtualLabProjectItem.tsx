@@ -1,4 +1,4 @@
-import { CalendarOutlined, LoadingOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
+import { CalendarOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { loadable, unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
@@ -94,24 +94,13 @@ export default function VirtualLabProjectItem({ project }: { project: Project })
       className="flex flex-col gap-3 rounded-md border border-primary-6 p-9"
       href={`${projectUrl}/home`}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center justify-between gap-6">
-          <div className="flex gap-2">
-            <span className="text-primary-3">Latest update</span>
-            <span className="font-bold">{formatDate(project.updated_at)}</span>
-          </div>
-          <div className="flex">
-            {/* Temporarily removing this until we update the response for POST requests to include star status
-	    {project.isFavorite ? (
-              <StarFilled style={{ fontSize: '18px', color: '#FFD465' }} />
-            ) : ( */}
-            {/* TODO: we dont have a favorite functionality yet */}
-            <StarOutlined style={{ fontSize: '18px' }} />
-            {/* )} */}
-          </div>
+      <div className="flex items-start justify-between">
+        <h3 className="text-4xl font-bold">{project.name}</h3>
+        <div className="flex gap-2">
+          <span className="text-primary-3">Latest update</span>
+          <span className="font-bold">{formatDate(project.updated_at)}</span>
         </div>
       </div>
-      <h3 className="text-4xl font-bold">{project.name}</h3>
       <p>{project.description}</p>
       <ProjectStats project={project} />
     </Link>
