@@ -10,8 +10,8 @@ export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>
   null,
   async (get) => {
     const session = get(sessionAtom);
-    const selectedMModel = get(selectedMModelAtom);
-    const selectedEModel = get(selectedEModelAtom);
+    const selectedMModel = await get(selectedMModelAtom);
+    const selectedEModel = await get(selectedEModelAtom);
 
     if (!session || !selectedMModel || !selectedEModel) return null;
 

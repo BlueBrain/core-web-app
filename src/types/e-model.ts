@@ -1,3 +1,6 @@
+import { IdWithType } from './explore-section/common';
+import { ModelSubject } from './explore-section/delta-model';
+import { ESeModel } from './explore-section/es';
 import { FileDistribution } from './explore-section/es-properties';
 import { MModelMenuItem } from './m-model';
 import { BrainLocation, ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
@@ -89,6 +92,7 @@ export interface EModel extends EModelCommonProps {
       label: string;
     };
   };
+  image: ESeModel['image'];
 }
 
 export interface EModelResource extends ResourceMetadata, EModel {}
@@ -392,6 +396,9 @@ export interface NeuronMorphology extends Entity {
       label: string;
     };
   };
+  license?: IdWithType;
+  subject?: ModelSubject;
+  mType?: string;
 }
 
 export interface NeuronMorphologyResource extends ResourceMetadata, NeuronMorphology {}
