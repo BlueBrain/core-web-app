@@ -37,25 +37,28 @@ export const renderInput = ({ disabled, onClick, placeholder, style, title, type
 
 export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
   disabled,
+  name,
   onClick,
   placeholder,
   style,
   title,
 }) => {
   return (
-    <div className="flex items-baseline">
-      <Input.TextArea
-        autoSize
-        className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
-        disabled={disabled}
-        placeholder={placeholder}
-        required
-        style={style}
-        title={title}
-        variant="borderless"
-      />
+    <Input.Group className="flex items-center">
+      <Form.Item name={name} noStyle>
+        <Input.TextArea
+          className={classNames('!h-auto !bg-transparent', disabled ? '' : 'font-bold')}
+          disabled={disabled}
+          placeholder={placeholder}
+          required
+          rows={2}
+          style={{ ...style, height: 'auto' }}
+          title={title}
+          variant="borderless"
+        />
+      </Form.Item>
       <Button ghost icon={<EditOutlined />} onClick={onClick} />
-    </div>
+    </Input.Group>
   );
 };
 
@@ -99,8 +102,8 @@ function SettingsFormItem({
         )}
       >
         <Form.Item
-          name={name}
           label={required ? `${label}*` : label}
+          name={name}
           required={required}
           style={{ width: '100%' }}
           hasFeedback={validateStatus === 'validating'}
@@ -193,7 +196,7 @@ export default function FormPanel({
 }) {
   const [validateStatus, setValidateStatus] = useState<Partial<
     Record<keyof VirtualLab, 'error' | 'validating'>
-  > | null>(null);
+  > | null>({ description: 'validating' });
 
   const [serverError, setServerError] = useState<string | null>(null);
 
