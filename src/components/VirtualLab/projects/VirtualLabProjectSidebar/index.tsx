@@ -70,6 +70,11 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       ),
       href: 'team',
     },
+    {
+      key: LinkItemKey.Activity,
+      content: 'Activity',
+      href: 'activity',
+    },
     { key: LinkItemKey.Papers, content: 'Papers', href: 'papers' },
     { key: LinkItemKey.Explore, content: 'Explore', href: 'explore' },
     { key: LinkItemKey.Build, content: 'Build', href: 'build' },
