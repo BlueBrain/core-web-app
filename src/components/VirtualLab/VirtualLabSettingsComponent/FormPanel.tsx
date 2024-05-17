@@ -215,32 +215,34 @@ export default function FormPanel({
     />
   ));
 
-  const handleOnValuesChange = debounce(async (values: Partial<VirtualLab>) => {
-    const validating = getValidateStatusFromValues(values, 'validating');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedOnValuesChange = useCallback(
+    debounce(async (values: Partial<VirtualLab>) => {
+      const validating = getValidateStatusFromValues(values, 'validating');
 
-    setValidateStatus(validating);
+      setValidateStatus(validating);
 
-    return onValuesChange(values)
-      .then(() => {
-        const entries = Object.entries(values);
+      return onValuesChange(values)
+        .then(() => {
+          const entries = Object.entries(values);
 
-        entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
+          entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
 
-        setServerError(null); // Remove error
-        setValidateStatus(null); // Reset validateStatus
-      })
-      .catch((error) => {
-        setServerError(error.message);
+          setServerError(null); // Remove error
+          setValidateStatus(null); // Reset validateStatus
+        })
+        .catch((error) => {
+          setServerError(error.message);
 
-        const newValidateStatus = error.cause
-          ? getValidateStatusFromValues(error.cause, 'error')
-          : null;
+          const newValidateStatus = error.cause
+            ? getValidateStatusFromValues(error.cause, 'error')
+            : null;
 
-        setValidateStatus(newValidateStatus);
-      });
-  }, 600);
-
-  const debouncedOnValuesChange = useCallback(handleOnValuesChange, [handleOnValuesChange]);
+          setValidateStatus(newValidateStatus);
+        });
+    }, 600),
+    [notification, onValuesChange]
+  );
 
   return (
     <div className="flex flex-col gap-5">
