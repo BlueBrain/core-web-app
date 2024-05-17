@@ -27,12 +27,14 @@ export function Form<T extends Record<string, any>>({
 }: FormProps<T>) {
   const refInvalidFields = useRef(new Set<keyof typeof fields>());
   const keys = Object.keys(fields);
+
   const handleValidityChange = (key: keyof typeof fields, validity: boolean) => {
     const set = refInvalidFields.current;
     if (validity) set.delete(key);
     else set.add(key);
     onValidityChange(set.size === 0);
   };
+
   return (
     <form className={classNames(styles.main, className)}>
       {keys.map((key) => {

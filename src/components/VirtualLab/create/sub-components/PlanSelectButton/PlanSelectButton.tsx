@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '../Button';
 import { VirtualLabPlanDefinition } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
+import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 import styles from './plan-select-button.module.css';
 
@@ -14,6 +15,11 @@ export interface PlanSelectButtonProps {
 }
 
 export function PlanSelectButton({ className, plan, selected, onSelect }: PlanSelectButtonProps) {
+  const { setStepTouched } = useModalState();
+  const handleClick = () => {
+    onSelect(plan);
+    setStepTouched(true);
+  };
   return (
     <div className={classNames(styles.main, className, selected && styles.selected)} key={plan.id}>
       <h1>{plan.name}</h1>
@@ -33,7 +39,7 @@ export function PlanSelectButton({ className, plan, selected, onSelect }: PlanSe
         {plan.price > 0 && <small>/ month / user</small>}
       </div>
       <footer>
-        <Button variant="primary" onClick={() => onSelect(plan)}>
+        <Button variant="primary" onClick={handleClick}>
           Select
         </Button>
       </footer>
