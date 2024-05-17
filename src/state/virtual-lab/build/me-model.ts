@@ -4,6 +4,7 @@ import { MEModelMorphologyType, MEModelSection } from '@/types/virtual-lab/build
 import { EModel, NeuronMorphology } from '@/types/e-model';
 import sessionAtom from '@/state/session';
 import { fetchResourceById } from '@/api/nexus';
+import { MEModelResource } from '@/types/me-model';
 
 export const meModelSectionAtom = atom<MEModelSection>('morphology');
 
@@ -27,4 +28,14 @@ export const selectedEModelAtom = atom<Promise<EModel | undefined>>(async (get) 
   if (!session || !eModelId) return;
 
   return fetchResourceById<EModel>(eModelId, session);
+});
+
+export const selectedMEModelIdAtom = atom<string | null>(null);
+
+export const meModelResourceAtom = atom<Promise<MEModelResource | undefined>>(async (get) => {
+  const session = get(sessionAtom);
+  const meModelId = get(selectedMEModelIdAtom);
+  if (!session || !meModelId) return;
+
+  return fetchResourceById<MEModelResource>(meModelId, session);
 });
