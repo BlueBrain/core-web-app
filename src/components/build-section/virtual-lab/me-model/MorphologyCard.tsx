@@ -14,7 +14,7 @@ export default function MorphologyCard() {
   if (!selectedMModel) return null;
 
   return (
-    <div className="border p-10">
+    <div className="w-full border p-10">
       <div className="flex justify-between">
         <div className={classNames('text-2xl', subtitleStyle)}>M-Model</div>
         <a href={selectedMModel['@id']} target="_blank" className="font-bold text-primary-8">

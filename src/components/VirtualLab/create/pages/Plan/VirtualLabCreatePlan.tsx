@@ -4,7 +4,6 @@ import { loadable } from 'jotai/utils';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { InputBillingInfo } from './InputBillingInfo';
 import { Layout } from '@/components/VirtualLab/create/sub-components/Layout';
 import { Main } from '@/components/VirtualLab/create/sub-components/Main';
 import { useCurrentVirtualLab } from '@/components/VirtualLab/create/hooks/current-virtual-lab';
@@ -17,7 +16,7 @@ export interface VirtualLabCreatePlanProps {
 
 export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
   const [lab, updateLab] = useCurrentVirtualLab();
-  const [billingValid, setBillingValid] = useState(false);
+  const [billingValid] = useState(false);
   const virtualLabPlansLoadable = useAtomValue(loadable(virtualLabPlansAtom));
 
   if (virtualLabPlansLoadable.state === 'loading') {
@@ -33,7 +32,6 @@ export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
   return (
     <Layout className={className}>
       <Main canGoNext={lab.plan_id !== null || billingValid} step="plan">
-        <h2>Plan</h2>
         {virtualLabPlans?.map((plan) => (
           <PlanSelectButton
             key={plan.id}
@@ -42,7 +40,6 @@ export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
             onSelect={() => updateLab({ plan_id: plan.id })}
           />
         ))}
-        {lab.plan_id && <InputBillingInfo onValidityChange={setBillingValid} />}
       </Main>
     </Layout>
   );

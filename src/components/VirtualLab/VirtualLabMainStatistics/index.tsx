@@ -19,29 +19,25 @@ export default function VirtualLabMainStatistics({ id, created_at }: Props) {
 
   return (
     <div className="flex gap-5">
-      <VirtualLabStatistic key="1" icon={<Brain style={iconStyle} />} title="Builds" detail="N/A" />
+      <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail="N/A" />
 
       <VirtualLabStatistic
-        key="2"
         icon={<StatsEditIcon style={iconStyle} />}
         title="Simulation experiments"
         detail="N/A"
       />
 
       <VirtualLabStatistic
-        key="2"
         icon={<UserOutlined style={iconStyle} />}
         title="Members"
         detail={virtualLabUsers?.length || 0}
       />
       <VirtualLabStatistic
-        key="3"
         icon={<MembersGroupIcon style={iconStyle} />}
         title="Admin"
         detail={virtualLabUsers?.find((user) => user.role === 'admin')?.name || '-'}
       />
       <VirtualLabStatistic
-        key="4"
         icon={<CalendarOutlined style={iconStyle} />}
         title="Creation date"
         detail={formatDate(created_at)}
