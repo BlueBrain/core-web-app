@@ -11,21 +11,25 @@ import { STEPS } from '@/components/VirtualLab/create/constants';
 interface ModalStateContextProps {
   isModalVisible: boolean;
   currentStep: string;
+  stepTouched: boolean;
   showModal: () => void;
   handleOk: () => void;
   handleNext: () => void;
   handleCancel: () => void;
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setStepTouched: (touched: boolean) => void;
 }
 
 const ModalStateContext = createContext<ModalStateContextProps>({
   isModalVisible: false,
   currentStep: 'information',
+  stepTouched: false,
   showModal: () => {},
   handleOk: () => {},
   handleNext: () => {},
   handleCancel: () => {},
   setIsModalVisible: () => {},
+  setStepTouched: () => {},
 });
 
 export const useModalState = () => {
@@ -41,6 +45,7 @@ export const useModalState = () => {
 export function ModalStateProvider({ children }: PropsWithChildren) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(STEPS[0]);
+  const [stepTouched, setStepTouched] = useState(false);
 
   const showModal = useCallback(() => {
     setIsModalVisible(true);
@@ -54,6 +59,7 @@ export function ModalStateProvider({ children }: PropsWithChildren) {
     const currentStepIndex = STEPS.indexOf(currentStep);
     if (currentStepIndex < STEPS.length - 1) {
       setCurrentStep(STEPS[currentStepIndex + 1]);
+      setStepTouched(false);
     }
   }, [currentStep]);
 
@@ -66,13 +72,15 @@ export function ModalStateProvider({ children }: PropsWithChildren) {
     () => ({
       isModalVisible,
       currentStep,
+      stepTouched,
+      setStepTouched,
       showModal,
       handleOk,
       handleNext,
       handleCancel,
       setIsModalVisible,
     }),
-    [isModalVisible, currentStep, showModal, handleOk, handleNext, handleCancel, setIsModalVisible]
+    [isModalVisible, currentStep, showModal, handleOk, handleNext, handleCancel, stepTouched]
   );
 
   return <ModalStateContext.Provider value={value}>{children}</ModalStateContext.Provider>;
