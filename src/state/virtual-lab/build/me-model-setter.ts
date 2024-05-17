@@ -5,11 +5,13 @@ import {
   selectedMModelIdAtom,
   selectedEModelAtom,
   selectedMModelAtom,
+  selectedMEModelIdAtom,
+  meModelResourceAtom,
 } from './me-model';
 import sessionAtom from '@/state/session';
 import { EntityCreation } from '@/types/nexus';
 import { MEModel, MEModelResource } from '@/types/me-model';
-import { createResource, fetchResourceById } from '@/api/nexus';
+import { createResource, fetchResourceById, updateResource } from '@/api/nexus';
 
 export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>(
   null,
@@ -45,12 +47,23 @@ export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>
   }
 );
 
-export const saveMEModelAtom = atom<null, [string, string], Promise<MEModelResource | null>>(
+export const saveMEModelAtom = atom<null, [string, string], void>(
   null,
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   async (get, set, name, description) => {
-    // TODO: implement update resource
-    return null;
+    const session = get(sessionAtom);
+
+    const meModelResource = await get(meModelResourceAtom);
+
+    if (!session || !meModelResource) return null;
+
+    const updated: MEModelResource = {
+      ...meModelResource,
+      name,
+      description,
+      validated: true,
+    };
+    await updateResource(updated, session);
   }
 );
 
@@ -69,5 +82,6 @@ export const initializeSummaryAtom = atom<null, [string], void>(
 
     set(selectedEModelIdAtom, usedEModel['@id']);
     set(selectedMModelIdAtom, usedMModel['@id']);
+    set(selectedMEModelIdAtom, meModel['@id']);
   }
 );
