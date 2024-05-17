@@ -10,11 +10,14 @@ import MorphologyCard from '@/components/build-section/virtual-lab/me-model/Morp
 import { Btn } from '@/components/Btn';
 import { ESeModel, ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 import { createMEModelAtom } from '@/state/virtual-lab/build/me-model-setter';
+import { usePendingValidationModal } from '@/components/build-section/virtual-lab/me-model/pending-validation-modal-hook';
 
 export default function ElectrophysiologyPage() {
   const setMEModelSection = useSetAtom(meModelSectionAtom);
   const setSelectedEModel = useSetAtom(selectedEModelAtom);
   const createMEModel = useSetAtom(createMEModelAtom);
+
+  const { createModal, contextHolder } = usePendingValidationModal();
 
   useEffect(() => setMEModelSection('electrophysiology'), [setMEModelSection]);
 
@@ -26,6 +29,7 @@ export default function ElectrophysiologyPage() {
     const emodel = selectedRows[0]._source as ESeModel;
     setSelectedEModel(emodel);
     createMEModel();
+    createModal();
   };
 
   return (
@@ -49,6 +53,7 @@ export default function ElectrophysiologyPage() {
           )}
         />
       </div>
+      {contextHolder}
     </>
   );
 }
