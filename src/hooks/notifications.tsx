@@ -1,4 +1,4 @@
-import { useCallback, Key } from 'react';
+import { useCallback, Key, useMemo } from 'react';
 import { Placement } from '@/types/notifications';
 import openNotification from '@/api/notifications';
 
@@ -79,5 +79,5 @@ export default function useNotification() {
     []
   );
 
-  return { error, warning, success, info };
+  return useMemo(() => ({ error, warning, success, info }), [error, warning, success, info]);
 }
