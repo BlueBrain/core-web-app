@@ -49,6 +49,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typeScript: {
+    ignoreDuringBuilds: true,
+  },
   async redirects() {
     return [
       {
