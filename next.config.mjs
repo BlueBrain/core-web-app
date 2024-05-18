@@ -49,7 +49,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  typeScript: {
+  typescript: {
     ignoreDuringBuilds: true,
   },
   async redirects() {

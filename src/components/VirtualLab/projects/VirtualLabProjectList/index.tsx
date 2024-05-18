@@ -17,7 +17,7 @@ import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 const { Option } = Select;
 
-const a:int = '1'
+const a: number = '1';
 
 function NewProjectModalFooter({
   close,
