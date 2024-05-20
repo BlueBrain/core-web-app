@@ -1,44 +1,25 @@
-import { useReducer } from 'react';
+import { useEffect } from 'react';
+import { useResetAtom } from 'jotai/utils';
 
-import { PlusOutlined } from '@ant-design/icons';
-import { Divider } from 'antd';
-import PaymentForm from './PaymentForm';
-import PaymentMethodsList from './PaymentMethodsList';
+import { BalanceDetails, CreditForm, SubmitCredit } from './Balance';
+import PaymentMethodsWidget from './PaymentMethodsList';
+import { transactionFormStateAtom } from '@/state/virtual-lab/lab';
 
 type Props = {
   virtualLabId: string;
 };
 
 export default function Billing({ virtualLabId }: Props) {
-  const [openStripeForm, toggleOpenStripeForm] = useReducer((val) => !val, false);
+  const resetTransactionFormStateAtom = useResetAtom(transactionFormStateAtom);
+  useEffect(() => resetTransactionFormStateAtom(), [resetTransactionFormStateAtom]);
 
   return (
     <div className="flex w-full flex-col items-center justify-center bg-white px-7 py-7">
       <div className="w-full max-w-2xl">
-        <div className="py-3">
-          <PaymentMethodsList virtualLabId={virtualLabId} />
-          {!openStripeForm && (
-            <button
-              className="mt-2 flex w-full items-center justify-between gap-3 rounded-md border border-neutral-3 !p-5 text-primary-7 hover:border-primary-0 hover:bg-primary-0"
-              type="button"
-              onClick={toggleOpenStripeForm}
-            >
-              <span>Add card</span>
-              <PlusOutlined />
-            </button>
-          )}
-        </div>
-        {openStripeForm && (
-          <>
-            <Divider />
-            <PaymentForm
-              {...{
-                virtualLabId,
-                toggleOpenStripeForm,
-              }}
-            />
-          </>
-        )}
+        <BalanceDetails {...{ virtualLabId }} />
+        <CreditForm {...{ virtualLabId }} />
+        <PaymentMethodsWidget {...{ virtualLabId }} />
+        <SubmitCredit {...{ virtualLabId }} />
       </div>
     </div>
   );
