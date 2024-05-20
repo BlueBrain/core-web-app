@@ -1,10 +1,10 @@
 import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Modal, Spin, Form, Input, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form/Form';
-import { ComponentProps, ReactElement, useMemo, useState } from 'react';
+import { ComponentProps, ReactElement, useMemo, useState, useEffect, useReducer } from 'react';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
+import { PlusOutlined, LoadingOutlined, SearchOutlined, MailOutlined } from '@ant-design/icons';
 import VirtualLabMemberIcon from '../../VirtualLabMemberIcon';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
@@ -14,10 +14,10 @@ import { Project } from '@/types/virtual-lab/projects';
 import { virtualLabMembersAtomFamily, newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
+import { useSetTypes } from '@/components/ConnectomeModelAssignment/hooks';
+import Email from 'next-auth/providers/email';
 
 const { Option } = Select;
-
-const a: number = '1';
 
 function NewProjectModalFooter({
   close,
@@ -104,6 +104,11 @@ const formItems: Array<ModalInputProps> = [
   },
 ];
 
+type InvitedMember = {
+  email: string;
+  role: 'admin' | 'member';
+};
+
 function NewProjectModalForm({
   form,
   members,
@@ -112,6 +117,19 @@ function NewProjectModalForm({
   members: VirtualLabMember[];
 }) {
   const [selectedMembers, setSelectedMembers] = useAtom(selectedMembersAtom);
+  const [showInvitation, setShowInvitation] = useState(false);
+  const [newInvite, setNewInvite] = useState<InvitedMember>({ email: '', role: 'admin' });
+  const [invitedMembers, dispatch] = useReducer(
+    (prevMembers: InvitedMember[], { type, payload }: { type: 'add'; payload: InvitedMember }) => {
+      if (type === 'add') return [...prevMembers, payload];
+      return prevMembers;
+    },
+    []
+  );
+
+  useEffect(() => {
+    setSelectedMembers(members);
+  }, [setSelectedMembers, members]);
 
   return (
     <Form form={form} layout="vertical" style={{ paddingBlockStart: 40 }}>
@@ -169,23 +187,64 @@ function NewProjectModalForm({
             </Select>
           </div>
         ))}
-        <Select
-          style={{ width: 200 }}
-          placeholder="Add member"
-          onChange={(v) => {
-            const m = members.find((member) => member.id === v);
-            if (m) setSelectedMembers([...selectedMembers, m]);
-          }}
-          className="mt-5"
+
+        {showInvitation && (
+          <div className="mt-3 flex w-full items-center">
+            <div className="inline-flex h-12 w-12 items-center justify-center bg-gray-100">
+              <MailOutlined />
+            </div>
+            <div className="ml-5 inline-block">
+              <span className="mr-2 inline-block font-bold text-primary-8">Invitation to:</span>
+              <div className="inline-block">
+                <Input
+                  placeholder="Enter email address"
+                  value={newInvite?.email}
+                  onChange={(v) => setNewInvite({ ...newInvite, email: v.currentTarget.value })}
+                />
+              </div>
+            </div>
+            <div className="grow" />
+            <div className="flex items-center">
+              <div>As</div>
+              <Select
+                defaultValue="admin"
+                onChange={(v: 'admin' | 'member') => setNewInvite({ ...newInvite, role: v })}
+              >
+                <Option value="admin">Admin</Option>
+                <Option value="member">Member</Option>
+              </Select>
+            </div>
+            <div className="flex">
+              {!!newInvite.email && (
+                <button type="button" className="text-sm text-primary-7">
+                  Confirm
+                </button>
+              )}
+              <button
+                type="button"
+                className="ml-3 text-sm text-primary-7"
+                onClick={() => {
+                  setNewInvite({ email: '', role: 'admin' });
+                  setShowInvitation(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        <Button
+          className="mt-5 flex h-12 items-center rounded-none bg-white font-bold text-primary-8"
+          onClick={() => setShowInvitation(true)}
         >
-          {members
-            .filter((m) => !selectedMembers.map((s) => s.id).includes(m.id))
-            .map((member) => (
-              <Option value={member.id} key={member.id}>
-                {member.name}
-              </Option>
-            ))}
-        </Select>
+          <div className="relative -top-1">
+            Add Member
+            <span className="relative top-0.5 ml-3 inline-block text-3xl font-normal text-gray-400 ">
+              +
+            </span>
+          </div>
+        </Button>
       </ConfigProvider>
     </Form>
   );
@@ -244,6 +303,7 @@ export function NewProjectModal({
   return (
     <>
       <Modal
+        style={{ minWidth: 600 }}
         footer={
           <NewProjectModalFooter
             close={() => setOpen(false)}
