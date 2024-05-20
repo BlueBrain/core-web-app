@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 
-import { CampaignDescriptor, useAccessToken } from '../current-campaign-descriptor';
+import { CampaignDescriptor } from '../current-campaign-descriptor';
 import LimitedCache from '../limited-cache';
 import { parseTemplateFile } from './parse-template-file';
 import { nexus } from '@/config';
 import { fetchSimulationsFromEs } from '@/api/explore-section/simulations';
 import { assertType } from '@/util/type-guards';
 import { logError } from '@/util/logger';
+import { useAccessToken } from '@/hooks/useAccessToken';
 
 export interface SimulationDefinition {
   campaignId: string;

@@ -1,6 +1,5 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import AxisGizmo from './AxisGizmo';
@@ -11,6 +10,8 @@ import Spinner from '@/components/Spinner';
 import BraynsService, { BraynsServiceInterface } from '@/services/brayns/circuit';
 import { isString } from '@/util/type-guards';
 import { useVisibleCells } from '@/state/atlas';
+import { useAccessToken } from '@/hooks/useAccessToken';
+
 import styles from './interactive-brayns.module.css';
 
 interface InteractiveBraynsProps {
@@ -98,9 +99,4 @@ function useCanvasMountHandler(brayns: AllocationResult) {
     brayns.canvas = canvas;
   }, [brayns, canvas]);
   return setCanvas;
-}
-
-function useAccessToken(): string | undefined {
-  const { data: session } = useSession();
-  return session?.accessToken;
 }

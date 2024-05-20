@@ -1,4 +1,3 @@
-import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -26,9 +25,4 @@ export function useCurrentCampaignDescriptor(): CampaignDescriptor | undefined {
     setCampaign({ id, organization, project });
   }, [paramId]);
   return campaign;
-}
-
-export function useAccessToken(): string | undefined {
-  const { data: session } = useSession();
-  return session?.accessToken;
 }
