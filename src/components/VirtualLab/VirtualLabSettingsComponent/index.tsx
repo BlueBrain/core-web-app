@@ -54,6 +54,7 @@ function CustomCollapse({ className, items }: CollapseProps) {
     >
       <Collapse
         accordion
+        destroyInactivePanel
         expandIconPosition="end"
         expandIcon={ExpandIcon}
         className={classNames(className)}
