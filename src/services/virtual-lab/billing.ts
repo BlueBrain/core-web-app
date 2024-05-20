@@ -1,5 +1,5 @@
 import { createVLApiHeaders } from './common';
-import { PaymentMethod } from '@/types/virtual-lab/billing';
+import { PaymentMethod, VlabBalance, VlabBudgetTopup } from '@/types/virtual-lab/billing';
 import { virtualLabApi } from '@/config';
 
 type NewPaymentMethodPayload = {
@@ -8,11 +8,24 @@ type NewPaymentMethodPayload = {
   email: string;
 };
 
+type NewBudgetTopUpPayload = {
+  credit?: number;
+  selectedPaymentMethodId?: string;
+};
+
 type VirtualLabPaymentMethodsResponse = {
   data: {
     virtual_lab_id: string;
     payment_methods: Array<PaymentMethod>;
   };
+};
+
+type VirtualLabBalanceResponse = {
+  data: VlabBalance;
+};
+
+type VirtualLabCreditTopupResponse = {
+  data: VlabBudgetTopup;
 };
 
 type AddVirtualLabPaymentMethodResponse = {
@@ -57,6 +70,35 @@ export async function getVirtualLabPaymentMethods(
 ): Promise<VirtualLabPaymentMethodsResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods`, {
     method: 'GET',
+    headers: createVLApiHeaders(token),
+  });
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function getVirtualLabBalanceDetails(
+  id: string,
+  token: string
+): Promise<VirtualLabBalanceResponse> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/balance`, {
+    method: 'GET',
+    headers: createVLApiHeaders(token),
+  });
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function addVirtualLabBudget(
+  id: string,
+  payload: NewBudgetTopUpPayload,
+  token: string
+): Promise<VirtualLabCreditTopupResponse> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/budget-topup`, {
+    method: 'POST',
     headers: createVLApiHeaders(token),
   });
   if (!response.ok) {
