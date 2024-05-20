@@ -1,35 +1,40 @@
 import { PaymentElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import {
-  ComponentProps,
   FormEvent,
   useState,
   useEffect,
   useRef,
-  DispatchWithoutAction,
   ChangeEvent,
+  Dispatch,
+  SetStateAction,
 } from 'react';
-import { Button, ConfigProvider, Spin } from 'antd';
-import { Stripe } from '@stripe/stripe-js';
+import { Button, Spin } from 'antd';
+import { Stripe, StripeElementsOptions } from '@stripe/stripe-js';
 
 import { useAtomValue, useSetAtom } from 'jotai';
 import { LoadingOutlined } from '@ant-design/icons';
 import z from 'zod';
 
-import getStripe, { getErrorMessage } from './getStripe';
+import getStripe, { getErrorMessage } from './utils';
+import StripeInput from './StripeInput';
+import { PREP_PAYMENT_FORM } from './messages';
 import useNotification from '@/hooks/notifications';
-import { classNames, getZodErrorPath, isStringEmpty } from '@/util/utils';
+import { getZodErrorPath, isStringEmpty } from '@/util/utils';
 import {
   SetupIntentResponse,
   addNewPaymentMethodToVirtualLab,
   generateSetupIntent,
 } from '@/services/virtual-lab/billing';
 import sessionAtom from '@/state/session';
-import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
-import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
+import {
+  transactionFormStateAtom,
+  virtualLabPaymentMethodsAtomFamily,
+} from '@/state/virtual-lab/lab';
+import { useAccessToken } from '@/hooks/useAccessToken';
 
 type PaymentFormProps = {
   virtualLabId: string;
-  toggleOpenStripeForm: DispatchWithoutAction;
+  toggleOpenStripeForm: Dispatch<SetStateAction<boolean>>;
 };
 
 const CardholderValidation = z.object({
@@ -40,51 +45,29 @@ const CardholderValidation = z.object({
 type Cardholder = z.infer<typeof CardholderValidation>;
 type CardholderKeys = keyof Cardholder;
 
-function StripeInput({
-  title,
-  id,
-  name,
-  value,
-  error,
-  ...props
-}: ComponentProps<'input'> & { title: string; error: boolean }) {
-  return (
-    <div className="mb-3">
-      <label
-        htmlFor={name}
-        className="mb-1 w-full text-[16px] text-[#30313d]"
-        style={{
-          transition:
-            'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
-        }}
-      >
-        {title}
-        <input
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-          id={id}
-          name={name}
-          value={value}
-          className={classNames(
-            'h-[44px] w-full rounded-[5px] border  border-solid bg-white p-3',
-            error
-              ? 'border-rose-600 shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02),0_0_0_1px_#df1b41]'
-              : 'border-neutral-200 shadow-[0px_1px_1px_rgba(0,0,0,0.03),0px_3px_6px_rgba(0,0,0,0.02)]'
-          )}
-          style={{
-            transition:
-              'background 0.15s ease, border 0.15s ease, box-shadow 0.15s ease, color 0.15s ease',
-          }}
-        />
-        {error && (
-          <p className="mt-1 text-[16px] text-rose-600" role="alert">
-            Your {id} is invalid.
-          </p>
-        )}
-      </label>
-    </div>
-  );
-}
+const buildStripeFormOptions = (clientSecret: string): StripeElementsOptions => ({
+  clientSecret,
+  fonts: [
+    {
+      family: 'Titillium Web',
+      cssSrc:
+        'https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap',
+    },
+  ],
+  appearance: {
+    variables: {
+      fontFamily: 'Titillium Web',
+      fontSizeSm: '1rem',
+    },
+    rules: {
+      '.Input:focus': {
+        boxShadow:
+          '0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 6px rgba(18, 42, 66, 0.02), 0 0 0 2px #0050B3',
+        borderColor: 'none',
+      },
+    },
+  },
+});
 
 export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
   const accessToken = useAccessToken();
@@ -92,6 +75,7 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
   const stripe = useStripe();
   const { error: errorNotify } = useNotification();
   const refreshPaymentMethods = useSetAtom(virtualLabPaymentMethodsAtomFamily(virtualLabId));
+  const setTransactionFormState = useSetAtom(transactionFormStateAtom);
   const [stripeElementsReady, setStipeElementsReady] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [cardholderForm, setCardHolderForm] = useState<Cardholder>({
@@ -99,6 +83,9 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
     email: '',
   });
   const [cardholderFormErrorKeys, setCardholderFormErrorKeys] = useState<Array<CardholderKeys>>([]);
+
+  const formLoaded = stripe && elements;
+  const disableForm = !formLoaded || formLoading;
 
   const onCardholderChange = (key: CardholderKeys) => (e: ChangeEvent<HTMLInputElement>) =>
     setCardHolderForm((state) => ({ ...state, [key]: e.target.value }));
@@ -115,13 +102,11 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
     }
   };
 
-  const formLoaded = stripe && elements;
-  const disableForm = !formLoaded || formLoading;
-
   const onStripeElementsReady = () => setStipeElementsReady(true);
 
-  const handlePaymentMethodSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const onPaymentMethodSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    event.stopPropagation();
     setFormLoading(true);
 
     const { name, email } = cardholderForm;
@@ -142,12 +127,16 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
       if (error) {
         errorNotify(error.message!, undefined, 'topRight', true);
       } else if (accessToken) {
-        await addNewPaymentMethodToVirtualLab(virtualLabId, accessToken, {
+        const {
+          data: { payment_method: PaymentMethod },
+        } = await addNewPaymentMethodToVirtualLab(virtualLabId, accessToken, {
           name,
           email,
           setupIntentId: setupIntent.id,
         });
-        toggleOpenStripeForm();
+
+        setTransactionFormState((prev) => ({ ...prev, selectedPaymentMethodId: PaymentMethod.id }));
+        toggleOpenStripeForm(false);
         refreshPaymentMethods();
       }
     } catch (error) {
@@ -164,7 +153,7 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
     <form
       name="stripe-payment-method-form"
       className="mx-auto w-full max-w-2xl"
-      onSubmit={handlePaymentMethodSubmit}
+      onSubmit={onPaymentMethodSubmit}
     >
       {stripeElementsReady && (
         <>
@@ -196,18 +185,15 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
       )}
       <PaymentElement onReady={onStripeElementsReady} />
       {stripeElementsReady && (
-        <ConfigProvider theme={{ hashed: false }}>
-          <Button
-            type="primary"
-            size="large"
-            htmlType="submit"
-            className="my-4 w-full rounded-md bg-primary-8 text-center text-xl font-semibold capitalize text-primary-3"
-            disabled={disableForm}
-            loading={formLoading}
-          >
-            Save card details
-          </Button>
-        </ConfigProvider>
+        <Button
+          size="large"
+          htmlType="submit"
+          className="my-4 w-full rounded-none border-primary-8 bg-primary-8 text-center text-xl text-white"
+          disabled={disableForm}
+          loading={formLoading}
+        >
+          Save card
+        </Button>
       )}
     </form>
   );
@@ -242,15 +228,9 @@ export default function PaymentForm({ virtualLabId, toggleOpenStripeForm }: Paym
           setLoadingStripe(false);
         }
       } catch (error) {
-        errorNotify(
-          "We're having some trouble setting up your payment options at the moment. Please try again in a little while.",
-          undefined,
-          'topRight',
-          true,
-          virtualLabId
-        );
+        errorNotify(PREP_PAYMENT_FORM, undefined, 'topRight', true, virtualLabId);
         setLoadingStripe(false);
-        toggleOpenStripeForm();
+        toggleOpenStripeForm(false);
       }
     }
 
@@ -268,33 +248,14 @@ export default function PaymentForm({ virtualLabId, toggleOpenStripeForm }: Paym
     );
 
   return (
-    <Elements
-      stripe={stripePromise}
-      options={{
-        clientSecret,
-        fonts: [
-          {
-            family: 'Titillium Web',
-            cssSrc:
-              'https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap',
-          },
-        ],
-        appearance: {
-          variables: {
-            fontFamily: 'Titillium Web',
-            fontSizeSm: '1rem',
-          },
-          rules: {
-            '.Input:focus': {
-              boxShadow:
-                '0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 6px rgba(18, 42, 66, 0.02), 0 0 0 2px #0050B3',
-              borderColor: 'none',
-            },
-          },
-        },
-      }}
-    >
-      <Form {...{ customerId, virtualLabId, toggleOpenStripeForm }} />
+    <Elements stripe={stripePromise} options={buildStripeFormOptions(clientSecret)}>
+      <Form
+        {...{
+          customerId,
+          virtualLabId,
+          toggleOpenStripeForm,
+        }}
+      />
     </Elements>
   );
 }
