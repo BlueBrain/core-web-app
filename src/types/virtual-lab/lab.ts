@@ -37,7 +37,13 @@ export enum SimulationType {
   SingleNeuron = 'single-neuron',
   PairedNeuron = 'paired-neuron',
   Synaptome = 'synaptome',
+  Microcircuit = 'microcircuit',
+  NeuroGliaVasculature = 'neuro-glia-vasculature',
+  BrainRegions = 'brain-regions',
+  BrainSystems = 'brain-systems',
+  WholeBrain = 'whole-brain',
 }
+
 export interface VirtualLabPlanDefinition {
   id: number;
   name: string;
