@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Modal, Spin, Form, Input, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form/Form';
-import { ComponentProps, ReactElement, useMemo, useState, useEffect, useReducer } from 'react';
+import { ComponentProps, ReactElement, useState, useEffect, useReducer } from 'react';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined, MailOutlined } from '@ant-design/icons';
@@ -112,9 +112,8 @@ function NewProjectModalForm({
   members,
 }: {
   form: FormInstance;
-  members: VirtualLabMember[];
+  members?: VirtualLabMember[];
 }) {
-  const [selectedMembers, setSelectedMembers] = useAtom(selectedMembersAtom);
   const [showInvitation, setShowInvitation] = useState(false);
   const [newInvite, setNewInvite] = useState<InvitedMember>({ email: '', role: 'admin' });
   const [invitedMembers, dispatch] = useReducer(
@@ -128,10 +127,11 @@ function NewProjectModalForm({
     },
     []
   );
+  const [selectedMembers, setSelectedMembers] = useAtom(selectedMembersAtom);
 
   useEffect(() => {
-    setSelectedMembers(members);
-  }, [setSelectedMembers, members]);
+    setSelectedMembers(invitedMembers);
+  }, [invitedMembers, setSelectedMembers]);
 
   return (
     <Form form={form} layout="vertical" style={{ paddingBlockStart: 40 }}>
@@ -165,7 +165,7 @@ function NewProjectModalForm({
         }}
       >
         {formItems.map(NewProjectModalInput)}
-        {selectedMembers.map((member) => (
+        {members?.map((member) => (
           <div key={member.id} className="text-primary-8">
             <VirtualLabMemberIcon
               role={member.role}
@@ -281,7 +281,8 @@ function NewProjectModalForm({
   );
 }
 
-const selectedMembersAtom = atom<VirtualLabMember[]>([]);
+const selectedMembersAtom = atom<InvitedMember[]>([]);
+
 export function NewProjectModal({
   onFail,
   onSuccess,
@@ -294,15 +295,8 @@ export function NewProjectModal({
   const [open, setOpen] = useAtom(newProjectModalOpenAtom);
   const [loading, setLoading] = useState(false);
   const session = useSession();
-  const members = useUnwrappedValue(
-    virtualLabMembersAtomFamily(virtualLabId)
-  ) as VirtualLabMember[];
-
-  const selectedMembers = useAtomValue(selectedMembersAtom);
-  const includeMembers = useMemo(
-    () => selectedMembers.map((m) => ({ email: m.email, role: m.role })),
-    [selectedMembers]
-  );
+  const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
+  const includeMembers = useAtomValue(selectedMembersAtom);
 
   const [form] = Form.useForm<{ name: string; description: string }>();
 
