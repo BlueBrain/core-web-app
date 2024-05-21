@@ -17,7 +17,6 @@ export function VirtualLabCreateInformation({ className }: VirtualLabCreateInfor
   return (
     <Layout className={className}>
       <Main canGoNext={valid} step="information">
-        <h2>Information</h2>
         <Form value={lab} onChange={updateLab} onValidityChange={setValid} fields={FIELDS} />
       </Main>
     </Layout>

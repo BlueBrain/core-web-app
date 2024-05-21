@@ -1,18 +1,43 @@
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
+import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '../create';
+import {
+  ModalStateProvider,
+  useModalState,
+} from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 export function CreateVirtualLabButton() {
-  const { showModal } = useModalState();
+  return (
+    <ModalStateProvider>
+      <CreateVirtualLabButtonContent />
+    </ModalStateProvider>
+  );
+}
+
+function CreateVirtualLabButtonContent() {
+  const { showModal, isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
 
   return (
-    <Button
-      className="h-12 w-52 rounded-none border-none text-sm font-bold text-primary-8"
-      size="small"
-      onClick={showModal}
-    >
-      Create Virtual Lab
-      <PlusOutlined className="relative bottom-1 left-3" />
-    </Button>
+    <>
+      <Button
+        className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
+        onClick={showModal}
+      >
+        <span className="relative text-primary-8">
+          Create virtual lab <PlusOutlined className="relative left-3 top-[0.1rem]" />
+        </span>
+      </Button>
+      <Modal
+        title={null}
+        open={isModalVisible}
+        width={800}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        {currentStep === 'information' && <VirtualLabCreateInformation />}
+        {currentStep === 'plan' && <VirtualLabCreatePlan />}
+      </Modal>
+    </>
   );
 }

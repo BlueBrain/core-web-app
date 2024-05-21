@@ -6,9 +6,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useCallback, useState } from 'react';
 
-import { ModalStateProvider, useModalState } from '../create/contexts/ModalStateContext';
 import { CreateVirtualLabButton } from '../VirtualLabTopMenu/CreateVirtualLabButton';
-import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '../create';
 import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import VirtualLabAndProject from './VirtualLabAndProject';
 import DashboardTotals from './DashboardTotals';
@@ -21,10 +19,9 @@ import {
 import useNotification from '@/hooks/notifications';
 import { Project } from '@/types/virtual-lab/projects';
 
-function VirtualLabDashboard() {
+export default function VirtualLabDashboard() {
   const virtualLabs = useAtomValue(loadable(virtualLabsOfUserAtom));
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
-  const { isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
   const [, setOpen] = useAtom(newProjectModalOpenAtom);
   const [virtualLabId, setVirtualLabId] = useAtom(virtualLabIdAtom);
   const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
@@ -73,24 +70,13 @@ function VirtualLabDashboard() {
               onClick={() => setIsProjectModalVisible(true)}
             >
               <span className="relative text-primary-8">
-                Create Project <PlusOutlined className="relative left-3" />
+                Create project <PlusOutlined className="relative left-3 top-[0.1rem]" />
               </span>
             </Button>
             <CreateVirtualLabButton />
           </div>
         </div>
       </div>
-      <Modal
-        title={null}
-        open={isModalVisible}
-        width={800}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        {currentStep === 'information' && <VirtualLabCreateInformation />}
-        {currentStep === 'plan' && <VirtualLabCreatePlan />}
-      </Modal>
 
       {virtualLabs.state === 'hasData' && virtualLabs.data && (
         <>
@@ -122,10 +108,7 @@ function VirtualLabDashboard() {
             <span className="my-3 block font-bold text-primary-8">Project Location</span>
             <Select
               style={{ width: 200 }}
-              options={[
-                { label: '-', value: '' },
-                ...virtualLabs.data.results.map((vl) => ({ label: vl.name, value: vl.id })),
-              ]}
+              options={virtualLabs.data.results.map((vl) => ({ label: vl.name, value: vl.id }))}
               onChange={(v) => setVirtualLabId(v)}
             />
           </Modal>
@@ -141,13 +124,5 @@ function VirtualLabDashboard() {
         </>
       )}
     </>
-  );
-}
-
-export default function VirtualLabDashboardWithModalState() {
-  return (
-    <ModalStateProvider>
-      <VirtualLabDashboard />
-    </ModalStateProvider>
   );
 }

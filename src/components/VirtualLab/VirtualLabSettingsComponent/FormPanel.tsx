@@ -1,14 +1,14 @@
-import { ReactNode, useState } from 'react';
-import { Button, ConfigProvider, Form, Input, Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { ReactNode, useCallback, useReducer, useState } from 'react';
+import debounce from 'lodash/debounce';
+import { Button, ConfigProvider, Form, Input } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { ConfigProviderProps } from 'antd/lib/config-provider';
-import { ButtonProps } from 'antd/lib/button/button';
 import { FormProps } from 'antd/lib/form/Form';
 import type { FormItemProps } from 'antd/lib/form/FormItem';
 import type { InputProps } from 'antd/lib/input/Input';
 import type { TextAreaProps } from 'antd/lib/input/TextArea';
-import merge from 'lodash/merge';
 
+import useNotification from '@/hooks/notifications';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
 
@@ -19,129 +19,156 @@ type RenderInputProps = Omit<FormItemProps, 'children'> & {
 
 type InformationForm = { name: string; description: string; reference_email: string };
 
-export const renderInput: (props: InputProps) => ReactNode = ({
-  disabled,
-  placeholder,
-  style,
-  title,
-  type,
-}) => {
+export const renderInput = ({ disabled, onClick, placeholder, style, title, type }: InputProps) => {
   return (
     <Input
-      className={disabled ? '' : 'font-bold'}
+      addonAfter={<Button ghost icon={<EditOutlined />} onClick={onClick} />}
+      className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
       disabled={disabled}
       placeholder={placeholder}
       required
-      style={{ ...style, borderTop: 'none', borderRight: 'none', borderLeft: 'none' }}
+      style={style}
       title={title}
       type={type}
+      variant="borderless"
     />
   );
 };
 
 export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
-  className,
   disabled,
+  name,
+  onClick,
   placeholder,
   style,
   title,
 }) => {
   return (
-    <Input.TextArea
-      autoSize
-      className={classNames(className, disabled ? '' : 'font-bold')}
-      disabled={disabled}
-      placeholder={placeholder}
-      required
-      style={{ ...style, borderTop: 'none', borderRight: 'none', borderLeft: 'none' }}
-      title={title}
-    />
+    <Input.Group className="flex items-center">
+      <Form.Item name={name} noStyle>
+        <Input.TextArea
+          className={classNames('!h-auto !bg-transparent', disabled ? '' : 'font-bold')}
+          disabled={disabled}
+          placeholder={placeholder}
+          required
+          rows={2}
+          style={{ ...style, height: 'auto' }}
+          title={title}
+          variant="borderless"
+        />
+      </Form.Item>
+      <Button ghost icon={<EditOutlined />} onClick={onClick} />
+    </Input.Group>
   );
 };
 
 function SettingsFormItem({
   children,
   className,
-  disabled,
-  name,
   label,
+  name,
   required,
-  rules,
-}: Omit<FormItemProps, 'children'> & {
-  children: (props: InputProps & TextAreaProps) => ReactNode;
-  disabled: InputProps['disabled'];
-}) {
+  rules: _rules, // Available as prop, but not necessary. AndD will trickle any rules down to the inputs.
+  type,
+  validateStatus,
+}: RenderInputProps) {
+  const [disabled, dispatch] = useReducer(
+    (state: boolean, { action }: { action: 'toggle' }): boolean => {
+      return action === 'toggle' ? !state : state;
+    },
+    true // Disabled by default
+  );
+
+  const onClick = useCallback(() => {
+    dispatch({ action: 'toggle' });
+  }, []);
+
   return (
-    <Form.Item
-      name={name}
-      label={required ? `${label}*` : label}
-      validateTrigger="onBlur"
-      rules={[{ ...rules, required }]}
-      className={classNames(`w-full pt-8`, className)}
-      required={required}
+    <ConfigProvider
+      theme={{
+        components: {
+          Button: {
+            defaultGhostColor: disabled ? '#69C0FF' : 'white',
+            defaultGhostBorderColor: 'transparent',
+          },
+        },
+      }}
     >
-      {children({
-        disabled,
-        placeholder: `${label}...`,
-      })}
-    </Form.Item>
+      <div
+        className={classNames(
+          `border-b-1 flex w-full items-center justify-between gap-4 border border-x-0 border-t-0 pt-8`,
+          disabled ? 'border-primary-3' : 'border-white',
+          className
+        )}
+      >
+        <Form.Item
+          label={required ? `${label}*` : label}
+          name={name}
+          required={required}
+          style={{ width: '100%' }}
+          hasFeedback={validateStatus === 'validating'}
+          validateStatus={validateStatus}
+        >
+          {children({
+            disabled,
+            name,
+            onClick,
+            placeholder: `${label}...`,
+            type,
+          })}
+        </Form.Item>
+      </div>
+    </ConfigProvider>
   );
 }
 
-function SettingsFormButton({ children, className, ...buttonProps }: ButtonProps) {
-  return (
-    <Button
-      className={classNames('h-14 rounded-none font-semibold', className)}
-      title="Save Changes"
-      {...buttonProps} // eslint-disable-line react/jsx-props-no-spreading
-    >
-      {children}
-    </Button>
-  );
+function getValidateStatusFromValues(
+  values: Partial<VirtualLab>,
+  status: 'error' | 'validating'
+): Record<keyof VirtualLab, 'error' | 'validating'> {
+  const entries = Object.entries(values).map(([k]) => [k, status]);
+
+  return Object.fromEntries(entries);
 }
 
 function SettingsForm({
   children,
   className,
-  theme,
   ...formProps
 }: FormProps & {
   theme?: ConfigProviderProps['theme'];
 }) {
   return (
     <ConfigProvider
-      theme={merge(
-        {
-          components: {
-            Button: {
-              colorBgContainer: '#00B212',
-              colorBgContainerDisabled: '#00B212', // Same as colorBgContainer
-              colorTextDisabled: '#262626',
-              defaultShadow: 'none',
-            },
-            Form: {
-              labelColor: '#69C0FF',
-              itemMarginBottom: 0,
-              verticalLabelPadding: 0,
-            },
-            Input: {
-              activeBg: 'transparent',
-              borderRadius: 0,
-              colorBgContainer: 'transparent',
-              colorText: '#fff',
-              colorTextDisabled: '#fff',
-              colorTextPlaceholder: '#8C8C8C',
-              // Antd uses `fontSizeLG` when no suffix/prefix icons are shown, and `fontSize` when these icons are shown. In both these cases, we want the same font size for our UI.
-              fontSize: 16,
-              fontSizeLG: 16,
-              hoverBorderColor: 'transparent',
-              paddingInline: 0,
-              paddingBlock: 10,
-            },
+      theme={{
+        components: {
+          Button: {
+            colorBgContainer: '#00B212',
+            colorBgContainerDisabled: '#00B212', // Same as colorBgContainer
+            colorTextDisabled: '#262626',
+            defaultShadow: 'none',
+          },
+          Form: {
+            controlHeight: 22, // Removing this will cause labels to jump when toggling disabled
+            labelColor: '#69C0FF',
+            itemMarginBottom: 0,
+            verticalLabelPadding: 0,
+          },
+          Input: {
+            activeBg: 'transparent',
+            activeShadow: 'none',
+            colorBgContainer: 'transparent',
+            colorText: '#fff',
+            colorTextDisabled: '#fff',
+            colorTextPlaceholder: '#8C8C8C',
+            // Antd uses `fontSizeLG` when no suffix/prefix icons are shown, and `fontSize` when these icons are shown. In both these cases, we want the same font size for our UI.
+            fontSize: 16,
+            fontSizeLG: 16,
+            paddingInline: 0,
+            paddingBlock: 10,
           },
         },
-        theme
-      )}
+      }}
     >
       <Form
         className={classNames('px-[28px]', className)}
@@ -162,119 +189,74 @@ export default function FormPanel({
   initialValues,
   items,
   name,
-  onFinish,
+  onValuesChange,
 }: Omit<FormProps, 'onFinish'> & {
   items: Array<RenderInputProps>;
-  onFinish: (values: Partial<VirtualLab>) => Promise<void>; // Modify typing to allow for Promise return.
+  onValuesChange: (values: Partial<VirtualLab>) => Promise<void>; // Modify typing to allow for Promise return.
 }) {
-  const [disabled, setDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [validateStatus, setValidateStatus] = useState<Partial<
+    Record<keyof VirtualLab, 'error' | 'validating'>
+  > | null>({ description: 'validating' });
+
   const [serverError, setServerError] = useState<string | null>(null);
 
   const [form] = Form.useForm<InformationForm>();
 
+  const notification = useNotification();
+
   const formItems = items.map(({ name: formItemName, ...formItemProps }) => (
     <SettingsFormItem
       key={formItemName}
-      disabled={disabled}
       name={formItemName}
+      validateStatus={
+        validateStatus && !!formItemName ? validateStatus[formItemName as keyof VirtualLab] : ''
+      }
       {...formItemProps} // eslint-disable-line react/jsx-props-no-spreading
     />
   ));
 
-  const submitBlock = (
-    <div className="col-span-2 flex items-center justify-end gap-2 py-4">
-      <SettingsFormButton
-        className="bg-neutral-3 text-neutral-7"
-        disabled={loading}
-        htmlType="button"
-        onClick={() => {
-          form.resetFields();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedOnValuesChange = useCallback(
+    debounce(async (values: Partial<VirtualLab>) => {
+      const validating = getValidateStatusFromValues(values, 'validating');
 
-          setDisabled(true);
-        }}
-      >
-        Cancel
-      </SettingsFormButton>
+      setValidateStatus(validating);
 
-      <Form.Item>
-        <SettingsFormButton
-          className="text-primary-8"
-          disabled={disabled || loading}
-          htmlType="submit"
-          onClick={() => {
-            setLoading(true);
+      return onValuesChange(values)
+        .then(() => {
+          const entries = Object.entries(values);
 
-            form.submit();
-          }}
-        >
-          {loading ? <Spin size="small" indicator={<LoadingOutlined />} /> : 'Save'}
-        </SettingsFormButton>
-      </Form.Item>
-    </div>
+          entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
+
+          setServerError(null); // Remove error
+          setValidateStatus(null); // Reset validateStatus
+        })
+        .catch((error) => {
+          setServerError(error.message);
+
+          const newValidateStatus = error.cause
+            ? getValidateStatusFromValues(error.cause, 'error')
+            : null;
+
+          setValidateStatus(newValidateStatus);
+        });
+    }, 600),
+    [onValuesChange]
   );
 
-  const editBlock = (
-    <div className="col-span-2 flex items-center justify-end gap-2 py-4">
-      {!!serverError && <p className="text-white">{`Something went wrong. ${serverError}`}</p>}
-      <SettingsFormButton
-        className="bg-neutral-3 text-neutral-7"
-        htmlType="button"
-        onClick={() => setDisabled(false)}
-      >
-        Edit virtual lab information
-      </SettingsFormButton>
-    </div>
-  );
-
-  if (disabled) {
-    return (
+  return (
+    <div className="flex flex-col gap-5">
       <SettingsForm
         className={className}
         form={form}
         initialValues={initialValues}
-        name={name} // TODO: Check whether this prop is necessary.
-        theme={{
-          components: {
-            Input: { colorBorder: 'white' },
-          },
-        }}
+        labelAlign="left"
+        name={name} // This will prefix any input IDs with the form name. Not sure whether necessary right now.
+        onValuesChange={debouncedOnValuesChange}
       >
         {formItems}
-        {editBlock}
       </SettingsForm>
-    );
-  }
-
-  return (
-    <SettingsForm
-      className={className}
-      form={form}
-      initialValues={initialValues}
-      name={name} // TODO: Check whether this prop is necessary.
-      onFinish={async (values) => {
-        return onFinish(values)
-          .then(() => {
-            setServerError(null);
-          })
-          .catch((error) => {
-            setServerError(error);
-
-            form.resetFields();
-          })
-          .finally(() => {
-            setLoading(false);
-            setDisabled(true);
-          });
-      }}
-      theme={{
-        components: {
-          Input: { colorBorder: '#69C0FF' },
-        },
-      }}
-    >
-      {formItems}
-      {submitBlock}
-    </SettingsForm>
+      {!!serverError && <p className="self-end px-8 text-xl text-error">{serverError}</p>}
+    </div>
   );
 }

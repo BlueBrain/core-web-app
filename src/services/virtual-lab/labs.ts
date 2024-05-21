@@ -51,17 +51,19 @@ export async function patchVirtualLab(
     virtual_lab: VirtualLab;
   }>
 > {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
+  return fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'PATCH',
     headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),
+  }).then(async (response) => {
+    if (!response.ok) {
+      const { details, message } = await response.json();
+
+      throw new Error(message, { cause: details });
+    }
+
+    return response.json();
   });
-
-  if (!response.ok) {
-    throw new Error(`Status: ${response.status}`);
-  }
-
-  return response.json();
 }
 
 export async function deleteVirtualLab(

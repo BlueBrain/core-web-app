@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useSetAtom } from 'jotai';
 import { Button } from '../Button';
 import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
-import { Step } from './Step';
 import useNotification from '@/hooks/notifications';
 import { classNames } from '@/util/utils';
 import { createVirtualLab } from '@/services/virtual-lab/labs';
@@ -18,7 +17,7 @@ export interface NavButtonsProps {
 }
 
 export function NavButtons({ className, step, disabled }: NavButtonsProps) {
-  const { handleNext, handleCancel } = useModalState();
+  const { handleNext, handleCancel, stepTouched, setIsModalVisible } = useModalState();
   const session = useSession();
   const notification = useNotification();
   const [loading, setLoading] = useState(false);
@@ -36,6 +35,7 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
         notification.success(`${response.data.virtual_lab.name} has been created.`);
         refresh((count) => count + 1);
         handleNext();
+        setIsModalVisible(false);
       })
       .catch((error) => {
         notification.error(`Virtual Lab creation failed: ${error}`);
@@ -51,20 +51,15 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
         Cancel
       </Button>
       {step === 'plan' ? (
-        <Button onClick={handleCreate} disabled={disabled || loading}>
+        <Button onClick={handleCreate} disabled={disabled || loading || !stepTouched}>
           {loading ? 'Creating...' : 'Create'}
         </Button>
       ) : (
-        <Button onClick={handleNext} disabled={disabled}>
+        <Button onClick={handleNext} disabled={disabled || !stepTouched}>
           Next
         </Button>
       )}
       <hr />
-      <div>{step}</div>
-      <div>
-        <Step selected={step === 'information'} />
-        <Step selected={step === 'plan'} />
-      </div>
     </div>
   );
 }

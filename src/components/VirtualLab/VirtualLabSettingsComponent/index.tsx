@@ -77,14 +77,16 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const updateVirtualLab = useCallback(
     async (formData: Partial<VirtualLab>): Promise<void> => {
-      const { data } = await patchVirtualLab(formData, id, token);
-      const { virtual_lab: virtualLab } = data;
+      return patchVirtualLab(formData, id, token).then((responseJSON) => {
+        const { data } = responseJSON;
+        const { virtual_lab: virtualLab } = data;
 
-      setVirtualLabDetail(
-        new Promise((resolve) => {
-          resolve(virtualLab);
-        })
-      );
+        setVirtualLabDetail(
+          new Promise((resolve) => {
+            resolve(virtualLab);
+          })
+        );
+      });
     },
     [id, setVirtualLabDetail, token]
   );
@@ -199,6 +201,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
                     label: 'Lab Name',
                     name: 'name',
                     required: true,
+                    rules: [{ max: 250 }],
                   },
                   {
                     className: 'col-span-2',
@@ -228,7 +231,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
                   },
                 ]}
                 name="settings" // TODO: Check whether this prop is necessary.
-                onFinish={updateVirtualLab}
+                onValuesChange={updateVirtualLab}
               />
             ),
             label: 'Lab Settings',

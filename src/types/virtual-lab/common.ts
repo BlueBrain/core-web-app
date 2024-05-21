@@ -6,7 +6,7 @@ export interface VlmResponse<T> {
 export interface VlmError {
   error_code: string;
   message: string;
-  details: string | null;
+  details: string | Record<string, string> | null;
 }
 
 export interface VirtualLabAPIListData<ReponseType> {

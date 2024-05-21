@@ -2,6 +2,7 @@ import { useId, useRef, useState } from 'react';
 
 import { FieldType } from '../../../types';
 import { classNames } from '@/util/utils';
+import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 
 import styles from './input-text.module.css';
 
@@ -11,7 +12,6 @@ export interface InputTextProps extends FieldType {
   onChange(value: string): void;
   onValidityChange(validity: boolean): void;
 }
-
 export function InputText({
   className,
   value,
@@ -25,6 +25,8 @@ export function InputText({
   title,
   options,
 }: InputTextProps) {
+  const { setStepTouched } = useModalState();
+  const [inputTouched, setInputTouched] = useState(false);
   const refInput = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState('');
   const inputId = useId();
@@ -36,13 +38,21 @@ export function InputText({
 
     onChange(input.value);
     const validity = input.checkValidity();
+
     onValidityChange(validity);
     setError(validity ? '' : input.validationMessage);
   };
+
   const handleMount = (input: HTMLInputElement | null) => {
     refInput.current = input;
     handleInputChange();
   };
+
+  const handleBlur = () => {
+    setStepTouched(true);
+    setInputTouched(true);
+  };
+
   return (
     <div className={classNames(styles.main, className)}>
       <header>
@@ -50,7 +60,7 @@ export function InputText({
           {label}
           {required ? '*' : ''}
         </label>
-        {error && <div>{error}</div>}
+        {inputTouched && error && <div>{error}</div>}
       </header>
       <input
         id={inputId}
@@ -58,11 +68,12 @@ export function InputText({
         type={type}
         list={list ? listId : undefined}
         placeholder={placeholder}
-        required={required}
+        required={required && inputTouched}
         pattern={pattern}
         title={title}
         value={value}
         onChange={handleInputChange}
+        onBlur={handleBlur}
       />
       {list && (
         <datalist id={listId}>
