@@ -4,7 +4,7 @@ import { basePath } from '@/config';
 
 export default function VirtualLabExploreMainPage() {
   return (
-    <div className="relative mt-5 flex h-[calc(100%-100px)] w-full items-center justify-center bg-black">
+    <div className="relative mt-5 flex h-[calc(100%-120px)] w-full items-center justify-center bg-black">
       <div className="relative flex h-4/5 w-2/3 items-center justify-center">
         <Image
           fill
@@ -21,7 +21,7 @@ export default function VirtualLabExploreMainPage() {
           literature search AI tool.
         </p>
       </div>
-      <div className="absolute bottom-4 right-4">
+      <div className="absolute bottom-[30px] right-[30px]">
         <div className="flex flex-col items-center justify-center gap-3">
           <Link
             href="explore/interactive"
