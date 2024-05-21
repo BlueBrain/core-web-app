@@ -134,7 +134,7 @@ export function CreditForm({ virtualLabId }: Props) {
               form={BILLING_FORM_NAME}
               type="number"
               min={0}
-              placeholder="enter amount here"
+              placeholder="Enter credit here"
               value={credit}
               onChange={onChange}
               className={classNames(
@@ -208,10 +208,16 @@ export function BalanceDetails({ virtualLabId }: Props) {
   }
 
   const { budget_amount: budgetAmount, total_spent: totalSpent } = balanceResult.data;
-  // const budget = 1918.14
-  // const totalSpent = 539.13
 
-  return <BalanceDetailsCard {...{ budgetAmount, totalSpent, virtualLabId }} />;
+  return (
+    <BalanceDetailsCard
+      {...{
+        virtualLabId,
+        budgetAmount,
+        totalSpent,
+      }}
+    />
+  );
 }
 
 export function SubmitCredit({ virtualLabId }: Props) {

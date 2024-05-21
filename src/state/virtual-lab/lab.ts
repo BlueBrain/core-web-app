@@ -17,7 +17,7 @@ import {
   getVirtualLabBalanceDetails,
   getVirtualLabPaymentMethods,
 } from '@/services/virtual-lab/billing';
-import { PaymentMethod, VlabBudget } from '@/types/virtual-lab/billing';
+import { PaymentMethod, VlabBalance } from '@/types/virtual-lab/billing';
 
 export const refreshAtom = atom(0);
 
@@ -75,7 +75,7 @@ export const virtualLabPaymentMethodsAtomFamily = atomFamily((virtualLabId: stri
 );
 
 export const virtualLabBalanceAtomFamily = atomFamily((virtualLabId: string) =>
-  atomWithRefresh<Promise<VlabBudget | undefined>>(async (get) => {
+  atomWithRefresh<Promise<VlabBalance | undefined>>(async (get) => {
     const session = get(sessionAtom);
     if (!session) {
       return;

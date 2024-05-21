@@ -29,7 +29,7 @@ type Props = Pick<
 
 export function PaymentMethodCardSkeleton() {
   return (
-    <div className="flex w-full animate-pulse items-center rounded-lg bg-gray-100 p-4 transition-colors duration-300 ease-out">
+    <div className="flex h-14 w-full animate-pulse items-center rounded-lg bg-gray-100 p-4 transition-colors duration-300 ease-out">
       <div className="mr-3 h-6 w-8 rounded bg-gray-200" />
       <div className="flex w-full min-w-0 justify-between gap-2">
         <div className="flex w-2/4 items-center gap-2">
@@ -96,7 +96,9 @@ export default function PaymentMethodCard({
     }
   };
 
-  const onDeletePaymentMethod = (pmId: string) => async () => {
+  const onDeletePaymentMethod = (pmId: string) => async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
     try {
       setIsDeleteLoading(true);
       if (accessToken) {
@@ -163,7 +165,12 @@ export default function PaymentMethodCard({
       {isSelected && (
         <div className="ml-auto select-none text-base text-white group-hover:hidden">Selected</div>
       )}
-      <div className="ml-auto hidden items-center justify-center gap-2 group-hover:flex">
+      <div
+        className={classNames(
+          'ml-auto items-center justify-center gap-2 group-hover:flex',
+          isSettingDefaultLoading || isDeleteLoading ? 'flex' : 'hidden'
+        )}
+      >
         {isDefault ? (
           <div className="select-none text-base text-primary-8">Default</div>
         ) : (

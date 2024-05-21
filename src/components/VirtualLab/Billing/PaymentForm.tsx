@@ -12,7 +12,7 @@ import { Button, Spin } from 'antd';
 import { Stripe, StripeElementsOptions } from '@stripe/stripe-js';
 
 import { useAtomValue, useSetAtom } from 'jotai';
-import { LoadingOutlined } from '@ant-design/icons';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import z from 'zod';
 
 import getStripe, { getErrorMessage } from './utils';
@@ -150,52 +150,61 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
   };
 
   return (
-    <form
-      name="stripe-payment-method-form"
-      className="mx-auto w-full max-w-2xl"
-      onSubmit={onPaymentMethodSubmit}
-    >
-      {stripeElementsReady && (
-        <>
-          <div className="w-full">
-            <StripeInput
-              type="email"
-              id="email"
-              name="email"
-              title="Email"
-              value={cardholderForm.email}
-              onChange={onCardholderChange('email')}
-              error={cardholderFormErrorKeys.includes('email')}
-              onBlur={onCardholderBlur('email')}
-            />
-          </div>
-          <div className="w-full">
-            <StripeInput
-              type="text"
-              id="name"
-              name="name"
-              title="Cardholder name"
-              value={cardholderForm.name}
-              error={cardholderFormErrorKeys.includes('name')}
-              onChange={onCardholderChange('name')}
-              onBlur={onCardholderBlur('name')}
-            />
-          </div>
-        </>
-      )}
-      <PaymentElement onReady={onStripeElementsReady} />
-      {stripeElementsReady && (
-        <Button
-          size="large"
-          htmlType="submit"
-          className="my-4 w-full rounded-none border-primary-8 bg-primary-8 text-center text-xl text-white"
-          disabled={disableForm}
-          loading={formLoading}
-        >
-          Save card
-        </Button>
-      )}
-    </form>
+    <div className="relative my-4 flex w-full flex-col">
+      <Button
+        type="text"
+        htmlType="button"
+        className="mt-3 self-end"
+        icon={<CloseOutlined className="text-base font-thin" />}
+        onClick={() => toggleOpenStripeForm(false)}
+      />
+      <form
+        name="stripe-payment-method-form"
+        className="mx-auto w-full max-w-2xl"
+        onSubmit={onPaymentMethodSubmit}
+      >
+        {stripeElementsReady && (
+          <>
+            <div className="w-full">
+              <StripeInput
+                type="email"
+                id="email"
+                name="email"
+                title="Email"
+                value={cardholderForm.email}
+                onChange={onCardholderChange('email')}
+                error={cardholderFormErrorKeys.includes('email')}
+                onBlur={onCardholderBlur('email')}
+              />
+            </div>
+            <div className="w-full">
+              <StripeInput
+                type="text"
+                id="name"
+                name="name"
+                title="Cardholder name"
+                value={cardholderForm.name}
+                error={cardholderFormErrorKeys.includes('name')}
+                onChange={onCardholderChange('name')}
+                onBlur={onCardholderBlur('name')}
+              />
+            </div>
+          </>
+        )}
+        <PaymentElement onReady={onStripeElementsReady} />
+        {stripeElementsReady && (
+          <Button
+            size="large"
+            htmlType="submit"
+            className="my-4 w-full rounded-none border-primary-8 bg-primary-8 text-center text-xl text-white"
+            disabled={disableForm}
+            loading={formLoading}
+          >
+            Save card
+          </Button>
+        )}
+      </form>
+    </div>
   );
 }
 

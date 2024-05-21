@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { loadable } from 'jotai/utils';
@@ -6,6 +6,7 @@ import { useAtomValue } from 'jotai';
 import orderBy from 'lodash/orderBy';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
+import { Loadable } from 'jotai/vanilla/utils/loadable';
 
 import PaymentForm from './PaymentForm';
 import { ADD_NEW_PAYMENT_METHOD_DESCRIPTION, FETCH_PAYMENT_METHODS_FAILED } from './messages';
@@ -14,50 +15,26 @@ import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
 import { PaymentMethod } from '@/types/virtual-lab/billing';
 import { classNames } from '@/util/utils';
 
-type PaymentMethodsListProps = {
-  virtualLabId: string;
-  paymentMethods: PaymentMethod[];
-};
-
 type Props = {
   virtualLabId: string;
 };
 
-function PaymentMethodsList({ virtualLabId, paymentMethods }: PaymentMethodsListProps) {
-  return orderBy(paymentMethods, ['default'], ['desc']).map((pm) => (
-    <PaymentMethodCard
-      key={pm.id}
-      id={pm.id}
-      cardholderName={pm.cardholder_name}
-      cardNumber={pm.card_number}
-      virtualLabId={virtualLabId}
-      brand={pm.brand}
-      isDefault={pm.default}
-    />
-  ));
-}
+type PaymentMethodsListProps = {
+  virtualLabId: string;
+  showCardsList: boolean;
+  paymentMethods: Loadable<Promise<PaymentMethod[] | undefined>>;
+};
 
 function FormWidget({ virtualLabId }: Props) {
   const [showStripeForm, toggleOpenStripeForm] = useState(false);
   const openStripeForm = () => toggleOpenStripeForm(true);
-  const closeStripeForm = () => toggleOpenStripeForm(false);
-
   return showStripeForm ? (
-    <div className="relative my-4 flex w-full flex-col">
-      <Button
-        type="text"
-        htmlType="button"
-        className="self-end"
-        icon={<CloseOutlined className="text-base font-thin" />}
-        onClick={closeStripeForm}
-      />
-      <PaymentForm
-        {...{
-          virtualLabId,
-          toggleOpenStripeForm,
-        }}
-      />
-    </div>
+    <PaymentForm
+      {...{
+        virtualLabId,
+        toggleOpenStripeForm,
+      }}
+    />
   ) : (
     <button
       type="button"
@@ -73,16 +50,23 @@ function FormWidget({ virtualLabId }: Props) {
   );
 }
 
-export default function PaymentMethodsWidget({ virtualLabId }: Props) {
-  const [mountCardsList, toggleMountCardsList] = useReducer((prev) => !prev, false);
-  const paymentMethods = useAtomValue(loadable(virtualLabPaymentMethodsAtomFamily(virtualLabId)));
+function PaymentMethodsList({
+  virtualLabId,
+  showCardsList,
+  paymentMethods,
+}: PaymentMethodsListProps) {
+  const previousCardsCount = useRef(
+    paymentMethods.state === 'hasData' ? paymentMethods.data?.length : 1
+  );
 
   if (paymentMethods.state === 'loading') {
     return (
       <div className="flex w-full flex-col gap-2">
-        {[...Array(3)].map((i) => (
-          <PaymentMethodCardSkeleton key={`payment-method-card-${i}`} />
-        ))}
+        {Array(previousCardsCount.current)
+          .fill('')
+          .map((i) => (
+            <PaymentMethodCardSkeleton key={`payment-method-card-${i}`} />
+          ))}
       </div>
     );
   }
@@ -93,7 +77,51 @@ export default function PaymentMethodsWidget({ virtualLabId }: Props) {
       </div>
     );
   }
-  if (paymentMethods.data && !paymentMethods.data.length) {
+
+  const defaultPaymentMethod = find(paymentMethods.data, ['default', true]);
+  const remainingPaymentMethods = filter(paymentMethods.data, ['default', false]);
+  previousCardsCount.current = paymentMethods.data.length + 1;
+
+  return (
+    <>
+      {defaultPaymentMethod && (
+        <PaymentMethodCard
+          key={`default-${defaultPaymentMethod.id}`}
+          id={defaultPaymentMethod.id}
+          virtualLabId={virtualLabId}
+          cardholderName={defaultPaymentMethod.cardholder_name}
+          cardNumber={defaultPaymentMethod.card_number}
+          brand={defaultPaymentMethod.brand}
+          isDefault={defaultPaymentMethod.default}
+        />
+      )}
+      <div className={classNames('w-full', showCardsList && 'animate-fade-in')}>
+        {showCardsList && (
+          <>
+            {orderBy(remainingPaymentMethods, ['default'], ['desc']).map((pm) => (
+              <PaymentMethodCard
+                key={pm.id}
+                id={pm.id}
+                cardholderName={pm.cardholder_name}
+                cardNumber={pm.card_number}
+                virtualLabId={virtualLabId}
+                brand={pm.brand}
+                isDefault={pm.default}
+              />
+            ))}
+            <FormWidget {...{ virtualLabId }} />
+          </>
+        )}
+      </div>
+    </>
+  );
+}
+
+export default function PaymentMethodsWidget({ virtualLabId }: Props) {
+  const [showCardsList, toggleShowCardsList] = useReducer((prev) => !prev, false);
+  const paymentMethods = useAtomValue(loadable(virtualLabPaymentMethodsAtomFamily(virtualLabId)));
+
+  if (paymentMethods.state === 'hasData' && paymentMethods.data && !paymentMethods.data.length) {
     return (
       <div className="my-7 w-full">
         <div className="mb-5">
@@ -107,47 +135,21 @@ export default function PaymentMethodsWidget({ virtualLabId }: Props) {
     );
   }
 
-  const defaultPaymentMethod = find(paymentMethods.data, ['default', true]);
-  const remainingPaymentMethods = filter(paymentMethods.data, ['default', false]);
-
   return (
     <div className="mt-10 w-full py-5">
       <div className="flex w-full items-center justify-between gap-2">
-        <div className="text-base font-bold">Payment method</div>
+        <div className="text-base font-bold">Payment methods</div>
         <Button
           htmlType="button"
           type="text"
           className="flex items-center justify-center gap-px text-base font-normal"
-          onClick={toggleMountCardsList}
+          onClick={toggleShowCardsList}
         >
           Manage cards
-          {mountCardsList && <CloseOutlined className="text-sm text-gray-300" />}
+          {showCardsList && <CloseOutlined className="text-sm text-gray-300" />}
         </Button>
       </div>
-      {defaultPaymentMethod && (
-        <PaymentMethodCard
-          key={`default-${defaultPaymentMethod.id}`}
-          id={defaultPaymentMethod.id}
-          virtualLabId={virtualLabId}
-          cardholderName={defaultPaymentMethod.cardholder_name}
-          cardNumber={defaultPaymentMethod.card_number}
-          brand={defaultPaymentMethod.brand}
-          isDefault={defaultPaymentMethod.default}
-        />
-      )}
-      <div className={classNames('w-full', mountCardsList && 'animate-fade-in')}>
-        {mountCardsList && (
-          <>
-            <PaymentMethodsList
-              {...{
-                virtualLabId,
-                paymentMethods: remainingPaymentMethods,
-              }}
-            />
-            <FormWidget {...{ virtualLabId }} />
-          </>
-        )}
-      </div>
+      <PaymentMethodsList {...{ virtualLabId, showCardsList, paymentMethods }} />
     </div>
   );
 }
