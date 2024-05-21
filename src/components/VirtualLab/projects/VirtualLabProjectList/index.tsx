@@ -14,8 +14,6 @@ import { Project } from '@/types/virtual-lab/projects';
 import { virtualLabMembersAtomFamily, newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
-import { useSetTypes } from '@/components/ConnectomeModelAssignment/hooks';
-import Email from 'next-auth/providers/email';
 
 const { Option } = Select;
 
@@ -120,8 +118,12 @@ function NewProjectModalForm({
   const [showInvitation, setShowInvitation] = useState(false);
   const [newInvite, setNewInvite] = useState<InvitedMember>({ email: '', role: 'admin' });
   const [invitedMembers, dispatch] = useReducer(
-    (prevMembers: InvitedMember[], { type, payload }: { type: 'add'; payload: InvitedMember }) => {
+    (
+      prevMembers: InvitedMember[],
+      { type, payload }: { type: 'add' | 'remove'; payload: InvitedMember }
+    ): InvitedMember[] => {
       if (type === 'add') return [...prevMembers, payload];
+      if (type === 'remove') return prevMembers.filter((m) => m.email !== payload.email);
       return prevMembers;
     },
     []
@@ -188,6 +190,27 @@ function NewProjectModalForm({
           </div>
         ))}
 
+        {invitedMembers.map((member) => (
+          <div key={member.email} className="mt-1 flex items-center text-primary-8">
+            <div className="inline-flex h-12 w-12 items-center justify-center bg-primary-8">
+              <MailOutlined className="text-white" />
+            </div>
+            <div key={member.email} className="ml-5 inline-block font-bold">
+              {member.email}
+            </div>
+            <div className="flex-grow" />
+            <button
+              type="button"
+              className="float-right mr-3 inline-block"
+              onClick={() => {
+                dispatch({ type: 'remove', payload: member });
+              }}
+            >
+              Cancel invitation
+            </button>
+          </div>
+        ))}
+
         {showInvitation && (
           <div className="mt-3 flex w-full items-center">
             <div className="inline-flex h-12 w-12 items-center justify-center bg-gray-100">
@@ -216,7 +239,15 @@ function NewProjectModalForm({
             </div>
             <div className="flex">
               {!!newInvite.email && (
-                <button type="button" className="text-sm text-primary-7">
+                <button
+                  type="button"
+                  className="text-sm text-primary-7"
+                  onClick={() => {
+                    dispatch({ type: 'add', payload: newInvite });
+                    setNewInvite({ email: '', role: 'admin' });
+                    setShowInvitation(false);
+                  }}
+                >
                   Confirm
                 </button>
               )}
