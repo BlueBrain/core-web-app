@@ -6,7 +6,11 @@ import find from 'lodash/find';
 import kebabCase from 'lodash/kebabCase';
 
 import { formatCurrency } from './utils';
-import { PAYMENT_FAILED, PAYMENT_SUCCEEDED, PROCESSING_TRANSACTION_FAILED } from './messages';
+import {
+  PROCESSING_TRANSACTION_FAILED,
+  TRANSACTION_FAILED,
+  TRANSACTION_SUCCEEDED,
+} from './messages';
 import { transactionFormValidator, useValidateTransactionForm } from './useValidator';
 import useNotification from '@/hooks/notifications';
 import {
@@ -78,9 +82,9 @@ export function CreditForm({ virtualLabId }: Props) {
 
         if (data.status === 'succeeded') {
           refreshBalanceResult();
-          successNotify(PAYMENT_SUCCEEDED, undefined, 'topRight', true, virtualLabId);
+          successNotify(TRANSACTION_SUCCEEDED, undefined, 'topRight', true, virtualLabId);
         } else {
-          errorNotify(PAYMENT_FAILED, undefined, 'topRight', true, virtualLabId);
+          errorNotify(TRANSACTION_FAILED, undefined, 'topRight', true, virtualLabId);
         }
       }
     } catch (er) {
@@ -173,7 +177,7 @@ function BalanceDetailsCard(
         <div className="text-sm text-primary-7">Your current credit balance:</div>
         <div className="text-4xl font-bold text-primary-8">
           {/* eslint-disable-next-line react/destructuring-assignment */}
-          {'loading' in props ? <Skeleton.Button active /> : formatCurrency(props.budgetAmount)}
+          {'loading' in props ? <Skeleton.Button active /> : formatCurrency(props.budget)}
         </div>
       </div>
       <div>
@@ -207,13 +211,13 @@ export function BalanceDetails({ virtualLabId }: Props) {
     return null;
   }
 
-  const { budget_amount: budgetAmount, total_spent: totalSpent } = balanceResult.data;
+  const { budget, total_spent: totalSpent } = balanceResult.data;
 
   return (
     <BalanceDetailsCard
       {...{
         virtualLabId,
-        budgetAmount,
+        budget,
         totalSpent,
       }}
     />

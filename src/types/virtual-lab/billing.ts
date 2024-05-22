@@ -15,7 +15,7 @@ export type PaymentMethod = {
 
 export type VlabBalance = {
   virtual_lab_id: string;
-  budget_amount: number;
+  budget: number;
   total_spent: number;
 };
 

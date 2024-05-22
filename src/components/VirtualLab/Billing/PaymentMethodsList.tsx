@@ -9,7 +9,7 @@ import find from 'lodash/find';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 
 import PaymentForm from './PaymentForm';
-import { ADD_NEW_PAYMENT_METHOD_DESCRIPTION, FETCH_PAYMENT_METHODS_FAILED } from './messages';
+import { ADDING_NEW_PAYMENT_METHOD_DESCRIPTION, FETCHING_PAYMENT_METHODS_FAILED } from './messages';
 import PaymentMethodCard, { PaymentMethodCardSkeleton } from './PaymentMethodCard';
 import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
 import { PaymentMethod } from '@/types/virtual-lab/billing';
@@ -73,7 +73,7 @@ function PaymentMethodsList({
   if (paymentMethods.state === 'hasError' || !paymentMethods.data) {
     return (
       <div className="my-4 inline-flex w-full min-w-0">
-        <div className="rounded-lg border p-8">{FETCH_PAYMENT_METHODS_FAILED}</div>
+        <div className="rounded-lg border p-8">{FETCHING_PAYMENT_METHODS_FAILED}</div>
       </div>
     );
   }
@@ -127,7 +127,7 @@ export default function PaymentMethodsWidget({ virtualLabId }: Props) {
         <div className="mb-5">
           <h3 className="text-lg font-bold text-primary-8">Add a New Payment Method</h3>
           <p className="text-base font-normal text-neutral-4">
-            {ADD_NEW_PAYMENT_METHOD_DESCRIPTION}
+            {ADDING_NEW_PAYMENT_METHOD_DESCRIPTION}
           </p>
         </div>
         <FormWidget {...{ virtualLabId }} />

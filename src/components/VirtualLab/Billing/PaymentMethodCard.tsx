@@ -3,6 +3,12 @@ import { Button } from 'antd';
 import { useState } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 
+import {
+  DEFAULTING_PAYMENT_METHOD_FAILED,
+  DEFAULTING_PAYMENT_METHOD_SUCCEEDED,
+  DELETING_PAYMENT_METHOD_FAILED,
+  DELETING_PAYMENT_METHOD_SUCCEEDED,
+} from './messages';
 import { PaymentMethod } from '@/types/virtual-lab/billing';
 import { KeysToCamelCase } from '@/util/typing';
 import {
@@ -78,19 +84,15 @@ export default function PaymentMethodCard({
         await updateDefaultPaymentMethodToVirtualLab(virtualLabId, accessToken, pmId);
         refreshPaymentMethods();
         successNotify(
-          `Success! Your card ending with ${cardNumber} is now your default payment method.`,
+          DEFAULTING_PAYMENT_METHOD_SUCCEEDED.replace('$$', cardNumber),
           undefined,
-          'topRight'
+          'topRight',
+          true,
+          virtualLabId
         );
       }
     } catch (error) {
-      errorNotify(
-        `There was a problem updating your default payment method, Please try again later.`,
-        undefined,
-        'topRight',
-        true,
-        virtualLabId
-      );
+      errorNotify(DEFAULTING_PAYMENT_METHOD_FAILED, undefined, 'topRight', true, virtualLabId);
     } finally {
       setIsSettingDefaultLoading(false);
     }
@@ -105,19 +107,13 @@ export default function PaymentMethodCard({
         await deletePaymentMethodToVirtualLab(virtualLabId, accessToken, pmId);
         refreshPaymentMethods();
         successNotify(
-          `Success! Your card ending with ${cardNumber} is deleted.`,
+          DELETING_PAYMENT_METHOD_SUCCEEDED.replace('$$', cardNumber),
           undefined,
           'topRight'
         );
       }
     } catch (error) {
-      errorNotify(
-        `There was a problem deleting the payment method, Please try again later.`,
-        undefined,
-        'topRight',
-        true,
-        virtualLabId
-      );
+      errorNotify(DELETING_PAYMENT_METHOD_FAILED, undefined, 'topRight', true, virtualLabId);
     } finally {
       setIsDeleteLoading(false);
     }

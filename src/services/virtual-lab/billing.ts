@@ -10,7 +10,7 @@ type NewPaymentMethodPayload = {
 
 type NewBudgetTopUpPayload = {
   credit?: number;
-  selectedPaymentMethodId?: string;
+  paymentMethodId?: string;
 };
 
 type VirtualLabPaymentMethodsResponse = {
@@ -99,7 +99,14 @@ export async function addVirtualLabBudget(
 ): Promise<VirtualLabCreditTopupResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/budget-topup`, {
     method: 'POST',
-    headers: createVLApiHeaders(token),
+    headers: {
+      ...createVLApiHeaders(token),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      credit: payload.credit,
+      payment_method_id: payload.paymentMethodId,
+    }),
   });
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);

@@ -15,9 +15,13 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import z from 'zod';
 
-import getStripe, { getErrorMessage } from './utils';
+import getStripe from './utils';
 import StripeInput from './StripeInput';
-import { PREP_PAYMENT_FORM } from './messages';
+import {
+  ADDING_NEW_PAYMENT_METHOD_FAILED,
+  ADDING_NEW_PAYMENT_METHOD_SUCCEEDED,
+  PREPARING_STRIPE_FORM,
+} from './messages';
 import useNotification from '@/hooks/notifications';
 import { getZodErrorPath, isStringEmpty } from '@/util/utils';
 import {
@@ -73,7 +77,7 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
   const accessToken = useAccessToken();
   const elements = useElements();
   const stripe = useStripe();
-  const { error: errorNotify } = useNotification();
+  const { error: errorNotify, success: successNotify } = useNotification();
   const refreshPaymentMethods = useSetAtom(virtualLabPaymentMethodsAtomFamily(virtualLabId));
   const setTransactionFormState = useSetAtom(transactionFormStateAtom);
   const [stripeElementsReady, setStipeElementsReady] = useState(false);
@@ -134,13 +138,19 @@ export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
           email,
           setupIntentId: setupIntent.id,
         });
-
+        successNotify(
+          ADDING_NEW_PAYMENT_METHOD_SUCCEEDED,
+          undefined,
+          'topRight',
+          true,
+          virtualLabId
+        );
         setTransactionFormState((prev) => ({ ...prev, selectedPaymentMethodId: PaymentMethod.id }));
         toggleOpenStripeForm(false);
         refreshPaymentMethods();
       }
     } catch (error) {
-      errorNotify(getErrorMessage(error));
+      errorNotify(ADDING_NEW_PAYMENT_METHOD_FAILED, undefined, 'topRight', true, virtualLabId);
     } finally {
       setFormLoading(false);
       setCardHolderForm({ name: '', email: '' });
@@ -237,7 +247,7 @@ export default function PaymentForm({ virtualLabId, toggleOpenStripeForm }: Paym
           setLoadingStripe(false);
         }
       } catch (error) {
-        errorNotify(PREP_PAYMENT_FORM, undefined, 'topRight', true, virtualLabId);
+        errorNotify(PREPARING_STRIPE_FORM, undefined, 'topRight', true, virtualLabId);
         setLoadingStripe(false);
         toggleOpenStripeForm(false);
       }
