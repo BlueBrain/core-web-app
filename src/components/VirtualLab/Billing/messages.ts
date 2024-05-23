@@ -1,5 +1,7 @@
 export const TRANSACTION_SUCCEEDED =
   "Your order has been placed. We'll send you an email with your order details.";
+export const TRANSACTION_AFTER_REDIRECTION_SUCCEEDED =
+  "Your order of $$  has been placed. We'll send you an email with your order details.";
 export const TRANSACTION_FAILED =
   'We are sorry, there was an error processing your payment. Please try again with a different payment method';
 export const PROCESSING_TRANSACTION_FAILED =
@@ -25,3 +27,5 @@ export const DEFAULTING_PAYMENT_METHOD_FAILED =
   'There was a problem updating your default payment method, Please try again later.';
 export const DEFAULTING_PAYMENT_METHOD_SUCCEEDED =
   'Success! Your card ending with $$ is now your default payment method.';
+
+export const VALIDATE_PAYMENT_INTENT_FAILED = 'An error occurred when following payment order';

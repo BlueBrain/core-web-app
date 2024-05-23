@@ -22,4 +22,6 @@ export type VlabBalance = {
 export type VlabBudgetTopup = {
   virtual_lab_id: string;
   status: PaymentIntent['status'];
+  next_action: PaymentIntent['next_action'];
+  cancellation_reason: PaymentIntent.CancellationReason | null;
 };

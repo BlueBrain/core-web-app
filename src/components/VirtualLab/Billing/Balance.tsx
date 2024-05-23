@@ -1,15 +1,19 @@
-import { ChangeEventHandler, FormEventHandler } from 'react';
+import { ChangeEventHandler, FormEventHandler, useEffect } from 'react';
 import { Button, Skeleton } from 'antd';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable, useResetAtom } from 'jotai/utils';
+import { useRouter } from 'next/navigation';
+import { parseAsString, useQueryStates } from 'nuqs';
 import find from 'lodash/find';
 import kebabCase from 'lodash/kebabCase';
 
-import { formatCurrency } from './utils';
+import getStripe, { formatCurrency } from './utils';
 import {
   PROCESSING_TRANSACTION_FAILED,
+  TRANSACTION_AFTER_REDIRECTION_SUCCEEDED,
   TRANSACTION_FAILED,
   TRANSACTION_SUCCEEDED,
+  VALIDATE_PAYMENT_INTENT_FAILED,
 } from './messages';
 import { transactionFormValidator, useValidateTransactionForm } from './useValidator';
 import useNotification from '@/hooks/notifications';
@@ -32,12 +36,25 @@ const BILLING_FORM_NAME = 'add-credit-form';
 
 export function CreditForm({ virtualLabId }: Props) {
   const token = useAccessToken();
+  const { replace: redirect } = useRouter();
   const { error: errorNotify, success: successNotify } = useNotification();
   const refreshBalanceResult = useSetAtom(virtualLabBalanceAtomFamily(virtualLabId));
   const [{ credit, selectedPaymentMethodId, errors }, setTransactionFormState] =
     useAtom(transactionFormStateAtom);
   const paymentMethods = useAtomValue(loadable(virtualLabPaymentMethodsAtomFamily(virtualLabId)));
   const resetTransactionFormStateAtom = useResetAtom(transactionFormStateAtom);
+
+  const [
+    { payment_intent_client_secret: paymentIntentClientSecret },
+    setPaymentIntentAfterRedirection,
+  ] = useQueryStates(
+    {
+      payment_intent: parseAsString.withDefault(''),
+      payment_intent_client_secret: parseAsString.withDefault(''),
+      source_type: parseAsString.withDefault(''),
+    },
+    { clearOnDefault: true }
+  );
 
   const defaultPaymentMethodId =
     paymentMethods.state === 'hasData'
@@ -79,10 +96,16 @@ export function CreditForm({ virtualLabId }: Props) {
     try {
       if (token && isValid && payload) {
         const { data } = await addVirtualLabBudget(virtualLabId, payload, token);
-
         if (data.status === 'succeeded') {
           refreshBalanceResult();
           successNotify(TRANSACTION_SUCCEEDED, undefined, 'topRight', true, virtualLabId);
+        } else if (
+          data.status === 'requires_action' &&
+          data.next_action &&
+          data.next_action.type === 'redirect_to_url' &&
+          data.next_action.redirect_to_url?.url
+        ) {
+          redirect(data.next_action.redirect_to_url.url);
         } else {
           errorNotify(TRANSACTION_FAILED, undefined, 'topRight', true, virtualLabId);
         }
@@ -93,6 +116,50 @@ export function CreditForm({ virtualLabId }: Props) {
       resetTransactionFormStateAtom();
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      if (paymentIntentClientSecret) {
+        const stripe = await getStripe();
+        if (stripe) {
+          const { paymentIntent } = await stripe.retrievePaymentIntent(paymentIntentClientSecret);
+          if (paymentIntent?.last_payment_error) {
+            errorNotify(
+              `Oops, ${paymentIntent.last_payment_error.message ?? VALIDATE_PAYMENT_INTENT_FAILED}`,
+              undefined,
+              'topRight',
+              true,
+              virtualLabId
+            );
+          } else if (paymentIntent?.status === 'succeeded') {
+            refreshBalanceResult();
+            successNotify(
+              TRANSACTION_AFTER_REDIRECTION_SUCCEEDED.replace(
+                '$$',
+                formatCurrency(paymentIntent.amount / 100)
+              ),
+              undefined,
+              'topRight',
+              true,
+              virtualLabId
+            );
+          }
+        }
+        setPaymentIntentAfterRedirection({
+          payment_intent: '',
+          payment_intent_client_secret: '',
+          source_type: '',
+        });
+      }
+    })();
+  }, [
+    errorNotify,
+    successNotify,
+    setPaymentIntentAfterRedirection,
+    refreshBalanceResult,
+    paymentIntentClientSecret,
+    virtualLabId,
+  ]);
 
   return (
     <div className="inline-flex w-full min-w-full items-center bg-white py-4">
@@ -140,6 +207,7 @@ export function CreditForm({ virtualLabId }: Props) {
               min={0}
               placeholder="Enter credit here"
               value={credit}
+              onWheel={(e) => e.currentTarget.blur()}
               onChange={onChange}
               className={classNames(
                 'peer ml-2 flex-grow text-2xl font-bold text-primary-8 outline-none',
