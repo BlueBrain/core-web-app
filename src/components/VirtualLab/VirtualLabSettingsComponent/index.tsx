@@ -8,6 +8,7 @@ import { CollapseProps } from 'antd/lib/collapse/Collapse';
 import { CollapsibleType } from 'antd/lib/collapse/CollapsePanel';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { useQueryState } from 'nuqs';
 
 import Billing from '../Billing';
 import ProjectsPanel from './ProjectsPanel';
@@ -32,7 +33,7 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   );
 }
 
-function CustomCollapse({ className, items }: CollapseProps) {
+function CustomCollapse({ className, items, activeKey, onChange }: CollapseProps) {
   return (
     <ConfigProvider
       theme={{
@@ -55,6 +56,8 @@ function CustomCollapse({ className, items }: CollapseProps) {
       <Collapse
         accordion
         destroyInactivePanel
+        activeKey={activeKey}
+        onChange={onChange}
         expandIconPosition="end"
         expandIcon={ExpandIcon}
         className={classNames(className)}
@@ -71,7 +74,10 @@ function CustomCollapse({ className, items }: CollapseProps) {
 export default function VirtualLabSettingsComponent({ id, token }: { id: string; token: string }) {
   const router = useRouter();
   const userIsAdmin = true;
-
+  const [activePanelKey, setActivePanel] = useQueryState('panel', {
+    clearOnDefault: true,
+    defaultValue: '',
+  });
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
   const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
   const refreshVirtualLabsOfUser = useSetAtom(virtualLabsOfUserAtom);
@@ -91,6 +97,8 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     },
     [id, setVirtualLabDetail, token]
   );
+
+  const onChangePanel = (key: string | string[]) => setActivePanel(String(key));
 
   const onDeleteVirtualLab = useCallback(async (): Promise<VirtualLab> => {
     const { data } = await deleteVirtualLab(id, token);
@@ -151,6 +159,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
   const header = useMemo(() => {
     return virtualLabDetail.state === 'hasData'
       ? {
+          key: 'header',
           collapsible: 'disabled' as CollapsibleType, // Type-casting shouldn't be necessary here, but it is for some reason.
           showArrow: false,
           label: (
@@ -187,6 +196,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     () =>
       virtualLabDetail.state === 'hasData'
         ? {
+            key: 'settings',
             children: (
               <FormPanel
                 className="grid grid-cols-2 gap-x-6"
@@ -264,6 +274,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     () =>
       virtualLabDetail.state === 'hasData'
         ? {
+            key: 'plans',
             children: !!plansWithDescriptions && (
               <PlanPanel
                 currentPlan={virtualLabDetail.data?.plan_id || 0}
@@ -280,6 +291,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const budget = useMemo(
     () => ({
+      key: 'project-budget',
       children: <ProjectsPanel expandIcon={ExpandIcon} virtualLabId={id} />,
       label: 'Budgets',
     }),
@@ -288,6 +300,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const billing = useMemo(
     () => ({
+      key: 'billing',
       children: <Billing virtualLabId={id} />,
       label: 'Billing',
     }),
@@ -298,6 +311,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     () =>
       virtualLabDetail.state === 'hasData' && userIsAdmin
         ? {
+            key: 'danger-zone',
             children: (
               <DangerZonePanel
                 onClick={onDeleteVirtualLab}
@@ -349,7 +363,12 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
       >
         <ArrowLeftOutlined /> Back to
       </Button>
-      <CustomCollapse className="flex flex-col gap-1 text-primary-8" items={collapseItems} />
+      <CustomCollapse
+        className="flex flex-col gap-1 text-primary-8"
+        items={collapseItems}
+        activeKey={activePanelKey}
+        onChange={onChangePanel}
+      />
     </div>
   );
 }
