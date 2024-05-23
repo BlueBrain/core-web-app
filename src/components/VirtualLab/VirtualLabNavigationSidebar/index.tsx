@@ -14,7 +14,7 @@ export default function VirtualLabNavigationSidebar({ link }: Props) {
             transform: 'rotate(180deg)',
           }}
         >
-          Blue Brain Open Brain Platform
+          Blue Brain Open Platform
         </span>
       </div>
     </Link>

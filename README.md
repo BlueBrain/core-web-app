@@ -1,6 +1,6 @@
-# Blue Brain Open Brain Platform
+# Blue Brain Open Platform
 
-This is the repository for the Blue Brain Open Brain Platform's core web application.
+This is the repository for the Blue Brain Open Platform's core web application.
 
 - [https://openbrainplatform.org/mmb-beta](https://openbrainplatform.org/mmb-beta)
 - [https://github.com/BlueBrain/core-web-app](https://github.com/BlueBrain/core-web-app)
@@ -8,7 +8,8 @@ This is the repository for the Blue Brain Open Brain Platform's core web applica
 # Table of contents
 
 
-- [Blue Brain Open Brain Platform](#blue-brain-open-brain-platform)
+
+- [Blue Brain Open Platform](#blue-brain-open-platform)
 - [Table of contents](#table-of-contents)
   - [Installation](#installation)
     - [Development](#development)
@@ -17,6 +18,7 @@ This is the repository for the Blue Brain Open Brain Platform's core web applica
     - [Next.js](#nextjs)
   - [Contribution Guidelines](#contribution-guidelines)
   - [Acknowledgment](#acknowledgment)
+
 
 
 ## Installation
