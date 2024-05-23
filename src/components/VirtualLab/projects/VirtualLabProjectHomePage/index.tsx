@@ -88,7 +88,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
           <div
             className="absolute right-[-150px] top-[-220px] h-[500px] w-[500px]  rotate-[-135deg] transform  bg-cover bg-left-top bg-right-top bg-no-repeat"
             style={{
-              backgroundImage: `url(${basePath}/images/virtual-lab/obp_neocortex.png)`,
+              backgroundImage: `url(${basePath}/images/virtual-lab/obp_neocortex.webp)`,
             }}
           />
           <div className="flex flex-row justify-between">
