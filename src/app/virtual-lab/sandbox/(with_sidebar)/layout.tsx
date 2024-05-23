@@ -39,7 +39,7 @@ export default function VirtualLabSandboxLayout({ children }: { children: ReactN
           <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
             <VirtualLabTopMenu />
             {children}
-            <div className="fixed bottom-0 right-0 m-10 flex justify-end">
+            <div className="fixed bottom-0 right-0 m-5 flex justify-end">
               <CreateVirtualLabButton />
             </div>
           </Suspense>

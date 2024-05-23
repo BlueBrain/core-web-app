@@ -64,7 +64,7 @@ export default function VirtualLabDashboard() {
             <DashboardTotals />
           </div>
           {renderVirtualLabs()}
-          <div className="fixed bottom-5 right-7">
+          <div className="fixed bottom-5 right-5">
             <Button
               className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
               onClick={() => setIsProjectModalVisible(true)}
