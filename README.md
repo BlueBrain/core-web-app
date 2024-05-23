@@ -7,6 +7,7 @@ This is the repository for the Blue Brain Open Brain Platform's core web applica
 
 # Table of contents
 
+
 - [Blue Brain Open Brain Platform](#blue-brain-open-brain-platform)
 - [Table of contents](#table-of-contents)
   - [Installation](#installation)
@@ -16,6 +17,7 @@ This is the repository for the Blue Brain Open Brain Platform's core web applica
     - [Next.js](#nextjs)
   - [Contribution Guidelines](#contribution-guidelines)
   - [Acknowledgment](#acknowledgment)
+
 
 ## Installation
 
