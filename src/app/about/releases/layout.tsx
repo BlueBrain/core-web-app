@@ -16,7 +16,7 @@ async function ReleasesList() {
   return (
     <>
       <div className="pb-5 pl-12 pt-9">
-        <h1 className="pr-4 text-4xl font-bold text-primary-8">What has happened in OBP?</h1>
+        <h1 className="pr-4 text-4xl font-bold text-primary-8">What has happened in BBOP?</h1>
         <div />
       </div>
       <div className="bg-white py-4 pl-12 pr-4">

@@ -5,7 +5,7 @@ import { basePath } from '@/config';
 export default function DiscoverObpPanel() {
   return (
     <div className="mt-10 flex flex-col gap-5">
-      <div className="font-bold uppercase">Discover OBP</div>
+      <div className="font-bold uppercase">Discover BBOP</div>
       <div className="flex w-full flex-row gap-3">
         <DiscoverObpItem
           imagePath={`${basePath}/images/virtual-lab/obp_full_brain_blue.png`}
