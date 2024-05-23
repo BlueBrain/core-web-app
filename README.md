@@ -1,18 +1,21 @@
-# Open Brain Platform
+# Blue Brain Open Brain Platform
 
-This is the repository for the Open Brain Platform's core web application.
+This is the repository for the Blue Brain Open Brain Platform's core web application.
 
 - [https://openbrainplatform.org/mmb-beta](https://openbrainplatform.org/mmb-beta)
 - [https://github.com/BlueBrain/core-web-app](https://github.com/BlueBrain/core-web-app)
 
 # Table of contents
 
-- [Installation](#installation)
-  - [Development](#development)
-  - [Testing](#testing)
-- [Additional Resources](#additional-resources)
-- [Contribution Guidelines](#contribution-guidelines)
-- [Acknowledgement](#acknowledgment)
+- [Blue Brain Open Brain Platform](#blue-brain-open-brain-platform)
+- [Table of contents](#table-of-contents)
+  - [Installation](#installation)
+    - [Development](#development)
+    - [Testing](#testing)
+  - [Additional Resources](#additional-resources)
+    - [Next.js](#nextjs)
+  - [Contribution Guidelines](#contribution-guidelines)
+  - [Acknowledgment](#acknowledgment)
 
 ## Installation
 

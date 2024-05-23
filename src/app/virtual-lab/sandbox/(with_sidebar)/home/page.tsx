@@ -61,7 +61,7 @@ export default function VirtualLabSandboxHomePage() {
     <div className="mt-5 flex flex-col gap-5">
       <VirtualLabBanner
         id="test"
-        name="Welcome to Open Brain Platform"
+        name="Welcome to Blue Brain Open Brain Platform"
         description="Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Aenean lacinia bibendum nulla sed consectetur. Donec id elit non mi porta gravida at eget metus. Vestibulum id ligula porta felis euismod semper. Maecenas faucibus mollis interdum."
         bottomElements={<SandboxStatistics />}
         supertitle={null}
