@@ -6,6 +6,7 @@ import { ErrorBoundary } from '@sentry/nextjs';
 import { usePathname } from 'next/navigation';
 
 import { classNames } from '@/util/utils';
+import { OBPLogo } from '@/components/Entrypoint/segments/Splash';
 import DocumentationSideMenu from '@/components/About/Documentation/SideMenu';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import AboutMenu from '@/components/About/Menu';
@@ -24,12 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }}
       />
       <div className="absolute left-14 top-7 py-2">
-        <div className="flex flex-col text-5xl font-bold">
-          <span>Blue</span>
-          <span>Brain</span>
-          <span>Open</span>
-          <span>Platform</span>
-        </div>
+        <OBPLogo color="text-white" />
       </div>
       <div className="fixed left-14 top-44 z-10 w-full max-w-[250px]">
         <Link href="/" className="group inline-flex items-center gap-1">
