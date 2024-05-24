@@ -16,10 +16,10 @@ import { addBookmark } from '@/services/virtual-lab/bookmark';
 import { useParams } from 'next/navigation';
 
 export default function DetailHeaderName({
-  detail,
-  url,
-  withRevision,
-}: {
+                                           detail,
+                                           url,
+                                           withRevision,
+                                         }: {
   detail: DeltaResource;
   url?: string | null;
   withRevision?: boolean;
@@ -27,7 +27,7 @@ export default function DetailHeaderName({
   const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
   const latestRevision = useAtomValue(
-    useMemo(() => loadable(latestRevisionFamily(resourceInfo)), [resourceInfo])
+    useMemo(() => loadable(latestRevisionFamily(resourceInfo)), [resourceInfo]),
   );
   const simCampMatch = path?.match(/\/explore\/simulation-campaigns\/[a-zA-Z0-9=]*/g);
   const isSimCampDetail = simCampMatch && path === simCampMatch[0];
@@ -35,7 +35,7 @@ export default function DetailHeaderName({
   const session = useAtomValue(sessionAtom);
   const [fetching, setFetching] = useState<boolean>(false);
 
-  const { virtualLabId, projectId } = useParams<{virtualLabId: string, projectId: string}>()
+  const { virtualLabId, projectId } = useParams<{ virtualLabId?: string, projectId?: string }>();
 
   // revisions builder
   const items: MenuProps['items'] = useMemo(() => {
@@ -82,7 +82,7 @@ export default function DetailHeaderName({
         </div>
         {session && (
           <>
-            <Button
+            {virtualLabId && projectId && <Button
               type="text"
               className="flex items-center gap-2"
               onClick={() => {
@@ -98,7 +98,7 @@ export default function DetailHeaderName({
               ) : (
                 <PlusOutlined className="border border-neutral-2 px-4 py-3" />
               )}
-            </Button>
+            </Button>}
             <div className="flex items-center gap-2">
               Download
               {fetching ? (
