@@ -1,6 +1,6 @@
 import { RefObject } from 'react';
 import { PrimitiveAtom, atom } from 'jotai';
-import { atomFamily, atomWithDefault, atomWithRefresh } from 'jotai/utils';
+import { atomFamily, atomWithDefault, atomWithRefresh, atomWithReset } from 'jotai/utils';
 
 import sessionAtom from '../session';
 
@@ -13,8 +13,11 @@ import {
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData } from '@/types/virtual-lab/common';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
-import { getVirtualLabPaymentMethods } from '@/services/virtual-lab/billing';
-import { PaymentMethod } from '@/types/virtual-lab/billing';
+import {
+  getVirtualLabBalanceDetails,
+  getVirtualLabPaymentMethods,
+} from '@/services/virtual-lab/billing';
+import { PaymentMethod, VlabBalance } from '@/types/virtual-lab/billing';
 
 export const refreshAtom = atom(0);
 
@@ -44,6 +47,22 @@ export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
   })
 );
 
+export const transactionFormStateAtom = atomWithReset<{
+  credit: string;
+  selectedPaymentMethodId?: string;
+  loading: boolean;
+  errors?: {
+    credit?: string[] | undefined;
+    selectedPaymentMethodId?: string[] | undefined;
+    defaultPaymentMethodId?: string[] | undefined;
+  };
+}>({
+  credit: '',
+  loading: false,
+  errors: undefined,
+  selectedPaymentMethodId: undefined,
+});
+
 export const virtualLabPaymentMethodsAtomFamily = atomFamily((virtualLabId: string) =>
   atomWithRefresh<Promise<Array<PaymentMethod> | undefined>>(async (get) => {
     const session = get(sessionAtom);
@@ -52,6 +71,17 @@ export const virtualLabPaymentMethodsAtomFamily = atomFamily((virtualLabId: stri
     }
     const response = await getVirtualLabPaymentMethods(virtualLabId, session.accessToken);
     return response.data.payment_methods;
+  })
+);
+
+export const virtualLabBalanceAtomFamily = atomFamily((virtualLabId: string) =>
+  atomWithRefresh<Promise<VlabBalance | undefined>>(async (get) => {
+    const session = get(sessionAtom);
+    if (!session) {
+      return;
+    }
+    const response = await getVirtualLabBalanceDetails(virtualLabId, session.accessToken);
+    return response.data;
   })
 );
 

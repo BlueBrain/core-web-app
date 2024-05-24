@@ -5,7 +5,6 @@ import { FullscreenOutlined } from '@ant-design/icons';
 import { GizmoCanvas, MorphologyCanvas } from '@bbp/morphoviewer';
 import { useEffect, useRef } from 'react';
 
-import { useAccessToken } from '../experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
 import { ColorRamp } from './ColorRamp';
 import { Scalebar } from './Scalebar';
 import { Settings } from './Settings';
@@ -17,6 +16,7 @@ import { fetchSomaFromNeuroMorphoViz } from './neuro-morpho-viz-service';
 import useNotification from '@/hooks/notifications';
 import { logError } from '@/util/logger';
 import { classNames } from '@/util/utils';
+import { useAccessToken } from '@/hooks/useAccessToken';
 
 import styles from './morpho-viewer.module.css';
 
