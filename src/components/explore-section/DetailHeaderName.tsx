@@ -1,7 +1,7 @@
-import { Dropdown, MenuProps, Spin } from 'antd';
+import { Button, Dropdown, MenuProps, Spin } from 'antd';
 import { useAtomValue } from 'jotai';
 import { useMemo, useState } from 'react';
-import { DownloadOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
+import { DownloadOutlined, DownOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import range from 'lodash/range';
 import { loadable } from 'jotai/utils';
 import { latestRevisionFamily } from '@/state/explore-section/detail-view-atoms';
@@ -12,6 +12,8 @@ import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import usePathname from '@/hooks/pathname';
 import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
+import { addBookmark } from '@/services/virtual-lab/bookmark';
+import { useParams } from 'next/navigation';
 
 export default function DetailHeaderName({
   detail,
@@ -32,6 +34,8 @@ export default function DetailHeaderName({
 
   const session = useAtomValue(sessionAtom);
   const [fetching, setFetching] = useState<boolean>(false);
+
+  const { virtualLabId, projectId } = useParams<{virtualLabId: string, projectId: string}>()
 
   // revisions builder
   const items: MenuProps['items'] = useMemo(() => {
@@ -77,20 +81,42 @@ export default function DetailHeaderName({
           )}
         </div>
         {session && (
-          <div className="flex items-center gap-2">
-            Download
-            {fetching ? (
-              <Spin className="border border-neutral-2 px-3 py-2" indicator={<LoadingOutlined />} />
-            ) : (
-              <DownloadOutlined
-                className="border border-neutral-2 px-4 py-3"
-                onClick={() => {
-                  setFetching(true);
-                  fetchArchive([detail._self], session, () => setFetching(false));
-                }}
-              />
-            )}
-          </div>
+          <>
+            <Button
+              type="text"
+              className="flex items-center gap-2"
+              onClick={() => {
+                addBookmark(detail['@id'], virtualLabId, projectId);
+              }}
+            >
+              Save to library
+              {fetching ? (
+                <Spin
+                  className="border border-neutral-2 px-3 py-2"
+                  indicator={<LoadingOutlined />}
+                />
+              ) : (
+                <PlusOutlined className="border border-neutral-2 px-4 py-3" />
+              )}
+            </Button>
+            <div className="flex items-center gap-2">
+              Download
+              {fetching ? (
+                <Spin
+                  className="border border-neutral-2 px-3 py-2"
+                  indicator={<LoadingOutlined />}
+                />
+              ) : (
+                <DownloadOutlined
+                  className="border border-neutral-2 px-4 py-3"
+                  onClick={() => {
+                    setFetching(true);
+                    fetchArchive([detail._self], session, () => setFetching(false));
+                  }}
+                />
+              )}
+            </div>
+          </>
         )}
 
         {isSimCampDetail && (
