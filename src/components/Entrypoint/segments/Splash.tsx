@@ -3,7 +3,6 @@ import Image from 'next/image';
 
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
-import { ObpLogo } from '@/components/icons/ObpLogo';
 
 export function Background() {
   return (
@@ -37,7 +36,12 @@ export function OBPLogo({
       href="/"
       className={classNames('z-10 flex h-auto flex-col justify-center pr-4', color, className)}
     >
-      <ObpLogo />
+      <div className="flex flex-col text-4xl font-bold">
+        <span>Blue</span>
+        <span>Brain</span>
+        <span>Open</span>
+        <span>Platform</span>
+      </div>
     </Link>
   );
 }
