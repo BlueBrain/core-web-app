@@ -1,9 +1,14 @@
-import BookmarkList from '@/components/VirtualLab/BookmarkList';
+import BookmarkList from '@/components/VirtualLab/Bookmarks/BookmarkList';
+import { ServerSideComponentProp } from '@/types/common';
 
-export default function VirtualLabProjectLibraryPage() {
+export default function VirtualLabProjectLibraryPage({
+  params,
+}: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
+  const { virtualLabId, projectId } = params;
 
-  return <div>
-    <h4>Library</h4>
-    <BookmarkList />
-  </div>;
+  return (
+    <div>
+      <BookmarkList labId={virtualLabId} projectId={projectId} />
+    </div>
+  );
 }

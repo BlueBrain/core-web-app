@@ -1,31 +1,33 @@
 import { render, screen } from '@testing-library/react';
-import BookmarkList from '@/components/VirtualLab/BookmarkList';
-
+import BookmarkList from '@/components/VirtualLab/Bookmarks/BookmarkList';
 
 describe('Library', () => {
-  it('should render successfully', async () => {
-    jest.mock('src/services/virtual-lab/bookmark', () => ({
-      __esModule: true,
-      getBookmarkedItems: (lab: string, project: string): string[] => {
-        console.log("getBookmarkedItems.mockImplementation oher")
-        return getBookmarkedItems(lab, project);
-      },
-    }));
+  const labId = '3';
+  const projectId = '123';
 
-    render(BookmarkList())
+  it('should render successfully', async () => {
+    projectHasBookmarks(labId, projectId, ['item1', 'item2']);
+    render(<BookmarkList labId={labId} projectId={projectId} />);
 
     await screen.findByText('item1');
-    await screen.getByText('item2');
+    screen.getByText('item2');
   });
-})
-
-const getBookmarkedItems = jest.fn((lab: string, project: string) => {
-  if (lab === 'virtualLabId' && project === 'projectId') {
-    console.log("getBookmarkedItems.mockImplementation correct")
-    return ['item1', 'item2'];
-  }
-  console.log("getBookmarkedItems.mockImplementation wrong")
-  return [];
 });
 
+const projectHasBookmarks = (labId: string, projectId: string, items: string[]) => {
+  getBookmarkedItems.mockImplementation((aLab, aProject) => {
+    if (labId === aLab && projectId === aProject) {
+      return Promise.resolve(items);
+    }
+    return Promise.resolve([]);
+  });
+};
 
+jest.mock('src/services/virtual-lab/bookmark', () => ({
+  __esModule: true,
+  getBookmarkedItems: (lab: string, project: string): string[] => {
+    return getBookmarkedItems(lab, project);
+  },
+}));
+
+const getBookmarkedItems = jest.fn();
