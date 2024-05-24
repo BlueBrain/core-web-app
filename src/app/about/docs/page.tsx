@@ -10,7 +10,7 @@ export default function Docs() {
   return (
     <div className="bg-white py-10">
       <div className="inline-flex w-full items-center justify-between gap-2 px-12">
-        <h1 className="w-full max-w-max text-4xl font-bold text-primary-8">OBP Documentation</h1>
+        <h1 className="w-full max-w-max text-4xl font-bold text-primary-8">BBOP Documentation</h1>
         <ConfigProvider theme={{ hashed: false }}>
           <Input.Search
             placeholder="Search topic ..."

@@ -109,6 +109,7 @@ module.exports = {
       animation: {
         'slide-out': 'slide-out 2s ease-in-out',
         'scale-down': 'scale-down .6s cubic-bezier(.55,-0.04,.91,.94) forwards',
+        'fade-in': 'fade-in 1.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both',
       },
       keyframes: {
         'slide-out': {
@@ -138,6 +139,14 @@ module.exports = {
           to: {
             opacity: 0,
             transform: 'scale(0)',
+          },
+        },
+        'fade-in': {
+          '0%': {
+            opacity: 0,
+          },
+          '100%': {
+            opacity: 1,
           },
         },
       },
