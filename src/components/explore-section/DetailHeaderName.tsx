@@ -19,10 +19,13 @@ export default function DetailHeaderName({
   detail,
   url,
   withRevision,
+  resourceProjectLabel,
 }: {
   detail: DeltaResource;
   url?: string | null;
   withRevision?: boolean;
+
+  resourceProjectLabel: string;
 }) {
   const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
@@ -52,6 +55,7 @@ export default function DetailHeaderName({
     return [];
   }, [latestRevision, url]);
 
+  console.log('Resource,', detail);
   return (
     <div className="flex flex-col text-primary-7">
       <div className="text font-thin">Name</div>
@@ -87,7 +91,7 @@ export default function DetailHeaderName({
                 type="text"
                 className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
                 onClick={() => {
-                  addBookmark(detail['@id'], virtualLabId, projectId);
+                  addBookmark(detail['@id'], resourceProjectLabel, virtualLabId, projectId);
                 }}
               >
                 Save to library

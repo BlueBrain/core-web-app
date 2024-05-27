@@ -53,7 +53,12 @@ export default function Detail<T extends DeltaResource>({
     <div className="flex h-full min-h-screen">
       <DetailsPageSideBackLink />
       <div className="ml-10 flex h-full w-full flex-col gap-7 overflow-auto bg-white p-7 pr-12">
-        <DetailHeader fields={fields} detail={detail.data} url={path} />
+        <DetailHeader
+          fields={fields}
+          detail={detail.data}
+          url={path}
+          resourceProjectLabel={`${resourceInfo.org}/${resourceInfo.project}`}
+        />
         {children && detail.data && children(detail.data)}
       </div>
     </div>

@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getBookmarkedItems } from '@/services/virtual-lab/bookmark';
+import Link from 'next/link';
+
+import { getBookmarkedItems, BookmarkItem } from '@/services/virtual-lab/bookmark';
+import { detailUrlWithinLab } from '@/util/common';
 
 type Props = {
   labId: string;
@@ -9,8 +12,7 @@ type Props = {
 };
 
 export default function BookmarkList({ labId, projectId }: Props) {
-  const [bookmarkedItems, setBookmarkedItems] = useState<string[]>();
-  console.log('Vlab', labId, projectId);
+  const [bookmarkedItems, setBookmarkedItems] = useState<BookmarkItem[]>();
 
   useEffect(() => {
     getBookmarkedItems(labId, projectId).then((items) => setBookmarkedItems(items));
@@ -21,8 +23,21 @@ export default function BookmarkList({ labId, projectId }: Props) {
       <h4>Library</h4>
       {bookmarkedItems && (
         <ul>
-          {bookmarkedItems.map((item) => (
-            <li key={item}>{item}</li>
+          {bookmarkedItems.map((bookmark) => (
+            <li key={bookmark.resourceId}>
+              <Link
+                href={detailUrlWithinLab(
+                  labId,
+                  projectId,
+                  bookmark.projectLabel,
+                  bookmark.resourceId,
+                  'morphology'
+                )}
+              >
+                {' '}
+                {bookmark.resourceId}
+              </Link>
+            </li>
           ))}
         </ul>
       )}

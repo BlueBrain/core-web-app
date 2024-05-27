@@ -8,13 +8,11 @@ import sessionAtom from '@/state/session';
 import { DeltaResource } from '@/types/explore-section/resources';
 
 describe('DetailHeaderName', () => {
-
   const virtualLabId = '456';
   const projectId = '123';
 
   it('allows a user to save a resource to a project library', async () => {
-
-    weAreInProject(virtualLabId, projectId)
+    weAreInProject(virtualLabId, projectId);
     const user = renderComponent();
 
     const saveButton = screen.getByText('Save to library');
@@ -23,14 +21,13 @@ describe('DetailHeaderName', () => {
   });
 
   it('do not allow a user to save a resource to a project library if we are not in a project', async () => {
-    weAreNotInProject()
+    weAreNotInProject();
 
     renderComponent();
 
     expect(screen.queryByText('Save to library')).toBeNull();
   });
 });
-
 
 const renderComponent = () => {
   const user = userEvent.setup();
@@ -44,7 +41,7 @@ const HydrateAtoms = ({ initialValues, children }: any) => {
   return children;
 };
 
-const TestProvider = ({ initialValues, children }: any) => {
+function TestProvider({ initialValues, children }: any) {
   return (
     <Provider>
       <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
@@ -52,7 +49,7 @@ const TestProvider = ({ initialValues, children }: any) => {
   );
 }
 
-const DetailHeaderNameProvider = () => {
+function DetailHeaderNameProvider() {
   return (
     <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
       <DetailHeaderName detail={mockDeltaResource as DeltaResource} />
@@ -88,10 +85,12 @@ jest.mock('src/services/virtual-lab/bookmark', () => ({
 
 const weAreInProject = (virtualLabId: string, projectId: string) => {
   useParams.mockReturnValue({ virtualLabId, projectId });
-  usePathname.mockReturnValue( `/virtual-lab/lab/${virtualLabId}/project/${projectId}/explore/interactive/experimental/morphology/somename`)
-}
+  usePathname.mockReturnValue(
+    `/virtual-lab/lab/${virtualLabId}/project/${projectId}/explore/interactive/experimental/morphology/somename`
+  );
+};
 
 const weAreNotInProject = () => {
-  useParams.mockReturnValue({ });
-  usePathname.mockReturnValue('/explore/interactive/experimental/morphology/somename')
-}
+  useParams.mockReturnValue({});
+  usePathname.mockReturnValue('/explore/interactive/experimental/morphology/somename');
+};
