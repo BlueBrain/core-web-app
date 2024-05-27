@@ -241,7 +241,7 @@ export default function FormPanel({
           setValidateStatus(newValidateStatus);
         });
     }, 600),
-    [notification, onValuesChange]
+    [onValuesChange]
   );
 
   return (

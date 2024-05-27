@@ -1,17 +1,18 @@
 import { useSession } from 'next-auth/react';
-import { Button, ConfigProvider, Modal, Spin, Form, Input } from 'antd';
-import { FormInstance } from 'antd/lib/form/Form';
-import { ComponentProps, ReactElement, useState } from 'react';
+import { Button, ConfigProvider, Modal, Spin, Form } from 'antd';
+import { useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { LoadingOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-
+import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
+import NewProjectModalForm from './NewProjectModalForm';
+import { selectedMembersAtom } from './shared';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
-import { newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
+import { virtualLabMembersAtomFamily, newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 function NewProjectModalFooter({
   close,
@@ -49,89 +50,6 @@ function NewProjectModalFooter({
   );
 }
 
-// This type extends the Form.Item props to make children a render-prop,
-// and to require both the label and name props.
-type ModalInputProps = Omit<ComponentProps<typeof Form.Item>, 'children' | 'label' | 'name'> & {
-  children: (
-    props: ComponentProps<typeof Input | typeof Input.TextArea>
-  ) => ReactElement<typeof Input | typeof Input.TextArea>;
-  label: string;
-  name: string;
-};
-
-function NewProjectModalInput({
-  children,
-  label,
-  name,
-  required,
-}: ModalInputProps): ReactElement<typeof Form.Item> {
-  return (
-    <Form.Item
-      key={name}
-      name={name}
-      label={label}
-      style={{ borderBottom: 'solid 1px #69C0FF' }}
-      required
-    >
-      {children({
-        name,
-        required,
-        placeholder: `Type the ${label?.toLowerCase()} here...`,
-      })}
-    </Form.Item>
-  );
-}
-
-const formItems: Array<ModalInputProps> = [
-  {
-    children: (props) => <Input maxLength={80} {...(props as ComponentProps<typeof Input>)} />, // eslint-disable-line react/jsx-props-no-spreading
-    label: 'PROJECT NAME',
-    name: 'name',
-    required: true,
-  },
-  {
-    children: (props) => (
-      <Input.TextArea maxLength={288} {...(props as ComponentProps<typeof Input.TextArea>)} /> // eslint-disable-line react/jsx-props-no-spreading
-    ),
-    label: 'PROJECT DESCRIPTION',
-    name: 'description',
-  },
-];
-
-function NewProjectModalForm({ form }: { form: FormInstance }) {
-  return (
-    <Form form={form} layout="vertical" style={{ paddingBlockStart: 40 }}>
-      <ConfigProvider
-        theme={{
-          components: {
-            Input: {
-              activeBg: 'transparent',
-              addonBg: 'transparent',
-              borderRadius: 0,
-              colorBgContainer: 'transparent',
-              colorBorder: 'transparent',
-              colorText: '#003A8C',
-              colorTextDisabled: '#fff',
-              colorTextPlaceholder: '#8C8C8C',
-              fontSizeLG: 16,
-              hoverBorderColor: 'transparent',
-              paddingInline: 0,
-              paddingBlock: 0,
-            },
-            Form: {
-              itemMarginBottom: 40,
-              verticalLabelMargin: 0,
-              verticalLabelPadding: 0,
-            },
-          },
-        }}
-      >
-        {formItems.map(NewProjectModalInput)}
-      </ConfigProvider>
-    </Form>
-  );
-}
-
 export function NewProjectModal({
   onFail,
   onSuccess,
@@ -144,6 +62,8 @@ export function NewProjectModal({
   const [open, setOpen] = useAtom(newProjectModalOpenAtom);
   const [loading, setLoading] = useState(false);
   const session = useSession();
+  const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
+  const includeMembers = useAtomValue(selectedMembersAtom);
 
   const [form] = Form.useForm<{ name: string; description: string }>();
 
@@ -155,7 +75,10 @@ export function NewProjectModal({
 
     const { name, description } = form.getFieldsValue();
 
-    return createProject({ name, description, token: session.data.accessToken }, virtualLabId)
+    return createProject(
+      { name, description, includeMembers, token: session.data.accessToken },
+      virtualLabId
+    )
       .then((response) => {
         form.resetFields();
         setOpen(false);
@@ -170,16 +93,31 @@ export function NewProjectModal({
   };
 
   return (
-    <Modal
-      footer={
-        <NewProjectModalFooter close={() => setOpen(false)} loading={loading} onSubmit={onSubmit} />
-      }
-      onCancel={() => setOpen(false)}
-      open={open}
-      styles={{ mask: { backgroundColor: '#0050B3D9' } }}
-    >
-      <NewProjectModalForm form={form} />
-    </Modal>
+    <>
+      <Modal
+        style={{ minWidth: 600 }}
+        footer={
+          <NewProjectModalFooter
+            close={() => setOpen(false)}
+            loading={loading}
+            onSubmit={onSubmit}
+          />
+        }
+        onCancel={() => setOpen(false)}
+        open={open}
+        styles={{ mask: { backgroundColor: '#0050B3D9' } }}
+      >
+        <NewProjectModalForm form={form} members={members} />
+      </Modal>
+      <button
+        type="button"
+        className="flex w-[200px] justify-between border border-primary-7 p-3"
+        onClick={() => setOpen(true)}
+      >
+        <span className="font-bold">New project</span>
+        <PlusOutlined />
+      </button>
+    </>
   );
 }
 
