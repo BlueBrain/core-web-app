@@ -196,7 +196,7 @@ export default function FormPanel({
 }) {
   const [validateStatus, setValidateStatus] = useState<Partial<
     Record<keyof VirtualLab, 'error' | 'validating'>
-  > | null>({ description: 'validating' });
+  > | null>();
 
   const [serverError, setServerError] = useState<string | null>(null);
 
