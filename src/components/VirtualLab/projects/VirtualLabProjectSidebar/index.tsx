@@ -76,7 +76,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
     { key: LinkItemKey.Simulate, content: 'Simulate', href: 'simulate' },
   ];
   return (
-    <div className="my-8 mr-6 flex flex-col gap-5">
+    <div className="my-8 mr-6 flex w-full flex-col gap-5">
       <h1 className="leading-12 text-4xl font-bold uppercase text-primary-5">
         {renderProjectTitle()}
       </h1>
