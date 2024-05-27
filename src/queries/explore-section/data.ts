@@ -1,4 +1,4 @@
-import { boolQuery, TermsQuery } from 'elastic-builder';
+import esb, { boolQuery, TermsQuery } from 'elastic-builder';
 import buildESSort from './sorters';
 import { DataQuery } from '@/api/explore-section/resources';
 import { Filter } from '@/components/Filter/types';
@@ -26,6 +26,12 @@ export default function fetchDataQuery(
     ...buildAggs(filters).toJSON(),
   };
 }
+
+export const esQueryById = (resourceIds: string[]): object => {
+  const filtersQuery = new esb.BoolQuery();
+  filtersQuery.must(esb.termsQuery('@id.keyword', resourceIds));
+  return { query: filtersQuery.toJSON() };
+};
 
 export function fetchDataQueryUsingIds(
   size: number,

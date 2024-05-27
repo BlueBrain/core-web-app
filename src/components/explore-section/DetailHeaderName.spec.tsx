@@ -17,7 +17,12 @@ describe('DetailHeaderName', () => {
 
     const saveButton = screen.getByText('Save to library');
     await user.click(saveButton);
-    expect(addBookmark).toHaveBeenCalledWith(mockDeltaResource['@id'], virtualLabId, projectId);
+    expect(addBookmark).toHaveBeenCalledWith(
+      mockDeltaResource['@id'],
+      resourceProjectLabel,
+      virtualLabId,
+      projectId
+    );
   });
 
   it('do not allow a user to save a resource to a project library if we are not in a project', async () => {
@@ -52,10 +57,15 @@ function TestProvider({ initialValues, children }: any) {
 function DetailHeaderNameProvider() {
   return (
     <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
-      <DetailHeaderName detail={mockDeltaResource as DeltaResource} />
+      <DetailHeaderName
+        detail={mockDeltaResource as DeltaResource}
+        resourceProjectLabel={resourceProjectLabel}
+      />
     </TestProvider>
   );
 }
+
+const resourceProjectLabel = 'some/label';
 
 const mockDeltaResource = {
   name: 'Mock resource',
@@ -78,8 +88,9 @@ jest.mock('next/navigation', () => ({
 const addBookmark = jest.fn();
 jest.mock('src/services/virtual-lab/bookmark', () => ({
   __esModule: true,
-  addBookmark: (resourceId: string, lab: string, project: string) => {
-    return addBookmark(resourceId, lab, project);
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  addBookmark: (resourceId: string, resourceProjectLabel: string, lab: string, project: string) => {
+    return addBookmark(resourceId, resourceProjectLabel, lab, project);
   },
 }));
 

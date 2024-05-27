@@ -12,6 +12,21 @@ export type DataQuery = {
   query: {};
 };
 
+export async function fetchESResourceByIds(
+  accessToken: string,
+  dataQuery: object,
+  signal?: AbortSignal
+): Promise<number | undefined> {
+  return fetch(API_SEARCH, {
+    method: 'POST',
+    headers: createHeaders(accessToken),
+    body: JSON.stringify(dataQuery),
+    signal,
+  })
+    .then<ExploreESResponse<Experiment>>((response) => response.json())
+    .then((data) => data?.hits?.total?.value);
+}
+
 export async function fetchTotalByExperimentAndRegions(
   accessToken: string,
   dataQuery: DataQuery,
