@@ -11,10 +11,9 @@ import { Settings } from './Settings';
 import { Warning } from './Warning';
 import { useMorphoViewerSettings } from './hooks/settings';
 import { useSignal } from './hooks/signal';
-import { fetchSomaFromNeuroMorphoViz } from './neuro-morpho-viz-service';
+import { WaitingForSomaEnhancement } from './WaitingForSomaEnhancement';
+import { useEnhancedSomaService } from './hooks/neuro-morpho-viz-service';
 
-import useNotification from '@/hooks/notifications';
-import { logError } from '@/util/logger';
 import { classNames } from '@/util/utils';
 import { useAccessToken } from '@/hooks/useAccessToken';
 
@@ -30,7 +29,6 @@ export interface MorphoViewerProps {
 }
 
 export function MorphoViewer({ className, swc, contentUrl }: MorphoViewerProps) {
-  const accessToken = useAccessToken();
   const refDiv = useRef<HTMLDivElement | null>(null);
   const refMorphoCanvas = useRef(new MorphologyCanvas());
   const morphoCanvas = refMorphoCanvas.current;
@@ -39,35 +37,22 @@ export function MorphoViewer({ className, swc, contentUrl }: MorphoViewerProps) 
   const refCanvas = useRef<HTMLCanvasElement | null>(null);
   const [{ isDarkMode }] = useMorphoViewerSettings(morphoCanvas);
   const [warning, setWarning] = useSignal(10000);
-  const notification = useNotification();
+  const enhancedSomaIsLoading = useEnhancedSomaService(morphoCanvas, contentUrl);
 
   useEffect(() => {
     morphoCanvas.canvas = refCanvas.current;
     morphoCanvas.swc = swc;
-    if (contentUrl) {
-      fetchSomaFromNeuroMorphoViz(contentUrl, accessToken)
-        .then((data) => {
-          if (!data) return;
-
-          morphoCanvas.somaGLB = data;
-          morphoCanvas.paint();
-        })
-        .catch((err) => {
-          logError('Unable to get a GLB mesh for the soma:', err);
-          notification.error('An error occured while retrieving an enhanced soma.');
-        });
-    }
-    gizmoCanvas.attachCamera(morphoCanvas.camera);
     const handleWarning = () => {
       setWarning(true);
     };
     morphoCanvas.eventMouseWheelWithoutCtrl.addListener(handleWarning);
+    gizmoCanvas.attachCamera(morphoCanvas.camera);
     gizmoCanvas.eventTipClick.addListener(morphoCanvas.interpolateCamera);
     return () => {
       morphoCanvas.eventMouseWheelWithoutCtrl.removeListener(handleWarning);
       gizmoCanvas.eventTipClick.removeListener(morphoCanvas.interpolateCamera);
     };
-  }, [morphoCanvas, gizmoCanvas, setWarning, swc, contentUrl, accessToken, notification]);
+  }, [morphoCanvas, gizmoCanvas, swc, setWarning]);
 
   const handleFullscreen = () => {
     const div = refDiv.current;
@@ -114,6 +99,7 @@ export function MorphoViewer({ className, swc, contentUrl }: MorphoViewerProps) 
       </div>
       <Scalebar painter={morphoCanvas} />
       <Warning visible={warning} />
+      <WaitingForSomaEnhancement visible={enhancedSomaIsLoading} />
     </div>
   );
 }
