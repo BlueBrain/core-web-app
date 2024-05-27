@@ -69,7 +69,17 @@ export async function getUsersProjects(
 }
 
 export async function createProject(
-  { name, description, token }: { name: string; description: string; token: string },
+  {
+    name,
+    description,
+    token,
+    includeMembers,
+  }: {
+    name: string;
+    description: string;
+    includeMembers: { email: string; role: 'admin' | 'member' }[];
+    token: string;
+  },
   virtualLabId: string
 ): Promise<VlmResponse<{ project: Project }>> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects`, {
@@ -78,14 +88,47 @@ export async function createProject(
     body: JSON.stringify({
       name,
       description,
-      include_members: [
-        {
-          email: 'harry.anderson@epfl.ch', // TODO: Update this
-          role: 'admin',
-        },
-      ],
+      include_members: includeMembers,
     }),
   });
+
+  if (response.ok) {
+    return response.json();
+  }
+
+  if (response.status === 400) {
+    const { message } = await response.json();
+
+    throw new Error(message);
+  }
+
+  throw new Error(`Undocumented error, ${response.status}`);
+}
+
+export async function inviteUser({
+  virtualLabId,
+  projectId,
+  email,
+  role,
+  token,
+}: {
+  virtualLabId: string;
+  projectId: string;
+  email: string;
+  role: 'admin' | 'member';
+  token: string;
+}): Promise<VlmResponse<{ project: Project }>> {
+  const response = await fetch(
+    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}/invites`,
+    {
+      method: 'POST',
+      headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        role,
+      }),
+    }
+  );
 
   if (response.ok) {
     return response.json();

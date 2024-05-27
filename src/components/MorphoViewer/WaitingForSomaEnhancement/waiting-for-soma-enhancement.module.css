@@ -1,0 +1,28 @@
+.main {
+  position: absolute;
+  left: 400px;
+  top: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1em;
+  padding: 0.5em;
+  color: var(--custom-color-accent);
+}
+
+.main > svg {
+  width: 1.5em;
+  height: 1.5em;
+  animation: rotation-animation linear 3s infinite;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+@keyframes rotation-animation {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

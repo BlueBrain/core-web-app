@@ -19,6 +19,7 @@ export interface VirtualLabMember {
   invite_accepted: boolean;
   role: Role;
   name: string;
+  email: string;
 }
 
 export type UsersResponse = VlmResponse<{ users: VirtualLabMember[] }>;

@@ -11,7 +11,7 @@ import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 
 function MainSidebarHeader({ expanded }: { expanded: boolean }) {
-  return expanded ? <span>OBP</span> : <span>Menu</span>;
+  return expanded ? <span>BBOP</span> : <span>Menu</span>;
 }
 
 export const MAIN_NAVIGATION_LIST: Array<NavigationItemProps> = [

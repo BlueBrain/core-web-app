@@ -11,7 +11,14 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "ignorePatterns": ["**/*.js", "**/*.jsx", "**/*.mjs"],
+  "ignorePatterns": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mjs",
+    "**/__tests__",
+    "**/*test*",
+    "**/*spec.tsx"
+  ],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "error",
