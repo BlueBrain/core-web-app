@@ -1,1 +1,1 @@
-export * from "./WaitingForSomaEnhancement"
+export * from './WaitingForSomaEnhancement';

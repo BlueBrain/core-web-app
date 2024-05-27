@@ -49,9 +49,7 @@ class EnhancedSomaLoader {
           this.eventSomaGlbReceived.dispatch(this.lastSomaGlb);
           continue;
         }
-        console.log('Fetching enhanced soma:', contentUrl);
         const data = await fetchSomaFromNeuroMorphoViz(contentUrl, accessToken);
-        console.log('🚀 [neuro-morpho-viz-service] data = ', data); // @FIXME: Remove this line written on 2024-05-21 at 15:48
         this.eventSomaGlbReceived.dispatch(data);
         this.lastContentUrl = contentUrl;
         this.lastSomaGlb = data;
@@ -71,7 +69,6 @@ class EnhancedSomaLoader {
 
   private set fetchingInProgress(value: boolean) {
     this._fetchingInProgress = value;
-    console.log('eventFetchingInProgress >>>', value);
     this.eventFetchingInProgress.dispatch(value);
   }
 }
