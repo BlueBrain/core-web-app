@@ -228,7 +228,6 @@ function ScopeCarousel() {
       </ScopeSelector>
       <div>
         <Carousel
-          // afterChange={(current) => setCurrentSlide(current)}
           ref={carouselRef}
           arrows
           dots
