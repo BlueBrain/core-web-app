@@ -133,7 +133,14 @@ const items = [
   },
 ];
 
-function CustomSlide(props) {
+function CustomSlide(props: {
+  key: SimulationType;
+  description: string;
+  src: string;
+  title: string;
+  selectedSimulationScope: SimulationType | null;
+  setSelectedSimulationScope: Dispatch<SetStateAction<SimulationType | null>>;
+}) {
   const {
     selectedSimulationScope,
     setSelectedSimulationScope,
@@ -141,7 +148,7 @@ function CustomSlide(props) {
     key,
     title,
     src,
-    ...otherProps
+    ...otherProps // These come from AntD's Carousel component. Do not remove.
   } = props;
 
   return (
