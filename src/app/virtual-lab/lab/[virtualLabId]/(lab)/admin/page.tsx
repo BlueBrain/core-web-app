@@ -1,8 +1,8 @@
 'use client';
 
 import VirtualLabSettingsComponent from '@/components/VirtualLab/VirtualLabSettingsComponent';
+import { useAccessToken } from '@/hooks/useAccessToken';
 import { ServerSideComponentProp } from '@/types/common';
-import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
 
 export default function VirtualLabAdminPage({
   params,

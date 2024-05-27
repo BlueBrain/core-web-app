@@ -44,7 +44,7 @@ const ENTRYPOINT_MENU_ITEMS: Array<EntrypointMenuItem> = [
   {
     title: 'Sign up',
     href: '/sign-up',
-    description: 'Create an account and start experimenting with OBP',
+    description: 'Create an account and start experimenting with BBOP',
     bgcolor: 'bg-primary-8',
   },
 ];

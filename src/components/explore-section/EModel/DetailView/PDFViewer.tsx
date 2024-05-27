@@ -3,8 +3,9 @@
 import { Fragment, useMemo, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Divider } from 'antd';
-import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
 import { classNames } from '@/util/utils';
+import { useAccessToken } from '@/hooks/useAccessToken';
+
 import styles from './styles.module.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
