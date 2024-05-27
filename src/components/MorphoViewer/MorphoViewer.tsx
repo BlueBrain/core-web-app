@@ -8,14 +8,13 @@ import { useEffect, useRef } from 'react';
 import { ColorRamp } from './ColorRamp';
 import { Scalebar } from './Scalebar';
 import { Settings } from './Settings';
+import { WaitingForSomaEnhancement } from './WaitingForSomaEnhancement';
 import { Warning } from './Warning';
+import { useEnhancedSomaService } from './hooks/neuro-morpho-viz-service';
 import { useMorphoViewerSettings } from './hooks/settings';
 import { useSignal } from './hooks/signal';
-import { WaitingForSomaEnhancement } from './WaitingForSomaEnhancement';
-import { useEnhancedSomaService } from './hooks/neuro-morpho-viz-service';
 
 import { classNames } from '@/util/utils';
-import { useAccessToken } from '@/hooks/useAccessToken';
 
 import styles from './morpho-viewer.module.css';
 

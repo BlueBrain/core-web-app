@@ -8,10 +8,10 @@ import {
 } from './neuro-morpho-viz-service-event';
 
 import useNotification from '@/hooks/notifications';
-import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
 import { thumbnailGenerationBaseUrl } from '@/config';
 import { logError } from '@/util/logger';
 import { createHeaders } from '@/util/utils';
+import { useAccessToken } from '@/hooks/useAccessToken';
 
 interface NeuroMorphoVizQuery {
   contentUrl: string;
