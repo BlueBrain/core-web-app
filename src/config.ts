@@ -71,6 +71,7 @@ export const cellCompositionFile = {
   org: env.NEXT_PUBLIC_CELL_COMPOSITION_FILE_ORG,
   project: env.NEXT_PUBLIC_CELL_COMPOSITION_FILE_PROJECT,
   id: env.NEXT_PUBLIC_CELL_COMPOSITION_FILE_ID,
+  tag: env.NEXT_PUBLIC_CELL_COMPOSITION_FILE_TAG,
 };
 
 export const synParamAssignmentResource = {
