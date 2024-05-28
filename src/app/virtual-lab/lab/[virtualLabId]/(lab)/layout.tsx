@@ -16,16 +16,16 @@ export default function VirtualLabPageLayout({
   params: { virtualLabId: string };
 }) {
   return (
-    <div className="inset-0 z-0 grid h-screen w-full grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 p-10 text-white">
+    <div className="flex h-screen w-full overflow-y-scroll bg-primary-9 p-8 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <Suspense fallback={null}>
-          <div className="flex flex-row gap-4">
+          <div className="flex w-1/3 flex-row gap-4">
             <VirtualLabSidebar virtualLabId={params.virtualLabId} />
           </div>
         </Suspense>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="ml-6">
+        <div className="ml-6 w-2/3">
           <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
             <VirtualLabTopMenu />
             {children}
