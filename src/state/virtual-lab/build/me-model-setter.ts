@@ -28,7 +28,7 @@ export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>
       // these name and description will be filled properly when the user saves the me-model
       name: `WIP ME-Model - ${selectedMModel.name}`,
       description: 'TODO',
-      used: [
+      hasPart: [
         {
           '@type': 'EModel',
           '@id': selectedEModel['@id'],
@@ -75,8 +75,8 @@ export const initializeSummaryAtom = atom<null, [string], void>(
     if (!session) return;
 
     const meModel = await fetchResourceById<MEModelResource>(meModelId, session);
-    const usedEModel = meModel.used.find((r) => r['@type'] === 'EModel');
-    const usedMModel = meModel.used.find((r) => r['@type'] === 'NeuronMorphology');
+    const usedEModel = meModel.hasPart.find((r) => r['@type'] === 'EModel');
+    const usedMModel = meModel.hasPart.find((r) => r['@type'] === 'NeuronMorphology');
 
     if (!usedEModel || !usedMModel) throw new Error('No EModel or Morphology found for ME-Model');
 
