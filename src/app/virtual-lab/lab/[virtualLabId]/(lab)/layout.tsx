@@ -19,13 +19,13 @@ export default function VirtualLabPageLayout({
     <div className="flex h-screen w-full overflow-y-scroll bg-primary-9 p-8 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <Suspense fallback={null}>
-          <div className="flex w-1/3 flex-row gap-4">
+          <div className="flex flex-row gap-4" style={{ width: '25%' }}>
             <VirtualLabSidebar virtualLabId={params.virtualLabId} />
           </div>
         </Suspense>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="ml-6 w-2/3">
+        <div className="ml-3" style={{ width: '75%' }}>
           <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
             <VirtualLabTopMenu />
             {children}
