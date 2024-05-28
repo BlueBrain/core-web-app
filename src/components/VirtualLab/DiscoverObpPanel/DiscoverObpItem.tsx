@@ -19,7 +19,7 @@ export default function DiscoverObpItem({
   bottomElement,
 }: Props) {
   return (
-    <div className="flex-1">
+    <div className="flex-1 flex">
       <div className="relative top-[-60px]">
         <Image
           src={imagePath}
@@ -28,7 +28,7 @@ export default function DiscoverObpItem({
           alt="Circular"
           className="relative left-1/2 z-50 h-32 w-32 -translate-x-1/2 translate-y-1/2 transform rounded-full"
         />
-        <div className="rounded-none bg-white p-5 pt-20">
+        <div className="rounded-none bg-white p-5 pt-20" style={{minHeight:'66%'}}>
           <div className="flex flex-col">
             <div className="uppercase text-neutral-4">{title}</div>
             <div className="text-2xl font-bold text-primary-8">{subtitle}</div>
