@@ -16,6 +16,7 @@ export default function WithControlPanel({
   children,
   dataType,
   brainRegionSource,
+  bookmarkResourceIds,
 }: {
   children: (props: {
     activeColumns?: string[];
@@ -25,6 +26,7 @@ export default function WithControlPanel({
   }) => ReactNode;
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
+  bookmarkResourceIds?: string[];
 }) {
   const activeColumns = useAtomValue(
     useMemo(() => unwrap(activeColumnsAtom({ dataType })), [dataType])
@@ -38,8 +40,8 @@ export default function WithControlPanel({
 
   const aggregations = useAtomValue(
     useMemo(
-      () => unwrap(aggregationsAtom({ dataType, brainRegionSource })),
-      [dataType, brainRegionSource]
+      () => unwrap(aggregationsAtom({ dataType, brainRegionSource, bookmarkResourceIds })),
+      [dataType, brainRegionSource, bookmarkResourceIds]
     )
   );
 

@@ -121,25 +121,31 @@ export function BaseTable({
     width: 0,
   });
   const tableRef = useRef<TableRef>(null);
+  const tableElement: HTMLElement | null | undefined =
+    tableRef.current?.nativeElement.querySelector('.ant-table-body');
+  const parentElement =
+    typeof document !== 'undefined'
+      ? document.getElementById('interactive-data-layout') ||
+        document.getElementById('explore-table-container-for-observable') ||
+        document.getElementById('bookmark-list-container')
+      : undefined;
+  const headerHeight =
+    (tableElement?.getBoundingClientRect()?.y ?? 0) -
+    (parentElement?.getBoundingClientRect()?.y ?? 0);
 
-  const onResize = useCallback(
-    (target: HTMLElement) => setContainerDimension(target.getBoundingClientRect()),
-    []
-  );
+  const onResize = useCallback((target: HTMLElement) => {
+    setContainerDimension(target.getBoundingClientRect());
+  }, []);
 
   // added new id explore-table-container-for-observable because we are using this component
   // outside of the explore and we want to resize the table acording to the screen size as well
   useResizeObserver({
-    element:
-      typeof document !== 'undefined'
-        ? document.getElementById('interactive-data-layout') ||
-          document.getElementById('explore-table-container-for-observable')
-        : undefined,
+    element: parentElement,
     callback: onResize,
   });
 
   useScrollComplete({
-    element: tableRef.current?.nativeElement.querySelector('.ant-table-body'),
+    element: tableElement,
     callback: showLoadMore,
   });
 
@@ -198,7 +204,7 @@ export function BaseTable({
         rowSelection={rowSelection}
         scroll={{
           x: 'fit-content',
-          y: containerDimension.height - 310, // 310: header + load-more button height
+          y: containerDimension.height - (headerHeight + 100), // header height + load-more button height
         }}
       />
     </ConfigProvider>
@@ -228,6 +234,7 @@ export default function ExploreSectionTable({
   renderButton,
   onCellClick,
   selectionType,
+  bookmarkResourceIds,
 }: TableProps<ExploreESHit<ExploreSectionResource>> & {
   enableDownload?: boolean;
   dataType: DataType;
@@ -236,9 +243,13 @@ export default function ExploreSectionTable({
   brainRegionSource: ExploreDataBrainRegionSource;
   onCellClick?: OnCellClick;
   selectionType?: RowSelectionType;
+  bookmarkResourceIds?: string[];
 }) {
   const [displayLoadMoreBtn, setDisplayLoadMoreBtn] = useState(false);
-  const toggleDisplayMore = (value?: boolean) => setDisplayLoadMoreBtn((state) => value ?? !state);
+  const toggleDisplayMore = (value?: boolean) =>
+    setDisplayLoadMoreBtn((state) => {
+      return value ?? !state;
+    });
   return (
     <>
       {enableDownload ? (
@@ -277,6 +288,7 @@ export default function ExploreSectionTable({
         <LoadMoreButton
           dataType={dataType}
           brainRegionSource={brainRegionSource}
+          bookmarkResourceIds={bookmarkResourceIds}
           hide={toggleDisplayMore}
         />
       )}

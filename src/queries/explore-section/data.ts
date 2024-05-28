@@ -14,7 +14,8 @@ export default function fetchDataQuery(
   dataType: DataType,
   sortState?: SortState,
   searchString: string = '',
-  descendantIds?: string[]
+  descendantIds?: string[],
+  bookmarkResourceIds?: string[]
 ): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
   return {
@@ -22,7 +23,13 @@ export default function fetchDataQuery(
     sort: sortQuery,
     from: (currentPage - 1) * size,
     track_total_hits: true,
-    query: buildFilters(filters, searchString, descendantIds, dataType).toJSON(),
+    query: buildFilters(
+      filters,
+      searchString,
+      descendantIds,
+      dataType,
+      bookmarkResourceIds
+    ).toJSON(),
     ...buildAggs(filters).toJSON(),
   };
 }
