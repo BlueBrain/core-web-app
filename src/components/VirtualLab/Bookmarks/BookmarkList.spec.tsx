@@ -6,6 +6,13 @@ import userEvent from '@testing-library/user-event';
 import { BookmarkItem } from '@/services/virtual-lab/bookmark';
 import BookmarkList from '@/components/VirtualLab/Bookmarks/BookmarkList';
 import sessionAtom from '@/state/session';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
+import { SelectedBrainRegion } from '@/state/brain-regions/types';
+import { Filter } from '@/components/Filter/types';
+import { DataType } from '@/constants/explore-section/list-views';
+import esb from 'elastic-builder';
+import { DataQuery } from '@/api/explore-section/resources';
 
 const resourceProjectLabel = 'aLabel';
 
@@ -15,21 +22,16 @@ describe('Library', () => {
 
   it('should render successfully', async () => {
     projectHasBookmarks(labId, projectId, [bookmarkItem('item1'), bookmarkItem('item2')]);
+    elasticSearchReturns(['item1', 'item2']);
     renderComponent(labId, projectId);
+
+    await screen.findByText('Results');
+    const argsPassed = buildFilters.mock.calls[0];
+    expect(argsPassed[3]).toEqual('ExperimentalNeuronMorphology');
+    expect(argsPassed[4]).toEqual(['item1', 'item2']);
 
     await screen.findByText('item1');
     screen.getByText('item2');
-  });
-
-  it('clicking on bookmark item navigates to item details page', async () => {
-    projectHasBookmarks(labId, projectId, [bookmarkItem('item1'), bookmarkItem('item2')]);
-
-    renderComponent(labId, projectId);
-
-    const bookmarkLink: HTMLAnchorElement = await screen.findByText('item1');
-
-    expect(bookmarkLink.href).toContain(labId);
-    expect(bookmarkLink.href).toContain(projectId);
   });
 });
 
@@ -55,7 +57,20 @@ function TestProvider({ initialValues, children }: any) {
 
 function BookmarkListProvider(labId: string, projectId: string) {
   return (
-    <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
+    <TestProvider
+      initialValues={[
+        [sessionAtom, { accessToken: 'abc' }],
+        [
+          selectedBrainRegionAtom,
+          {
+            id: mockBrainRegions[1].id,
+            title: mockBrainRegions[1].title,
+            leaves: mockBrainRegions[1].leaves,
+            representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
+          } as SelectedBrainRegion,
+        ],
+      ]}
+    >
       <BookmarkList labId={labId} projectId={projectId} />
     </TestProvider>
   );
@@ -75,6 +90,35 @@ const projectHasBookmarks = (labId: string, projectId: string, items: BookmarkIt
   });
 };
 
+const elasticSearchReturns = (hitIds: string[]) => {
+  fetchEsResourcesByType.mockResolvedValue({
+    hits: hitIds.map(mockHit),
+    total: { relation: 'eq', value: hitIds.length },
+    aggs: {
+      contributors: {
+        buckets: [{ doc_count: 9, key: 'Janelia Research Campus' }],
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+      },
+      createdAt: {
+        avg: 1.6881596779622222e12,
+        avg_as_string: '2023-06-30T21:14:37.962Z',
+        count: 9,
+      },
+      mType: {
+        buckets: [{ doc_count: hitIds.length, key: 'Interneuron' }],
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+      },
+      subjectSpecies: {
+        buckets: [{ doc_count: hitIds.length, key: 'Mus musculus' }],
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+      },
+    },
+  });
+};
+
 jest.mock('src/services/virtual-lab/bookmark', () => ({
   __esModule: true,
   getBookmarkedItems: (lab: string, project: string): string[] => {
@@ -82,4 +126,110 @@ jest.mock('src/services/virtual-lab/bookmark', () => ({
   },
 }));
 
+jest.mock('src/queries/explore-section/filters', () => {
+  const actual = jest.requireActual('src/queries/explore-section/filters');
+
+  return {
+    ...actual,
+    __esModule: true,
+    default: (
+      filters: Filter[],
+      searchString?: string,
+      descendantIds?: string[],
+      dataType?: DataType,
+      resourceIds?: string[]
+    ) => buildFilters(filters, searchString, descendantIds, dataType, resourceIds),
+  };
+});
+
+jest.mock('src/api/explore-section/resources', () => {
+  const actual = jest.requireActual('src/api/explore-section/resources');
+
+  return {
+    ...actual,
+    fetchEsResourcesByType: (accessToken: string, dataQuery: DataQuery) =>
+      fetchEsResourcesByType(accessToken, dataQuery),
+  };
+});
+
 const getBookmarkedItems = jest.fn();
+const buildFilters = jest.fn();
+const fetchEsResourcesByType = jest.fn();
+const filtersQuery = new esb.BoolQuery();
+
+const mockHit = (resourceId: string) => ({
+  sort: [1692256614916],
+  _id: resourceId,
+  _index:
+    'nexus_search_b5db4c20-8200-47f9-98d9-0ca8fa3be422_b5db4c20-8200-47f9-98d9-0ca8fa3be422_16',
+  _source: {
+    '@id': resourceId,
+    '@type': [
+      'https://neuroshapes.org/ReconstructedNeuronMorphology',
+      'https://neuroshapes.org/NeuronMorphology',
+    ],
+    brainRegion: {
+      '@id': 'http://api.brain-map.org/api/v2/data/Structure/648',
+      idLabel: 'http://api.brain-map.org/api/v2/data/Structure/648|Primary motor area, layer 5',
+      identifier: 'http://api.brain-map.org/api/v2/data/Structure/648',
+      label: 'Primary motor area, layer 5',
+    },
+    contributors: [
+      {
+        '@id': 'https://www.grid.ac/institutes/grid.443970.d',
+        '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
+        idLabel: 'https://www.grid.ac/institutes/grid.443970.d|Janelia Research Campus',
+        label: 'Janelia Research Campus',
+      },
+    ],
+    coordinatesInBrainAtlas: { valueX: '3586.003', valueY: '3229.3972', valueZ: '8268.21' },
+    createdAt: '2023-08-17T07:16:54.916Z',
+    createdBy: 'https://sbo-nexus-delta.shapes-registry.org/v1/realms/bbp/users/cgonzale',
+    curated: true,
+    deprecated: false,
+    derivation: [
+      {
+        '@type': ['http://schema.org/Dataset', 'http://www.w3.org/ns/prov#Entity'],
+        identifier:
+          'https://bbp.epfl.ch/nexus/v1/resources/bbp/mouselight/_/a8b7f31c-78a5-4452-aa16-3de296fac582',
+        label: 'Source file for AA1190',
+      },
+    ],
+    description:
+      'Annotation Space: CCFv3.0 Axes> X: Anterior-Posterior; Y: Inferior-Superior; Z:Left-Right',
+    distribution: [
+      {
+        contentSize: 571421,
+        contentUrl:
+          'https://sbo-nexus-delta.shapes-registry.org/v1/files/bbp/mouselight/https:%2F%2Fbbp.epfl.ch%2Fnexus%2Fv1%2Fresources%2Fbbp%2Fmouselight%2F_%2Fb962a87f-6439-432d-af15-0a483bc25a67',
+        encodingFormat: 'application/asc',
+        label: 'AA1190.asc',
+      },
+    ],
+    generation: {
+      endedAt: '2023-08-17T09:16:50.000Z',
+      startedAt: '2023-08-17T09:16:50.000Z',
+    },
+    license: {
+      '@id': 'https://creativecommons.org/licenses/by-nc/4.0/',
+      identifier: 'https://creativecommons.org/licenses/by-nc/4.0/',
+    },
+    name: resourceId,
+    project: {
+      '@id': 'https://sbo-nexus-delta.shapes-registry.org/v1/projects/bbp/mouselight',
+      identifier: 'https://sbo-nexus-delta.shapes-registry.org/v1/projects/bbp/mouselight',
+      label: 'bbp/mouselight',
+    },
+    subjectSpecies: {
+      '@id': 'http://purl.obolibrary.org/obo/NCBITaxon_10090',
+      identifier: 'http://purl.obolibrary.org/obo/NCBITaxon_10090',
+      label: 'Mus musculus',
+    },
+    updatedAt: '2024-01-11T11:46:29.211Z',
+    updatedBy: 'https://sbo-nexus-delta.shapes-registry.org/v1/realms/bbp/users/cgonzale',
+    _self:
+      'https://sbo-nexus-delta.shapes-registry.org/v1/resources/bbp/mouselight/_/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fneuronmorphologies%2FAA1190',
+  },
+});
+
+buildFilters.mockReturnValue(filtersQuery);

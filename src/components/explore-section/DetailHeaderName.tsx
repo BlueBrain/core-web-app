@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { DownloadOutlined, DownOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import range from 'lodash/range';
 import { loadable } from 'jotai/utils';
+import { useParams } from 'next/navigation';
 import { latestRevisionFamily } from '@/state/explore-section/detail-view-atoms';
 import { DeltaResource } from '@/types/explore-section/resources';
 import Link from '@/components/Link';
@@ -13,7 +14,6 @@ import usePathname from '@/hooks/pathname';
 import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
 import { addBookmark } from '@/services/virtual-lab/bookmark';
-import { useParams } from 'next/navigation';
 
 export default function DetailHeaderName({
   detail,
@@ -55,7 +55,6 @@ export default function DetailHeaderName({
     return [];
   }, [latestRevision, url]);
 
-  console.log('Resource,', detail);
   return (
     <div className="flex flex-col text-primary-7">
       <div className="text font-thin">Name</div>

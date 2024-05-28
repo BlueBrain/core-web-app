@@ -44,7 +44,6 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<any>>>(
         rev: info.rev,
       });
 
-      console.log('Resource', resource, 'Project', info.project);
       return resource;
     }),
   isEqual

@@ -29,6 +29,7 @@ export default function useScrollComplete({
       const { scrollHeight, clientHeight, scrollTop } = currentTarget as HTMLDivElement;
       callback(Math.abs(scrollHeight - clientHeight - scrollTop) < 1);
     };
+
     if (element) {
       element.addEventListener('scroll', onScroll);
     }
