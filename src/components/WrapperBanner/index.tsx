@@ -17,7 +17,7 @@ function getBackgroundImage(srcSet = '') {
 
 const imgSrc = `${basePath}/images/virtual-lab/flopped_obp_hippocampus.png`;
 
-export default function NewEntryPoint({ children }: { children: ReactNode }) {
+export default function WrapperBanner({ children }: { children: ReactNode }) {
   const {
     props: { srcSet },
   } = getImageProps({
