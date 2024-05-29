@@ -64,7 +64,7 @@ export type DefaultMEModelType = {
 export interface MEModel extends Entity {
   name: string;
   description: string;
-  used: [
+  hasPart: [
     {
       '@type': 'EModel';
       '@id': string;
