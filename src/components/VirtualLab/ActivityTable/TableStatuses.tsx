@@ -73,8 +73,8 @@ export default function TableStatuses() {
   useEffect(() => {
     if (!notValidatedMEModels) return;
 
-    const data = convertData(notValidatedMEModels);
-    setDataSource(data);
+    const rowItemData = generateRowItem(notValidatedMEModels);
+    setDataSource(rowItemData);
     setLoading(false);
   }, [notValidatedMEModels]);
 
@@ -100,7 +100,7 @@ export default function TableStatuses() {
   );
 }
 
-function convertData(meModels: MEModelResource[]): RowItem[] {
+function generateRowItem(meModels: MEModelResource[]): RowItem[] {
   return meModels.map((item) => ({
     key: item['@id'],
     scale: 'TODO',
