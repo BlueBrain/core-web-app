@@ -29,7 +29,8 @@ type Props = {
 
 export default function VerticalLinks({ virtualLabId, projectId, links, currentPage }: Props) {
   const { push } = useRouter();
-  const onClick = (href: string) => () => push(`/virtual-lab/lab/${virtualLabId}/project/${projectId}/${href}`);
+  const onClick = (href: string) => () =>
+    push(`/virtual-lab/lab/${virtualLabId}/project/${projectId}/${href}`);
   const selectedLayout = useSelectedLayoutSegment();
 
   return (
@@ -39,8 +40,8 @@ export default function VerticalLinks({ virtualLabId, projectId, links, currentP
           <button
             key={link.key}
             onClick={onClick(link.href)}
-            type='button'
-            className={`border-primary-7 text-left py-4 font-bold ${(selectedLayout === link.key || currentPage === link.key) && 'bg-neutral-1 text-primary-8'} ${idx !== links.length - 1 && 'border-b'}`}
+            type="button"
+            className={`border-primary-7 py-4 text-left font-bold ${(selectedLayout === link.key || currentPage === link.key) && 'bg-neutral-1 text-primary-8'} ${idx !== links.length - 1 && 'border-b'}`}
           >
             <div className="mx-4">{link.content}</div>
           </button>
@@ -48,13 +49,12 @@ export default function VerticalLinks({ virtualLabId, projectId, links, currentP
           <Link
             key={link.key}
             href={link.href}
-            className={`border-primary-7 text-left py-4 font-bold ${(selectedLayout === link.key || currentPage === link.key) && 'bg-neutral-1 text-primary-8'} ${idx !== links.length - 1 && 'border-b'}`}
+            className={`border-primary-7 py-4 text-left font-bold ${(selectedLayout === link.key || currentPage === link.key) && 'bg-neutral-1 text-primary-8'} ${idx !== links.length - 1 && 'border-b'}`}
           >
             <div className="mx-4">{link.content}</div>
           </Link>
-        )
-      }
-      )}
+        );
+      })}
     </div>
   );
 }

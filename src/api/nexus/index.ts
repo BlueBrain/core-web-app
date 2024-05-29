@@ -100,7 +100,7 @@ export function createFile(
   filename: string,
   contentType: string,
   session: Session,
-  fileUrl?: string,
+  fileUrl?: string
 ): Promise<FileMetadata> {
   const url = fileUrl ?? composeUrl('file', '');
 
@@ -240,7 +240,7 @@ export function listResourceLinksById<T>(
 export function createResource<T extends EntityResource>(
   resource: Record<string, any>,
   session: Session,
-  url?: string,
+  url?: string
 ): Promise<T> {
   const createResourceApiUrl = url ?? composeUrl('resource', '', { sync: true, schema: null });
   // TODO: remove this while all entities do not have metadata in source

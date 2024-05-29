@@ -87,12 +87,14 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
         <span>Switch project</span> <SwapOutlined />
       </Link>
 
-      <VerticalLinks {...{
-        virtualLabId,
-        projectId,
-        currentPage,
-        links: linkItems
-      }} />
+      <VerticalLinks
+        {...{
+          virtualLabId,
+          projectId,
+          currentPage,
+          links: linkItems,
+        }}
+      />
     </div>
   );
 }

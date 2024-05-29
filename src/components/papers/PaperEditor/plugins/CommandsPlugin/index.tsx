@@ -4,8 +4,6 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getSelection } from 'lexical';
 import { expand, summarize } from '../../services/ml';
 
-
-
 export default function CommandsPlugin() {
   const [selectOpen, setSelectOpen] = useState(false);
 

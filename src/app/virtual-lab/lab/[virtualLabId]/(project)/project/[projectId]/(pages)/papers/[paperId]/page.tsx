@@ -9,7 +9,6 @@ const Editor = dynamic(() => import('@/components/papers/PaperEditor'), { ssr: f
 function PaperPage({
   params: { virtualLabId, projectId, paperId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string; paperId: string }>) {
-
   return (
     <div className="mt-4 h-[80vh] bg-white p-8 text-slate-800">
       <Link className="mb-18" href={`/virtual-lab/lab/${virtualLabId}/project/${projectId}/papers`}>

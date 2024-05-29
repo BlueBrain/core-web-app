@@ -1,22 +1,21 @@
 'use server';
 
-import { revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache';
 
 import { PaperCreationAction, PaperSchema } from './validation';
-import { papersListTagGenerator } from './utils';
-import { createFile, createResource } from "@/api/nexus";
-import { auth } from "@/auth";
-import { PaperResource } from "@/types/nexus";
-import { composeUrl, createDistribution } from "@/util/nexus";
-import { to64 } from '@/util/common';
+import { paperHrefGenerator, papersListTagGenerator } from './utils';
+import { createFile, createResource } from '@/api/nexus';
+import { auth } from '@/auth';
+import { PaperResource } from '@/types/nexus';
+import { composeUrl, createDistribution } from '@/util/nexus';
 
-
-
-
-export default async function initializePaperEntry(_prevState: PaperCreationAction, paper: FormData) {
+export default async function initializePaperEntry(
+  _prevState: PaperCreationAction,
+  paper: FormData
+) {
   const session = await auth();
   if (!session) {
-    throw Error("oops");
+    throw Error('oops');
   }
 
   const { success, data, error } = PaperSchema.safeParse({
@@ -25,7 +24,7 @@ export default async function initializePaperEntry(_prevState: PaperCreationActi
     title: paper.get('title'),
     summary: paper.get('summary'),
     sourceData: paper.get('source-data'),
-    generateOutline: paper.get('generate-outline')
+    generateOutline: paper.get('generate-outline'),
   });
 
   if (!success && error) {
@@ -33,7 +32,7 @@ export default async function initializePaperEntry(_prevState: PaperCreationActi
       error: error.message,
       validationErrors: error.flatten().fieldErrors,
       redirect: null,
-    }
+    };
   }
 
   try {
@@ -46,14 +45,14 @@ export default async function initializePaperEntry(_prevState: PaperCreationActi
       'lexical-editor--state.json',
       'application/json',
       session,
-      fileUrl,
+      fileUrl
     );
 
     const resourceUrl = composeUrl('resource', '', {
       org: virtualLabId,
       project: projectId,
       sync: true,
-      schema: null
+      schema: null,
     });
 
     const result = await createResource<PaperResource>(
@@ -73,20 +72,18 @@ export default async function initializePaperEntry(_prevState: PaperCreationActi
       resourceUrl
     );
 
-
     revalidateTag(papersListTagGenerator({ virtualLabId, projectId }));
 
-    return ({
+    return {
       error: null,
       validationErrors: null,
-      redirect:`/virtual-lab/lab/${virtualLabId}/project/${projectId}/papers/${to64(result['@id'])}`,
-    })
-
+      redirect: paperHrefGenerator({ virtualLabId, projectId, '@id': result['@id'] }),
+    };
   } catch (err) {
-    return ({
+    return {
       redirect: null,
       validationErrors: null,
-      error: (err as ({ message: string })).message
-    });
+      error: (err as { message: string }).message,
+    };
   }
 }

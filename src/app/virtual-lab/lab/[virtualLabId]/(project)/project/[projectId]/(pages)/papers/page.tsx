@@ -5,8 +5,6 @@ import PaperListView from '@/components/papers/PaperListView';
 import { ServerSideComponentProp } from '@/types/common';
 import retrievePapersList from '@/services/paper-ai/retrievePapersList';
 
-
-
 export default async function PapersListing({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
@@ -14,19 +12,20 @@ export default async function PapersListing({
   if (!session) return;
 
   const { papers, total } = await retrievePapersList({
-    virtualLabId, projectId,
+    virtualLabId,
+    projectId,
     accessToken: session.accessToken,
-  })
+  });
 
   return (
     <div
       id="project-papers-container"
-      className="mt-4 max-h-[80vh] h-full bg-white p-8 flex flex-col relative"
+      className="relative mt-4 flex h-full max-h-[80vh] flex-col bg-white p-8"
     >
       <PaperListView {...{ total, papers }} />
       <Link
-        className="bg-primary-8 px-8 py-4 flex items-center justify-center text-white max-w-max self-end mt-auto"
-        type='primary'
+        className="mt-auto flex max-w-max items-center justify-center self-end bg-primary-8 px-8 py-4 text-white"
+        type="primary"
         href={`/virtual-lab/lab/${virtualLabId}/project/${projectId}/papers/create`}
       >
         Create new paper
