@@ -4,12 +4,14 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
+import { classNames } from '@/util/utils';
 
 type Props = {
+  className?: string;
   extraItems?: ReactNode[];
 };
 
-export default function VirtualLabTopMenu({ extraItems }: Props) {
+export default function VirtualLabTopMenu({ className, extraItems }: Props) {
   const { data: session } = useSession();
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
@@ -18,7 +20,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   }, [localRef, setProjectTopMenuRef]);
 
   return (
-    <div className="flex h-14 w-full justify-between">
+    <div className={classNames('flex h-14 w-full justify-between', className)}>
       <div className="flex gap-4" ref={localRef} />
       <div className="flex w-fit items-center justify-end border border-primary-7">
         <Link className="w-52 border-x border-primary-7 p-4 font-bold" href="/getting-started">
