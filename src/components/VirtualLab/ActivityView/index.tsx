@@ -1,10 +1,10 @@
-import HeaderStatuses from './HeaderStatuses';
+import StatusHeader from './StatusHeader';
 import ActivityTable from './ActivityTable';
 
 export default function ActivityView() {
   return (
     <div>
-      <HeaderStatuses />
+      <StatusHeader />
       <ActivityTable />
     </div>
   );
