@@ -1,7 +1,7 @@
 'use client';
 
-import ActivityTable from '@/components/VirtualLab/ActivityTable';
+import ActivityView from '@/components/VirtualLab/ActivityView';
 
 export default function VirtualLabProjectActivityPage() {
-  return <ActivityTable />;
+  return <ActivityView />;
 }

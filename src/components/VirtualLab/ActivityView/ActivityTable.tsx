@@ -65,7 +65,7 @@ const columns: ActivityColumn[] = [
   },
 ];
 
-export default function TableStatuses() {
+export default function ActivityTable() {
   const [loading, setLoading] = useState(true);
   const [dataSource, setDataSource] = useState<RowItem[]>([]);
   const notValidatedMEModels = useAtomValue(notValidatedMEModelsAtom);

@@ -1,21 +1,10 @@
-import TableStatuses from './TableStatuses';
-
-export default function ActivityTable() {
-  return (
-    <div>
-      <HeaderStatuses />
-      <TableStatuses />
-    </div>
-  );
-}
-
 const headerStatuses = [
   { name: 'Error', count: 0 },
   { name: 'Model builds', count: 0 },
   { name: 'Analysis running', count: 0 },
 ];
 
-function HeaderStatuses() {
+export default function HeaderStatuses() {
   // TODO: this numbers need to be fetched
   return (
     <div className="flex gap-7">
