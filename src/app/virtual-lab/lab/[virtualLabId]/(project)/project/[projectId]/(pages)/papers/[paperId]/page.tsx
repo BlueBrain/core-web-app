@@ -7,9 +7,8 @@ import { ServerSideComponentProp } from '@/types/common';
 const Editor = dynamic(() => import('@/components/papers/PaperEditor'), { ssr: false });
 
 function PaperPage({
-  params,
+  params: { virtualLabId, projectId, paperId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string; paperId: string }>) {
-  const { virtualLabId, projectId, paperId } = params;
 
   return (
     <div className="mt-4 h-[80vh] bg-white p-8 text-slate-800">

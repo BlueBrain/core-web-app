@@ -3,10 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/button-has-type */
 
-import { useState, useLayoutEffect } from 'react';
-import { Select } from 'antd';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getSelection } from 'lexical';
+import { useState } from 'react';
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -18,96 +15,9 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import RemoteStorePlugin from './plugins/RemoteStorePlugin';
-import { expand, summarize } from './services/ml';
+import CommandsPlugin from './plugins/CommandsPlugin';
 
 import style from './paper-editor.module.css';
-
-function CommandSPlugin() {
-  const [selectOpen, setSelectOpen] = useState(false);
-
-  const [editor] = useLexicalComposerContext();
-
-  const handleExpand = async () => {
-    const text = editor.getEditorState().read(() => $getSelection()?.getTextContent());
-
-    if (!text) return;
-
-    const expandedText = await expand(text);
-
-    editor.update(() => {
-      const selection = $getSelection();
-
-      selection?.insertRawText(`${text}${expandedText}`);
-    });
-  };
-
-  const handleSummarize = async () => {
-    const text = editor.getEditorState().read(() => $getSelection()?.getTextContent());
-
-    if (!text) return;
-
-    const summary = await summarize(text);
-
-    editor.update(() => {
-      const selection = $getSelection();
-
-      selection?.insertRawText(summary);
-    });
-  };
-
-  const applyCmd = (cmd: 'expand' | 'summarize') => {
-    setSelectOpen(false);
-
-    if (cmd === 'expand') {
-      handleExpand();
-    } else if (cmd === 'summarize') {
-      handleSummarize();
-    }
-
-    editor.focus();
-  };
-
-  useLayoutEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      // check if the user pressed cmd + k
-      if (e.metaKey && e.key === 'k') {
-        e.preventDefault();
-        setSelectOpen(true);
-      }
-    };
-
-    return editor.registerRootListener(
-      (rootElement: null | HTMLElement, prevRootElement: null | HTMLElement) => {
-        if (prevRootElement !== null) {
-          prevRootElement.removeEventListener('keydown', onKeyDown);
-        }
-        if (rootElement !== null) {
-          rootElement.addEventListener('keydown', onKeyDown);
-        }
-      }
-    );
-  }, [editor]);
-
-  return (
-    <div style={{ height: 0, overflow: 'hidden', marginTop: '1rem' }}>
-      {selectOpen ? (
-        <Select
-          autoFocus
-          open
-          style={{ width: 200 }}
-          options={[
-            { label: 'Summarize', value: 'summarize' },
-            { label: 'Expand', value: 'expand' },
-          ]}
-          onBlur={() => {
-            setSelectOpen(false);
-          }}
-          onChange={applyCmd}
-        />
-      ) : null}
-    </div>
-  );
-}
 
 const theme = {
   root: 'p-4 border-slate-500 border-2 rounded h-full min-h-[200px] focus:outline-none focus-visible:border-black',
@@ -145,7 +55,7 @@ export default function Editor({ virtualLabId, projectId, paperId }: EditorProps
       <LexicalComposer initialConfig={initialConfig}>
         <div className={style.editorContainer}>
           <RemoteStorePlugin virtualLabId={virtualLabId} projectId={projectId} paperId={paperId} />
-          <CommandSPlugin />
+          <CommandsPlugin />
           <ToolbarPlugin />
           <div className={style.editorInner}>
             <RichTextPlugin
