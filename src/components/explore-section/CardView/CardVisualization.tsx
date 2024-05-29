@@ -12,10 +12,13 @@ import {
 } from '@/types/explore-section/es-experiment';
 import PreviewThumbnail from '@/components/explore-section/ExploreSectionListingView/PreviewThumbnail';
 import { useSwcContentUrl } from '@/util/content-url';
+import { NeuronMorphology } from '@/types/e-model';
 
 type CardVisualizationProps = {
   dataType: DataType;
-  resource: ReconstructedNeuronMorphology | ExperimentalTrace;
+  resource: ReconstructedNeuronMorphology | ExperimentalTrace | NeuronMorphology;
+  height?: number;
+  width?: number;
 };
 
 const swcFileAtom = atomFamily((contentUrl?: string) =>
@@ -27,7 +30,12 @@ const swcFileAtom = atomFamily((contentUrl?: string) =>
   })
 );
 
-export default function CardVisualization({ dataType, resource }: CardVisualizationProps) {
+export default function CardVisualization({
+  dataType,
+  resource,
+  height = 350,
+  width = 350,
+}: CardVisualizationProps) {
   const contentUrl = useSwcContentUrl(resource.distribution);
 
   const swc = useAtomValue(useMemo(() => loadable(swcFileAtom(contentUrl)), [contentUrl]));
@@ -48,9 +56,9 @@ export default function CardVisualization({ dataType, resource }: CardVisualizat
             <PreviewThumbnail
               contentUrl={contentUrl}
               dpi={300}
-              height={350}
+              height={height}
               type={DataType.ExperimentalNeuronMorphology}
-              width={350}
+              width={width}
             />
           )
         );
