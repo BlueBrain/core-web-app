@@ -85,7 +85,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
     { key: LinkItemKey.Admin, content: 'Admin', href: 'admin' },
   ];
   return (
-    <div className="mr-12 flex w-full flex-col gap-5">
+    <div className="mr-5 flex w-full flex-col gap-5">
       <VirtualLabTitle virtualLabId={virtualLabId} />
       <Link
         href="/virtual-lab"
