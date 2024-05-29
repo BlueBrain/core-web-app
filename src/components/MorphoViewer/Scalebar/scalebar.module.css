@@ -1,7 +1,6 @@
 .main {
   position: absolute;
-  left: 1em;
-  right: 1em;
+  left: 0;
   bottom: 0;
   height: 32px;
   width: 100%;
