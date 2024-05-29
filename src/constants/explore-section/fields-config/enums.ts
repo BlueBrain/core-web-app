@@ -65,4 +65,6 @@ export enum Field {
   EModelMorphology = 'eModelMorphology',
   EModelScore = 'eModelScore',
   EModelResponse = 'eModelResponse',
+  MEModelResponse = 'meModelResponse',
+  MEModelMorphologyPreview = 'meModelMorphologyPreview',
 }

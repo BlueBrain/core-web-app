@@ -6,6 +6,7 @@ import { Model } from '@/types/explore-section/delta-model';
 import { formatNumber } from '@/util/common';
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import { ESeModel } from '@/types/explore-section/es';
+import MorphPreviewFromId from '@/components/build-section/virtual-lab/me-model/MorphPreviewFromId';
 
 export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
   [Field.EModelMorphology]: {
@@ -50,6 +51,42 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
   [Field.EModelResponse]: {
     className: 'text-center',
     title: 'Response',
+    filter: null,
+    render: {
+      esResourceViewFn: (_value, record) => {
+        const { _source: source } = record;
+
+        const images = (source as ESeModel)?.image;
+        return <EModelTracePreview images={images} height={116} width={184} />;
+      },
+    },
+    vocabulary: {
+      plural: 'responses',
+      singular: 'response',
+    },
+    style: { width: 184 },
+  },
+  [Field.MEModelMorphologyPreview]: {
+    className: 'text-center',
+    title: 'Morphology',
+    filter: null,
+    render: {
+      esResourceViewFn: (_value, record) => {
+        const { _source: source } = record;
+
+        const morphId = (source as ESeModel)?.memodel?.neuronMorphology['@id'] || '';
+        return <MorphPreviewFromId id={morphId} height={116} width={184} />;
+      },
+    },
+    vocabulary: {
+      plural: 'responses',
+      singular: 'response',
+    },
+    style: { width: 184 },
+  },
+  [Field.MEModelResponse]: {
+    className: 'text-center',
+    title: 'Trace',
     filter: null,
     render: {
       esResourceViewFn: (_value, record) => {
