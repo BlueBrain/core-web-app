@@ -68,9 +68,10 @@ export const inferenceMorphRelevantRule = {
 };
 
 export const cellCompositionFile = {
-  org: env.NEXT_PUBLIC_CELL_COMPOSITION_FILE_ORG,
-  project: env.NEXT_PUBLIC_CELL_COMPOSITION_FILE_PROJECT,
-  id: env.NEXT_PUBLIC_CELL_COMPOSITION_FILE_ID,
+  org: env.NEXT_PUBLIC_CELL_COMPOSITION_ORG,
+  project: env.NEXT_PUBLIC_CELL_COMPOSITION_PROJECT,
+  id: env.NEXT_PUBLIC_CELL_COMPOSITION_ID,
+  tag: env.NEXT_PUBLIC_CELL_COMPOSITION_TAG,
 };
 
 export const synParamAssignmentResource = {

@@ -30,6 +30,7 @@ export type ComposeUrlParams = {
   viewType?: 'es' | 'sparql';
   sync?: boolean;
   idExpand?: boolean;
+  tag?: string;
 };
 
 const ViewTypeMap = {
@@ -50,6 +51,7 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     viewType,
     sync = false,
     idExpand = true,
+    tag = undefined,
   } = params ?? {};
 
   // if id has revision and revision is passed as attribute remove to avoid collision
@@ -72,6 +74,9 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
 
   if (rev) {
     searchParams.set('rev', rev.toString());
+  }
+  if (tag) {
+    searchParams.set('tag', tag);
   }
 
   if (sync) {
