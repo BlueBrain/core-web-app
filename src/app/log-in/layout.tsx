@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import NewEntryPoint from '@/components/NewEntryPoint';
+import WrapperBanner from '@/components/WrapperBanner';
 
 export default function Layout({ children }: ReactNode) {
-  return <NewEntryPoint>{children}</NewEntryPoint>;
+  return <WrapperBanner>{children}</WrapperBanner>;
 }
