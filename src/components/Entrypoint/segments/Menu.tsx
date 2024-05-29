@@ -1,8 +1,7 @@
 import { ComponentType } from 'react';
-import { signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 import kebabCase from 'lodash/kebabCase';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 
 import { OBPLogo } from './Splash';
 import { classNames } from '@/util/utils';
@@ -36,10 +35,9 @@ const ENTRYPOINT_MENU_ITEMS: Array<EntrypointMenuItem> = [
   },
   {
     title: 'Log in',
+    href: '/log-in',
     description: 'Get access to all your models & experiments',
     bgcolor: 'bg-primary-7',
-    action: (callbackUrl: string) =>
-      signIn('keycloak', { callbackUrl: callbackUrl ?? `${basePath}/main` }),
   },
   {
     title: 'Sign up',

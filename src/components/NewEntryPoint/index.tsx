@@ -17,13 +17,7 @@ function getBackgroundImage(srcSet = '') {
 
 const imgSrc = `${basePath}/images/virtual-lab/flopped_obp_hippocampus.png`;
 
-export default function NewEntryPoint({
-  children,
-  // errorCode,
-}: {
-  children: ReactNode;
-  // errorCode?: string;
-}) {
+export default function NewEntryPoint({ children }: { children: ReactNode }) {
   const {
     props: { srcSet },
   } = getImageProps({
@@ -33,7 +27,7 @@ export default function NewEntryPoint({
     width: 4096,
   });
   const backgroundImage = getBackgroundImage(srcSet);
-  const style = { backgroundImage, backgroundPositionX: '64rem' };
+  const style = { backgroundImage, backgroundPositionX: '96rem' };
 
   return (
     <div
