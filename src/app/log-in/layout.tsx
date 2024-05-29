@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <WrapperBanner>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <VirtualLabTopMenu className="absolute right-10 top-10 text-white" />
+        <VirtualLabTopMenu className="absolute right-10 top-10 text-white" ghost={false} />
         {children}
       </ErrorBoundary>
     </WrapperBanner>
