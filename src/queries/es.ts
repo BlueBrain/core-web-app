@@ -491,11 +491,7 @@ export const getLicenseByIdQuery = (licenseId: string) => ({
   },
 });
 
-export const getPaperListQuery = (
-  virtualLabId: string,
-  projectId: string,
-  searchString: string = ''
-) => ({
+export const getPaperListQuery = (searchString: string = '') => ({
   size: DEFAULT_SIZE,
   query: {
     bool: {
@@ -505,19 +501,6 @@ export const getPaperListQuery = (
             must: { term: { _deprecated: false } },
           },
         },
-        // TODO: I comment this filter because the virtualLabId & projectId are not indexed in the defaultView
-        // TODO: The view can filter per vlab/project automatically
-        // TODO: need suggestion @pavlo
-        // {
-        //   bool: {
-        //     must: { term: { virtualLabId } },
-        //   },
-        // },
-        // {
-        //   bool: {
-        //     must: { term: { projectId } },
-        //   },
-        // },
         {
           bool: {
             must: { term: { '@type': 'Paper' } },
