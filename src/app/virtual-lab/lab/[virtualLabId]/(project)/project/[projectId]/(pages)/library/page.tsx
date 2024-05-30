@@ -6,9 +6,5 @@ export default function VirtualLabProjectLibraryPage({
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
   const { virtualLabId, projectId } = params;
 
-  return (
-    <div>
-      <BookmarkList labId={virtualLabId} projectId={projectId} />
-    </div>
-  );
+  return <BookmarkList labId={virtualLabId} projectId={projectId} />;
 }

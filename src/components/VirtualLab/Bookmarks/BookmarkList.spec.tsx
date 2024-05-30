@@ -33,6 +33,29 @@ describe('Library', () => {
     await screen.findByText('item1');
     screen.getByText('item2');
   });
+
+  it('bookmark item links to detail page', async () => {
+    projectHasBookmarks(labId, projectId, [bookmarkItem('item1'), bookmarkItem('item2')]);
+    elasticSearchReturns(['item1', 'item2']);
+    const user = renderComponent(labId, projectId);
+
+    const nameCell = await screen.findByText('item1');
+    await user.click(nameCell);
+    const url = navigateTo.mock.calls[0][0];
+    expect(url).toContain('morphology');
+    expect(url).toContain(labId);
+    expect(url).toContain(projectId);
+  });
+
+  it('does not show table with bookmarks if no resource is bookmarked', async () => {
+    projectHasBookmarks(labId, projectId, []);
+    elasticSearchReturns(['item1', 'item2']); // ES populates query atoms correctly
+
+    renderComponent(labId, projectId);
+
+    await screen.findByText('There are no pinned datasets for morphologies');
+    expect(screen.queryByText('item1')).not.toBeInTheDocument();
+  });
 });
 
 const renderComponent = (labId: string, projectId: string) => {
@@ -147,14 +170,27 @@ jest.mock('src/api/explore-section/resources', () => {
 
   return {
     ...actual,
+    __esModule: true,
     fetchEsResourcesByType: (accessToken: string, dataQuery: DataQuery) =>
       fetchEsResourcesByType(accessToken, dataQuery),
+  };
+});
+
+jest.mock('next/navigation', () => {
+  const actual = jest.requireActual('next/navigation');
+  return {
+    ...actual,
+    __esModule: true,
+    useRouter: () => ({
+      push: (path: string) => navigateTo(path),
+    }),
   };
 });
 
 const getBookmarkedItems = jest.fn();
 const buildFilters = jest.fn();
 const fetchEsResourcesByType = jest.fn();
+const navigateTo = jest.fn();
 const filtersQuery = new esb.BoolQuery();
 
 const mockHit = (resourceId: string) => ({

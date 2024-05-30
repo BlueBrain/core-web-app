@@ -1,7 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 
 import { loadable } from 'jotai/utils';
-import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import FilterControls from '@/components/explore-section/ExploreSectionListingView/FilterControls';
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
@@ -9,27 +9,27 @@ import WithControlPanel from '@/components/explore-section/ExploreSectionListing
 import { DataType } from '@/constants/explore-section/list-views';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { dataAtom, sortStateAtom } from '@/state/explore-section/list-view-atoms';
+import { detailUrlWithinLab } from '@/util/common';
 
 type Props = {
   dataType: DataType;
   resourceIds: string[];
+  labId: string;
+  projectId: string;
 };
 
-export default function ExperimentBookmarks({ dataType, resourceIds }: Props) {
+export default function ExperimentBookmarks({ dataType, resourceIds, labId, projectId }: Props) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
+  const router = useRouter();
 
   const data = useAtomValue(
-    useMemo(
-      () =>
-        loadable(
-          dataAtom({
-            dataType,
-            brainRegionSource: 'selected',
-            bookmarkResourceIds: resourceIds,
-          })
-        ),
-      [dataType, resourceIds]
+    loadable(
+      dataAtom({
+        dataType,
+        brainRegionSource: 'selected',
+        bookmarkResourceIds: resourceIds,
+      })
     )
   );
 
@@ -40,7 +40,7 @@ export default function ExperimentBookmarks({ dataType, resourceIds }: Props) {
       id="bookmark-list-container"
       style={{
         height: `${dataSource.length * 100}px`,
-        maxHeight: '700px',
+        maxHeight: '1200px',
         position: 'relative',
         minHeight: '450px',
       }}
@@ -77,6 +77,17 @@ export default function ExperimentBookmarks({ dataType, resourceIds }: Props) {
                   brainRegionSource="selected"
                   loading={data.state === 'loading'}
                   bookmarkResourceIds={resourceIds}
+                  onCellClick={(_, record) => {
+                    router.push(
+                      detailUrlWithinLab(
+                        labId,
+                        projectId,
+                        record._source.project.label,
+                        record._id,
+                        'morphology'
+                      )
+                    );
+                  }}
                 />
               </div>
             </>

@@ -9,7 +9,6 @@ export async function addBookmark(
   lab: string,
   labProject: string
 ) {
-  console.log('Project', labProject);
   return getBookmarkedItems(lab, labProject).then((items) => {
     localStorage.setItem(
       keyFor(lab, labProject),

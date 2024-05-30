@@ -40,12 +40,17 @@ export default function BookmarkList({ labId, projectId }: Props) {
               </span>
             </div>
           ),
-          children: (
-            <ExperimentBookmarks
-              dataType={DataType.ExperimentalNeuronMorphology}
-              resourceIds={bookmarkedItems.map((b) => b.resourceId)}
-            />
-          ),
+          children:
+            bookmarkedItems?.length > 0 ? (
+              <ExperimentBookmarks
+                dataType={DataType.ExperimentalNeuronMorphology}
+                resourceIds={bookmarkedItems.map((b) => b.resourceId)}
+                labId={labId}
+                projectId={projectId}
+              />
+            ) : (
+              <p>There are no pinned datasets for morphologies</p>
+            ),
         },
       ]
     : [];
