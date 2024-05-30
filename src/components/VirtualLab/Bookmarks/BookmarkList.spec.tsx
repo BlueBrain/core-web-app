@@ -14,8 +14,6 @@ import { DataType } from '@/constants/explore-section/list-views';
 import esb from 'elastic-builder';
 import { DataQuery } from '@/api/explore-section/resources';
 
-const resourceProjectLabel = 'aLabel';
-
 describe('Library', () => {
   const labId = '3';
   const projectId = '123';
@@ -98,9 +96,8 @@ function BookmarkListProvider(labId: string, projectId: string) {
   );
 }
 
-const bookmarkItem = (id: string, projectLabel: string = resourceProjectLabel): BookmarkItem => ({
+const bookmarkItem = (id: string): BookmarkItem => ({
   resourceId: id,
-  projectLabel,
 });
 
 const projectHasBookmarks = (labId: string, projectId: string, items: BookmarkItem[]) => {

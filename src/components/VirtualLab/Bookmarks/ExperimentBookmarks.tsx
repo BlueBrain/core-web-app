@@ -20,7 +20,6 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
   const router = useRouter();
-
   const data = useAtomValue(
     loadable(
       dataAtom({

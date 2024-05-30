@@ -19,13 +19,10 @@ export default function DetailHeaderName({
   detail,
   url,
   withRevision,
-  resourceProjectLabel,
 }: {
   detail: DeltaResource;
   url?: string | null;
   withRevision?: boolean;
-
-  resourceProjectLabel: string;
 }) {
   const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
@@ -89,8 +86,8 @@ export default function DetailHeaderName({
               <Button
                 type="text"
                 className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
-                onClick={() => {
-                  addBookmark(detail['@id'], resourceProjectLabel, virtualLabId, projectId);
+                onClick={async () => {
+                  await addBookmark(detail['@id'], virtualLabId, projectId);
                 }}
               >
                 Save to library

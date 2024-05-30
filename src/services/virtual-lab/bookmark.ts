@@ -1,18 +1,12 @@
 export type BookmarkItem = {
   resourceId: string;
-  projectLabel: string;
 };
 
-export async function addBookmark(
-  resource: string,
-  resourceProjectLabel: string,
-  lab: string,
-  labProject: string
-) {
+export async function addBookmark(resource: string, lab: string, labProject: string) {
   return getBookmarkedItems(lab, labProject).then((items) => {
     localStorage.setItem(
       keyFor(lab, labProject),
-      JSON.stringify(items.concat({ resourceId: resource, projectLabel: resourceProjectLabel }))
+      JSON.stringify(items.concat({ resourceId: resource }))
     );
   });
 }

@@ -27,18 +27,16 @@ export default function DetailHeader({
   fields,
   detail,
   url,
-  resourceProjectLabel,
 }: {
   fields: DetailProps[];
   detail?: DetailType | undefined;
   url?: string | null;
-  resourceProjectLabel: string;
 }) {
   if (!detail) return null;
 
   return (
     <div className="flex max-w-screen-2xl flex-col gap-10">
-      <DetailHeaderName detail={detail} url={url} resourceProjectLabel={resourceProjectLabel} />
+      <DetailHeaderName detail={detail} url={url} />
       <div className="grid grid-cols-6 gap-4 break-words">
         {fields.map(({ className, field }) => (
           <Field key={field} className={className} field={field} data={detail} />
