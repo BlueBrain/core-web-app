@@ -6,6 +6,7 @@ import { Carousel } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { CarouselRef } from 'antd/lib/carousel';
 
+import { basePath } from '@/config';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
 import { SimulationType } from '@/types/virtual-lab/lab';
@@ -19,11 +20,83 @@ enum SimulationScope {
 
 type SlideProps = {
   description: string;
-  key: SimulationType;
-  scope: string;
+  id: SimulationType;
+  selectedSimulationScope: SimulationType | null;
+  setSelectedSimulationScope: Dispatch<SetStateAction<SimulationType | null>>;
   src: string;
   title: string;
 };
+
+const imgBasePath = `${basePath}/images/virtual-lab/simulate`;
+
+const items = [
+  {
+    description: 'Coming soon.',
+    key: SimulationType.IonChannel,
+    scope: 'cellular',
+    src: `${imgBasePath}/${SimulationType.IonChannel}.png`,
+    title: 'Ion Channel',
+  },
+  {
+    description:
+      'Load Hodgkin-Huxley single cell models, perform current clamp experiments with different levels of input current, and observe the resulting changes in membrane potential.',
+    key: SimulationType.SingleNeuron,
+    scope: 'cellular',
+    src: `${imgBasePath}/${SimulationType.SingleNeuron}.png`,
+    title: 'Single Neuron',
+  },
+  {
+    description:
+      'Retrieve interconnected Hodgkin-Huxley cell models from a circuit and conduct a simulated experiment by establishing a stimulation and reporting protocol.',
+    key: SimulationType.PairedNeuron,
+    scope: 'cellular',
+    src: `${imgBasePath}/${SimulationType.PairedNeuron}.png`,
+    title: 'Paired Neurons',
+  },
+  {
+    description:
+      'Introduce spikes into the synapses of Hodgkin-Huxley cell models and carry out a virtual experiment by setting up a stimulation and reporting protocol.',
+    key: SimulationType.Synaptome,
+    scope: 'circuit',
+    src: `${imgBasePath}/${SimulationType.Synaptome}.png`,
+    title: 'Synaptome',
+  },
+  {
+    description: 'Coming soon.',
+    key: SimulationType.Microcircuit,
+    scope: 'circuit',
+    src: `${imgBasePath}/${SimulationType.Microcircuit}.png`,
+    title: 'Microcircuit',
+  },
+  {
+    description: 'Coming soon.',
+    key: SimulationType.NeuroGliaVasculature,
+    scope: 'circuit',
+    src: `${imgBasePath}/${SimulationType.NeuroGliaVasculature}.png`,
+    title: 'Neuro-glia-vasculature',
+  },
+  {
+    description: 'Coming soon.',
+    key: SimulationType.BrainRegions,
+    scope: 'system',
+    src: `${imgBasePath}/${SimulationType.BrainRegions}.png`,
+    title: 'Brain Regions',
+  },
+  {
+    description: 'Coming soon.',
+    key: SimulationType.BrainSystems,
+    scope: 'system',
+    src: `${imgBasePath}/${SimulationType.BrainSystems}.png`,
+    title: 'Brain Systems',
+  },
+  {
+    description: 'Coming soon.',
+    key: SimulationType.WholeBrain,
+    scope: 'system',
+    src: `${imgBasePath}/${SimulationType.WholeBrain}.png`,
+    title: 'Whole Brain',
+  },
+];
 
 function ScopeSelector({
   children,
@@ -66,13 +139,7 @@ function ScopeSelector({
   return projectTopMenuRef?.current && createPortal(controls, projectTopMenuRef.current);
 }
 
-function CustomSlide(
-  props: Omit<SlideProps, 'scope' | 'key'> & {
-    id: SimulationType;
-    selectedSimulationScope: SimulationType | null;
-    setSelectedSimulationScope: Dispatch<SetStateAction<SimulationType | null>>;
-  }
-) {
+function CustomSlide(props: SlideProps) {
   const {
     description,
     id: key,
@@ -119,7 +186,7 @@ function CustomSlide(
   );
 }
 
-export default function ScopeCarousel({ items }: { items: Array<SlideProps> }) {
+export default function ScopeCarousel() {
   const [selectedScope, setSelectedScope] = useState<SimulationScope | null>(null);
 
   const [selectedSimulationScope, setSelectedSimulationScope] = useAtom(
