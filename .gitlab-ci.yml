@@ -142,7 +142,7 @@ deploy-aws-prod:
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
     NEXT_PUBLIC_ATLAS_ES_VIEW_ID: https://bbp.epfl.ch/neurosciencegraph/data/420e53b8-db21-4f70-a534-d799c4b59b5d
     NEXT_PUBLIC_KG_INFERENCE_BASE_URL: https://kg-inference-api.shapes-registry.org
-    NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL: https://thumbnail-generation-api.shapes-registry.org
+    NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL: https://openbrainplatform.org/api/thumbnail-generation
     NEXT_PUBLIC_VIRTUAL_LAB_API_URL: https://openbrainplatform.org/api/virtual-lab-manager
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_51P6uAFFE4Bi50cLlatJIc0fUPsP0jQkaCCJ8TTkIYOOLIrLzxX1M9p1kVD11drNqsF9p7yiaumWJ8UHb3ptJJRXB00y3qjYReV
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN

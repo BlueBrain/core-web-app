@@ -18,7 +18,7 @@ jobs:
       NEXT_PUBLIC_NEXUS_URL: https://sbo-nexus-delta.shapes-registry.org/v1
       NEXT_PUBLIC_ATLAS_ES_VIEW_ID: https://sbo-nexus-delta.shapes-registry.org/data/bbp/atlas/98e91247-a3f2-4dae-8cfb-9432fc7d84ae
       NEXT_PUBLIC_KG_INFERENCE_BASE_URL: https://kg-inference-api.shapes-registry.org
-      NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL: https://thumbnail-generation-api.shapes-registry.org
+      NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL: https://openbrainplatform.org/api/thumbnail-generation
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
