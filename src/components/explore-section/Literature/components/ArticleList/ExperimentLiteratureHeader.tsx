@@ -18,13 +18,15 @@ import { ArticleListFilters as Filters } from '@/components/explore-section/Lite
 import If from '@/components/ConditionalRenderer/If';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { brainRegionTitleCaseExceptConjunctions } from '@/util/utils';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
-import { ExperimentDataTypeName } from '@/types/explore-section/data-types';
+import {
+  EXPERIMENT_DATA_TYPES,
+  ExperimentTypeNames,
+} from '@/constants/explore-section/data-types/experiment-data-types';
 
 function ExperimentLiteratureHeader({ loading }: { loading?: boolean }) {
   const router = useRouter();
   const [brainRegion] = useQueryState('brainRegion');
-  const params = useParams<{ 'experiment-data-type': ExperimentDataTypeName }>();
+  const params = useParams<{ 'experiment-data-type': ExperimentTypeNames }>();
   const openFilterPanel = useSetAtom(articleListingFilterPanelOpenAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const filters = useAtomValue(articleListFiltersAtom);

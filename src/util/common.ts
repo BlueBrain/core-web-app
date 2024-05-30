@@ -1,7 +1,7 @@
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { BASE_EXPERIMENTAL_EXPLORE_PATH } from '@/constants/explore-section/paths';
-import { ExperimentDataTypeName } from '@/types/explore-section/data-types';
+import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 
 export const switchStateType = {
   COUNT: 'count',
@@ -41,14 +41,14 @@ export const detailUrlWithinLab = (
   labProjectId: string,
   resourceProjectLabel: string,
   resourceId: string,
-  resourceType: ExperimentDataTypeName
+  resourceType: ExperimentTypeNames
 ) =>
   `/virtual-lab/lab/${labId}/project/${labProjectId}${BASE_EXPERIMENTAL_EXPLORE_PATH}${resourceType}/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
 
 export const detailUrlOutsideLab = (
   projectLabel: string,
   resourceId: string,
-  resourceType: ExperimentDataTypeName
+  resourceType: ExperimentTypeNames
 ) => `${BASE_EXPERIMENTAL_EXPLORE_PATH}/${resourceType}/${to64(`${projectLabel}!/!${resourceId}`)}`;
 
 export const localCompareString = (a: string, b: string) => a.localeCompare(b);
