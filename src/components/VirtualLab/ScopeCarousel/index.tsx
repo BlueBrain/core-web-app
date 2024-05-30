@@ -67,56 +67,55 @@ function ScopeSelector({
 }
 
 function CustomSlide(
-  props: Omit<SlideProps, 'scope'> & {
+  props: Omit<SlideProps, 'scope' | 'key'> & {
+    id: SimulationType;
     selectedSimulationScope: SimulationType | null;
     setSelectedSimulationScope: Dispatch<SetStateAction<SimulationType | null>>;
   }
 ) {
   const {
+    description,
+    id: key,
     selectedSimulationScope,
     setSelectedSimulationScope,
-    description,
-    key,
-    title,
     src,
+    title,
     ...otherProps // These come from AntD's Carousel component. Do not remove.
   } = props;
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <div {...otherProps}>
-      <button
+    <button
+      className={classNames(
+        '!flex h-[290px] w-full flex-col gap-2 overflow-hidden px-3 text-left text-white',
+        !!selectedSimulationScope &&
+          selectedSimulationScope !== key &&
+          'text-opacity-60 opacity-60 hover:text-opacity-100 hover:opacity-100',
+        !selectedSimulationScope && 'hover:font-bold'
+      )}
+      onClick={() => setSelectedSimulationScope(selectedSimulationScope !== key ? key : null)}
+      type="button"
+      {...otherProps} // eslint-disable-line react/jsx-props-no-spreading
+    >
+      <h2
         className={classNames(
-          'flex h-[280px] w-[286px] flex-col gap-2 text-left text-white',
-          !!selectedSimulationScope &&
-            selectedSimulationScope !== key &&
-            'text-opacity-60 opacity-60 hover:text-opacity-100 hover:opacity-100',
-          !selectedSimulationScope && 'hover:font-bold'
+          'text-3xl',
+          !!selectedSimulationScope && selectedSimulationScope === key && 'font-bold'
         )}
-        onClick={() => setSelectedSimulationScope(selectedSimulationScope !== key ? key : null)}
-        type="button"
       >
-        <h2
-          className={classNames(
-            'text-3xl',
-            !!selectedSimulationScope && selectedSimulationScope === key && 'font-bold'
-          )}
-        >
-          {title}
-        </h2>
-        <span className="font-light">{description}</span>
-        <div className="relative w-full grow" style={{ opacity: 'inherit' }}>
-          <Image
-            fill
-            alt={`${title} Banner Image`}
-            style={{
-              objectFit: 'cover',
-            }}
-            src={src}
-          />
-        </div>
-      </button>
-    </div>
+        {title}
+      </h2>
+      <span className="font-light">{description}</span>
+      <div className="relative mt-auto h-[168px]" style={{ opacity: 'inherit' }}>
+        <Image
+          fill
+          alt={`${title} Banner Image`}
+          style={{
+            objectFit: 'cover',
+          }}
+          src={src}
+        />
+      </div>
+    </button>
   );
 }
 
@@ -130,8 +129,8 @@ export default function ScopeCarousel({ items }: { items: Array<SlideProps> }) {
   const carouselRef = useRef<CarouselRef>(null);
   const progressRef = useRef(null);
 
-  const slidesToShow = 5;
-  const slidesToScroll = 3;
+  const slidesToShow = 4;
+  const slidesToScroll = 4;
 
   const carouselItems = items
     .filter(({ scope }) => !selectedScope || scope === selectedScope)
@@ -139,10 +138,11 @@ export default function ScopeCarousel({ items }: { items: Array<SlideProps> }) {
       <CustomSlide
         key={key}
         description={description}
-        src={src}
-        title={title}
+        id={key}
         selectedSimulationScope={selectedSimulationScope}
         setSelectedSimulationScope={setSelectedSimulationScope}
+        src={src}
+        title={title}
       />
     ));
 
@@ -155,17 +155,35 @@ export default function ScopeCarousel({ items }: { items: Array<SlideProps> }) {
           Navigate scope right
         </RightOutlined>
       </ScopeSelector>
-      <div>
+      <div className="relative">
         <Carousel
-          ref={carouselRef}
           arrows
+          className="-mx-3"
           dots
           infinite={false}
-          slidesToShow={slidesToShow}
+          ref={carouselRef}
+          responsive={[
+            {
+              breakpoint: 1280,
+              settings: {
+                slidesToShow: 3,
+                slidesToScroll: 3,
+              },
+            },
+            {
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2,
+              },
+            },
+          ]}
           slidesToScroll={slidesToScroll}
+          slidesToShow={slidesToShow}
         >
           {carouselItems}
         </Carousel>
+        <div className="absolute right-0 top-0 h-full w-[134px] bg-gradient-to-r from-transparent to-[#002766]" />
       </div>
     </>
   );
