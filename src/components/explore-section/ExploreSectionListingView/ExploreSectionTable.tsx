@@ -178,10 +178,7 @@ export function BaseTable({
         ref={tableRef}
         sticky={{ offsetHeader: 50 }}
         aria-label="listing-view-table"
-        className={classNames(
-          styles.table,
-          '[&_.ant-table-body]:!no-scrollbar [&_.ant-table-sticky-holder]:shadow-md'
-        )}
+        className={classNames(styles.table, '[&_.ant-table-sticky-holder]:shadow-md')}
         columns={
           columns &&
           columns.map((col) => ({

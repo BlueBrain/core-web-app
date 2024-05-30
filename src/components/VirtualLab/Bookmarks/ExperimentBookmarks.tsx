@@ -9,6 +9,7 @@ import { DataType } from '@/constants/explore-section/list-views';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { dataAtom, sortStateAtom } from '@/state/explore-section/list-view-atoms';
 import { detailUrlWithinLab } from '@/util/common';
+import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 
 type Props = {
   dataType: DataType;
@@ -76,7 +77,7 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
                         projectId,
                         record._source.project.label,
                         record._id,
-                        'morphology'
+                        ExperimentTypeNames.MORPHOLOGY
                       )
                     );
                   }}
