@@ -53,6 +53,39 @@ export function FormatH3(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function FormatH4(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      <path
+        fill="currentColor"
+        d="M4 16.5v-9h1v4h5v-4h1v9h-1v-4H5v4zm14 0v-3h-5v-6h1v5h4v-5h1v5h2v1h-2v3z"
+      />
+    </svg>
+  );
+}
+
+export function FormatH5(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      <path
+        fill="currentColor"
+        d="M4 16.5v-9h1v4h5v-4h1v9h-1v-4H5v4zm9 0v-1h5.385q.269 0 .442-.173t.173-.442v-1.77q0-.269-.173-.442t-.442-.173H13v-5h7v1h-6v3h4.385q.666 0 1.14.475q.475.474.475 1.14v1.77q0 .666-.475 1.14q-.474.475-1.14.475z"
+      />
+    </svg>
+  );
+}
+
+export function FormatH6(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      <path
+        fill="currentColor"
+        d="M4 16.5v-9h1v4h5v-4h1v9h-1v-4H5v4zm10.615 0q-.666 0-1.14-.475q-.475-.474-.475-1.14v-5.77q0-.666.475-1.14q.474-.475 1.14-.475H20v1h-5.385q-.269 0-.442.173T14 9.115V11.5h4.385q.666 0 1.14.475q.475.474.475 1.14v1.77q0 .666-.475 1.14q-.474.475-1.14.475zm-.615-4v2.385q0 .269.173.442t.442.173h3.77q.269 0 .442-.173t.173-.442v-1.77q0-.269-.173-.442t-.442-.173z"
+      />
+    </svg>
+  );
+}
+
 export function FormatAlignLeft(props: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
