@@ -1,26 +1,27 @@
-import { CSSProperties, MouseEvent, ReactNode, useCallback, useRef, useState } from 'react';
-import { ConfigProvider, Table, TableProps } from 'antd';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
-import { useSetAtom } from 'jotai';
+import { ConfigProvider, Table, TableProps } from 'antd';
 import { ColumnGroupType, ColumnType, TableRef } from 'antd/es/table';
 import { RowSelectionType } from 'antd/es/table/interface';
+import { useSetAtom } from 'jotai';
+import { CSSProperties, MouseEvent, ReactNode, useCallback, useRef, useState } from 'react';
 
 import LoadMoreButton from './LoadMoreButton';
-import usePathname from '@/hooks/pathname';
-import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { ExploreDownloadButton } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 import WithRowSelection, {
   RenderButtonProps,
 } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-import type { ExploreESHit } from '@/types/explore-section/es';
-import { classNames } from '@/util/utils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DataType } from '@/constants/explore-section/list-views';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
-import { ExploreSectionResource } from '@/types/explore-section/resources';
+import usePathname from '@/hooks/pathname';
 import useResizeObserver from '@/hooks/useResizeObserver';
 import useScrollComplete from '@/hooks/useScrollComplete';
+import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
+import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import type { ExploreESHit } from '@/types/explore-section/es';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { classNames } from '@/util/utils';
 
+import { BookmarkScope } from '@/state/virtual-lab/bookmark';
 import styles from '@/app/explore/explore.module.scss';
 
 export type OnCellClick = (
@@ -234,7 +235,7 @@ export default function ExploreSectionTable({
   renderButton,
   onCellClick,
   selectionType,
-  bookmarkResourceIds,
+  bookmarksFor,
 }: TableProps<ExploreESHit<ExploreSectionResource>> & {
   enableDownload?: boolean;
   dataType: DataType;
@@ -243,7 +244,7 @@ export default function ExploreSectionTable({
   brainRegionSource: ExploreDataBrainRegionSource;
   onCellClick?: OnCellClick;
   selectionType?: RowSelectionType;
-  bookmarkResourceIds?: string[];
+  bookmarksFor?: BookmarkScope;
 }) {
   const [displayLoadMoreBtn, setDisplayLoadMoreBtn] = useState(false);
   const toggleDisplayMore = (value?: boolean) =>
@@ -288,7 +289,7 @@ export default function ExploreSectionTable({
         <LoadMoreButton
           dataType={dataType}
           brainRegionSource={brainRegionSource}
-          bookmarkResourceIds={bookmarkResourceIds}
+          bookmarksFor={bookmarksFor}
           hide={toggleDisplayMore}
         />
       )}

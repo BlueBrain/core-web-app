@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Collapse, CollapseProps, ConfigProvider } from 'antd';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import ExperimentBookmarks from './ExperimentBookmarks';
-import sessionAtom from '@/state/session';
-import { BookmarkItem, getBookmarkedItems } from '@/services/virtual-lab/bookmark';
 import { DataType } from '@/constants/explore-section/list-views';
+import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
 
 type Props = {
   labId: string;
@@ -16,17 +15,15 @@ type Props = {
 };
 
 export default function BookmarkList({ labId, projectId }: Props) {
-  const [bookmarkedItems, setBookmarkedItems] = useState<BookmarkItem[]>();
-  const session = useAtomValue(sessionAtom);
+  const [bookmarks, refreshBookmarks] = useAtom(
+    bookmarksForProjectAtomFamily({ virtualLabId: labId, projectId })
+  );
 
   useEffect(() => {
-    getBookmarkedItems(labId, projectId).then((items) => {
-      setBookmarkedItems(items);
-      return items;
-    });
-  }, [labId, projectId, session?.accessToken]);
+    refreshBookmarks();
+  }, [labId, projectId]);
 
-  const items: CollapseProps['items'] = bookmarkedItems
+  const items: CollapseProps['items'] = bookmarks
     ? [
         {
           key: '1',
@@ -36,15 +33,14 @@ export default function BookmarkList({ labId, projectId }: Props) {
                 Neuron morphology
               </span>
               <span className="ml-2 text-sm font-normal text-gray-600">
-                {bookmarkedItems.length} pinned datasets
+                {bookmarks.length} pinned datasets
               </span>
             </div>
           ),
           children:
-            bookmarkedItems?.length > 0 ? (
+            bookmarks?.length > 0 ? (
               <ExperimentBookmarks
                 dataType={DataType.ExperimentalNeuronMorphology}
-                resourceIds={bookmarkedItems.map((b) => b.resourceId)}
                 labId={labId}
                 projectId={projectId}
               />

@@ -11,12 +11,13 @@ import {
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
+import { BookmarkScope } from '@/state/virtual-lab/bookmark';
 
 export default function WithControlPanel({
   children,
   dataType,
   brainRegionSource,
-  bookmarkResourceIds,
+  bookmarksFor,
 }: {
   children: (props: {
     activeColumns?: string[];
@@ -26,7 +27,7 @@ export default function WithControlPanel({
   }) => ReactNode;
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
-  bookmarkResourceIds?: string[];
+  bookmarksFor?: BookmarkScope;
 }) {
   const activeColumns = useAtomValue(
     useMemo(() => unwrap(activeColumnsAtom({ dataType })), [dataType])
@@ -40,8 +41,8 @@ export default function WithControlPanel({
 
   const aggregations = useAtomValue(
     useMemo(
-      () => unwrap(aggregationsAtom({ dataType, brainRegionSource, bookmarkResourceIds })),
-      [dataType, brainRegionSource, bookmarkResourceIds]
+      () => unwrap(aggregationsAtom({ dataType, brainRegionSource, bookmarksFor })),
+      [dataType, brainRegionSource, bookmarksFor]
     )
   );
 

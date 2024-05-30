@@ -8,13 +8,11 @@ import { DataType } from '@/constants/explore-section/list-views';
 function NumericResultsInfo({
   dataType,
   brainRegionSource,
-  bookmarkResourceIds,
 }: {
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
-  bookmarkResourceIds?: string[];
 }) {
-  const total = useLoadableValue(totalAtom({ dataType, brainRegionSource, bookmarkResourceIds }));
+  const total = useLoadableValue(totalAtom({ dataType, brainRegionSource }));
 
   return (
     <div className="flex w-full justify-start">

@@ -25,13 +25,12 @@ describe('Library', () => {
     elasticSearchReturns(['item1', 'item2']);
     renderComponent(labId, projectId);
 
-    await screen.findByText('Results');
+    await screen.findByText('item1');
+    screen.getByText('item2');
+
     const argsPassed = buildFilters.mock.calls[0];
     expect(argsPassed[3]).toEqual('ExperimentalNeuronMorphology');
     expect(argsPassed[4]).toEqual(['item1', 'item2']);
-
-    await screen.findByText('item1');
-    screen.getByText('item2');
   });
 
   it('bookmark item links to detail page', async () => {

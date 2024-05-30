@@ -4,7 +4,6 @@ import { loadable } from 'jotai/utils';
 import { useRouter } from 'next/navigation';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import FilterControls from '@/components/explore-section/ExploreSectionListingView/FilterControls';
-import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import WithControlPanel from '@/components/explore-section/ExploreSectionListingView/WithControlPanel';
 import { DataType } from '@/constants/explore-section/list-views';
 import useExploreColumns from '@/hooks/useExploreColumns';
@@ -13,12 +12,11 @@ import { detailUrlWithinLab } from '@/util/common';
 
 type Props = {
   dataType: DataType;
-  resourceIds: string[];
   labId: string;
   projectId: string;
 };
 
-export default function ExperimentBookmarks({ dataType, resourceIds, labId, projectId }: Props) {
+export default function ExperimentBookmarks({ dataType, labId, projectId }: Props) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
   const router = useRouter();
@@ -28,7 +26,7 @@ export default function ExperimentBookmarks({ dataType, resourceIds, labId, proj
       dataAtom({
         dataType,
         brainRegionSource: 'selected',
-        bookmarkResourceIds: resourceIds,
+        bookmarksFor: { virtualLabId: labId, projectId },
       })
     )
   );
@@ -40,7 +38,7 @@ export default function ExperimentBookmarks({ dataType, resourceIds, labId, proj
       id="bookmark-list-container"
       style={{
         height: `${dataSource.length * 100}px`,
-        maxHeight: '1200px',
+        maxHeight: '1000px',
         position: 'relative',
         minHeight: '450px',
       }}
@@ -49,7 +47,7 @@ export default function ExperimentBookmarks({ dataType, resourceIds, labId, proj
         <WithControlPanel
           dataType={dataType}
           brainRegionSource="selected"
-          bookmarkResourceIds={resourceIds}
+          bookmarksFor={{ virtualLabId: labId, projectId }}
         >
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
             <>
@@ -59,13 +57,8 @@ export default function ExperimentBookmarks({ dataType, resourceIds, labId, proj
                 dataType={dataType}
                 setDisplayControlPanel={setDisplayControlPanel}
                 className="sticky top-0 !max-h-24 px-4 py-5"
-              >
-                <NumericResultsInfo
-                  dataType={dataType}
-                  brainRegionSource="selected"
-                  bookmarkResourceIds={resourceIds}
-                />
-              </FilterControls>
+              />
+
               <div>
                 <ExploreSectionTable
                   columns={columns.filter(({ key }) =>
@@ -76,7 +69,7 @@ export default function ExperimentBookmarks({ dataType, resourceIds, labId, proj
                   dataType={dataType}
                   brainRegionSource="selected"
                   loading={data.state === 'loading'}
-                  bookmarkResourceIds={resourceIds}
+                  bookmarksFor={{ virtualLabId: labId, projectId }}
                   onCellClick={(_, record) => {
                     router.push(
                       detailUrlWithinLab(

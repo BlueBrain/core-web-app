@@ -2,6 +2,7 @@ import { Atom, atom } from 'jotai';
 import { atomFamily, atomWithDefault } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import isEqual from 'lodash/isEqual';
+import { BookmarkScope, bookmarksForProjectAtomFamily } from '../virtual-lab/bookmark';
 import columnKeyToFilter from './column-key-to-filter';
 import { ExploreDataBrainRegionSource, SortState } from '@/types/explore-section/application';
 import fetchDataQuery from '@/queries/explore-section/data';
@@ -24,7 +25,7 @@ type DataAtomFamilyScopeType = {
   dataType: DataType;
   brainRegionSource?: ExploreDataBrainRegionSource;
   resourceId?: string;
-  bookmarkResourceIds?: string[];
+  bookmarksFor?: BookmarkScope;
 };
 
 const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType): boolean =>
@@ -32,7 +33,7 @@ const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType)
   a.dataType === b.dataType &&
   a.brainRegionSource === b.brainRegionSource &&
   a.resourceId === b.resourceId &&
-  isEqual(a.bookmarkResourceIds, b.bookmarkResourceIds);
+  isEqual(a.bookmarksFor, b.bookmarksFor);
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
@@ -122,12 +123,16 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
 );
 
 export const queryAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarkResourceIds }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource, bookmarksFor }: DataAtomFamilyScopeType) =>
     atom<Promise<DataQuery | null>>(async (get) => {
       const searchString = get(searchStringAtom({ dataType }));
       const pageNumber = get(pageNumberAtom({ dataType }));
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
+
+      const bookmarkResourceIds = (
+        bookmarksFor ? await get(bookmarksForProjectAtomFamily(bookmarksFor)) : []
+      ).map((b) => b.resourceId);
 
       const descendantIds: string[] =
         brainRegionSource === 'selected'
@@ -155,13 +160,13 @@ export const queryAtom = atomFamily(
 );
 
 export const queryResponseAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarkResourceIds }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource, bookmarksFor }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource> | null>>(async (get) => {
       const session = get(sessionAtom);
 
       if (!session) return null;
 
-      const query = await get(queryAtom({ dataType, brainRegionSource, bookmarkResourceIds }));
+      const query = await get(queryAtom({ dataType, brainRegionSource, bookmarksFor }));
       const result = query && (await fetchEsResourcesByType(session.accessToken, query));
 
       return result;
@@ -173,11 +178,9 @@ export const dataAtom = atomFamily<
   DataAtomFamilyScopeType,
   Atom<Promise<ExploreESHit<ExploreSectionResource>[]>>
 >(
-  ({ dataType, brainRegionSource, bookmarkResourceIds }) =>
+  ({ dataType, brainRegionSource, bookmarksFor }) =>
     atom(async (get) => {
-      const response = await get(
-        queryResponseAtom({ dataType, brainRegionSource, bookmarkResourceIds })
-      );
+      const response = await get(queryResponseAtom({ dataType, brainRegionSource, bookmarksFor }));
 
       if (response?.hits) {
         return response.hits;
@@ -189,11 +192,9 @@ export const dataAtom = atomFamily<
 );
 
 export const totalAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarkResourceIds }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource, bookmarksFor }: DataAtomFamilyScopeType) =>
     atom(async (get) => {
-      const response = await get(
-        queryResponseAtom({ dataType, brainRegionSource, bookmarkResourceIds })
-      );
+      const response = await get(queryResponseAtom({ dataType, brainRegionSource, bookmarksFor }));
       const { total } = response ?? {
         total: { value: 0 },
       };
@@ -203,11 +204,11 @@ export const totalAtom = atomFamily(
 );
 
 export const aggregationsAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarkResourceIds }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource, bookmarksFor }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['aggs'] | undefined>>(
       async (get) => {
         const response = await get(
-          queryResponseAtom({ dataType, brainRegionSource, bookmarkResourceIds })
+          queryResponseAtom({ dataType, brainRegionSource, bookmarksFor })
         );
         return response?.aggs;
       }
