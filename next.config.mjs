@@ -20,6 +20,7 @@ function getVersion() {
   return commit ? `${version} (${commit})` : version;
 }
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config) => {
     config.resolve.alias.canvas = false;
@@ -77,6 +78,11 @@ const nextConfig = {
     ];
   },
   transpilePackages: ['jotai-devtools'],
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
 export default withBundleAnalyzer(withSentryConfig(nextConfig, SentryWebpackPluginOptions));

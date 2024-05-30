@@ -505,16 +505,19 @@ export const getPaperListQuery = (
             must: { term: { _deprecated: false } },
           },
         },
-        {
-          bool: {
-            must: { term: { virtualLabId } },
-          },
-        },
-        {
-          bool: {
-            must: { term: { projectId } },
-          },
-        },
+        // TODO: I comment this filter because the virtualLabId & projectId are not indexed in the defaultView
+        // TODO: The view can filter per vlab/project automatically
+        // TODO: need suggestion @pavlo
+        // {
+        //   bool: {
+        //     must: { term: { virtualLabId } },
+        //   },
+        // },
+        // {
+        //   bool: {
+        //     must: { term: { projectId } },
+        //   },
+        // },
         {
           bool: {
             must: { term: { '@type': 'Paper' } },

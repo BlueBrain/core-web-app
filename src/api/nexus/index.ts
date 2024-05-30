@@ -99,9 +99,10 @@ export function createFile(
   data: any,
   filename: string,
   contentType: string,
-  session: Session
+  session: Session,
+  fileUrl?: string
 ): Promise<FileMetadata> {
-  const url = composeUrl('file', '');
+  const url = fileUrl ?? composeUrl('file', '');
 
   const formData = new FormData();
   const dataBlob = new Blob([data], { type: contentType });
@@ -238,9 +239,10 @@ export function listResourceLinksById<T>(
 
 export function createResource<T extends EntityResource>(
   resource: Record<string, any>,
-  session: Session
+  session: Session,
+  url?: string
 ): Promise<T> {
-  const createResourceApiUrl = composeUrl('resource', '', { sync: true, schema: null });
+  const createResourceApiUrl = url ?? composeUrl('resource', '', { sync: true, schema: null });
   // TODO: remove this while all entities do not have metadata in source
   const sanitizedResource = removeMetadata(resource);
 
