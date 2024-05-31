@@ -2,11 +2,20 @@ export type BookmarkItem = {
   resourceId: string;
 };
 
-export async function addBookmark(resource: string, lab: string, labProject: string) {
+export async function addBookmark(lab: string, labProject: string, resource: string) {
   return getBookmarkedItems(lab, labProject).then((items) => {
     localStorage.setItem(
       keyFor(lab, labProject),
       JSON.stringify(items.concat({ resourceId: resource }))
+    );
+  });
+}
+
+export async function removeBookmark(lab: string, labProject: string, resource: string) {
+  return getBookmarkedItems(lab, labProject).then((items) => {
+    localStorage.setItem(
+      keyFor(lab, labProject),
+      JSON.stringify(items.filter((i) => i.resourceId !== resource))
     );
   });
 }

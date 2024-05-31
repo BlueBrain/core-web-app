@@ -19,7 +19,7 @@ describe('DetailHeaderName', () => {
 
     const saveButton = await screen.findByText('Save to library');
     await user.click(saveButton);
-    expect(addBookmark).toHaveBeenCalledWith(mockDeltaResource['@id'], virtualLabId, projectId);
+    expect(addBookmark).toHaveBeenCalledWith(virtualLabId, projectId, mockDeltaResource['@id']);
   });
 
   it('do not allow a user to save a resource to a project library if we are not in a project', async () => {
@@ -38,6 +38,23 @@ describe('DetailHeaderName', () => {
     renderComponent(resource);
 
     await screen.findByText('Remove from library');
+  });
+
+  it('changes button label when user saves or removes resource from library', async () => {
+    weAreInProject(virtualLabId, projectId);
+    bookmarksInclude([]);
+
+    const user = renderComponent(mockDeltaResource);
+
+    const saveButton = await screen.findByText('Save to library');
+    bookmarksInclude([mockDeltaResource['@id']]); // Simulate resource saved to db
+    await user.click(saveButton);
+
+    const removeButton = await screen.findByText('Remove from library');
+    bookmarksInclude([]); // Simulate resource removed from db
+    await user.click(removeButton);
+
+    await screen.findByText('Save to library');
   });
 });
 
@@ -93,12 +110,13 @@ const getBookmarkedItems = jest.fn();
 jest.mock('src/services/virtual-lab/bookmark', () => ({
   __esModule: true,
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  addBookmark: (resourceId: string, lab: string, project: string) => {
-    return addBookmark(resourceId, lab, project);
+  addBookmark: (lab: string, project: string, resourceId: string) => {
+    return addBookmark(lab, project, resourceId);
   },
   getBookmarkedItems: (lab: string, project: string) => {
     return getBookmarkedItems(lab, project);
   },
+  removeBookmark: jest.fn(),
 }));
 
 const weAreInProject = (virtualLabId: string, projectId: string) => {

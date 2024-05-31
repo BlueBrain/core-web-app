@@ -1,5 +1,4 @@
 import { atomFamily, atomWithRefresh } from 'jotai/utils';
-import { atom } from 'jotai';
 import { Bookmark } from '@/types/virtual-lab/bookmark';
 import { getBookmarkedItems } from '@/services/virtual-lab/bookmark';
 
@@ -19,9 +18,3 @@ export const bookmarksForProjectAtomFamily = atomFamily(
     }),
   isBookmarkAtomEqual
 );
-
-export const isResourceBookmarkedAtom = (id: string, virtualLabId: string, projectId: string) =>
-  atom(async (get) => {
-    const bookmarks = await get(bookmarksForProjectAtomFamily({ virtualLabId, projectId }));
-    return bookmarks.some((b) => b.resourceId === id);
-  });

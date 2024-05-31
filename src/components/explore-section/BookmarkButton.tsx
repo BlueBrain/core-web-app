@@ -1,10 +1,10 @@
-import { LoadingOutlined, PlusOutlined, WarningFilled } from '@ant-design/icons';
+import { LoadingOutlined, MinusOutlined, PlusOutlined, WarningFilled } from '@ant-design/icons';
 import { Button, Spin } from 'antd';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { addBookmark } from '@/services/virtual-lab/bookmark';
+import { addBookmark, removeBookmark } from '@/services/virtual-lab/bookmark';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
 
 type Props = {
@@ -23,6 +23,18 @@ export default function BookmarkButton({ virtualLabId, projectId, resourceId }: 
     )
   );
 
+  const refreshBookmarks = useSetAtom(bookmarksForProjectAtomFamily({ virtualLabId, projectId }));
+
+  const saveToLibrary = useCallback(async () => {
+    await addBookmark(virtualLabId, projectId, resourceId);
+    refreshBookmarks();
+  }, [virtualLabId, projectId, resourceId, refreshBookmarks]);
+
+  const removeFromLibrary = useCallback(async () => {
+    await removeBookmark(virtualLabId, projectId, resourceId);
+    refreshBookmarks();
+  }, [virtualLabId, projectId, resourceId, refreshBookmarks]);
+
   const isBookmarked = useMemo(() => {
     return bookmarks.state === 'hasData' && bookmarks.data.some((b) => b.resourceId === resourceId);
   }, [bookmarks, resourceId]);
@@ -35,15 +47,22 @@ export default function BookmarkButton({ virtualLabId, projectId, resourceId }: 
     return <WarningFilled title="Bookmark status could not be loaded" />;
   }
 
-  return (
+  return isBookmarked ? (
     <Button
       type="text"
       className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
-      onClick={async () => {
-        await addBookmark(resourceId, virtualLabId, projectId);
-      }}
+      onClick={removeFromLibrary}
     >
-      {isBookmarked ? 'Remove from library' : 'Save to library'}
+      Remove from library
+      <MinusOutlined className="border border-neutral-2 px-4 py-3" />
+    </Button>
+  ) : (
+    <Button
+      type="text"
+      className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
+      onClick={saveToLibrary}
+    >
+      Save to library
       <PlusOutlined className="border border-neutral-2 px-4 py-3" />
     </Button>
   );
