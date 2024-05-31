@@ -513,3 +513,19 @@ export const getPaperListQuery = (searchString: string = '') => ({
   },
   sort: searchString ? undefined : [defaultCreationDateSort],
 });
+
+export const getPaperCountQuery = () => ({
+  size: 0,
+  query: {
+    term: {
+      '@type': 'Paper',
+    },
+  },
+  aggs: {
+    total: {
+      value_count: {
+        field: '_index',
+      },
+    },
+  },
+});
