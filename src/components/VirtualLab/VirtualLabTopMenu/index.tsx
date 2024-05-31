@@ -16,6 +16,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   const { data: session } = useSession();
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
+
   useEffect(() => {
     setProjectTopMenuRef(localRef);
   }, [localRef, setProjectTopMenuRef]);
@@ -50,10 +51,12 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             {children}
           </Link>
         ))}
-        <div className={classNames(btnClassName, 'flex flex-row justify-between')}>
-          <span className="font-bold">{session?.user.name}</span>
-          <UserOutlined className="mr-2 text-primary-4" />
-        </div>
+        {!!session && (
+          <div className={classNames(btnClassName, 'flex flex-row justify-between')}>
+            <span className="font-bold">{session?.user.name}</span>
+            <UserOutlined className="mr-2 text-primary-4" />
+          </div>
+        )}
         {extraItems}
       </div>
     </div>
