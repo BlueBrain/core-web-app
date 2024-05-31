@@ -34,13 +34,6 @@ export default function Page() {
             <GitlabFilled className="text-6xl" />
           </div>
         </div>
-        <hr className="border-primary-7" />
-        <div className="flex items-center justify-between">
-          <div className="text-2xl font-normal text-white">Don&apos;t have a lab yet?</div>
-          <Button className="rounded-none" ghost>
-            Sign-up
-          </Button>
-        </div>
       </ConfigProvider>
     </div>
   );
