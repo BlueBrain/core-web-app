@@ -18,13 +18,15 @@ import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { SerializedEditorState } from 'lexical/LexicalEditorState';
 
 import ToolbarPlugin from './plugins/ToolbarPlugin';
-// import RemoteStorePlugin from './plugins/RemoteStorePlugin';
-// import CommandsPlugin from './plugins/CommandsPlugin';
+import FloatAiCommandsPlugin from './plugins/AiPlugin';
 import InsertPlugin from './plugins/InsertPlugin';
 import ActionPlugin from './plugins/ActionPlugin';
+import RemoteSyncPlugin from './plugins/RemoteSyncPlugin';
 import theme from './themes/appEditorCustomTheme';
+import { PaperResource } from '@/types/nexus';
 
 const initialConfig: InitialConfigType = {
   theme,
@@ -49,17 +51,16 @@ function onError(error: Error) {
   throw error;
 }
 
-// interface EditorProps {
-//   virtualLabId: string;
-//   projectId: string;
-//   paperId: string;
-// }
+type Props = {
+  paper: PaperResource;
+  config: SerializedEditorState;
+};
 
 function PaperEditorContentEditable() {
   return (
     <ContentEditable
       id="paper-editor__content_editable"
-      className="relative z-0 w-full flex-grow bg-white p-8 text-gray-950 focus-visible:outline-0"
+      className="relative z-0 w-full flex-grow bg-white p-8 text-gray-950 focus-visible:outline-none focus-visible:outline-0"
     />
   );
 }
@@ -75,12 +76,16 @@ function PaperEditorPlaceholder() {
   );
 }
 
-export default function Editor() {
+export default function Editor({ config, paper }: Props) {
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <div className="relative flex flex-grow flex-col border border-t-0 border-gray-200">
-        {/* <RemoteStorePlugin virtualLabId={virtualLabId} projectId={projectId} paperId={paperId} /> */}
-        {/* <CommandsPlugin /> */}
+    <LexicalComposer
+      initialConfig={{
+        ...initialConfig,
+        editorState: JSON.stringify(config),
+      }}
+    >
+      <div className="relative flex h-[calc(100%-60px)] flex-col border border-t-0 border-gray-200 pb-40">
+        <RemoteSyncPlugin {...{ paper }} />
         <CheckListPlugin />
         <ClearEditorPlugin />
         <HorizontalRulePlugin />
@@ -95,8 +100,9 @@ export default function Editor() {
         />
         <HistoryPlugin />
         <AutoFocusPlugin />
+        <FloatAiCommandsPlugin />
         <InsertPlugin />
-        <ActionPlugin />
+        <ActionPlugin {...{ paper }} />
       </div>
     </LexicalComposer>
   );
