@@ -136,15 +136,12 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       DEFAULT_SIM_CONFIG,
       session.accessToken,
       {
-        thresholdCurrent: eModelScript.threshold_current ?? 0,
-        holdingCurrent: eModelScript.holding_current ?? 0,
-      },
-      {
         onClick,
         onHoverEnd,
         onInit,
         onTraceData,
         onSimulationDone: simulationDoneCB,
+        thresholdCurrent: eModelScript.threshold_current ?? 0,
       }
     );
 

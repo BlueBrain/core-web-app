@@ -20,11 +20,7 @@ interface BlueNaasConfig {
   onTraceData?: (traceData: TraceData) => void;
   onSimulationDone?: () => void;
   onStimuliPreviewData?: (data: PlotData) => void;
-}
-
-interface InitialCurrents {
-  thresholdCurrent: number;
-  holdingCurrent: number;
+  thresholdCurrent?: number;
 }
 
 export default class BlueNaas {
@@ -53,7 +49,6 @@ export default class BlueNaas {
     modelId: string,
     simConfig: SimConfig,
     token: string,
-    initialCurrents: InitialCurrents,
     config: BlueNaasConfig = {}
   ) {
     this.simConfig = simConfig;
@@ -61,11 +56,9 @@ export default class BlueNaas {
 
     this.renderer = new Renderer(container, config);
     this.ws = new Ws(blueNaas.wsUrl, token, this.onMessage);
-    this.thresholdCurrent = initialCurrents.thresholdCurrent;
+    this.thresholdCurrent = this.config.thresholdCurrent ?? 0;
     this.ws.send(BlueNaasCmd.SET_MODEL, {
       model_id: modelId,
-      threshold_current: initialCurrents.thresholdCurrent,
-      holding_current: initialCurrents.holdingCurrent,
     });
   }
 
