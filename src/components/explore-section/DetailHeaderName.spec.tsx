@@ -13,9 +13,11 @@ describe('DetailHeaderName', () => {
 
   it('allows a user to save a resource to a project library', async () => {
     weAreInProject(virtualLabId, projectId);
+    bookmarksInclude([]);
+
     const user = renderComponent();
 
-    const saveButton = screen.getByText('Save to library');
+    const saveButton = await screen.findByText('Save to library');
     await user.click(saveButton);
     expect(addBookmark).toHaveBeenCalledWith(mockDeltaResource['@id'], virtualLabId, projectId);
   });
@@ -27,12 +29,22 @@ describe('DetailHeaderName', () => {
 
     expect(screen.queryByText('Save to library')).toBeNull();
   });
+
+  it('shows remove bookmark option if resource is already bookmarked', async () => {
+    const resource = mockDeltaResource;
+
+    weAreInProject(virtualLabId, projectId);
+    bookmarksInclude([resource['@id']]);
+    renderComponent(resource);
+
+    await screen.findByText('Remove from library');
+  });
 });
 
-const renderComponent = () => {
+const renderComponent = (resource = mockDeltaResource) => {
   const user = userEvent.setup();
 
-  render(DetailHeaderNameProvider());
+  render(DetailHeaderNameProvider(resource as DeltaResource));
   return user;
 };
 
@@ -49,10 +61,10 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
-function DetailHeaderNameProvider() {
+function DetailHeaderNameProvider(resource: DeltaResource) {
   return (
     <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
-      <DetailHeaderName detail={mockDeltaResource as DeltaResource} />
+      <DetailHeaderName detail={resource} />
     </TestProvider>
   );
 }
@@ -76,11 +88,16 @@ jest.mock('next/navigation', () => ({
 }));
 
 const addBookmark = jest.fn();
+const getBookmarkedItems = jest.fn();
+
 jest.mock('src/services/virtual-lab/bookmark', () => ({
   __esModule: true,
   // eslint-disable-next-line @typescript-eslint/no-shadow
   addBookmark: (resourceId: string, lab: string, project: string) => {
     return addBookmark(resourceId, lab, project);
+  },
+  getBookmarkedItems: (lab: string, project: string) => {
+    return getBookmarkedItems(lab, project);
   },
 }));
 
@@ -89,6 +106,10 @@ const weAreInProject = (virtualLabId: string, projectId: string) => {
   usePathname.mockReturnValue(
     `/virtual-lab/lab/${virtualLabId}/project/${projectId}/explore/interactive/experimental/morphology/somename`
   );
+};
+
+const bookmarksInclude = (resourceIds: string[]) => {
+  getBookmarkedItems.mockResolvedValue(resourceIds.map((id) => ({ resourceId: id })));
 };
 
 const weAreNotInProject = () => {
