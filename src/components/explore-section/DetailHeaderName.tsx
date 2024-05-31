@@ -14,6 +14,7 @@ import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import usePathname from '@/hooks/pathname';
 import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
+import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 
 export default function DetailHeaderName({
   detail,
@@ -35,7 +36,11 @@ export default function DetailHeaderName({
   const session = useAtomValue(sessionAtom);
   const [fetching, setFetching] = useState<boolean>(false);
 
-  const { virtualLabId, projectId } = useParams<{ virtualLabId?: string; projectId?: string }>();
+  const { virtualLabId, projectId, experimentType } = useParams<{
+    virtualLabId?: string;
+    projectId?: string;
+    experimentType?: ExperimentTypeNames;
+  }>();
 
   // revisions builder
   const items: MenuProps['items'] = useMemo(() => {
@@ -82,11 +87,12 @@ export default function DetailHeaderName({
         </div>
         {session && (
           <div className="flex">
-            {virtualLabId && projectId && (
+            {virtualLabId && projectId && experimentType && (
               <BookmarkButton
                 virtualLabId={virtualLabId}
                 projectId={projectId}
                 resourceId={detail['@id']}
+                experimentType={experimentType}
               />
             )}
             <div className="flex items-center gap-2">

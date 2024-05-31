@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Collapse, CollapseProps, ConfigProvider } from 'antd';
@@ -9,6 +9,7 @@ import { loadable } from 'jotai/utils';
 import ExperimentBookmarks from './ExperimentBookmarks';
 import { DataType } from '@/constants/explore-section/list-views';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
 type Props = {
   labId: string;
@@ -27,34 +28,37 @@ export default function BookmarkList({ labId, projectId }: Props) {
     refreshBookmarks();
   }, [refreshBookmarks]);
 
-  const items: CollapseProps['items'] =
-    bookmarks.state === 'hasData'
-      ? [
-          {
-            key: '1',
-            label: (
-              <div>
-                <span className="text-center text-xl font-bold leading-7 text-primary-8">
-                  Neuron morphology
-                </span>
-                <span className="ml-2 text-sm font-normal text-gray-600">
-                  {bookmarks.data.length} pinned datasets
-                </span>
-              </div>
-            ),
-            children:
-              bookmarks.data.length > 0 ? (
-                <ExperimentBookmarks
-                  dataType={DataType.ExperimentalNeuronMorphology}
-                  labId={labId}
-                  projectId={projectId}
-                />
-              ) : (
-                <p>There are no pinned datasets for morphologies</p>
-              ),
-          },
-        ]
-      : [];
+  const collapsibleItems: CollapseProps['items'] = useMemo(() => {
+    if (bookmarks.state !== 'hasData') {
+      return [];
+    }
+
+    return Object.keys(EXPERIMENT_DATA_TYPES).map((experiment) => {
+      return {
+        key: experiment,
+        label: (
+          <div>
+            <span className="text-center text-xl font-bold leading-7 text-primary-8">
+              {EXPERIMENT_DATA_TYPES[experiment].title}
+            </span>
+            <span className="ml-2 text-sm font-normal text-gray-600">
+              {bookmarks.data[experiment as DataType]?.length ?? 0} pinned datasets
+            </span>
+          </div>
+        ),
+        children:
+          bookmarks.data[experiment as DataType]?.length > 0 ? (
+            <ExperimentBookmarks
+              dataType={experiment as DataType}
+              labId={labId}
+              projectId={projectId}
+            />
+          ) : (
+            <p>There are no pinned datasets for morphologies</p>
+          ),
+      };
+    });
+  }, [bookmarks, labId, projectId]);
 
   return (
     <div>
@@ -62,7 +66,7 @@ export default function BookmarkList({ labId, projectId }: Props) {
         <span className="text-primary-9">Experimental data</span>{' '}
         <InfoCircleOutlined className="ml-2 text-sm text-gray-400" />
       </div>
-      <div className="w-full bg-white p-10">
+      <div className="max-h-[1000px] w-full overflow-scroll bg-white p-10">
         <ConfigProvider
           theme={{
             components: {
@@ -75,7 +79,7 @@ export default function BookmarkList({ labId, projectId }: Props) {
             },
           }}
         >
-          <Collapse items={items} defaultActiveKey={['1']} expandIconPosition="end" />
+          <Collapse items={collapsibleItems} defaultActiveKey={['1']} expandIconPosition="end" />
         </ConfigProvider>
       </div>
     </div>

@@ -6,14 +6,25 @@ import { useCallback, useMemo } from 'react';
 
 import { addBookmark, removeBookmark } from '@/services/virtual-lab/bookmark';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
+import {
+  EXPERIMENT_DATA_TYPES,
+  ExperimentTypeNames,
+} from '@/constants/explore-section/data-types/experiment-data-types';
+import { DataType } from '@/constants/explore-section/list-views';
 
 type Props = {
   virtualLabId: string;
   projectId: string;
   resourceId: string;
+  experimentType: ExperimentTypeNames;
 };
 
-export default function BookmarkButton({ virtualLabId, projectId, resourceId }: Props) {
+export default function BookmarkButton({
+  virtualLabId,
+  projectId,
+  resourceId,
+  experimentType,
+}: Props) {
   const bookmarks = useAtomValue(
     loadable(
       bookmarksForProjectAtomFamily({
@@ -25,19 +36,28 @@ export default function BookmarkButton({ virtualLabId, projectId, resourceId }: 
 
   const refreshBookmarks = useSetAtom(bookmarksForProjectAtomFamily({ virtualLabId, projectId }));
 
+  const category = useMemo(() => {
+    return Object.keys(EXPERIMENT_DATA_TYPES).find(
+      (experimentKey) => EXPERIMENT_DATA_TYPES[experimentKey].name === experimentType
+    )! as DataType;
+  }, [experimentType]);
+
   const saveToLibrary = useCallback(async () => {
-    await addBookmark(virtualLabId, projectId, resourceId);
+    await addBookmark(virtualLabId, projectId, { resourceId, category });
     refreshBookmarks();
-  }, [virtualLabId, projectId, resourceId, refreshBookmarks]);
+  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks]);
 
   const removeFromLibrary = useCallback(async () => {
-    await removeBookmark(virtualLabId, projectId, resourceId);
+    await removeBookmark(virtualLabId, projectId, { resourceId, category });
     refreshBookmarks();
-  }, [virtualLabId, projectId, resourceId, refreshBookmarks]);
+  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks]);
 
   const isBookmarked = useMemo(() => {
-    return bookmarks.state === 'hasData' && bookmarks.data.some((b) => b.resourceId === resourceId);
-  }, [bookmarks, resourceId]);
+    return (
+      bookmarks.state === 'hasData' &&
+      bookmarks.data[category].some((b) => b.resourceId === resourceId)
+    );
+  }, [bookmarks, resourceId, category]);
 
   if (bookmarks.state === 'loading') {
     return <Spin className="border border-neutral-2 px-3 py-2" indicator={<LoadingOutlined />} />;

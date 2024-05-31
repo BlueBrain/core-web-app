@@ -131,7 +131,7 @@ export const queryAtom = atomFamily(
       const sortState = get(sortStateAtom);
 
       const bookmarkResourceIds = (
-        bookmarkScope ? await get(bookmarksForProjectAtomFamily(bookmarkScope)) : []
+        bookmarkScope ? (await get(bookmarksForProjectAtomFamily(bookmarkScope)))[dataType] : []
       ).map((b) => b.resourceId);
 
       const descendantIds: string[] =
