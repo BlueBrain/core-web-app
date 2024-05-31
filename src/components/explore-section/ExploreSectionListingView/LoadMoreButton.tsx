@@ -5,6 +5,7 @@ import { classNames } from '@/util/utils';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { DataType, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import { useLoadableValue } from '@/hooks/hooks';
+import { BookmarkScope } from '@/state/virtual-lab/bookmark';
 
 function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
@@ -23,13 +24,15 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
 export default function LoadMoreButton({
   dataType,
   brainRegionSource,
+  bookmarkScope,
   hide,
 }: HTMLProps<HTMLButtonElement> & {
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
+  bookmarkScope?: BookmarkScope;
   hide: () => void;
 }) {
-  const total = useLoadableValue(totalAtom({ dataType, brainRegionSource }));
+  const total = useLoadableValue(totalAtom({ dataType, brainRegionSource, bookmarkScope }));
   const [contentSize, setContentSize] = useAtom(pageSizeAtom);
 
   const onLoadMore = () => {

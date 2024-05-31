@@ -2,11 +2,19 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DataTypeConfig, DataTypeGroup } from '@/types/explore-section/data-types';
 
+export enum ExperimentTypeNames {
+  MORPHOLOGY = 'morphology',
+  ELECTROPHYSIOLOGY = 'electrophysiology',
+  NEURON_DENSITY = 'neuron-density',
+  BOUTON_DENSITY = 'bouton-density',
+  SYNAPSE_PER_CONNECTION = 'synapse-per-connection',
+}
+
 export const EXPERIMENT_DATA_TYPES: { [key: string]: DataTypeConfig } = {
   [DataType.ExperimentalNeuronMorphology]: {
     title: 'Morphology',
     group: DataTypeGroup.ExperimentalData,
-    name: 'morphology',
+    name: ExperimentTypeNames.MORPHOLOGY,
     columns: [
       Field.Preview,
       Field.BrainRegion,
@@ -100,7 +108,7 @@ export const EXPERIMENT_DATA_TYPES: { [key: string]: DataTypeConfig } = {
   [DataType.ExperimentalElectroPhysiology]: {
     title: 'Electrophysiology',
     group: DataTypeGroup.ExperimentalData,
-    name: 'electrophysiology',
+    name: ExperimentTypeNames.ELECTROPHYSIOLOGY,
     columns: [
       Field.Preview,
       Field.BrainRegion,
@@ -116,7 +124,7 @@ export const EXPERIMENT_DATA_TYPES: { [key: string]: DataTypeConfig } = {
   [DataType.ExperimentalNeuronDensity]: {
     title: 'Neuron density',
     group: DataTypeGroup.ExperimentalData,
-    name: 'neuron-density',
+    name: ExperimentTypeNames.NEURON_DENSITY,
     columns: [
       Field.BrainRegion,
       Field.MType,
@@ -152,7 +160,7 @@ export const EXPERIMENT_DATA_TYPES: { [key: string]: DataTypeConfig } = {
   [DataType.ExperimentalSynapsePerConnection]: {
     title: 'Synapse per connection',
     group: DataTypeGroup.ExperimentalData,
-    name: 'synapse-per-connection',
+    name: ExperimentTypeNames.SYNAPSE_PER_CONNECTION,
     columns: [
       Field.PreSynapticBrainRegion,
       Field.PostSynapticBrainRegion,

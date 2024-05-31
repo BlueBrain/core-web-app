@@ -1,4 +1,4 @@
-import { boolQuery, TermsQuery } from 'elastic-builder';
+import esb, { boolQuery, TermsQuery } from 'elastic-builder';
 import buildESSort from './sorters';
 import { DataQuery } from '@/api/explore-section/resources';
 import { Filter } from '@/components/Filter/types';
@@ -14,7 +14,8 @@ export default function fetchDataQuery(
   dataType: DataType,
   sortState?: SortState,
   searchString: string = '',
-  descendantIds?: string[]
+  descendantIds?: string[],
+  bookmarkResourceIds?: string[]
 ): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
   return {
@@ -22,10 +23,22 @@ export default function fetchDataQuery(
     sort: sortQuery,
     from: (currentPage - 1) * size,
     track_total_hits: true,
-    query: buildFilters(filters, searchString, descendantIds, dataType).toJSON(),
+    query: buildFilters(
+      filters,
+      searchString,
+      descendantIds,
+      dataType,
+      bookmarkResourceIds
+    ).toJSON(),
     ...buildAggs(filters).toJSON(),
   };
 }
+
+export const esQueryById = (resourceIds: string[]): object => {
+  const filtersQuery = new esb.BoolQuery();
+  filtersQuery.must(esb.termsQuery('@id.keyword', resourceIds));
+  return { query: filtersQuery.toJSON() };
+};
 
 export function fetchDataQueryUsingIds(
   size: number,

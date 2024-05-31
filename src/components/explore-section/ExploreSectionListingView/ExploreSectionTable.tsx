@@ -1,26 +1,27 @@
-import { CSSProperties, MouseEvent, ReactNode, useCallback, useRef, useState } from 'react';
-import { ConfigProvider, Table, TableProps } from 'antd';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
-import { useSetAtom } from 'jotai';
+import { ConfigProvider, Table, TableProps } from 'antd';
 import { ColumnGroupType, ColumnType, TableRef } from 'antd/es/table';
 import { RowSelectionType } from 'antd/es/table/interface';
+import { useSetAtom } from 'jotai';
+import { CSSProperties, MouseEvent, ReactNode, useCallback, useRef, useState } from 'react';
 
 import LoadMoreButton from './LoadMoreButton';
-import usePathname from '@/hooks/pathname';
-import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { ExploreDownloadButton } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 import WithRowSelection, {
   RenderButtonProps,
 } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-import type { ExploreESHit } from '@/types/explore-section/es';
-import { classNames } from '@/util/utils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DataType } from '@/constants/explore-section/list-views';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
-import { ExploreSectionResource } from '@/types/explore-section/resources';
+import usePathname from '@/hooks/pathname';
 import useResizeObserver from '@/hooks/useResizeObserver';
 import useScrollComplete from '@/hooks/useScrollComplete';
+import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
+import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import type { ExploreESHit } from '@/types/explore-section/es';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { classNames } from '@/util/utils';
 
+import { BookmarkScope } from '@/state/virtual-lab/bookmark';
 import styles from '@/app/explore/explore.module.scss';
 
 export type OnCellClick = (
@@ -121,25 +122,31 @@ export function BaseTable({
     width: 0,
   });
   const tableRef = useRef<TableRef>(null);
+  const tableElement: HTMLElement | null | undefined =
+    tableRef.current?.nativeElement.querySelector('.ant-table-body');
+  const parentElement =
+    typeof document !== 'undefined'
+      ? document.getElementById('interactive-data-layout') ||
+        document.getElementById('explore-table-container-for-observable') ||
+        document.getElementById('bookmark-list-container')
+      : undefined;
+  const headerHeight =
+    (tableElement?.getBoundingClientRect()?.y ?? 0) -
+    (parentElement?.getBoundingClientRect()?.y ?? 0);
 
-  const onResize = useCallback(
-    (target: HTMLElement) => setContainerDimension(target.getBoundingClientRect()),
-    []
-  );
+  const onResize = useCallback((target: HTMLElement) => {
+    setContainerDimension(target.getBoundingClientRect());
+  }, []);
 
   // added new id explore-table-container-for-observable because we are using this component
   // outside of the explore and we want to resize the table acording to the screen size as well
   useResizeObserver({
-    element:
-      typeof document !== 'undefined'
-        ? document.getElementById('interactive-data-layout') ||
-          document.getElementById('explore-table-container-for-observable')
-        : undefined,
+    element: parentElement,
     callback: onResize,
   });
 
   useScrollComplete({
-    element: tableRef.current?.nativeElement.querySelector('.ant-table-body'),
+    element: tableElement,
     callback: showLoadMore,
   });
 
@@ -171,10 +178,7 @@ export function BaseTable({
         ref={tableRef}
         sticky={{ offsetHeader: 50 }}
         aria-label="listing-view-table"
-        className={classNames(
-          styles.table,
-          '[&_.ant-table-body]:!no-scrollbar [&_.ant-table-sticky-holder]:shadow-md'
-        )}
+        className={classNames(styles.table, '[&_.ant-table-sticky-holder]:shadow-md')}
         columns={
           columns &&
           columns.map((col) => ({
@@ -198,7 +202,7 @@ export function BaseTable({
         rowSelection={rowSelection}
         scroll={{
           x: 'fit-content',
-          y: containerDimension.height - 310, // 310: header + load-more button height
+          y: containerDimension.height - (headerHeight + 100), // header height + load-more button height
         }}
       />
     </ConfigProvider>
@@ -228,6 +232,7 @@ export default function ExploreSectionTable({
   renderButton,
   onCellClick,
   selectionType,
+  bookmarkScope,
 }: TableProps<ExploreESHit<ExploreSectionResource>> & {
   enableDownload?: boolean;
   dataType: DataType;
@@ -236,9 +241,13 @@ export default function ExploreSectionTable({
   brainRegionSource: ExploreDataBrainRegionSource;
   onCellClick?: OnCellClick;
   selectionType?: RowSelectionType;
+  bookmarkScope?: BookmarkScope;
 }) {
   const [displayLoadMoreBtn, setDisplayLoadMoreBtn] = useState(false);
-  const toggleDisplayMore = (value?: boolean) => setDisplayLoadMoreBtn((state) => value ?? !state);
+  const toggleDisplayMore = (value?: boolean) =>
+    setDisplayLoadMoreBtn((state) => {
+      return value ?? !state;
+    });
   return (
     <>
       {enableDownload ? (
@@ -277,6 +286,7 @@ export default function ExploreSectionTable({
         <LoadMoreButton
           dataType={dataType}
           brainRegionSource={brainRegionSource}
+          bookmarkScope={bookmarkScope}
           hide={toggleDisplayMore}
         />
       )}

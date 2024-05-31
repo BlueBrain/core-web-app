@@ -1,8 +1,13 @@
 import esb, { Sort } from 'elastic-builder';
 import { createHeaders } from '@/util/utils';
 import { API_SEARCH } from '@/constants/explore-section/queries';
-import { ExploreESResponse, FlattenedExploreESResponse } from '@/types/explore-section/es';
+import {
+  ExploreESHit,
+  ExploreESResponse,
+  FlattenedExploreESResponse,
+} from '@/types/explore-section/es';
 import { Experiment } from '@/types/explore-section/es-experiment';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 
 export type DataQuery = {
   size: number;
@@ -11,6 +16,21 @@ export type DataQuery = {
   track_total_hits: boolean;
   query: {};
 };
+
+export async function fetchESResourceByIds(
+  accessToken: string,
+  dataQuery: object,
+  signal?: AbortSignal
+): Promise<ExploreESHit<ExploreSectionResource>[]> {
+  return fetch(API_SEARCH, {
+    method: 'POST',
+    headers: createHeaders(accessToken),
+    body: JSON.stringify(dataQuery),
+    signal,
+  })
+    .then<ExploreESResponse<Experiment>>((response) => response.json())
+    .then<ExploreESHit<ExploreSectionResource>[]>((data) => data?.hits?.hits ?? []);
+}
 
 export async function fetchTotalByExperimentAndRegions(
   accessToken: string,

@@ -115,7 +115,8 @@ export default function buildFilters(
   filters: Filter[],
   searchString?: string,
   descendantIds?: string[],
-  dataType?: DataType
+  dataType?: DataType,
+  resourceIds?: string[]
 ) {
   const filtersQuery = new esb.BoolQuery();
 
@@ -131,6 +132,10 @@ export default function buildFilters(
     filtersQuery.must(esb.termsQuery('brainRegion.@id.keyword', descendantIds));
   }
 
+  if (resourceIds && resourceIds.length > 0) {
+    filtersQuery.must(esb.termsQuery('@id.keyword', resourceIds));
+  }
+
   if (searchString) {
     filtersQuery.should([
       esb.multiMatchQuery(['*'], searchString).type('most_fields').operator('and').boost(10),
@@ -138,6 +143,7 @@ export default function buildFilters(
     ]);
     filtersQuery.minimumShouldMatch(1);
   }
+
   filters.forEach((filter: Filter) => {
     const esBuilder = getFilterESBuilder(filter);
 
