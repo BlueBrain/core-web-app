@@ -25,7 +25,7 @@ type DataAtomFamilyScopeType = {
   dataType: DataType;
   brainRegionSource?: ExploreDataBrainRegionSource;
   resourceId?: string;
-  bookmarksFor?: BookmarkScope;
+  bookmarkScope?: BookmarkScope;
 };
 
 const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType): boolean =>
@@ -33,7 +33,7 @@ const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType)
   a.dataType === b.dataType &&
   a.brainRegionSource === b.brainRegionSource &&
   a.resourceId === b.resourceId &&
-  isEqual(a.bookmarksFor, b.bookmarksFor);
+  isEqual(a.bookmarkScope, b.bookmarkScope);
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
@@ -123,7 +123,7 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
 );
 
 export const queryAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarksFor }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource, bookmarkScope }: DataAtomFamilyScopeType) =>
     atom<Promise<DataQuery | null>>(async (get) => {
       const searchString = get(searchStringAtom({ dataType }));
       const pageNumber = get(pageNumberAtom({ dataType }));
@@ -131,7 +131,7 @@ export const queryAtom = atomFamily(
       const sortState = get(sortStateAtom);
 
       const bookmarkResourceIds = (
-        bookmarksFor ? await get(bookmarksForProjectAtomFamily(bookmarksFor)) : []
+        bookmarkScope ? await get(bookmarksForProjectAtomFamily(bookmarkScope)) : []
       ).map((b) => b.resourceId);
 
       const descendantIds: string[] =
@@ -160,13 +160,13 @@ export const queryAtom = atomFamily(
 );
 
 export const queryResponseAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarksFor }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource, bookmarkScope }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource> | null>>(async (get) => {
       const session = get(sessionAtom);
 
       if (!session) return null;
 
-      const query = await get(queryAtom({ dataType, brainRegionSource, bookmarksFor }));
+      const query = await get(queryAtom({ dataType, brainRegionSource, bookmarkScope }));
       const result = query && (await fetchEsResourcesByType(session.accessToken, query));
 
       return result;
@@ -178,9 +178,9 @@ export const dataAtom = atomFamily<
   DataAtomFamilyScopeType,
   Atom<Promise<ExploreESHit<ExploreSectionResource>[]>>
 >(
-  ({ dataType, brainRegionSource, bookmarksFor }) =>
+  ({ dataType, brainRegionSource, bookmarkScope }) =>
     atom(async (get) => {
-      const response = await get(queryResponseAtom({ dataType, brainRegionSource, bookmarksFor }));
+      const response = await get(queryResponseAtom({ dataType, brainRegionSource, bookmarkScope }));
 
       if (response?.hits) {
         return response.hits;
@@ -192,9 +192,9 @@ export const dataAtom = atomFamily<
 );
 
 export const totalAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarksFor }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource, bookmarkScope }: DataAtomFamilyScopeType) =>
     atom(async (get) => {
-      const response = await get(queryResponseAtom({ dataType, brainRegionSource, bookmarksFor }));
+      const response = await get(queryResponseAtom({ dataType, brainRegionSource, bookmarkScope }));
       const { total } = response ?? {
         total: { value: 0 },
       };
@@ -204,11 +204,11 @@ export const totalAtom = atomFamily(
 );
 
 export const aggregationsAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarksFor }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource, bookmarkScope }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['aggs'] | undefined>>(
       async (get) => {
         const response = await get(
-          queryResponseAtom({ dataType, brainRegionSource, bookmarksFor })
+          queryResponseAtom({ dataType, brainRegionSource, bookmarkScope })
         );
         return response?.aggs;
       }

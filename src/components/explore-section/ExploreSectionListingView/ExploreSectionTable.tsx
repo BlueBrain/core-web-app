@@ -232,7 +232,7 @@ export default function ExploreSectionTable({
   renderButton,
   onCellClick,
   selectionType,
-  bookmarksFor,
+  bookmarkScope,
 }: TableProps<ExploreESHit<ExploreSectionResource>> & {
   enableDownload?: boolean;
   dataType: DataType;
@@ -241,7 +241,7 @@ export default function ExploreSectionTable({
   brainRegionSource: ExploreDataBrainRegionSource;
   onCellClick?: OnCellClick;
   selectionType?: RowSelectionType;
-  bookmarksFor?: BookmarkScope;
+  bookmarkScope?: BookmarkScope;
 }) {
   const [displayLoadMoreBtn, setDisplayLoadMoreBtn] = useState(false);
   const toggleDisplayMore = (value?: boolean) =>
@@ -286,7 +286,7 @@ export default function ExploreSectionTable({
         <LoadMoreButton
           dataType={dataType}
           brainRegionSource={brainRegionSource}
-          bookmarksFor={bookmarksFor}
+          bookmarkScope={bookmarkScope}
           hide={toggleDisplayMore}
         />
       )}

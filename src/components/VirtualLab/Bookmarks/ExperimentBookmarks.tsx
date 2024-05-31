@@ -26,7 +26,7 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
       dataAtom({
         dataType,
         brainRegionSource: 'selected',
-        bookmarksFor: { virtualLabId: labId, projectId },
+        bookmarkScope: { virtualLabId: labId, projectId },
       })
     )
   );
@@ -47,7 +47,7 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
         <WithControlPanel
           dataType={dataType}
           brainRegionSource="selected"
-          bookmarksFor={{ virtualLabId: labId, projectId }}
+          bookmarkScope={{ virtualLabId: labId, projectId }}
         >
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
             <>
@@ -69,7 +69,7 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
                   dataType={dataType}
                   brainRegionSource="selected"
                   loading={data.state === 'loading'}
-                  bookmarksFor={{ virtualLabId: labId, projectId }}
+                  bookmarkScope={{ virtualLabId: labId, projectId }}
                   onCellClick={(_, record) => {
                     router.push(
                       detailUrlWithinLab(
