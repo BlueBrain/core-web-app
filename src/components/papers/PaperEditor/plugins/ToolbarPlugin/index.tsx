@@ -5,7 +5,7 @@ import { $isLinkNode } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $isHeadingNode } from '@lexical/rich-text';
-import { $getSelectionStyleValueForProperty, $patchStyleText } from '@lexical/selection';
+import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { $isTableSelection } from '@lexical/table';
 import { $findMatchingParent, $getNearestNodeOfType, mergeRegister } from '@lexical/utils';
 import {
@@ -22,6 +22,11 @@ import {
 } from 'lexical';
 
 import { getSelectedNode } from '../../utils/getSelectedNode';
+import {
+  EDITOR_AUTO_SAVE_FAILED_EVENT,
+  EDITOR_AUTO_SAVE_SUCCESS_EVENT,
+  EDITOR_AUTO_SAVING_START_EVENT,
+} from '../RemoteSyncPlugin';
 import FontSize from './FontSize';
 import GeneralFormat from './GeneralFormat';
 import TextFormat from './TextFormat';
@@ -30,6 +35,7 @@ import BlockFormat, { blockTypeToBlockName } from './BlockFormat';
 import ColorPicker from './ColorPicker';
 import HistoryControl from './HistoryControl';
 import { classNames } from '@/util/utils';
+import { DataSync, DataSyncInit } from '@/components/icons/EditorIcons';
 
 export default function ToolbarPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext();
@@ -51,11 +57,20 @@ export default function ToolbarPlugin(): JSX.Element {
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
+  const [showAutoSavedFlush, setShowAutoSavedFlush] = useState<{
+    show: boolean;
+    state: 'saved to storage' | 'saving' | 'error' | null;
+  }>({
+    show: false,
+    state: null,
+  });
 
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
+
     if ($isRangeSelection(selection)) {
       const anchorNode = selection.anchor.getNode();
+
       let element =
         anchorNode.getKey() === 'root'
           ? anchorNode
@@ -81,6 +96,7 @@ export default function ToolbarPlugin(): JSX.Element {
 
       const node = getSelectedNode(selection);
       const parent = node.getParent();
+
       if ($isLinkNode(parent) || $isLinkNode(node)) {
         setIsLink(true);
       } else {
@@ -173,34 +189,28 @@ export default function ToolbarPlugin(): JSX.Element {
     );
   }, [$updateToolbar, activeEditor, editor]);
 
-  const applyStyleText = useCallback(
-    (styles: Record<string, string>, skipHistoryStack?: boolean) => {
-      activeEditor.update(
-        () => {
-          const selection = $getSelection();
-          if (selection !== null) {
-            $patchStyleText(selection, styles);
-          }
-        },
-        skipHistoryStack ? { tag: 'historic' } : {}
-      );
-    },
-    [activeEditor]
-  );
+  useEffect(() => {
+    const displayAutoSavedNotif = () => {
+      setShowAutoSavedFlush({ show: true, state: 'saved to storage' });
+      setTimeout(() => setShowAutoSavedFlush({ show: false, state: null }), 4000);
+    };
+    const displaySavingNotif = () => {
+      setShowAutoSavedFlush({ show: true, state: 'saving' });
+    };
+    const hideErrorNotif = () => {
+      setShowAutoSavedFlush({ show: false, state: 'error' });
+    };
 
-  const onFontColorSelect = useCallback(
-    (value: Color) => {
-      applyStyleText({ color: `#${value.toHex()}` });
-    },
-    [applyStyleText]
-  );
+    window.addEventListener(EDITOR_AUTO_SAVE_SUCCESS_EVENT, displayAutoSavedNotif);
+    window.addEventListener(EDITOR_AUTO_SAVING_START_EVENT, displaySavingNotif);
+    window.addEventListener(EDITOR_AUTO_SAVE_FAILED_EVENT, hideErrorNotif);
 
-  const onBgColorSelect = useCallback(
-    (value: Color) => {
-      applyStyleText({ 'background-color': `#${value.toHex()}` });
-    },
-    [applyStyleText]
-  );
+    return () => {
+      window.removeEventListener(EDITOR_AUTO_SAVE_SUCCESS_EVENT, displayAutoSavedNotif);
+      window.removeEventListener(EDITOR_AUTO_SAVING_START_EVENT, displaySavingNotif);
+      window.removeEventListener(EDITOR_AUTO_SAVE_FAILED_EVENT, hideErrorNotif);
+    };
+  }, []);
 
   return (
     <div
@@ -219,11 +229,17 @@ export default function ToolbarPlugin(): JSX.Element {
           editor={activeEditor}
         />
         <Divider type="vertical" className="h-full" />
-        {blockType in blockTypeToBlockName && activeEditor === editor && (
-          <>
-            <BlockFormat disabled={!isEditable} blockType={blockType} editor={editor} />
-            <Divider type="vertical" className="h-full" />
-          </>
+        <BlockFormat disabled={!isEditable} blockType={blockType} editor={editor} />
+        <Divider type="vertical" className="h-full" />
+        {showAutoSavedFlush.show && (
+          <div className="flex select-none items-center justify-center gap-2 rounded-full bg-primary-6 px-2 py-px pr-3">
+            {showAutoSavedFlush.state === 'saving' ? (
+              <DataSyncInit className="h-5 w-5 text-white" />
+            ) : (
+              <DataSync className="h-5 w-5 text-white" />
+            )}
+            <span className="text-sm font-light text-white">{showAutoSavedFlush.state}</span>
+          </div>
         )}
       </div>
       <div className="flex h-full items-center justify-center gap-2">
@@ -246,18 +262,18 @@ export default function ToolbarPlugin(): JSX.Element {
           }}
         />
         <ColorPicker
-          title="text color"
+          editor={activeEditor}
           type="text"
+          title="text color"
           disabled={!isEditable}
           color={fontColor as unknown as Color}
-          onChange={onFontColorSelect}
         />
         <ColorPicker
+          editor={activeEditor}
           type="bg"
           title="bg color"
           disabled={!isEditable}
           color={bgColor as unknown as Color}
-          onChange={onBgColorSelect}
         />
         <Divider type="vertical" className="h-full" />
         <TextFormat
