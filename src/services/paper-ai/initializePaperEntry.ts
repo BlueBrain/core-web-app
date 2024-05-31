@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 import { PaperCreationAction, PaperSchema } from './validation';
 import { paperHrefGenerator, papersListTagGenerator } from './utils';
@@ -8,6 +9,11 @@ import { createFile, createResource } from '@/api/nexus';
 import { auth } from '@/auth';
 import { PaperResource } from '@/types/nexus';
 import { composeUrl, createDistribution } from '@/util/nexus';
+
+const DEFAULT_EDITOR_STATE =
+  '{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
+const DEFAULT_EDITOR_CONFIG_NAME = 'lexical-editor--state.json';
+const DEFAULT_EDITOR_CONFIG_FORMAT = 'application/json';
 
 export default async function initializePaperEntry(
   _prevState: PaperCreationAction,
@@ -35,15 +41,16 @@ export default async function initializePaperEntry(
     };
   }
 
+  let redirectUrl: string | null = null;
   try {
     const { virtualLabId, projectId, title, summary, sourceData, generateOutline } = data;
 
     const fileUrl = composeUrl('file', '', { org: data.virtualLabId, project: data.projectId });
 
     const fileMetadata = await createFile(
-      'null',
-      'lexical-editor--state.json',
-      'application/json',
+      DEFAULT_EDITOR_STATE,
+      DEFAULT_EDITOR_CONFIG_NAME,
+      DEFAULT_EDITOR_CONFIG_FORMAT,
       session,
       fileUrl
     );
@@ -66,24 +73,30 @@ export default async function initializePaperEntry(
         virtualLabId,
         projectId,
         tags: [],
-        distribution: createDistribution(fileMetadata),
+        distribution: createDistribution(
+          fileMetadata,
+          composeUrl('file', fileMetadata['@id'], {
+            rev: fileMetadata._rev,
+            org: virtualLabId,
+            project: projectId,
+          })
+        ),
       },
       session,
       resourceUrl
     );
 
     revalidateTag(papersListTagGenerator({ virtualLabId, projectId }));
-
-    return {
-      error: null,
-      validationErrors: null,
-      redirect: paperHrefGenerator({ virtualLabId, projectId, '@id': result['@id'] }),
-    };
+    redirectUrl = paperHrefGenerator({ virtualLabId, projectId, '@id': result['@id'] });
   } catch (err) {
     return {
       redirect: null,
       validationErrors: null,
       error: (err as { message: string }).message,
     };
+  }
+
+  if (redirect) {
+    redirect(redirectUrl);
   }
 }
