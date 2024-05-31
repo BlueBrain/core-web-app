@@ -90,7 +90,10 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     .join('');
 }
 
-export function createDistribution(payloadMetadata: FileMetadata): Distribution {
+export function createDistribution(
+  payloadMetadata: FileMetadata,
+  contentUrl?: string
+): Distribution {
   if (!payloadMetadata._rev)
     throw new Error('revision in file metadata missing when creating distribution');
 
@@ -101,7 +104,8 @@ export function createDistribution(payloadMetadata: FileMetadata): Distribution 
       unitCode: 'bytes',
       value: payloadMetadata._bytes,
     },
-    contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
+    contentUrl:
+      contentUrl ?? composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
     encodingFormat: payloadMetadata._mediaType,
     digest: {
       algorithm: payloadMetadata._digest._algorithm,
@@ -116,6 +120,10 @@ export function ensureArray<T>(value: T | T[]) {
 
 export function removeMetadata(resource: Record<string, any>) {
   return pickBy(resource, (value, key) => !metadataKeys.includes(key));
+}
+
+export function getMetadata(resource: Record<string, any>) {
+  return pickBy(resource, (value, key) => metadataKeys.includes(key));
 }
 
 export function setRev(url: string, rev: number | string) {
