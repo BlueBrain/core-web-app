@@ -150,27 +150,21 @@ function CustomSlide(props: SlideProps) {
     ...otherProps // These come from AntD's Carousel component. Do not remove.
   } = props;
 
+  const isSelected = !!selectedSimulationScope && selectedSimulationScope === key;
+  const isNotSelected = !!selectedSimulationScope && selectedSimulationScope !== key;
+
   return (
     <button
       className={classNames(
         '!flex h-[290px] w-full flex-col gap-2 overflow-hidden px-3 text-left text-white',
-        !!selectedSimulationScope &&
-          selectedSimulationScope !== key &&
-          'text-opacity-60 opacity-60 hover:text-opacity-100 hover:opacity-100',
+        isNotSelected && 'text-opacity-60 opacity-60 hover:text-opacity-100 hover:opacity-100',
         !selectedSimulationScope && 'hover:font-bold'
       )}
       onClick={() => setSelectedSimulationScope(selectedSimulationScope !== key ? key : null)}
       type="button"
       {...otherProps} // eslint-disable-line react/jsx-props-no-spreading
     >
-      <h2
-        className={classNames(
-          'text-3xl',
-          !!selectedSimulationScope && selectedSimulationScope === key && 'font-bold'
-        )}
-      >
-        {title}
-      </h2>
+      <h2 className={classNames('text-3xl', isSelected && 'font-bold')}>{title}</h2>
       <span className="font-light">{description}</span>
       <div className="relative mt-auto h-[168px]" style={{ opacity: 'inherit' }}>
         <Image
