@@ -248,7 +248,6 @@ export default function BlockFormat({
     >
       <EditorButton
         showLabel
-        active
         aria-label={blockTypeToBlockName[blockType]}
         title={blockTypeToBlockName[blockType]}
         disabled={disabled}
