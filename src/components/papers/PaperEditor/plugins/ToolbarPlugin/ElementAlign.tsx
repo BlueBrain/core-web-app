@@ -109,7 +109,7 @@ export default function ElementAlign({
         onClick,
       }}
       trigger={['click']}
-      placement="bottomLeft"
+      placement="bottomRight"
     >
       <EditorButton
         showLabel

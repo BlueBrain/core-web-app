@@ -15,7 +15,7 @@ export const POST = async (request: Request) => {
   if (!session) {
     return new Response('Unauthorized', {
       status: 401,
-      statusText: 'The supplied authentication is not authorized to access',
+      statusText: 'The supplied authentication is not authorized for this action',
     });
   }
 
@@ -69,12 +69,12 @@ export const POST = async (request: Request) => {
       );
 
       return Response.json({
-        message: 'PaperConfig update successfully',
+        message: 'Paper state and configuration updated successfully',
         data: await data.json(),
       });
     }
   } catch (error) {
-    return new Response('ServerError: Updating corresponding files/resources failed', {
+    return new Response('ServerError: Updating paper relative files/resources failed', {
       status: 500,
       statusText: 'Internal Server Error',
     });

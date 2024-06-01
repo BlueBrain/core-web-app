@@ -283,7 +283,14 @@
   display: inline;
   background-color: #ffbbbb !important;
 }
+.app-editor-theme__ol {
+  padding: 0;
+  margin: 0;
+  list-style-position: outside;
+}
 .app-editor-theme__ol1 {
+  list-style-type: lower-latin;
+  list-style: decimal;
   padding: 0;
   margin: 0;
   list-style-position: outside;
@@ -313,6 +320,13 @@
   list-style-position: outside;
 }
 .app-editor-theme__ul {
+  padding: 0;
+  margin: 0;
+  list-style-position: outside;
+}
+.app-editor-theme__ul1 {
+  list-style-type: circle;
+  list-style: disc;
   padding: 0;
   margin: 0;
   list-style-position: outside;

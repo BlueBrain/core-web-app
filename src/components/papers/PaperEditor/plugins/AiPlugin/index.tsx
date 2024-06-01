@@ -14,7 +14,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getSelection, $isRangeSelection } from 'lexical';
 
 import { AI_EXPAND_FAILED, AI_SUMMARIZE_FAILED } from '../../utils/messages';
-import { isSelectionEntireParagraph } from '../../utils/isSelectionInParagraph';
+import isSelectionEntireParagraph from '../../utils/isSelectionInParagraph';
 import usePointerDown from './usePointerDown';
 import { classNames } from '@/util/utils';
 import { TextdirectionVertical, TextdirectionLToR } from '@/components/icons/EditorIcons';
