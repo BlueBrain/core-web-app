@@ -13,10 +13,10 @@ import {
   STREAM_JSON_DATA_SEPARATOR_REGEX,
   generativeQADTO,
 } from './utils/DTOs';
-import { isJSON, updateAndMerge } from './utils';
+import { updateAndMerge } from './utils';
 import { getGenerativeQA } from './api';
 import { GenerativeQA, GenerativeQAResponse, GenerativeQADTO } from '@/types/literature';
-import { formatDate } from '@/util/utils';
+import { formatDate, isJSON } from '@/util/utils';
 import {
   initialParameters,
   literatureAtom,
@@ -140,7 +140,7 @@ function useStreamGenerative({
             break;
           }
           captureErrorAtStart = false;
-          // keep receive streaming until one of the separator catptured
+          // keep receive streaming until one of the separator captured
           // separator oneOf<data|error>
           if (decodedChunk.search(STREAM_JSON_DATA_SEPARATOR_REGEX) !== -1) {
             stopAppendAnswer = true;
