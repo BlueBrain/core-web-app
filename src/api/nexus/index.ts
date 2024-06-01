@@ -276,6 +276,19 @@ export async function updateResource(
   }).then((res) => res.json());
 }
 
+export async function deprecateResource(
+  resource: EntityResource,
+  session: Session,
+  options: ComposeUrlParams
+): Promise<EntityResource> {
+  const url = composeUrl('resource', resource['@id'], options);
+
+  return fetch(url, {
+    method: 'DELETE',
+    headers: createHeaders(session.accessToken),
+  }).then((res) => res.json());
+}
+
 export function queryES<T>(
   query: Record<string, any>,
   session: Session,

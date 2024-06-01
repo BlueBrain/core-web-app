@@ -83,9 +83,9 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     searchParams.set('indexing', 'sync');
   }
 
-  const seachParamsStr = searchParams.toString();
+  const searchParamsStr = searchParams.toString();
 
-  return [nexus.url, '/', pathname, seachParamsStr ? `?${seachParamsStr}` : null]
+  return [nexus.url, '/', pathname, searchParamsStr ? `?${searchParamsStr}` : null]
     .filter(Boolean)
     .join('');
 }
