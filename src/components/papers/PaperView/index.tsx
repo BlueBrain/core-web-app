@@ -2,10 +2,15 @@
 
 import dynamic from 'next/dynamic';
 import { SerializedEditorState } from 'lexical/LexicalEditorState';
-import { Button } from 'antd';
+import { Button, Popconfirm, message } from 'antd';
+import { useEffect, useTransition } from 'react';
+import { parseAsString, useQueryState } from 'nuqs';
+import { useSetAtom } from 'jotai';
 
 import { DeleteOutline, EditDocument } from '@/components/icons/EditorIcons';
 import { PaperResource } from '@/types/nexus';
+import { virtualLabProjectPapersCountAtomFamily } from '@/state/virtual-lab/projects';
+import deletePaperFromProject from '@/services/paper-ai/deletePaperFromProject';
 
 const Editor = dynamic(() => import('@/components/papers/PaperEditor'), { ssr: false });
 
@@ -37,6 +42,39 @@ export default function PaperView({
   config: SerializedEditorState;
   paper: PaperResource;
 }) {
+  const [fromRoute, setFromRoute] = useQueryState(
+    'from',
+    parseAsString.withDefault('').withOptions({ clearOnDefault: true })
+  );
+  const [isDeleting, startTransition] = useTransition();
+  const refreshPapersCount = useSetAtom(
+    virtualLabProjectPapersCountAtomFamily({
+      virtualLabId: paper.virtualLabId,
+      projectId: paper.projectId,
+    })
+  );
+
+  const onDeletePaper = async () => {
+    startTransition(async () => {
+      try {
+        await deletePaperFromProject({ paper });
+        refreshPapersCount();
+      } catch (error) {
+        message.error(`
+          Oops! Something went wrong while trying to delete the paper from your project,
+          Please try again later.
+        `);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (fromRoute) {
+      refreshPapersCount();
+      setFromRoute('');
+    }
+  }, [fromRoute, refreshPapersCount, setFromRoute]);
+
   return (
     <div
       id="editor-view-container"
@@ -55,15 +93,32 @@ export default function PaperView({
                 Edit
                 <EditDocument className="h-7 w-7 group-hover:scale-105 group-hover:transform group-hover:text-gray-300" />
               </Button>
-              <Button
-                htmlType="button"
-                type="text"
-                size="large"
-                className="flex items-center justify-center gap-2 rounded-none"
+              <Popconfirm
+                title="Delete paper"
+                description="Are you sure to delete this paper?"
+                onConfirm={onDeletePaper}
+                okText="I confirm"
+                cancelText="Cancel"
+                placement="bottomRight"
+                okButtonProps={{
+                  type: 'primary',
+                  size: 'middle',
+                  loading: isDeleting,
+                  className: 'bg-primary-8 rounded-none px-5',
+                }}
+                cancelButtonProps={{ className: 'rounded-none', type: 'text', size: 'middle' }}
               >
-                Delete paper
-                <DeleteOutline className="h-7 w-7 group-hover:scale-105 group-hover:transform group-hover:text-gray-300" />
-              </Button>
+                <Button
+                  htmlType="button"
+                  type="text"
+                  size="large"
+                  className="flex items-center justify-center gap-2 rounded-none"
+                  loading={isDeleting}
+                >
+                  Delete paper
+                  <DeleteOutline className="h-7 w-7 group-hover:scale-105 group-hover:transform group-hover:text-gray-300" />
+                </Button>
+              </Popconfirm>
             </div>
           </div>
           <div className="my-4 flex w-full flex-col gap-2 bg-white">
