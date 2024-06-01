@@ -1,0 +1,37 @@
+'use server';
+
+import { revalidateTag } from 'next/cache';
+import { redirect } from 'next/navigation';
+
+import { papersListTagGenerator } from './utils';
+import { deprecateResource } from '@/api/nexus';
+import { PaperResource } from '@/types/nexus';
+import { auth } from '@/auth';
+
+export default async function deletePaperFromProject({ paper }: { paper: PaperResource }) {
+  const session = await auth();
+  let shouldRedirect = false;
+  try {
+    if (session) {
+      await deprecateResource(paper, session, {
+        org: paper.virtualLabId,
+        project: paper.projectId,
+        rev: paper._rev,
+        sync: true,
+      });
+      revalidateTag(
+        papersListTagGenerator({
+          virtualLabId: paper.virtualLabId,
+          projectId: paper.projectId,
+        })
+      );
+      shouldRedirect = true;
+    }
+  } catch (error) {
+    throw Error('deprecation failed');
+  }
+
+  if (shouldRedirect) {
+    redirect(`/virtual-lab/lab/${paper.virtualLabId}/project/${paper.projectId}/papers`);
+  }
+}
