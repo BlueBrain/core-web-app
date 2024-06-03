@@ -1,9 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
 import userEvent from '@testing-library/user-event';
-import { BookmarkItem } from '@/services/virtual-lab/bookmark';
 import BookmarkList from '@/components/VirtualLab/Bookmarks/BookmarkList';
 import sessionAtom from '@/state/session';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -13,13 +12,18 @@ import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
 import esb from 'elastic-builder';
 import { DataQuery } from '@/api/explore-section/resources';
+import { Bookmark, BookmarksByCategory } from '@/types/virtual-lab/bookmark';
 
 describe('Library', () => {
   const labId = '3';
   const projectId = '123';
+  const morphology = DataType.ExperimentalNeuronMorphology;
 
-  it('should render successfully', async () => {
-    projectHasBookmarks(labId, projectId, [bookmarkItem('item1'), bookmarkItem('item2')]);
+  it('renders bookmarked morphology resources by default', async () => {
+    projectHasBookmarks(labId, projectId, [
+      bookmarkItem('item1', morphology),
+      bookmarkItem('item2', morphology),
+    ]);
     elasticSearchReturns(['item1', 'item2']);
     renderComponent(labId, projectId);
 
@@ -32,7 +36,10 @@ describe('Library', () => {
   });
 
   it('bookmark item links to detail page', async () => {
-    projectHasBookmarks(labId, projectId, [bookmarkItem('item1'), bookmarkItem('item2')]);
+    projectHasBookmarks(labId, projectId, [
+      bookmarkItem('item1', morphology),
+      bookmarkItem('item2', morphology),
+    ]);
     elasticSearchReturns(['item1', 'item2']);
     const user = renderComponent(labId, projectId);
 
@@ -52,6 +59,26 @@ describe('Library', () => {
 
     await screen.findByText('There are no pinned datasets for morphologies');
     expect(screen.queryByText('item1')).not.toBeInTheDocument();
+  });
+
+  it('shows electrophysiology bookmarks when Electrophysiology panel is opened', async () => {
+    projectHasBookmarks(labId, projectId, [
+      bookmarkItem('item1', DataType.ExperimentalElectroPhysiology),
+      bookmarkItem('item2', DataType.ExperimentalElectroPhysiology),
+    ]);
+    elasticSearchReturns(['item1', 'item2']);
+    const user = renderComponent(labId, projectId);
+
+    expect(screen.queryByText('item1')).not.toBeInTheDocument(); // No morphology items are visible
+
+    const electrophysiologyTab = await screen.findByText('Electrophysiology');
+    within(screen.getByTestId(`${DataType.ExperimentalElectroPhysiology}-tab`)).getByText(
+      '2 pinned datasets'
+    );
+
+    await user.click(electrophysiologyTab);
+    await screen.findByText('item1');
+    screen.getByText('item2');
   });
 });
 
@@ -96,16 +123,25 @@ function BookmarkListProvider(labId: string, projectId: string) {
   );
 }
 
-const bookmarkItem = (id: string): BookmarkItem => ({
+const bookmarkItem = (id: string, category: DataType): Bookmark => ({
   resourceId: id,
+  category,
 });
 
-const projectHasBookmarks = (labId: string, projectId: string, items: BookmarkItem[]) => {
-  getBookmarkedItems.mockImplementation((aLab, aProject) => {
+const projectHasBookmarks = (labId: string, projectId: string, items: Bookmark[]) => {
+  getBookmarksByCategory.mockImplementation((aLab, aProject) => {
     if (labId === aLab && projectId === aProject) {
-      return Promise.resolve(items);
+      const bookmarksByCategory = items.reduce((acc, curr) => {
+        if (curr.category in acc) {
+          return { ...acc, [curr.category]: [...acc[curr.category], curr] };
+        }
+
+        return { ...acc, [curr.category]: [curr] };
+      }, {} as BookmarksByCategory);
+
+      return Promise.resolve(bookmarksByCategory);
     }
-    return Promise.resolve([]);
+    return Promise.resolve({});
   });
 };
 
@@ -138,12 +174,16 @@ const elasticSearchReturns = (hitIds: string[]) => {
   });
 };
 
-jest.mock('src/services/virtual-lab/bookmark', () => ({
-  __esModule: true,
-  getBookmarkedItems: (lab: string, project: string): string[] => {
-    return getBookmarkedItems(lab, project);
-  },
-}));
+jest.mock('src/services/virtual-lab/bookmark', () => {
+  const actual = jest.requireActual('src/services/virtual-lab/bookmark');
+  return {
+    ...actual,
+    __esModule: true,
+    getBookmarksByCategory: (lab: string, project: string): string[] => {
+      return getBookmarksByCategory(lab, project);
+    },
+  };
+});
 
 jest.mock('src/queries/explore-section/filters', () => {
   const actual = jest.requireActual('src/queries/explore-section/filters');
@@ -183,7 +223,7 @@ jest.mock('next/navigation', () => {
   };
 });
 
-const getBookmarkedItems = jest.fn();
+const getBookmarksByCategory = jest.fn();
 const buildFilters = jest.fn();
 const fetchEsResourcesByType = jest.fn();
 const navigateTo = jest.fn();
@@ -259,8 +299,7 @@ const mockHit = (resourceId: string) => ({
     },
     updatedAt: '2024-01-11T11:46:29.211Z',
     updatedBy: 'https://sbo-nexus-delta.shapes-registry.org/v1/realms/bbp/users/cgonzale',
-    _self:
-      'https://sbo-nexus-delta.shapes-registry.org/v1/resources/bbp/mouselight/_/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fneuronmorphologies%2FAA1190',
+    _self: `https://sbo-nexus-delta.shapes-registry.org/v1/resources/bbp/mouselight/_/${resourceId}`,
   },
 });
 

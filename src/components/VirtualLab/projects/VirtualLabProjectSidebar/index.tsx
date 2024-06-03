@@ -5,6 +5,7 @@ import { loadable } from 'jotai/utils';
 import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
+import { useMemo } from 'react';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import {
@@ -12,7 +13,9 @@ import {
   virtualLabProjectPapersCountAtomFamily,
   virtualLabProjectUsersAtomFamily,
 } from '@/state/virtual-lab/projects';
+import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
+import { getBookmarksCount } from '@/services/virtual-lab/bookmark';
 
 type Props = {
   virtualLabId: string;
@@ -25,6 +28,9 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
   );
   const projectUsers = useAtomValue(
     loadable(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
+  );
+  const bookmarks = useAtomValue(
+    loadable(bookmarksForProjectAtomFamily({ virtualLabId, projectId }))
   );
 
   const projectPapers = useAtomValue(
@@ -63,6 +69,16 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
     return null;
   };
 
+  const bookmarksCount = useMemo(() => {
+    if (bookmarks.state === 'loading') {
+      return <Spin indicator={<LoadingOutlined />} />;
+    }
+    if (bookmarks.state === 'hasData') {
+      return getBookmarksCount(bookmarks.data);
+    }
+    return null;
+  }, [bookmarks]);
+
   const currentPage = usePathname().split('/').pop();
 
   const linkItems: LinkItem[] = [
@@ -72,7 +88,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       content: (
         <div className="flex justify-between">
           <span>Project Library</span>
-          <span className="font-normal text-primary-3">3,826</span>
+          <span className="font-normal text-primary-3">{bookmarksCount}</span>
         </div>
       ),
       href: 'library',

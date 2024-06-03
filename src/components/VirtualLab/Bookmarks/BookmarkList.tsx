@@ -36,6 +36,7 @@ export default function BookmarkList({ labId, projectId }: Props) {
     return Object.keys(EXPERIMENT_DATA_TYPES).map((experiment) => {
       return {
         key: experiment,
+        'data-testid': `${experiment}-tab`,
         label: (
           <div>
             <span className="text-center text-xl font-bold leading-7 text-primary-8">
@@ -79,7 +80,11 @@ export default function BookmarkList({ labId, projectId }: Props) {
             },
           }}
         >
-          <Collapse items={collapsibleItems} defaultActiveKey={['1']} expandIconPosition="end" />
+          <Collapse
+            items={collapsibleItems}
+            defaultActiveKey={[DataType.ExperimentalNeuronMorphology]}
+            expandIconPosition="end"
+          />
         </ConfigProvider>
       </div>
     </div>
