@@ -530,3 +530,22 @@ export const getPaperListQuery = (
   },
   sort: searchString ? undefined : [defaultCreationDateSort],
 });
+
+export const getNotValidatedMEModelQuery = (username: string) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'MEModel' } },
+              { term: { _createdBy: `https://bbp.epfl.ch/nexus/v1/realms/bbp/users/${username}` } },
+            ],
+          },
+        },
+      ],
+    },
+  },
+});
