@@ -6,7 +6,7 @@ import { PaperUpdateAction, PaperUpdateSchema } from './validation';
 import { paperHrefGenerator, papersListTagGenerator } from './utils';
 import { auth } from '@/auth';
 import { EntityResource, PaperResource } from '@/types/nexus';
-import { composeUrl } from '@/util/nexus';
+import { composeUrl, removeMetadata } from '@/util/nexus';
 import { createHeaders } from '@/util/utils';
 
 export default async function updatePaperDetails(
@@ -23,7 +23,7 @@ export default async function updatePaperDetails(
     const { success, data, error } = PaperUpdateSchema.safeParse({
       title: paperData.get('title'),
       summary: paperData.get('summary'),
-      sourceData: paperData.get('source-data'),
+      sourceData: paperData.get('source-data') ?? 'source data',
       paper: paperData.get('paper'),
     });
 
@@ -36,7 +36,7 @@ export default async function updatePaperDetails(
     }
 
     const { title, summary, sourceData } = data;
-    const paper = data.paper as PaperResource;
+    const paper = JSON.parse(data.paper) as PaperResource;
 
     const response = await fetch(
       composeUrl('resource', paper['@id'], {
@@ -48,44 +48,50 @@ export default async function updatePaperDetails(
       {
         method: 'PUT',
         headers: createHeaders(session.accessToken),
-        body: JSON.stringify({
-          ...paper,
-          name: title,
-          description: summary,
-          sourceData,
-        } as EntityResource),
+        body: JSON.stringify(
+          removeMetadata({
+            ...paper,
+            name: title,
+            description: summary,
+            sourceData,
+          }) as EntityResource
+        ),
         cache: 'no-store',
       }
     );
-    if (response.ok) {
-      revalidateTag(
-        papersListTagGenerator({
-          virtualLabId: paper.virtualLabId,
-          projectId: paper.projectId,
-        })
-      );
-      revalidatePath(
-        paperHrefGenerator({
-          virtualLabId: paper.virtualLabId,
-          projectId: paper.projectId,
-          '@id': paper['@id'],
-        })
-      );
-      return {
-        type: 'success',
-        validationErrors: null,
-        error: null,
-      };
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      if ('reason' in errorResponse) {
+        throw new Error(errorResponse.reason);
+      }
+      throw new Error('Failed to update paper details');
     }
+
+    revalidateTag(
+      papersListTagGenerator({
+        virtualLabId: paper.virtualLabId,
+        projectId: paper.projectId,
+      })
+    );
+
+    revalidatePath(
+      paperHrefGenerator({
+        virtualLabId: paper.virtualLabId,
+        projectId: paper.projectId,
+        '@id': paper['@id'],
+      })
+    );
+
     return {
-      type: 'error',
-      error: await response.text(),
+      type: 'success',
       validationErrors: null,
+      error: null,
     };
-  } catch (err) {
+  } catch (err: any) {
     return {
       type: 'error',
-      error: (err as { message: string }).message,
+      error: (err as Error).message,
       validationErrors: null,
     };
   }

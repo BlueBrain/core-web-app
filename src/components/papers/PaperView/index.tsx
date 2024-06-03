@@ -7,6 +7,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useSetAtom } from 'jotai';
 
+import { DELETE_PAPER_FAILED } from '../utils/messages';
 import PaperDetails from './PaperDetails';
 import { DeleteOutline, EditDocument } from '@/components/icons/EditorIcons';
 import { PaperResource } from '@/types/nexus';
@@ -41,10 +42,7 @@ export default function PaperView({
         await deletePaperFromProject({ paper });
         refreshPapersCount();
       } catch (error) {
-        message.error(`
-          Oops! Something went wrong while trying to delete the paper from your project,
-          Please try again later.
-        `);
+        message.error(DELETE_PAPER_FAILED);
       }
     });
   };

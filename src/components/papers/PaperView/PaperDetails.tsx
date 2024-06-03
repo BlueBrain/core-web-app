@@ -1,12 +1,15 @@
+import { useEffect } from 'react';
 import { Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import { useFormState, useFormStatus } from 'react-dom';
 
+import { EDIT_PAPER_FAILED, EDIT_PAPER_SUCCESS } from '../utils/messages';
 import { FormError, FormStaleLabel } from '../molecules/Form';
 import { PaperResource } from '@/types/nexus';
 import { classNames } from '@/util/utils';
 import { PaperUpdateAction } from '@/services/paper-ai/validation';
 import updatePaperDetails from '@/services/paper-ai/updatePaperResource';
+import useNotification from '@/hooks/notifications';
 
 type PaperDetailsProps = {
   editable: boolean;
@@ -16,6 +19,7 @@ type PaperDetailsProps = {
 
 function PaperEditSubmit() {
   const { pending } = useFormStatus();
+
   return (
     <div className="justify-end self-end">
       <Button
@@ -34,6 +38,7 @@ function PaperEditSubmit() {
 }
 
 export default function PaperDetails({ editable, paper, onCompleteEdit }: PaperDetailsProps) {
+  const { success: successNotify, error: errorNotify } = useNotification();
   const [state, runPaperUpdateAction] = useFormState<PaperUpdateAction, FormData>(
     updatePaperDetails,
     {
@@ -43,17 +48,22 @@ export default function PaperDetails({ editable, paper, onCompleteEdit }: PaperD
     }
   );
 
-  const onEditPaper = (formData: FormData) => {
-    runPaperUpdateAction(formData);
-    onCompleteEdit(false);
-  };
+  useEffect(() => {
+    if (state.type === 'success') {
+      successNotify(EDIT_PAPER_SUCCESS, undefined, 'topRight');
+      onCompleteEdit(false);
+    } else if (state.type === 'error') {
+      errorNotify(EDIT_PAPER_FAILED, undefined, 'topRight');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
   return (
     <form
       id="paper-details-form"
       name="paper-details-form"
       className="flex flex-col"
-      action={onEditPaper}
+      action={runPaperUpdateAction}
     >
       <div className="my-4 flex w-full flex-col gap-2 bg-white">
         <input id="paper" name="paper" value={JSON.stringify(paper)} />
@@ -98,20 +108,27 @@ export default function PaperDetails({ editable, paper, onCompleteEdit }: PaperD
         <div className="flex flex-col">
           <FormStaleLabel title="Source data" className={editable ? 'font-bold' : 'font-normal'} />
           {editable ? (
-            <div className="flex items-center justify-between gap-4">
-              <button
-                type="button"
-                className="flex w-max items-center gap-10 rounded-md border border-gray-200 px-4 py-5 font-bold text-primary-8"
-              >
-                <span className="min-w-max text-left">cADpyr model</span>
-                <SwapOutlined className="-rotate-45 transform" />
-              </button>
-              <p className="line-clamp-2 text-red-500">
-                If you alter your source data, this will delete all generated information, including
-                the outline, abstract, summary, methods, and references. These will then be replaced
-                with those from the new source data.
-              </p>
-            </div>
+            <>
+              <div className="flex items-center justify-between gap-4">
+                <button
+                  type="button"
+                  className="flex w-max items-center gap-10 rounded-md border border-gray-200 px-4 py-5 font-bold text-primary-8"
+                >
+                  <span className="min-w-max text-left">cADpyr model</span>
+                  <SwapOutlined className="-rotate-45 transform" />
+                </button>
+                <p className="line-clamp-2 text-red-500">
+                  If you alter your source data, this will delete all generated information,
+                  including the outline, abstract, summary, methods, and references. These will then
+                  be replaced with those from the new source data.
+                </p>
+              </div>
+              <div className="w-full">
+                {state.validationErrors?.sourceData && (
+                  <FormError errors={state.validationErrors.sourceData} />
+                )}
+              </div>
+            </>
           ) : (
             <>cADpyr model</>
           )}
