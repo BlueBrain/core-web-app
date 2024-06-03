@@ -9,7 +9,7 @@ import Realistic from 'react-canvas-confetti/dist/presets/realistic';
 import { basePath } from '@/config';
 import styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
 
-export default function WelcomeUserBanner({ title }: { title: string }) {
+export default function WelcomeUserBanner({ title }: { title?: string }) {
   const { data } = useSession();
   const params = useSearchParams();
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';

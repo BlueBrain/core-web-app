@@ -22,11 +22,11 @@ function VirtualLabTitle({ virtualLabId }: Props) {
     useMemo(() => unwrap(virtualLabDetailAtomFamily(virtualLabId)), [virtualLabId])
   );
 
-  if (virtualLab) {
-    return <div className="text-5xl font-bold uppercase text-primary-5">{virtualLab.name}</div>;
-  }
-
-  return null;
+  return (
+    <div className="text-5xl font-bold uppercase text-primary-5" style={{ minHeight: '84px' }}>
+      {virtualLab?.name}
+    </div>
+  );
 }
 
 function UsersAmount({ virtualLabId }: Props) {
@@ -45,7 +45,7 @@ function ProjectsAmount({ virtualLabId }: Props) {
     useMemo(() => loadable(virtualLabProjectsAtomFamily(virtualLabId)), [virtualLabId])
   );
   if (projects.state === 'loading') {
-    return <Spin indicator={<LoadingOutlined />} />;
+    return null;
   }
   if (projects.state === 'hasData') {
     return projects.data?.results.length;

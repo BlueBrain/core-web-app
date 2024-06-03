@@ -11,29 +11,33 @@ import { getVirtualLabDetail, getVirtualLabUsers } from '@/services/virtual-lab/
 import { getVirtualLabProjects } from '@/services/virtual-lab/projects';
 
 type Props = {
-  id: string;
+  id?: string;
 };
 
 export default async function VirtualLabHomePage({ id }: Props) {
-  const virtualLabDetail = (await getVirtualLabDetail(id)).data.virtual_lab;
-  const virtualLabUsers = (await getVirtualLabUsers(id)).data.users;
-  const virtualLabProjects = (await getVirtualLabProjects(id)).data.results;
+  const virtualLabDetail = id ? (await getVirtualLabDetail(id)).data.virtual_lab : undefined;
+  const virtualLabUsers = id ? (await getVirtualLabUsers(id)).data.users : [];
+  const virtualLabProjects = id ? (await getVirtualLabProjects(id)).data.results : undefined;
 
   return (
     <div className="pb-5">
-      <WelcomeUserBanner title={virtualLabDetail.name} />
+      <WelcomeUserBanner title={virtualLabDetail && virtualLabDetail.name} />
       <div className="mt-10">
         <VirtualLabBanner
-          id={virtualLabDetail.id}
-          name={virtualLabDetail.name}
-          description={virtualLabDetail.description}
+          id={virtualLabDetail?.id}
+          name={virtualLabDetail?.name}
+          description={virtualLabDetail?.description}
           withEditButton
           bottomElements={
-            <VirtualLabMainStatistics id={id} created_at={virtualLabDetail.created_at} />
+            <VirtualLabMainStatistics id={id} created_at={virtualLabDetail?.created_at} />
           }
         />
       </div>
-      <BudgetPanel total={virtualLabDetail.budget} totalSpent={300} remaining={350} />
+      <BudgetPanel
+        total={virtualLabDetail && virtualLabDetail.budget}
+        totalSpent={300}
+        remaining={350}
+      />
       <VirtualLabCTABanner
         title="Create your first project"
         subtitle="In order to start exploring brain regions, building models and simulate neuron, create a project"
@@ -57,12 +61,12 @@ export default async function VirtualLabHomePage({ id }: Props) {
       <div className="mt-10">
         <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
         <div className="flex flex-row gap-5">
-          {virtualLabProjects.slice(0, 3).map((project) => (
+          {virtualLabProjects?.map((project) => (
             <ProjectItem
               key={project.id}
               title={project.name}
               description={project.description}
-              buttonHref={`${generateVlProjectUrl(id, project.id)}/home`}
+              buttonHref={id && `${generateVlProjectUrl(id, project.id)}/home`}
             />
           ))}
         </div>

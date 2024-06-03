@@ -29,8 +29,9 @@ export const virtualLabDetailAtomFamily = atomFamily<string, PrimitiveAtom<Promi
     })
 );
 
-export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
+export const virtualLabMembersAtomFamily = atomFamily((virtualLabId?: string) =>
   atom<Promise<VirtualLabMember[] | undefined>>(async () => {
+    if (!virtualLabId) return;
     const response = await getVirtualLabUsers(virtualLabId);
     return response.data.users;
   })
