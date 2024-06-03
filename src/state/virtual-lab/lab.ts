@@ -19,8 +19,6 @@ import {
 } from '@/services/virtual-lab/billing';
 import { PaymentMethod, VlabBalance } from '@/types/virtual-lab/billing';
 
-export const refreshAtom = atom(0);
-
 export const virtualLabDetailAtomFamily = atomFamily<string, PrimitiveAtom<Promise<VirtualLab>>>(
   (virtualLabId) =>
     atomWithDefault(async () => {
@@ -77,8 +75,7 @@ export const virtualLabBalanceAtomFamily = atomFamily((virtualLabId: string) =>
 
 export const virtualLabsOfUserAtom = atomWithRefresh<
   Promise<VirtualLabAPIListData<VirtualLab> | undefined>
->(async (get) => {
-  get(refreshAtom);
+>(async () => {
   const response = await getVirtualLabsOfUser();
   return response.data;
 });

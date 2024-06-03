@@ -7,7 +7,7 @@ import useNotification from '@/hooks/notifications';
 import { classNames } from '@/util/utils';
 import { createVirtualLab } from '@/services/virtual-lab/labs';
 import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
-import { refreshAtom } from '@/state/virtual-lab/lab';
+import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
 import styles from './nav-buttons.module.css';
 
 export interface NavButtonsProps {
@@ -22,7 +22,7 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
   const notification = useNotification();
   const [loading, setLoading] = useState(false);
   const [lab] = useCurrentVirtualLab();
-  const refresh = useSetAtom(refreshAtom);
+  const refreshVirtualLabs = useSetAtom(virtualLabsOfUserAtom);
 
   const handleCreate = async () => {
     if (!session.data) {
@@ -33,7 +33,7 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
     return createVirtualLab({ lab, token: session.data.accessToken })
       .then((response) => {
         notification.success(`${response.data.virtual_lab.name} has been created.`);
-        refresh((count) => count + 1);
+        refreshVirtualLabs();
         handleNext();
         setIsModalVisible(false);
       })
