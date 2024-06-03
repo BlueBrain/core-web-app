@@ -27,11 +27,11 @@ export default function WrapperBanner({ children }: { children: ReactNode }) {
     width: 4096,
   });
   const backgroundImage = getBackgroundImage(srcSet);
-  const style = { backgroundImage, backgroundPositionX: '96rem' };
+  const style = { backgroundImage, backgroundPositionX: '55vw', backgroundSize: '145%' };
 
   return (
     <div
-      className="flex h-screen w-screen items-center justify-center bg-primary-9 bg-cover bg-left bg-no-repeat"
+      className="flex h-screen w-screen items-center justify-center bg-primary-9 bg-left bg-no-repeat"
       style={style}
     >
       {children}
