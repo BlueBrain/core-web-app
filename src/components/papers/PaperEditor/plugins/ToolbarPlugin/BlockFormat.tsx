@@ -11,7 +11,7 @@ import { $setBlocksType } from '@lexical/selection';
 import { $createParagraphNode, $getSelection, $isRangeSelection, LexicalEditor } from 'lexical';
 import { MenuItemType } from 'antd/es/menu/hooks/useItems';
 
-import EditorButton from '../../molecules/Button';
+import EditorButton from '../../../molecules/Button';
 import {
   FormatH1,
   FormatH2,
