@@ -24,7 +24,6 @@ import ToolbarPlugin from './plugins/ToolbarPlugin';
 import FloatAiCommandsPlugin from './plugins/AiPlugin';
 import InsertPlugin from './plugins/InsertPlugin';
 import ActionPlugin from './plugins/ActionPlugin';
-import RemoteSyncPlugin from './plugins/RemoteSyncPlugin';
 import theme from './themes/appEditorCustomTheme';
 import { PaperResource } from '@/types/nexus';
 
@@ -85,7 +84,6 @@ export default function Editor({ config, paper }: Props) {
       }}
     >
       <div className="relative flex h-[calc(100%-60px)] flex-col border border-t-0 border-gray-200 pb-40">
-        <RemoteSyncPlugin {...{ paper }} />
         <CheckListPlugin />
         <ClearEditorPlugin />
         <HorizontalRulePlugin />

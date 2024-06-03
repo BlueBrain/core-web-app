@@ -69,6 +69,8 @@ export const POST = async (request: Request) => {
       data: await data.json(),
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('@@error@@ [PAPER_SYNC_ROUTE]', error);
     return new Response('ServerError: Updating paper relative files/resources failed', {
       status: 500,
       statusText: 'Internal Server Error',
