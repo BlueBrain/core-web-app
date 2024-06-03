@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';

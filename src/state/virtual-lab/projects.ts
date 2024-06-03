@@ -14,13 +14,8 @@ import {
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const virtualLabProjectsAtomFamily = atomFamily((virtualLabId: string) =>
-  atomWithRefresh<Promise<VirtualLabAPIListData<Project> | undefined>>(async (get) => {
-    const session = get(sessionAtom);
-    if (!session) {
-      return;
-    }
-    const response = await getVirtualLabProjects(virtualLabId, session?.accessToken);
-
+  atomWithRefresh<Promise<VirtualLabAPIListData<Project> | undefined>>(async () => {
+    const response = await getVirtualLabProjects(virtualLabId);
     return response.data;
   })
 );
