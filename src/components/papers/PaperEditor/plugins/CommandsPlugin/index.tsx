@@ -71,7 +71,7 @@ export default function CommandsPlugin() {
   }, [editor]);
 
   return (
-    <div style={{ height: 0, overflow: 'hidden', marginTop: '1rem' }}>
+    <div>
       {selectOpen ? (
         <Select
           autoFocus
