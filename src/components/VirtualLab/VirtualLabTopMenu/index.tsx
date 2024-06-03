@@ -1,6 +1,6 @@
-import { useEffect, useRef, ReactNode } from 'react';
+import { useEffect, useRef, ReactNode, useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
@@ -16,6 +16,8 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   const { data: session } = useSession();
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
+  const [expanded, setExpanded] = useState(false);
+
   useEffect(() => {
     setProjectTopMenuRef(localRef);
   }, [localRef, setProjectTopMenuRef]);
@@ -49,33 +51,51 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             {children}
           </Link>
         ))}
-        <div>
+        <div
+          onMouseLeave={() => {
+            if (!expanded) return;
+            setExpanded(false);
+          }}
+        >
           <div
             className={classNames(
               btnClassName,
               'flex flex-row justify-between  border border-primary-7'
             )}
             style={{ padding: '13px' }}
+            onMouseEnter={() => {
+              if (expanded) return;
+              setExpanded(true);
+            }}
           >
             <span className="font-bold">{session?.user.name}</span>
             <UserOutlined className="mr-2 text-primary-4" />
           </div>
-          <div
-            className={classNames(
-              btnClassName,
-              'flex flex-row justify-between  border border-t-0 border-primary-7'
-            )}
-          >
-            <span className="font-bold">Account</span>
-          </div>
-          <div
-            className={classNames(
-              btnClassName,
-              'flex flex-row justify-between  border border-t-0 border-primary-7'
-            )}
-          >
-            <span className="font-bold">Log out</span>
-          </div>
+          {expanded && (
+            <>
+              <div
+                className={classNames(
+                  btnClassName,
+                  'flex flex-row justify-between  border border-t-0 border-primary-7'
+                )}
+              >
+                <span className="font-bold">Account</span>
+              </div>
+              <button
+                type="button"
+                className={classNames(
+                  btnClassName,
+                  'flex flex-row justify-between  border border-t-0 border-primary-7'
+                )}
+                onClick={() => {
+                  signOut();
+                  window.location.href = '/';
+                }}
+              >
+                <span className="font-bold">Log out</span>
+              </button>
+            </>
+          )}
         </div>
 
         {extraItems}
