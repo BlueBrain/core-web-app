@@ -1,6 +1,6 @@
+import { Suspense } from 'react';
 import VirtualLabHomePage from '@/components/VirtualLab/VirtualLabHomePage';
 import { ServerSideComponentProp } from '@/types/common';
-import { Suspense } from 'react';
 
 export default function VirtualLabSettingsPage({
   params,

@@ -1,11 +1,10 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Spin } from 'antd';
 import { usePathname } from 'next/navigation';
 import { loadable, unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
-import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
+import { SwapOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 import { virtualLabDetailAtomFamily, virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
