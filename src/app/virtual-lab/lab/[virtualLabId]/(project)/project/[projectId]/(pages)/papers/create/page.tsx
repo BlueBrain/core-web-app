@@ -2,24 +2,12 @@
 
 import { useFormState, useFormStatus } from 'react-dom';
 import { SearchOutlined } from '@ant-design/icons';
-import kebabCase from 'lodash/kebabCase';
 import { Button } from 'antd';
 
 import { ServerSideComponentProp } from '@/types/common';
 import { PaperCreationAction } from '@/services/paper-ai/validation';
 import initializePaperEntry from '@/services/paper-ai/initializePaperEntry';
-
-function Label({ title }: { title: string }) {
-  return <span className="mb-1 text-base font-bold text-primary-8">{title}</span>;
-}
-
-function FormError({ errors }: { errors: string[] }) {
-  return errors.map((err) => (
-    <div key={`error-paper-${kebabCase(err)}`} className="flex py-1 text-sm text-rose-600">
-      {err}
-    </div>
-  ));
-}
+import { FormActiveLabel, FormError } from '@/components/papers/molecules/Form';
 
 function FormActions() {
   const { pending } = useFormStatus();
@@ -75,7 +63,7 @@ export default function CreatePaper({
 
         <div className="mb-2 w-full">
           <div className="flex w-full flex-col items-start justify-start">
-            <Label title="Title" />
+            <FormActiveLabel title="Title" />
             <input
               type="text"
               id="title"
@@ -88,7 +76,7 @@ export default function CreatePaper({
         </div>
         <div className="mb-2 w-full flex-grow">
           <div className="flex h-full w-full flex-col items-start justify-start">
-            <Label title="Summary" />
+            <FormActiveLabel title="Summary" />
             <textarea
               id="summary"
               name="summary"
@@ -102,7 +90,7 @@ export default function CreatePaper({
         </div>
         <div className="mb-2 w-full">
           <div className="flex w-full flex-col items-start justify-start">
-            <Label title="Source data" />
+            <FormActiveLabel title="Source data" />
             <div className="relative w-full">
               <input
                 type="text"
@@ -122,7 +110,7 @@ export default function CreatePaper({
         </div>
         <div className="mb-2 w-full">
           <div className="flex w-full items-center gap-2">
-            <Label title="Generate outline" />
+            <FormActiveLabel title="Generate outline" />
             <input
               type="checkbox"
               id="generate-outline"
