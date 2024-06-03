@@ -25,7 +25,16 @@ const keyFor = (lab: string, project: string): string => `bookmarkedItems-${lab}
 async function getBookmarkedItems(lab: string, labProject: string): Promise<Bookmark[]> {
   const stringValue = localStorage.getItem(keyFor(lab, labProject));
 
-  return Promise.resolve(stringValue ? (JSON.parse(stringValue) as Bookmark[]) : []);
+  if (!stringValue) {
+    return [];
+  }
+
+  try {
+    const items = JSON.parse(stringValue) as any[];
+    return items.map((i) => ({ resourceId: i.resourceId, category: i.category }) as Bookmark);
+  } catch (err) {
+    return [];
+  }
 }
 
 // Temporary function that returns bookmarks by experiment categories. This will soon be replaced by a server call.
@@ -33,22 +42,17 @@ export async function getBookmarksByCategory(
   lab: string,
   labProject: string
 ): Promise<BookmarksByCategory> {
-  const stringValue = localStorage.getItem(keyFor(lab, labProject));
+  const bookmarks = await getBookmarkedItems(lab, labProject);
 
-  if (stringValue) {
-    const bookmarks = JSON.parse(stringValue) as Bookmark[];
-    const bookmarksByCategory = bookmarks.reduce((acc, curr) => {
-      if (curr.category in acc) {
-        return { ...acc, [curr.category]: [...acc[curr.category], curr] };
-      }
+  const bookmarksByCategory = bookmarks.reduce((acc, curr) => {
+    if (curr.category in acc) {
+      return { ...acc, [curr.category]: [...acc[curr.category], curr] };
+    }
 
-      return { ...acc, [curr.category]: [curr] };
-    }, {} as BookmarksByCategory);
+    return { ...acc, [curr.category]: [curr] };
+  }, {} as BookmarksByCategory);
 
-    return bookmarksByCategory;
-  }
-
-  return {} as BookmarksByCategory;
+  return bookmarksByCategory;
 }
 
 export const getBookmarksCount = (bookmarksByCategory: BookmarksByCategory): number => {
