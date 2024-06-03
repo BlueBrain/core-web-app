@@ -46,10 +46,7 @@ export const POST = async (request: Request) => {
 
     const updatedResource = removeMetadata({
       ...paper,
-      distribution: createDistribution(
-        remoteState,
-        `${remoteState._self}?rev=${remoteState._rev}`
-      ),
+      distribution: createDistribution(remoteState, `${remoteState._self}?rev=${remoteState._rev}`),
     });
 
     const data = await fetch(
