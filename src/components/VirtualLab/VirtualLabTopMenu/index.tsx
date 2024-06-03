@@ -51,52 +51,54 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             {children}
           </Link>
         ))}
-        {!!session && <div
-          onMouseLeave={() => {
-            if (!expanded) return;
-            setExpanded(false);
-          }}
-        >
+        {!!session && (
           <div
-            className={classNames(
-              btnClassName,
-              'flex flex-row justify-between  border border-primary-7'
-            )}
-            style={{ padding: '13px' }}
-            onMouseEnter={() => {
-              if (expanded) return;
-              setExpanded(true);
+            onMouseLeave={() => {
+              if (!expanded) return;
+              setExpanded(false);
             }}
           >
-            <span className="font-bold">{session?.user.name}</span>
-            <UserOutlined className="mr-2 text-primary-4" />
+            <div
+              className={classNames(
+                btnClassName,
+                'flex flex-row justify-between  border border-primary-7'
+              )}
+              style={{ padding: '13px' }}
+              onMouseEnter={() => {
+                if (expanded) return;
+                setExpanded(true);
+              }}
+            >
+              <span className="font-bold">{session?.user.name}</span>
+              <UserOutlined className="mr-2 text-primary-4" />
+            </div>
+            {expanded && (
+              <>
+                <div
+                  className={classNames(
+                    btnClassName,
+                    'flex flex-row justify-between  border border-t-0 border-primary-7'
+                  )}
+                >
+                  <span className="font-bold">Account</span>
+                </div>
+                <button
+                  type="button"
+                  className={classNames(
+                    btnClassName,
+                    'flex flex-row justify-between  border border-t-0 border-primary-7'
+                  )}
+                  onClick={async () => {
+                    await signOut();
+                    window.location.href = '/log-in';
+                  }}
+                >
+                  <span className="font-bold">Log out</span>
+                </button>
+              </>
+            )}
           </div>
-          {expanded && (
-            <>
-              <div
-                className={classNames(
-                  btnClassName,
-                  'flex flex-row justify-between  border border-t-0 border-primary-7'
-                )}
-              >
-                <span className="font-bold">Account</span>
-              </div>
-              <button
-                type="button"
-                className={classNames(
-                  btnClassName,
-                  'flex flex-row justify-between  border border-t-0 border-primary-7'
-                )}
-                onClick={async () => {
-                  await signOut();
-                  window.location.href = '/log-in';
-                }}
-              >
-                <span className="font-bold">Log out</span>
-              </button>
-            </>
-          )}
-        </div>}
+        )}
 
         {extraItems}
       </div>
