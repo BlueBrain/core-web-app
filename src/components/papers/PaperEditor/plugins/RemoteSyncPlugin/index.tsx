@@ -27,7 +27,7 @@ export default function RemoteSyncPlugin({ paper }: Props) {
   useEffect(() => {
     const $update = async () => {
       try {
-        if (session && paper) {
+        if (session && paper && !editor.isComposing()) {
           if (abortControllerRef.current) {
             abortControllerRef.current.abort();
           }
@@ -68,7 +68,6 @@ export default function RemoteSyncPlugin({ paper }: Props) {
       }
     };
 
-    $update();
     const id = setInterval($update, FLUSH_SYNC_TIMEOUT);
 
     return () => clearInterval(id);
