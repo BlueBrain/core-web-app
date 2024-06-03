@@ -8,5 +8,5 @@ export default async function VirtualLabMainPage() {
   if (virtualLabs.data.results.length === 0) {
     redirect('/virtual-lab/sandbox/home');
   }
-  return <VirtualLabDashboard />;
+  return <VirtualLabDashboard virtualLabs={virtualLabs.data.results} />;
 }

@@ -18,33 +18,14 @@ import {
 
 import useNotification from '@/hooks/notifications';
 import { Project } from '@/types/virtual-lab/projects';
+import { VirtualLab } from '@/types/virtual-lab/lab';
 
-export default function VirtualLabDashboard() {
-  const virtualLabs = useAtomValue(loadable(virtualLabsOfUserAtom));
+export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
   const [, setOpen] = useAtom(newProjectModalOpenAtom);
   const [virtualLabId, setVirtualLabId] = useAtom(virtualLabIdAtom);
   const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
   const notification = useNotification();
-
-  const renderVirtualLabs = useCallback(() => {
-    if (virtualLabs.state === 'loading') {
-      return <Spin indicator={<LoadingOutlined />} />;
-    }
-    if (virtualLabs.state === 'hasData') {
-      return virtualLabs.data?.results.map((vl) => (
-        <VirtualLabAndProject
-          key={vl.id}
-          id={vl.id}
-          name={vl.name}
-          description={vl.description}
-          createdAt={vl.created_at}
-          showOnlyLabs={showOnlyLabs}
-        />
-      ));
-    }
-    return null;
-  }, [virtualLabs, showOnlyLabs]);
 
   return (
     <>
@@ -63,7 +44,16 @@ export default function VirtualLabDashboard() {
             <div className="text-5xl font-bold uppercase">Your virtual labs and projects</div>
             <DashboardTotals />
           </div>
-          {renderVirtualLabs()}
+          {virtualLabs.map((vl) => (
+            <VirtualLabAndProject
+              key={vl.id}
+              id={vl.id}
+              name={vl.name}
+              description={vl.description}
+              createdAt={vl.created_at}
+              showOnlyLabs={showOnlyLabs}
+            />
+          ))}
           <div className="fixed bottom-5 right-5">
             <Button
               className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
