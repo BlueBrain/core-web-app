@@ -32,4 +32,5 @@ export enum LinkItemKey {
   Simulate = 'simulate',
   Team = 'team',
   VirtualLab = 'virtualLab',
+  Activity = 'activity',
 }
