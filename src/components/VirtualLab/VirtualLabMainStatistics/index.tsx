@@ -1,3 +1,5 @@
+'use client'
+
 import { unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { CalendarOutlined, UserOutlined } from '@ant-design/icons';

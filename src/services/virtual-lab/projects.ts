@@ -3,15 +3,12 @@ import { virtualLabApi } from '@/config';
 import { Project, ProjectResponse } from '@/types/virtual-lab/projects';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
+import { fetchWithSession } from '@/util/utils';
 
 export async function getVirtualLabProjects(
-  id: string,
-  token: string
+  id: string
 ): Promise<VlmResponse<VirtualLabAPIListData<Project>>> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/projects`, {
-    method: 'GET',
-    headers: createVLApiHeaders(token),
-  });
+  const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs/${id}/projects`);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }

@@ -1,7 +1,3 @@
-'use client';
-
-import { useAtomValue } from 'jotai';
-
 import VirtualLabCTABanner from '../VirtualLabCTABanner';
 import VirtualLabBanner from '../VirtualLabBanner';
 import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
@@ -9,19 +5,19 @@ import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
 import WelcomeUserBanner from './WelcomeUserBanner';
-import { virtualLabDetailAtomFamily, virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
-import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
+import { getVirtualLabDetail, getVirtualLabUsers } from '@/services/virtual-lab/labs';
+import { getVirtualLabProjects } from '@/services/virtual-lab/projects';
 
 type Props = {
   id: string;
 };
 
-export default function VirtualLabHomePage({ id }: Props) {
-  const virtualLabDetail = useAtomValue(virtualLabDetailAtomFamily(id));
-  const virtualLabUsers = useAtomValue(virtualLabMembersAtomFamily(id));
-  const virtualLabProjects = useAtomValue(virtualLabProjectsAtomFamily(id));
+export default async function VirtualLabHomePage({ id }: Props) {
+  const virtualLabDetail = (await getVirtualLabDetail(id)).data.virtual_lab;
+  const virtualLabUsers = (await getVirtualLabUsers(id)).data.users;
+  const virtualLabProjects = (await getVirtualLabProjects(id)).data.results;
 
   return (
     <div className="pb-5">
@@ -61,16 +57,14 @@ export default function VirtualLabHomePage({ id }: Props) {
       <div className="mt-10">
         <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
         <div className="flex flex-row gap-5">
-          {virtualLabProjects?.results
-            .slice(0, 3)
-            .map((project) => (
-              <ProjectItem
-                key={project.id}
-                title={project.name}
-                description={project.description}
-                buttonHref={`${generateVlProjectUrl(id, project.id)}/home`}
-              />
-            ))}
+          {virtualLabProjects.slice(0, 3).map((project) => (
+            <ProjectItem
+              key={project.id}
+              title={project.name}
+              description={project.description}
+              buttonHref={`${generateVlProjectUrl(id, project.id)}/home`}
+            />
+          ))}
         </div>
       </div>
     </div>
