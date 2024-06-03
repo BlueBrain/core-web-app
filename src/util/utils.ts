@@ -256,7 +256,6 @@ export async function getSession() {
   // @/src/components/SessionStateProvider/index.tsx
   let session: Session | null = null;
   while (!session) {
-    console.log('waiting for store');
     await sleep(0); // Release the loop
     session = getSessionFromStore();
   }
