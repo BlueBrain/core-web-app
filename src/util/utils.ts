@@ -3,11 +3,10 @@ import capitalize from 'lodash/capitalize';
 import _memoize from 'lodash/memoize';
 import { ZodError } from 'zod';
 import { Session } from 'next-auth';
-import sessionAtom from '@/state/session';
+import { getSession as getSessionFromStore } from '@/hooks/session';
 import { createVLApiHeaders } from '@/services/virtual-lab/common';
 
 import { isServer } from '@/config';
-import { store } from '@/app/providers';
 
 export function createHeaders(
   token: string,
@@ -257,8 +256,9 @@ export async function getSession() {
   // @/src/components/SessionStateProvider/index.tsx
   let session: Session | null = null;
   while (!session) {
+    console.log('waiting for store');
     await sleep(0); // Release the loop
-    session = store.get(sessionAtom);
+    session = getSessionFromStore();
   }
   return session;
 }

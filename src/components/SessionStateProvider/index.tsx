@@ -2,14 +2,14 @@
 
 import { ReactNode, ReactElement } from 'react';
 
-import useSession from '@/hooks/session';
+import useSessionState from '@/hooks/session';
 
 type SessionStateWrapperProps = {
   children: ReactNode;
 };
 
 export default function SessionStateProvider({ children }: SessionStateWrapperProps) {
-  useSession();
+  useSessionState();
 
   return children as ReactElement;
 }

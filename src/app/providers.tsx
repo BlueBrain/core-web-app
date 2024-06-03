@@ -20,7 +20,7 @@ export const store = createStore();
 export default function Providers({ children }: ProvidersProps) {
   return (
     <ConfigProvider theme={commonAntdTheme}>
-      <JotaiProvider store={store}>
+      <JotaiProvider>
         <DevTools {...{ isInitialOpen: false }} />
         <ThemeProvider>
           <SessionProvider basePath={`${basePath}/api/auth`} refetchInterval={2 * 60}>
