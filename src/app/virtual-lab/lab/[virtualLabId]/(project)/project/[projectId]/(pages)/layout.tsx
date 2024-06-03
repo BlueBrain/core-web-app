@@ -42,7 +42,7 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
         </div>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="mt-10 w-full overflow-hidden">
+        <div className="mt-10 flex w-full flex-col overflow-hidden">
           <VirtualLabTopMenu />
           {children}
         </div>

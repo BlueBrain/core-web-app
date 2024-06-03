@@ -1,9 +1,9 @@
 'use client';
 
-import { useFormState } from 'react-dom';
-import { useRouter } from 'next/navigation';
+import { useFormState, useFormStatus } from 'react-dom';
 import { SearchOutlined } from '@ant-design/icons';
 import kebabCase from 'lodash/kebabCase';
+import { Button } from 'antd';
 
 import { ServerSideComponentProp } from '@/types/common';
 import { PaperCreationAction } from '@/services/paper-ai/validation';
@@ -21,11 +21,38 @@ function FormError({ errors }: { errors: string[] }) {
   ));
 }
 
+function FormActions() {
+  const { pending } = useFormStatus();
+  return (
+    <div className="flex w-full items-start justify-end gap-3">
+      <Button
+        htmlType="reset"
+        type="text"
+        size="large"
+        className="rounded-none"
+        form="create-project-paper-form"
+      >
+        Cancel
+      </Button>
+      <Button
+        htmlType="submit"
+        type="primary"
+        size="large"
+        className="rounded-none bg-primary-8 px-14"
+        loading={pending}
+        disabled={pending}
+        form="create-project-paper-form"
+      >
+        Next
+      </Button>
+    </div>
+  );
+}
+
 export default function CreatePaper({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
-  const { push: redirect } = useRouter();
-  const [state, runPaperCreationAction, isPending] = useFormState<PaperCreationAction, FormData>(
+  const [state, runPaperCreationAction] = useFormState<PaperCreationAction, FormData>(
     initializePaperEntry,
     {
       error: null,
@@ -34,14 +61,11 @@ export default function CreatePaper({
     }
   );
 
-  if (state.redirect) {
-    redirect(state.redirect);
-  }
-
   return (
     <div className="mt-4 flex h-full max-h-[80vh] w-full flex-col bg-white p-8">
       <h2 className="py-4 text-3xl font-bold text-primary-8">Create new paper</h2>
       <form
+        id="create-project-paper-form"
         name="create-project-paper-form"
         className="flex h-full flex-col items-start gap-4"
         action={runPaperCreationAction}
@@ -60,7 +84,7 @@ export default function CreatePaper({
               placeholder="Write your title..."
             />
           </div>
-          {state.validationErrors?.title && <FormError errors={state.validationErrors.title} />}
+          {state?.validationErrors?.title && <FormError errors={state.validationErrors.title} />}
         </div>
         <div className="mb-2 w-full flex-grow">
           <div className="flex h-full w-full flex-col items-start justify-start">
@@ -72,7 +96,9 @@ export default function CreatePaper({
               placeholder="Write your summary here..."
             />
           </div>
-          {state.validationErrors?.summary && <FormError errors={state.validationErrors.summary} />}
+          {state?.validationErrors?.summary && (
+            <FormError errors={state.validationErrors.summary} />
+          )}
         </div>
         <div className="mb-2 w-full">
           <div className="flex w-full flex-col items-start justify-start">
@@ -90,7 +116,7 @@ export default function CreatePaper({
               </div>
             </div>
           </div>
-          {state.validationErrors?.sourceData && (
+          {state?.validationErrors?.sourceData && (
             <FormError errors={state.validationErrors.sourceData} />
           )}
         </div>
@@ -101,30 +127,15 @@ export default function CreatePaper({
               type="checkbox"
               id="generate-outline"
               name="generate-outline"
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              className="h-4 w-4 cursor-pointer rounded border-gray-300 text-primary-8 focus:ring-primary-8"
             />
           </div>
-          {state.validationErrors?.generateOutline && (
+          {state?.validationErrors?.generateOutline && (
             <FormError errors={state.validationErrors.generateOutline} />
           )}
         </div>
 
-        <div className="flex w-full items-start justify-end gap-3">
-          {/* eslint-disable-next-line react/button-has-type */}
-          <button
-            type="reset"
-            className="rounded-none bg-white px-5 py-3 text-lg  font-semibold text-gray-800 hover:bg-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="rounded-none bg-primary-8 px-14 py-3 text-lg font-semibold text-white hover:bg-primary-6"
-            disabled={isPending}
-          >
-            Next
-          </button>
-        </div>
+        <FormActions />
       </form>
     </div>
   );
