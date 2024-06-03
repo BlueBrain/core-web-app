@@ -156,7 +156,7 @@ function CustomSlide(props: SlideProps) {
   const currentScopeIsSelected = selectedSimulationScope === key; // This particular scope is selected.
 
   const anyScopeIsSelected = !!selectedSimulationScope;
-  const anotherScopeIsSelected = anyScopeIsSelected && !currentScopeIsSelected;
+  const anotherScopeIsSelected = anyScopeIsSelected && !currentScopeIsSelected; // A scope is selected, but it isn't this one.
 
   return (
     <button
