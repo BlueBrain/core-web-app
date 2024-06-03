@@ -3,37 +3,17 @@
 import dynamic from 'next/dynamic';
 import { SerializedEditorState } from 'lexical/LexicalEditorState';
 import { Button, Popconfirm, message } from 'antd';
-import { useEffect, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useSetAtom } from 'jotai';
 
+import PaperDetails from './PaperDetails';
 import { DeleteOutline, EditDocument } from '@/components/icons/EditorIcons';
 import { PaperResource } from '@/types/nexus';
 import { virtualLabProjectPapersCountAtomFamily } from '@/state/virtual-lab/projects';
 import deletePaperFromProject from '@/services/paper-ai/deletePaperFromProject';
 
 const Editor = dynamic(() => import('@/components/papers/PaperEditor'), { ssr: false });
-
-function PaperInfoItem({
-  label,
-  description,
-  isTitle = false,
-}: {
-  label: string;
-  description: string;
-  isTitle?: boolean;
-}) {
-  return (
-    <div className="flex flex-col">
-      <h3 className="text-base text-neutral-4">{label}</h3>
-      {isTitle ? (
-        <h1 className="text-xl font-bold text-primary-8">{description}</h1>
-      ) : (
-        <p className="text-lg text-primary-8">{description}</p>
-      )}
-    </div>
-  );
-}
 
 export default function PaperView({
   config,
@@ -42,6 +22,7 @@ export default function PaperView({
   config: SerializedEditorState;
   paper: PaperResource;
 }) {
+  const [editable, toggleDetailEditable] = useState(false);
   const [fromRoute, setFromRoute] = useQueryState(
     'from',
     parseAsString.withDefault('').withOptions({ clearOnDefault: true })
@@ -75,6 +56,9 @@ export default function PaperView({
     }
   }, [fromRoute, refreshPapersCount, setFromRoute]);
 
+  const onEditPaper = () => toggleDetailEditable(true);
+  const onCompleteEdit = () => toggleDetailEditable(false);
+
   return (
     <div
       id="editor-view-container"
@@ -84,15 +68,18 @@ export default function PaperView({
         <div className="w-full bg-white px-8 py-4">
           <div className="mt-4 flex items-center justify-end bg-white">
             <div className="flex items-center justify-center gap-4">
-              <Button
-                htmlType="button"
-                type="text"
-                size="large"
-                className="flex items-center justify-center gap-2 rounded-none"
-              >
-                Edit
-                <EditDocument className="h-7 w-7 group-hover:scale-105 group-hover:transform group-hover:text-gray-300" />
-              </Button>
+              {!editable && (
+                <Button
+                  htmlType="button"
+                  type="text"
+                  size="large"
+                  className="flex items-center justify-center gap-2 rounded-none"
+                  onClick={onEditPaper}
+                >
+                  Edit
+                  <EditDocument className="h-7 w-7 group-hover:scale-105 group-hover:transform group-hover:text-gray-300" />
+                </Button>
+              )}
               <Popconfirm
                 title="Delete paper"
                 description="Are you sure to delete this paper?"
@@ -121,11 +108,7 @@ export default function PaperView({
               </Popconfirm>
             </div>
           </div>
-          <div className="my-4 flex w-full flex-col gap-2 bg-white">
-            <PaperInfoItem isTitle label="Title" description={paper.name} />
-            <PaperInfoItem label="Summary" description={paper.description} />
-            <PaperInfoItem isTitle label="Source data" description="cADpyr model" />
-          </div>
+          <PaperDetails {...{ editable, paper, onCompleteEdit }} />
         </div>
         <div className="w-full flex-grow bg-white px-8 py-4">
           <Editor {...{ config, paper }} />
