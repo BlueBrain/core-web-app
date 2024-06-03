@@ -21,28 +21,17 @@ import { PaymentMethod, VlabBalance } from '@/types/virtual-lab/billing';
 
 export const refreshAtom = atom(0);
 
-export const virtualLabDetailAtomFamily = atomFamily<
-  string,
-  PrimitiveAtom<Promise<VirtualLab | undefined>>
->((virtualLabId) =>
-  atomWithDefault(async (get) => {
-    const session = get(sessionAtom);
-    if (!session) {
-      return;
-    }
-    const response = await getVirtualLabDetail(virtualLabId, session.accessToken);
-
-    return response.data.virtual_lab;
-  })
+export const virtualLabDetailAtomFamily = atomFamily<string, PrimitiveAtom<Promise<VirtualLab>>>(
+  (virtualLabId) =>
+    atomWithDefault(async () => {
+      const response = await getVirtualLabDetail(virtualLabId);
+      return response.data.virtual_lab;
+    })
 );
 
 export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
-  atom<Promise<VirtualLabMember[] | undefined>>(async (get) => {
-    const session = get(sessionAtom);
-    if (!session) {
-      return;
-    }
-    const response = await getVirtualLabUsers(virtualLabId, session.accessToken);
+  atom<Promise<VirtualLabMember[] | undefined>>(async () => {
+    const response = await getVirtualLabUsers(virtualLabId);
     return response.data.users;
   })
 );
@@ -87,13 +76,8 @@ export const virtualLabBalanceAtomFamily = atomFamily((virtualLabId: string) =>
 
 export const virtualLabsOfUserAtom = atomWithRefresh<
   Promise<VirtualLabAPIListData<VirtualLab> | undefined>
->(async (get) => {
-  const session = get(sessionAtom);
-  get(refreshAtom);
-  if (!session) {
-    return;
-  }
-  const response = await getVirtualLabsOfUser(session.accessToken);
+>(async () => {
+  const response = await getVirtualLabsOfUser();
   return response.data;
 });
 

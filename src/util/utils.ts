@@ -2,6 +2,12 @@ import { format } from 'date-fns';
 import capitalize from 'lodash/capitalize';
 import _memoize from 'lodash/memoize';
 import { ZodError } from 'zod';
+import { Session } from 'next-auth';
+import sessionAtom from '@/state/session';
+import { createVLApiHeaders } from '@/services/virtual-lab/common';
+
+import { isServer } from '@/config';
+import { store } from '@/app/providers';
 
 export function createHeaders(
   token: string,
@@ -226,3 +232,43 @@ export const getZodErrorPath = ({ issues }: ZodError) => {
     return [...acc, ...curr.path];
   }, []);
 };
+
+function assertSession(session: Session | null) {
+  if (!session || session.error || Date.now() >= new Date(session.expires).getTime())
+    throw new Error('Unauthenticated');
+  return session;
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+export async function getSession() {
+  if (isServer) {
+    /* eslint-disable-next-line global-require */
+    const { auth } = require('src/auth'); // Only import if running on server
+    const session = assertSession(await auth());
+    return session;
+  }
+
+  // Wait until session gets set by sessionStateProvider
+  // @/src/components/SessionStateProvider/index.tsx
+  let session: Session | null = null;
+  while (!session) {
+    await sleep(0); // Release the loop
+    session = store.get(sessionAtom);
+  }
+  return session;
+}
+
+export async function fetchWithSession(
+  ...args: Parameters<typeof fetch>
+): ReturnType<typeof fetch> {
+  const session = (await getSession()) as Session;
+  const init = args[1] || {};
+  init.headers = { ...init.headers, ...createVLApiHeaders(session.accessToken) };
+  const newArgs: typeof args = [args[0], init];
+  return fetch(...newArgs);
+}

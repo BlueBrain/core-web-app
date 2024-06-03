@@ -1,5 +1,3 @@
-'use client';
-
 import VirtualLabHomePage from '@/components/VirtualLab/VirtualLabHomePage';
 import { ServerSideComponentProp } from '@/types/common';
 

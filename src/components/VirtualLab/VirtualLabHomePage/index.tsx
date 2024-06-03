@@ -1,6 +1,5 @@
 'use client';
 
-import { unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 
 import VirtualLabCTABanner from '../VirtualLabCTABanner';
@@ -20,63 +19,60 @@ type Props = {
 };
 
 export default function VirtualLabHomePage({ id }: Props) {
-  const virtualLabDetail = useAtomValue(unwrap(virtualLabDetailAtomFamily(id)));
-  const virtualLabUsers = useAtomValue(unwrap(virtualLabMembersAtomFamily(id)));
-  const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
+  const virtualLabDetail = useAtomValue(virtualLabDetailAtomFamily(id));
+  const virtualLabUsers = useAtomValue(virtualLabMembersAtomFamily(id));
+  const virtualLabProjects = useAtomValue(virtualLabProjectsAtomFamily(id));
 
-  if (virtualLabDetail) {
-    return (
-      <div className="pb-5">
-        <WelcomeUserBanner title={virtualLabDetail.name} />
-        <div className="mt-10">
-          <VirtualLabBanner
-            id={virtualLabDetail.id}
-            name={virtualLabDetail.name}
-            description={virtualLabDetail.description}
-            withEditButton
-            bottomElements={
-              <VirtualLabMainStatistics id={id} created_at={virtualLabDetail.created_at} />
-            }
-          />
-        </div>
-        <BudgetPanel total={virtualLabDetail.budget} totalSpent={300} remaining={350} />
-        <VirtualLabCTABanner
-          title="Create your first project"
-          subtitle="In order to start exploring brain regions, building models and simulate neuron, create a project"
+  return (
+    <div className="pb-5">
+      <WelcomeUserBanner title={virtualLabDetail.name} />
+      <div className="mt-10">
+        <VirtualLabBanner
+          id={virtualLabDetail.id}
+          name={virtualLabDetail.name}
+          description={virtualLabDetail.description}
+          withEditButton
+          bottomElements={
+            <VirtualLabMainStatistics id={id} created_at={virtualLabDetail.created_at} />
+          }
         />
-        <DiscoverObpPanel />
-        <div>
-          <div className="my-5 text-lg font-bold uppercase">Members</div>
-          <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
-            {virtualLabUsers?.map((user) => (
-              <Member
-                key={user.id}
-                name={user.name}
-                lastActive="N/A"
-                memberRole={user.role}
-                firstName={user.first_name}
-                lastName={user.last_name}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="mt-10">
-          <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
-          <div className="flex flex-row gap-5">
-            {virtualLabProjects?.results
-              .slice(0, 3)
-              .map((project) => (
-                <ProjectItem
-                  key={project.id}
-                  title={project.name}
-                  description={project.description}
-                  buttonHref={`${generateVlProjectUrl(id, project.id)}/home`}
-                />
-              ))}
-          </div>
+      </div>
+      <BudgetPanel total={virtualLabDetail.budget} totalSpent={300} remaining={350} />
+      <VirtualLabCTABanner
+        title="Create your first project"
+        subtitle="In order to start exploring brain regions, building models and simulate neuron, create a project"
+      />
+      <DiscoverObpPanel />
+      <div>
+        <div className="my-5 text-lg font-bold uppercase">Members</div>
+        <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
+          {virtualLabUsers?.map((user) => (
+            <Member
+              key={user.id}
+              name={user.name}
+              lastActive="N/A"
+              memberRole={user.role}
+              firstName={user.first_name}
+              lastName={user.last_name}
+            />
+          ))}
         </div>
       </div>
-    );
-  }
-  return null;
+      <div className="mt-10">
+        <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
+        <div className="flex flex-row gap-5">
+          {virtualLabProjects?.results
+            .slice(0, 3)
+            .map((project) => (
+              <ProjectItem
+                key={project.id}
+                title={project.name}
+                description={project.description}
+                buttonHref={`${generateVlProjectUrl(id, project.id)}/home`}
+              />
+            ))}
+        </div>
+      </div>
+    </div>
+  );
 }

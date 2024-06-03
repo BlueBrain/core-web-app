@@ -3,39 +3,31 @@ import { virtualLabApi } from '@/config';
 import { VirtualLab, VirtualLabResponse } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
+import { fetchWithSession } from '@/util/utils';
 
-export async function getVirtualLabDetail(id: string, token: string): Promise<VirtualLabResponse> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
-    method: 'GET',
-    headers: createVLApiHeaders(token),
-  });
+export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse> {
+  const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs/${id}`);
+
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
   return response.json();
 }
 
-export async function getVirtualLabUsers(
-  virtualLabId: string,
-  token: string
-): Promise<UsersResponse> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/users`, {
-    method: 'GET',
-    headers: createVLApiHeaders(token),
-  });
+export async function getVirtualLabUsers(virtualLabId: string): Promise<UsersResponse> {
+  const response = await fetchWithSession(
+    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/users`
+  );
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
   return response.json();
 }
 
-export async function getVirtualLabsOfUser(
-  token: string
-): Promise<VlmResponse<VirtualLabAPIListData<VirtualLab>>> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs`, {
-    method: 'GET',
-    headers: createVLApiHeaders(token),
-  });
+export async function getVirtualLabsOfUser(): Promise<
+  VlmResponse<VirtualLabAPIListData<VirtualLab>>
+> {
+  const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs`);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
