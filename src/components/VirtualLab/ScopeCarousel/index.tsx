@@ -153,13 +153,17 @@ function CustomSlide(props: SlideProps) {
     ...otherProps // These come from AntD's Carousel component. Do not remove.
   } = props;
 
-  const isSelected = selectedSimulationScope === key;
+  const isSelected = selectedSimulationScope === key; // This particular scope is selected.
+
+  const anyScopeIsSelected = !!selectedSimulationScope;
+  const anotherScopeIsSelected = anyScopeIsSelected && selectedSimulationScope !== key; // A scope is selected, but it isn't this one.
 
   return (
     <button
       className={classNames(
         '!flex h-[290px] w-full flex-col gap-2 overflow-hidden px-3 text-left text-white',
         isSelected && hoverStyles.isSelected,
+        anotherScopeIsSelected && hoverStyles.isNotSelected,
         className
       )}
       onClick={() => setSelectedSimulationScope(selectedSimulationScope !== key ? key : null)}
