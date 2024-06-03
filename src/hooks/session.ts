@@ -3,24 +3,40 @@
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, useSession, getSession as getSessionFromApi } from 'next-auth/react';
 import { Session } from 'next-auth';
 import sessionAtom from '@/state/session';
 
-function SessionProvider() {
-  let session: Session | null;
+export type SessionOrNull = Session | null;
+
+/* Calls /api/auth if no other caller has or waits the session
+   Ensures  /api/auth is called at most once per page load 
+   useSessionState updates it to keep the session 'fresh'.
+*/
+function SessionFromAPILock() {
+  let session: SessionOrNull = null;
+  let sessionPromise: Promise<SessionOrNull> | null = null;
+
   return {
-    getSession() {
+    async getSession() {
+      if (session) return session;
+
+      if (!sessionPromise) {
+        sessionPromise = getSessionFromApi();
+      }
+
+      session = await sessionPromise;
       return session;
     },
-    setSession(newSession: Session | null) {
+    setSession(newSession: SessionOrNull) {
       session = newSession;
     },
   };
 }
 
-const { getSession, setSession } = SessionProvider();
-export { getSession, setSession };
+const { getSession: getSessionLocked, setSession } = SessionFromAPILock();
+
+export { getSessionLocked, setSession };
 
 export default function useSessionState() {
   const currentSession = useSession();

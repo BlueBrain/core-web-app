@@ -1,4 +1,4 @@
-import { createVLApiHeaders } from './common';
+import { createApiHeaders } from './common';
 import { virtualLabApi } from '@/config';
 import { VirtualLab, VirtualLabResponse } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
@@ -45,7 +45,7 @@ export async function patchVirtualLab(
 > {
   return fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'PATCH',
-    headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),
   }).then(async (response) => {
     if (!response.ok) {
@@ -68,7 +68,7 @@ export async function deleteVirtualLab(
 > {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'DELETE',
-    headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
   });
 
   if (!response.ok) {
@@ -92,7 +92,7 @@ export async function getPlans(token: string): Promise<
 > {
   const response = await fetch(`${virtualLabApi.url}/plans`, {
     method: 'GET',
-    headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
   });
 
   if (!response.ok) {
@@ -111,7 +111,7 @@ export async function createVirtualLab({
 }): Promise<VlmResponse<{ virtual_lab: VirtualLab }>> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs`, {
     method: 'POST',
-    headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
     body: JSON.stringify(lab),
   });
 

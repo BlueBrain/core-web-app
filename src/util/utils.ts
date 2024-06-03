@@ -2,9 +2,8 @@ import { format } from 'date-fns';
 import capitalize from 'lodash/capitalize';
 import _memoize from 'lodash/memoize';
 import { ZodError } from 'zod';
-import { Session } from 'next-auth';
-import { getSession as getSessionFromApi } from 'next-auth/react';
-import { createVLApiHeaders } from '@/services/virtual-lab/common';
+import { createApiHeaders } from '@/services/virtual-lab/common';
+import { SessionOrNull, getSessionLocked } from '@/hooks/session';
 
 import { isServer } from '@/config';
 
@@ -232,31 +231,6 @@ export const getZodErrorPath = ({ issues }: ZodError) => {
   }, []);
 };
 
-type SessionOrNull = Session | null;
-
-/* Calls /api/auth if no other caller has or waits the session
-   Ensures  /api/auth is called at most once per page load 
-*/
-function SessionFromAPILock() {
-  let session: SessionOrNull = null;
-  let sessionPromise: Promise<SessionOrNull> | null = null;
-
-  return {
-    async getSession() {
-      if (session) return session;
-
-      if (!sessionPromise) {
-        sessionPromise = getSessionFromApi();
-      }
-
-      session = await sessionPromise;
-      return session;
-    },
-  };
-}
-
-const { getSession: getSessionLocked } = SessionFromAPILock();
-
 export async function getSession() {
   let session: SessionOrNull = null;
   if (isServer) {
@@ -275,7 +249,7 @@ export async function fetchWithSession(
   const session = await getSession();
   if (!session) return fetch(...args); // If no active session fetch, for use in unauthenticated routes
   const init = args[1] || {};
-  init.headers = { ...init.headers, ...createVLApiHeaders(session.accessToken) };
+  init.headers = { ...init.headers, ...createApiHeaders(session.accessToken) };
   const newArgs: typeof args = [args[0], init];
   return fetch(...newArgs); // If there is and active session setHeaders and fetch
 }
