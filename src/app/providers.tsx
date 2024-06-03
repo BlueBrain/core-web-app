@@ -15,7 +15,7 @@ type ProvidersProps = {
   children: ReactNode;
 };
 
-export const store = createStore()
+export const store = createStore();
 
 export default function Providers({ children }: ProvidersProps) {
   return (
