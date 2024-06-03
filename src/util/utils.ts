@@ -3,7 +3,7 @@ import capitalize from 'lodash/capitalize';
 import _memoize from 'lodash/memoize';
 import { ZodError } from 'zod';
 import { Session } from 'next-auth';
-import { getSession as getSessionFromStore } from '@/hooks/session';
+import { getSession as getSessionFromApi } from 'next-auth/react';
 import { createVLApiHeaders } from '@/services/virtual-lab/common';
 
 import { isServer } from '@/config';
@@ -232,42 +232,50 @@ export const getZodErrorPath = ({ issues }: ZodError) => {
   }, []);
 };
 
-function assertSession(session: Session | null) {
-  if (!session || session.error || Date.now() >= new Date(session.expires).getTime())
-    throw new Error('Unauthenticated');
-  return session;
+type SessionOrNull = Session | null;
+
+/* Calls /api/auth if no other caller has or waits the session
+   Ensures  /api/auth is called at most once per page load 
+*/
+function SessionFromAPILock() {
+  let session: SessionOrNull = null;
+  let sessionPromise: Promise<SessionOrNull> | null = null;
+
+  return {
+    async getSession() {
+      if (session) return session;
+
+      if (!sessionPromise) {
+        sessionPromise = getSessionFromApi();
+      }
+
+      session = await sessionPromise;
+      return session;
+    },
+  };
 }
 
-function sleep(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
+const { getSession: getSessionLocked } = SessionFromAPILock();
 
 export async function getSession() {
+  let session: SessionOrNull = null;
   if (isServer) {
     /* eslint-disable-next-line global-require */
     const { auth } = require('src/auth'); // Only import if running on server
-    const session = assertSession(await auth());
+    session = await auth();
     return session;
   }
 
-  // Wait until session gets set by sessionStateProvider
-  // @/src/components/SessionStateProvider/index.tsx
-  let session: Session | null = null;
-  while (!session) {
-    await sleep(0); // Release the loop
-    session = getSessionFromStore();
-  }
-  return session;
+  return await getSessionLocked();
 }
 
 export async function fetchWithSession(
   ...args: Parameters<typeof fetch>
 ): ReturnType<typeof fetch> {
-  const session = (await getSession()) as Session;
+  const session = await getSession();
+  if (!session) return fetch(...args); // If no active session fetch, for use in unauthenticated routes
   const init = args[1] || {};
   init.headers = { ...init.headers, ...createVLApiHeaders(session.accessToken) };
   const newArgs: typeof args = [args[0], init];
-  return fetch(...newArgs);
+  return fetch(...newArgs); // If there is and active session setHeaders and fetch
 }
