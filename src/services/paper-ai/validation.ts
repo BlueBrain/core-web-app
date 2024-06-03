@@ -8,7 +8,7 @@ const LocationSchema = z.object({
 export const PaperBaseSchema = z.object({
   title: z.string().min(1, 'Please provide a title for your paper.'),
   summary: z.string().min(1, 'Please provide a brief summary of your paper.'),
-  sourceData: z.string({ invalid_type_error: 'Please provide one or more resources.' }).optional(),
+  sourceData: z.string({ invalid_type_error: 'Please provide one or more data sources.' }).optional(),
 });
 
 export const PaperSchema = PaperBaseSchema.merge(LocationSchema).extend({
