@@ -11,6 +11,7 @@ import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
 import { SimulationType } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
+import hoverStyles from './hover-styles.module.css';
 
 enum SimulationScope {
   Cellular = 'cellular',
@@ -19,6 +20,7 @@ enum SimulationScope {
 }
 
 type SlideProps = {
+  className?: string;
   description: string;
   id: SimulationType;
   selectedSimulationScope: SimulationType | null;
@@ -141,6 +143,7 @@ function ScopeSelector({
 
 function CustomSlide(props: SlideProps) {
   const {
+    className,
     description,
     id: key,
     selectedSimulationScope,
@@ -150,24 +153,25 @@ function CustomSlide(props: SlideProps) {
     ...otherProps // These come from AntD's Carousel component. Do not remove.
   } = props;
 
-  const scopeIsSet = !!selectedSimulationScope; // Any scope is selected.
-  const isSelected = scopeIsSet && selectedSimulationScope === key; // This particular scope is selected.
-  const isNotSelected = scopeIsSet && selectedSimulationScope !== key; // A scope is selected, but it isn't this one.
+  const anyScopeIsSelected = !!selectedSimulationScope;
+  const isSelected = anyScopeIsSelected && selectedSimulationScope === key; // This particular scope is selected.
+  const isNotSelected = anyScopeIsSelected && selectedSimulationScope !== key; // A scope is selected, but it isn't this one.
 
   return (
     <button
       className={classNames(
         '!flex h-[290px] w-full flex-col gap-2 overflow-hidden px-3 text-left text-white',
-        isNotSelected && 'text-opacity-60 opacity-60 hover:text-opacity-100 hover:opacity-100',
-        !selectedSimulationScope && 'hover:font-bold'
+        isSelected && hoverStyles.isSelected,
+        isNotSelected && hoverStyles.isNotSelected,
+        className
       )}
       onClick={() => setSelectedSimulationScope(selectedSimulationScope !== key ? key : null)}
       type="button"
       {...otherProps} // eslint-disable-line react/jsx-props-no-spreading
     >
-      <h2 className={classNames('text-3xl', isSelected && 'font-bold')}>{title}</h2>
+      <h2 className="text-3xl">{title}</h2>
       <span className="font-light">{description}</span>
-      <div className="relative mt-auto h-[168px]" style={{ opacity: 'inherit' }}>
+      <div className="relative mt-auto h-[168px] w-full">
         <Image
           fill
           alt={`${title} Banner Image`}
@@ -198,9 +202,10 @@ export default function ScopeCarousel() {
     .filter(({ scope }) => !selectedScope || scope === selectedScope)
     .map(({ description, key, src, title }) => (
       <CustomSlide
-        key={key}
+        className={hoverStyles.customSlide}
         description={description}
         id={key}
+        key={key}
         selectedSimulationScope={selectedSimulationScope}
         setSelectedSimulationScope={setSelectedSimulationScope}
         src={src}
@@ -220,8 +225,8 @@ export default function ScopeCarousel() {
       <div className="relative">
         <Carousel
           arrows
-          className="-mx-3"
-          dots
+          className={classNames('-mx-3', hoverStyles.customSlickSlider)}
+          dots={false}
           infinite={false}
           ref={carouselRef}
           responsive={[
