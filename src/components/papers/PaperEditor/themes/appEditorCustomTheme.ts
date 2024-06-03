@@ -67,6 +67,7 @@ const theme: EditorThemeClasses = {
     nested: {
       listitem: 'app-editor-theme__nestedListItem',
     },
+    ol: 'app-editor-theme__ol',
     olDepth: [
       'app-editor-theme__ol1',
       'app-editor-theme__ol2',
@@ -75,6 +76,7 @@ const theme: EditorThemeClasses = {
       'app-editor-theme__ol5',
     ],
     ul: 'app-editor-theme__ul',
+    ulDepth: ['app-editor-theme__ul1'],
   },
   ltr: 'app-editor-theme__ltr',
   mark: 'app-editor-theme__mark',

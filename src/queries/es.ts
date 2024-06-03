@@ -532,3 +532,19 @@ export const getNotValidatedMEModelQuery = (username: string) => ({
     },
   },
 });
+
+export const getPaperCountQuery = () => ({
+  size: 0,
+  query: {
+    term: {
+      '@type': 'Paper',
+    },
+  },
+  aggs: {
+    total: {
+      value_count: {
+        field: '_index',
+      },
+    },
+  },
+});

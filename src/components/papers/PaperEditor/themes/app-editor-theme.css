@@ -26,27 +26,27 @@
 }
 .app-editor-theme__h2 {
   font-size: 1.5em;
-  font-weight: 400;
+  font-weight: 700;
   margin: 0;
 }
 .app-editor-theme__h3 {
   font-size: 1.17em;
-  font-weight: 400;
+  font-weight: 700;
   margin: 0;
 }
 .app-editor-theme__h4 {
   font-size: 1em;
-  font-weight: 400;
+  font-weight: 700;
   margin: 0;
 }
 .app-editor-theme__h5 {
   font-size: 0.83em;
-  font-weight: 400;
+  font-weight: 700;
   margin: 0;
 }
 .app-editor-theme__h6 {
   font-size: 0.67em;
-  font-weight: 400;
+  font-weight: 700;
   margin: 0;
 }
 .app-editor-theme__indent {
@@ -283,7 +283,14 @@
   display: inline;
   background-color: #ffbbbb !important;
 }
+.app-editor-theme__ol {
+  padding: 0;
+  margin: 0;
+  list-style-position: outside;
+}
 .app-editor-theme__ol1 {
+  list-style-type: lower-latin;
+  list-style: decimal;
   padding: 0;
   margin: 0;
   list-style-position: outside;
@@ -313,6 +320,13 @@
   list-style-position: outside;
 }
 .app-editor-theme__ul {
+  padding: 0;
+  margin: 0;
+  list-style-position: outside;
+}
+.app-editor-theme__ul1 {
+  list-style-type: circle;
+  list-style: disc;
   padding: 0;
   margin: 0;
   list-style-position: outside;

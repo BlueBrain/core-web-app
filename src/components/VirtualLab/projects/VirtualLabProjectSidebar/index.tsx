@@ -9,6 +9,7 @@ import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import {
   virtualLabProjectDetailsAtomFamily,
+  virtualLabProjectPapersCountAtomFamily,
   virtualLabProjectUsersAtomFamily,
 } from '@/state/virtual-lab/projects';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
@@ -26,6 +27,10 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
     loadable(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
   );
 
+  const projectPapers = useAtomValue(
+    loadable(virtualLabProjectPapersCountAtomFamily({ virtualLabId, projectId }))
+  );
+
   const renderProjectTitle = () => {
     if (projectDetails.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
@@ -41,7 +46,19 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       return <Spin indicator={<LoadingOutlined />} />;
     }
     if (projectUsers.state === 'hasData') {
-      return projectUsers.data?.length;
+      const count = projectUsers.data?.length;
+      return `${count} member${count && count > 1 ? 's' : ''}`;
+    }
+    return null;
+  };
+
+  const renderPapersAmount = () => {
+    if (projectPapers.state === 'loading') {
+      return <Spin indicator={<LoadingOutlined />} />;
+    }
+    if (projectPapers.state === 'hasData') {
+      const count = projectPapers.data;
+      return `${count} paper${count && count > 1 ? 's' : ''}`;
     }
     return null;
   };
@@ -65,7 +82,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       content: (
         <div className="flex justify-between">
           <span>Project Team</span>
-          <span className="font-normal text-primary-3">{renderUserAmount()} members</span>
+          <span className="font-normal text-primary-3">{renderUserAmount()}</span>
         </div>
       ),
       href: 'team',
@@ -75,7 +92,16 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       content: 'Activity',
       href: 'activity',
     },
-    { key: LinkItemKey.Papers, content: 'Papers', href: 'papers' },
+    {
+      key: LinkItemKey.Papers,
+      content: (
+        <div className="flex justify-between">
+          <span>Project papers</span>
+          <span className="font-normal text-primary-3">{renderPapersAmount()}</span>
+        </div>
+      ),
+      href: 'papers',
+    },
     { key: LinkItemKey.Explore, content: 'Explore', href: 'explore' },
     { key: LinkItemKey.Build, content: 'Build', href: 'build' },
     { key: LinkItemKey.Simulate, content: 'Simulate', href: 'simulate' },
