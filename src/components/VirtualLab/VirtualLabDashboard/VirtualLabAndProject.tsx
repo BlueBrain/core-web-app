@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Spin } from 'antd';
@@ -26,7 +25,7 @@ export default function VirtualLabAndProject({
 }: Props) {
   const projects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
 
-  const renderProjects = useCallback(() => {
+  const renderProjects = () => {
     if (projects.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
@@ -44,7 +43,7 @@ export default function VirtualLabAndProject({
     }
 
     return null;
-  }, [projects]);
+  };
 
   return (
     <div>
