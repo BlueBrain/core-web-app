@@ -17,7 +17,7 @@ export default async function retrievePapersList({
   total: number;
   papers: Array<PaperResource>;
 }> {
-  const query = getPaperListQuery(virtualLabId, projectId);
+  const query = getPaperListQuery();
   const apiUrl = composeUrl('view', nexus.defaultESViewId, {
     viewType: 'es',
     org: virtualLabId,
