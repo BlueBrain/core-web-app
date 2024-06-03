@@ -20,7 +20,6 @@ interface BlueNaasConfig {
   onTraceData?: (traceData: TraceData) => void;
   onSimulationDone?: () => void;
   onStimuliPreviewData?: (data: PlotData) => void;
-  thresholdCurrent?: number;
 }
 
 export default class BlueNaas {
@@ -56,7 +55,6 @@ export default class BlueNaas {
 
     this.renderer = new Renderer(container, config);
     this.ws = new Ws(blueNaas.wsUrl, token, this.onMessage);
-    this.thresholdCurrent = this.config.thresholdCurrent ?? 0;
     this.ws.send(BlueNaasCmd.SET_MODEL, {
       model_id: modelId,
     });
@@ -152,7 +150,6 @@ export default class BlueNaas {
       stimulus: {
         stimulusProtocol: this.stimulusProtocol,
         amplitudes,
-        thresholdCurrent: this.thresholdCurrent,
       },
     });
   }
