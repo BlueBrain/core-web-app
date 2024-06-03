@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Button } from 'antd';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 
 import throttle from 'lodash/throttle';
 
@@ -13,10 +13,7 @@ import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import { SimAction } from '@/types/simulate/single-neuron';
 import { PlotData, TraceData } from '@/services/bluenaas-single-cell/types';
-import {
-  eModelScriptAtom,
-  selectedEModelAtom,
-} from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import {
   blueNaasInstanceRefAtom,
   simulationPlotDataAtom,
@@ -59,9 +56,6 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   const setPlotData = useSetAtom(simulationPlotDataAtom);
   const session = useSessionAtomValue();
 
-  // this atom contains the threshold and holding values to initialize the model properly
-  const eModelScript = useAtomValue(eModelScriptAtom);
-
   const [selectionCtrlConfig, setSelectionCtrlConfig] = useState<SelectionCtrlConfig | null>(null);
 
   const onChange = (action: SimAction) => {
@@ -93,7 +87,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   }, [simConfig]);
 
   useEffect(() => {
-    if (!containerRef.current || !eModelScript || !session?.accessToken) return;
+    if (!containerRef.current || !session?.accessToken) return;
 
     const onClick = (data: any) => {
       setSelectionCtrlConfig({
@@ -136,10 +130,6 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       DEFAULT_SIM_CONFIG,
       session.accessToken,
       {
-        thresholdCurrent: eModelScript.threshold_current ?? 0,
-        holdingCurrent: eModelScript.holding_current ?? 0,
-      },
-      {
         onClick,
         onHoverEnd,
         onInit,
@@ -162,7 +152,6 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
     setSegNames,
     setPlotData,
     simulationDoneCB,
-    eModelScript,
     session,
   ]);
 

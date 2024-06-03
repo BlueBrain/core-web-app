@@ -2,14 +2,15 @@
 
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useQueryState } from 'nuqs';
-
 import { useEffect } from 'react';
+
 import { selectedEModelAtom, selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import MorphologyCard from '@/components/build-section/virtual-lab/me-model/MorphologyCard';
 import EModelCard from '@/components/build-section/virtual-lab/me-model/EModelCard';
 import SaveButton from '@/components/build-section/virtual-lab/me-model/SaveButton';
 import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { useSessionAtomValue } from '@/hooks/hooks';
+import AnalysisPreview from '@/components/build-section/virtual-lab/me-model/AnalysisPreview';
 
 export default function SummaryPage() {
   const selectedEModel = useAtomValue(selectedEModelAtom);
@@ -38,6 +39,8 @@ export default function SummaryPage() {
       <div className="text-2xl font-bold text-primary-8">Single Neuron</div>
       <MorphologyCard />
       <EModelCard />
+
+      <AnalysisPreview />
 
       <div>
         <SaveButton />
