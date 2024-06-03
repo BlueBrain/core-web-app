@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useAtomValue } from 'jotai';
 
-import calculateJSONDigest from '../../utils/calculateJSONDigest';
+import calculateJSONDigest from '../../../utils/calculateJSONDigest';
 import sessionAtom from '@/state/session';
 import { PaperResource } from '@/types/nexus';
 import useNotification from '@/hooks/notifications';

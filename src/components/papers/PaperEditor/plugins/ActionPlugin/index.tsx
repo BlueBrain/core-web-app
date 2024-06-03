@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from 'antd';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
-import { PAPER_UPDATED_FAILED, PAPER_UPDATED_SUCCESS } from '../../utils/messages';
+import { PAPER_UPDATED_FAILED, PAPER_UPDATED_SUCCESS } from '../../../utils/messages';
 import { PaperResource } from '@/types/nexus';
 import useNotification from '@/hooks/notifications';
 

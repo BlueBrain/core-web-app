@@ -21,7 +21,7 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 
-import { getSelectedNode } from '../../utils/getSelectedNode';
+import { getSelectedNode } from '../../../utils/getSelectedNode';
 import {
   EDITOR_AUTO_SAVE_FAILED_EVENT,
   EDITOR_AUTO_SAVE_SUCCESS_EVENT,
