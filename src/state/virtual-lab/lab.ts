@@ -77,6 +77,7 @@ export const virtualLabBalanceAtomFamily = atomFamily((virtualLabId: string) =>
 export const virtualLabsOfUserAtom = atomWithRefresh<
   Promise<VirtualLabAPIListData<VirtualLab> | undefined>
 >(async (get) => {
+  console.log('teset')
   get(refreshAtom);
   const response = await getVirtualLabsOfUser();
   return response.data;
