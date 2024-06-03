@@ -6,23 +6,29 @@ import userEvent from '@testing-library/user-event';
 import DetailHeaderName from './DetailHeaderName';
 import sessionAtom from '@/state/session';
 import { DeltaResource } from '@/types/explore-section/resources';
+import { DataType } from '@/constants/explore-section/list-views';
+import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
+import { Bookmark } from '@/types/virtual-lab/bookmark';
 
 describe('DetailHeaderName', () => {
   const virtualLabId = '456';
   const projectId = '123';
 
-  it('allows a user to save a resource to a project library', async () => {
-    weAreInProject(virtualLabId, projectId);
+  it.only('allows a user to save a resource to a project library', async () => {
+    weAreInRoute({ virtualLabId, projectId, experimentType: ExperimentTypeNames.MORPHOLOGY });
     bookmarksInclude([]);
 
     const user = renderComponent();
 
     const saveButton = await screen.findByText('Save to library');
     await user.click(saveButton);
-    expect(addBookmark).toHaveBeenCalledWith(virtualLabId, projectId, mockDeltaResource['@id']);
+    expect(addBookmark).toHaveBeenCalledWith(virtualLabId, projectId, {
+      resourceId: mockDeltaResource['@id'],
+      category: DataType.ExperimentalNeuronMorphology,
+    } as Bookmark);
   });
 
-  it('do not allow a user to save a resource to a project library if we are not in a project', async () => {
+  it('do not allow a user to save a resource to a project library if we are not in experiment within a project', async () => {
     weAreNotInProject();
 
     renderComponent();
@@ -33,7 +39,7 @@ describe('DetailHeaderName', () => {
   it('shows remove bookmark option if resource is already bookmarked', async () => {
     const resource = mockDeltaResource;
 
-    weAreInProject(virtualLabId, projectId);
+    weAreInRoute({ virtualLabId, projectId, experimentType: ExperimentTypeNames.MORPHOLOGY });
     bookmarksInclude([resource['@id']]);
     renderComponent(resource);
 
@@ -41,7 +47,7 @@ describe('DetailHeaderName', () => {
   });
 
   it('changes button label when user saves or removes resource from library', async () => {
-    weAreInProject(virtualLabId, projectId);
+    weAreInRoute({ virtualLabId, projectId, experimentType: ExperimentTypeNames.MORPHOLOGY });
     bookmarksInclude([]);
 
     const user = renderComponent(mockDeltaResource);
@@ -105,7 +111,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 const addBookmark = jest.fn();
-const getBookmarkedItems = jest.fn();
+const getBookmarksByCategory = jest.fn();
 
 jest.mock('src/services/virtual-lab/bookmark', () => ({
   __esModule: true,
@@ -113,21 +119,34 @@ jest.mock('src/services/virtual-lab/bookmark', () => ({
   addBookmark: (lab: string, project: string, resourceId: string) => {
     return addBookmark(lab, project, resourceId);
   },
-  getBookmarkedItems: (lab: string, project: string) => {
-    return getBookmarkedItems(lab, project);
+  getBookmarksByCategory: (lab: string, project: string): string[] => {
+    return getBookmarksByCategory(lab, project);
   },
   removeBookmark: jest.fn(),
 }));
 
-const weAreInProject = (virtualLabId: string, projectId: string) => {
-  useParams.mockReturnValue({ virtualLabId, projectId });
+const weAreInRoute = ({
+  virtualLabId,
+  projectId,
+  experimentType,
+}: {
+  virtualLabId: string;
+  projectId: string;
+  experimentType: ExperimentTypeNames;
+}) => {
+  useParams.mockReturnValue({ virtualLabId, projectId, experimentType });
   usePathname.mockReturnValue(
     `/virtual-lab/lab/${virtualLabId}/project/${projectId}/explore/interactive/experimental/morphology/somename`
   );
 };
 
 const bookmarksInclude = (resourceIds: string[]) => {
-  getBookmarkedItems.mockResolvedValue(resourceIds.map((id) => ({ resourceId: id })));
+  getBookmarksByCategory.mockResolvedValue({
+    [DataType.ExperimentalNeuronMorphology]: resourceIds.map((r) => ({
+      resourceId: r,
+      category: DataType.ExperimentalNeuronMorphology,
+    })),
+  });
 };
 
 const weAreNotInProject = () => {

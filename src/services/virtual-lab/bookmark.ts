@@ -1,3 +1,4 @@
+import { DataType } from '@/constants/explore-section/list-views';
 import { Bookmark, BookmarksByCategory } from '@/types/virtual-lab/bookmark';
 
 export async function addBookmark(lab: string, labProject: string, bookmark: Bookmark) {
@@ -49,3 +50,10 @@ export async function getBookmarksByCategory(
 
   return Promise.resolve({} as BookmarksByCategory);
 }
+
+export const getBookmarksCount = (bookmarksByCategory: BookmarksByCategory): number => {
+  return Object.keys(bookmarksByCategory).reduce(
+    (acc, curr) => acc + bookmarksByCategory[curr as DataType].length,
+    0
+  );
+};
