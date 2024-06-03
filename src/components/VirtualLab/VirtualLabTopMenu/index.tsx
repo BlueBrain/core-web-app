@@ -51,7 +51,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             {children}
           </Link>
         ))}
-        <div
+        {!!session && <div
           onMouseLeave={() => {
             if (!expanded) return;
             setExpanded(false);
@@ -96,7 +96,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
               </button>
             </>
           )}
-        </div>
+        </div>}
 
         {extraItems}
       </div>
