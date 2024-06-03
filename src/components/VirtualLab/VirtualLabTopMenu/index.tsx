@@ -87,9 +87,9 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
                   btnClassName,
                   'flex flex-row justify-between  border border-t-0 border-primary-7'
                 )}
-                onClick={() => {
-                  signOut();
-                  window.location.href = '/';
+                onClick={async () => {
+                  await signOut();
+                  window.location.href = '/log-in';
                 }}
               >
                 <span className="font-bold">Log out</span>
