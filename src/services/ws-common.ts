@@ -1,4 +1,4 @@
-const ReadState = {
+const ReadyState = {
   CONNECTING: 0,
   OPEN: 1,
   CLOSING: 2,
@@ -59,7 +59,7 @@ export default class WsCommon<WSResponses> {
   }
 
   _send(message: Message, data?: Data, cmdId?: CmdId) {
-    if (this.socket.readyState !== ReadState.OPEN || !this.serviceUp) {
+    if (this.socket.readyState !== ReadyState.OPEN || !this.serviceUp) {
       throw new Error('Websocket is not open');
     }
 
@@ -103,7 +103,7 @@ export default class WsCommon<WSResponses> {
   }
 
   sendCheckUpMsg() {
-    if (this.socket.readyState !== ReadState.OPEN) return;
+    if (this.socket.readyState !== ReadyState.OPEN) return;
     if (this.serviceUp) return;
 
     this.socket.send(JSON.stringify({}));
