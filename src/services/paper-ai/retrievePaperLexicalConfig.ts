@@ -19,8 +19,10 @@ export default async function retrievePaperLexicalConfig({
   paper: PaperResource;
   config: SerializedEditorState;
 }> {
+  let remotePaperResource = null;
+  let editorStateObj = null;
   try {
-    const remotePaperResource = await fetchResourceById<PaperResource>(
+    remotePaperResource = await fetchResourceById<PaperResource>(
       from64(decodeURIComponent(paperId)),
       session,
       {
@@ -28,17 +30,20 @@ export default async function retrievePaperLexicalConfig({
         project: projectId,
       }
     );
-
-    const editorStateObj = await fetchJsonFileByUrl<SerializedEditorState>(
+  } catch (error) {
+    throw new Error('Paper resource not found');
+  }
+  try {
+    editorStateObj = await fetchJsonFileByUrl<SerializedEditorState>(
       remotePaperResource.distribution.contentUrl,
       session
     );
-
-    return {
-      paper: remotePaperResource,
-      config: editorStateObj,
-    };
   } catch (error) {
-    throw new Error('Paper and config not found');
+    throw new Error('Paper configuration not found');
   }
+
+  return {
+    paper: remotePaperResource,
+    config: editorStateObj,
+  };
 }
