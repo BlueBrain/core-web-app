@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import { selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
 import { NeuronMorphology } from '@/types/e-model';
-import PreviewThumbnail from '@/components/explore-section/ExploreSectionListingView/PreviewThumbnail';
+import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import { DataType } from '@/constants/explore-section/list-views';
 import { DisplayMessages } from '@/constants/display-messages';
 
@@ -24,7 +24,14 @@ export default function MorphologyCard() {
       </div>
 
       <div className="mt-2 flex gap-10">
-        <MorphImage morph={selectedMModel} />
+        <div className="border border-black">
+          <CardVisualization
+            dataType={DataType.ExperimentalNeuronMorphology}
+            resource={selectedMModel}
+            height={200}
+            width={200}
+          />
+        </div>
         <div className="flex-grow">
           <div className={subtitleStyle}>NAME</div>
           <div className="my-1 text-3xl font-bold text-primary-8">{selectedMModel.name}</div>
@@ -64,27 +71,6 @@ function MorphDetails({ morph }: { morph: NeuronMorphology }) {
         <div className={subtitleStyle}>Age</div>
         <div>{DisplayMessages.UNKNOWN}</div>
       </div>
-    </div>
-  );
-}
-
-function MorphImage({ morph }: { morph: NeuronMorphology }) {
-  const contentUrl = morph.distribution?.[0]?.contentUrl;
-
-  if (!contentUrl)
-    return (
-      <div className="flex h-[200px] w-[200px] justify-center align-middle">Morphology IMG</div>
-    );
-
-  return (
-    <div className="border border-black">
-      <PreviewThumbnail
-        contentUrl={contentUrl}
-        dpi={300}
-        height={200}
-        type={DataType.ExperimentalNeuronMorphology}
-        width={200}
-      />
     </div>
   );
 }

@@ -79,7 +79,7 @@ export default function PreviewThumbnail({
   }
 
   return (
-    <div ref={ref} className="flex items-center justify-start" style={{ height, width }}>
+    <div ref={ref} className="flex items-center justify-center" style={{ height, width }}>
       {loading ? (
         <Skeleton.Image
           active={loading}
