@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Spin } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
+import BluePyEModelContainer from './BluePyEModelContainer';
+
 function ModalContent({ onClose }: { onClose: () => void }) {
   return (
     <>
@@ -38,6 +40,8 @@ function ModalContent({ onClose }: { onClose: () => void }) {
         >
           Go to Project home
         </Button>
+
+        <BluePyEModelContainer />
       </div>
     </>
   );

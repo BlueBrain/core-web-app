@@ -15,7 +15,7 @@ import { createResource, fetchResourceById, updateResource } from '@/api/nexus';
 
 export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>(
   null,
-  async (get) => {
+  async (get, set) => {
     const session = get(sessionAtom);
     const selectedMModel = await get(selectedMModelAtom);
     const selectedEModel = await get(selectedEModelAtom);
@@ -43,7 +43,9 @@ export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>
       status: 'initalized',
     };
 
-    return createResource<MEModelResource>(entity, session);
+    const meModelResource = await createResource<MEModelResource>(entity, session);
+    set(selectedMEModelIdAtom, meModelResource['@id']);
+    return meModelResource;
   }
 );
 

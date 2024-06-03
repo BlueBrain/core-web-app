@@ -17,6 +17,10 @@ export const blueNaas = {
   wsUrl: env.NEXT_PUBLIC_BLUE_NAAS_WS_URL,
 };
 
+export const meModelAnalysisSvc = {
+  wsUrl: env.NEXT_PUBLIC_ME_MODEL_ANALYSIS_WS_URL,
+};
+
 const ORG = env.NEXT_PUBLIC_NEXUS_DEFAULT_ORG;
 const PROJECT = env.NEXT_PUBLIC_NEXUS_DEFAULT_PROJECT;
 
