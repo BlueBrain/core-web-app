@@ -1,4 +1,4 @@
-import { useEffect, useRef, ReactNode } from 'react';
+import { useEffect, useRef, ReactNode, useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -26,14 +26,9 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   );
 
   return (
-    <div className={classNames('flex h-14 w-full justify-between', className)}>
+    <div className={classNames('flex h-14 w-full justify-between overflow-y-visible', className)}>
       <div className="flex gap-4" ref={localRef} />
-      <div
-        className={classNames(
-          'flex w-fit items-center justify-end gap-1',
-          ghost ? 'divide-x divide-primary-7 border border-primary-7' : ''
-        )}
-      >
+      <div className={classNames('flex w-fit justify-end')}>
         {[
           {
             children: 'Getting Started',
@@ -46,14 +41,43 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             key: 'about',
           },
         ].map(({ children, href, key }) => (
-          <Link className={btnClassName} href={href} key={key}>
+          <Link
+            className={classNames(btnClassName, 'border border-primary-7')}
+            href={href}
+            key={key}
+          >
             {children}
           </Link>
         ))}
-        <div className={classNames(btnClassName, 'flex flex-row justify-between')}>
-          <span className="font-bold">{session?.user.name}</span>
-          <UserOutlined className="mr-2 text-primary-4" />
+        <div>
+          <div
+            className={classNames(
+              btnClassName,
+              'flex flex-row justify-between  border border-primary-7'
+            )}
+            style={{ padding: '13px' }}
+          >
+            <span className="font-bold">{session?.user.name}</span>
+            <UserOutlined className="mr-2 text-primary-4" />
+          </div>
+          <div
+            className={classNames(
+              btnClassName,
+              'flex flex-row justify-between  border border-t-0 border-primary-7'
+            )}
+          >
+            <span className="font-bold">Account</span>
+          </div>
+          <div
+            className={classNames(
+              btnClassName,
+              'flex flex-row justify-between  border border-t-0 border-primary-7'
+            )}
+          >
+            <span className="font-bold">Log out</span>
+          </div>
         </div>
+
         {extraItems}
       </div>
     </div>
