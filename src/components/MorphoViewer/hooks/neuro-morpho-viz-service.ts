@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useEffect } from 'react';
 import { MorphologyCanvas } from '@bbp/morphoviewer';
 
@@ -42,10 +43,12 @@ class EnhancedSomaLoader {
     this.nextQuery = query;
     do {
       const { accessToken, contentUrl } = this.nextQuery;
+      console.log('Fetching enhanced soma:', this.nextQuery);
       this.nextQuery = null;
       this.fetchingInProgress = true;
       try {
         if (contentUrl === this.lastContentUrl) {
+          console.log('Same contentURL, we use the case.');
           this.eventSomaGlbReceived.dispatch(this.lastSomaGlb);
           continue;
         }
@@ -80,14 +83,36 @@ async function fetchSomaFromNeuroMorphoViz(
   if (!accessToken) return null;
 
   const url = `${thumbnailGenerationBaseUrl}/soma/process-nexus-swc?content_url=${encodeURIComponent(contentUrl)}`;
-  const resp = await fetch(url, {
-    method: 'GET',
-    headers: createHeaders(accessToken, {
-      Accept: 'application/json',
-    }),
-  });
-  const data = await resp.arrayBuffer();
-  return data;
+  console.log('Actual fetch:', url);
+  console.log(
+    '🚀 [neuro-morpho-viz-service] thumbnailGenerationBaseUrl = ',
+    thumbnailGenerationBaseUrl
+  ); // @FIXME: Remove this line written on 2024-06-04 at 09:49
+  console.log('🚀 [neuro-morpho-viz-service] contentUrl = ', contentUrl); // @FIXME: Remove this line written on 2024-06-04 at 09:49
+  const time = Date.now();
+  try {
+    const resp = await fetch(url, {
+      method: 'GET',
+      headers: createHeaders(accessToken, {
+        Accept: 'application/json',
+      }),
+    });
+    console.log('🚀 [neuro-morpho-viz-service] resp = ', resp); // @FIXME: Remove this line written on 2024-06-04 at 09:47
+    if (!resp.ok) {
+      let message = 'Unable to get enhanced soma!';
+      try {
+        message = await resp.text();
+      } catch (ex) {
+        console.error('Unable to get error message from Thumbnail service!');
+      }
+      console.error(`Error #${resp.status}: ${resp.statusText}:`, message);
+      throw Error(message);
+    }
+    const data = await resp.arrayBuffer();
+    return data;
+  } finally {
+    console.log('Thumbnail service response time:', (Date.now() - time) * 1e-3, 'seconds');
+  }
 }
 
 const enhancedSomaService = new EnhancedSomaLoader();
