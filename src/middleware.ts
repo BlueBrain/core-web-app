@@ -7,21 +7,22 @@ export async function middleware(request: NextRequest) {
   const sessionValid = session && Date.now() < session?.accessTokenExpires;
   const requestUrl = request.nextUrl.pathname;
 
-  if (requestUrl === '/log-in') {
-    return NextResponse.next();
-  }
-
-  // If the user is the authenticated and want to access home page
-  // then redirect him to the main page
-  if (sessionValid && requestUrl === '/') {
+  // If the user is authenticated and wants to access home page or log-in page
+  // then redirect to the main page
+  if (sessionValid && (requestUrl === '/' || requestUrl === '/log-in')) {
     const url = request.nextUrl.clone();
     url.pathname = `/main`;
     return NextResponse.redirect(url);
   }
 
-  // if the user is not authenticated at all
-  // then redirect him to the home/login page
-  // if it's successfull then redirect him to the origin request page
+  // Unathenticated user and wants to go to /log-in, let them through
+  if (!sessionValid && requestUrl === '/log-in') {
+    return NextResponse.next();
+  }
+
+  // If the user is not authenticated at all
+  // then redirect them to the home/login page
+  // if it's successful then redirect him to the origin request page
   if (!sessionValid && requestUrl !== '/') {
     return nextAuthMiddleware(request as NextRequestWithAuth);
   }
