@@ -4,7 +4,6 @@ import _memoize from 'lodash/memoize';
 import { ZodError } from 'zod';
 import { createApiHeaders } from '@/services/virtual-lab/common';
 import { SessionOrNull, getSessionLocked } from '@/hooks/session';
-
 import { isServer } from '@/config';
 
 export function createHeaders(
