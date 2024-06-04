@@ -17,7 +17,7 @@ type Props = {
 export default async function VirtualLabHomePage({ id }: Props) {
   const virtualLabDetail = id ? (await getVirtualLabDetail(id)).data.virtual_lab : undefined;
   const virtualLabUsers = id ? (await getVirtualLabUsers(id)).data.users : [];
-  const virtualLabProjects = id ? (await getVirtualLabProjects(id)).data.results : undefined;
+  const virtualLabProjects = id ? (await getVirtualLabProjects(id, 3)).data.results : undefined;
 
   return (
     <div className="pb-5">
@@ -61,16 +61,14 @@ export default async function VirtualLabHomePage({ id }: Props) {
       <div className="mt-10">
         <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
         <div className="flex flex-row gap-5">
-          {virtualLabProjects
-            ?.slice(0, 3)
-            .map((project) => (
-              <ProjectItem
-                key={project.id}
-                title={project.name}
-                description={project.description}
-                buttonHref={id && `${generateVlProjectUrl(id, project.id)}/home`}
-              />
-            ))}
+          {virtualLabProjects?.map((project) => (
+            <ProjectItem
+              key={project.id}
+              title={project.name}
+              description={project.description}
+              buttonHref={id && `${generateVlProjectUrl(id, project.id)}/home`}
+            />
+          ))}
         </div>
       </div>
     </div>
