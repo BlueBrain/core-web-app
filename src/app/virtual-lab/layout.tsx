@@ -1,7 +1,7 @@
 import { ErrorBoundary } from 'react-error-boundary';
 import { ReactNode } from 'react';
-import { useAuthenticatedRoute } from '@/hooks/server-safe-hooks';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
+import { useAuthenticatedRoute } from '@/hooks/server-safe-hooks';
 
 export default async function VirtualLabLayout({ children }: { children: ReactNode }) {
   await useAuthenticatedRoute();
