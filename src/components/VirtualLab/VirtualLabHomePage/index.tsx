@@ -61,14 +61,16 @@ export default async function VirtualLabHomePage({ id }: Props) {
       <div className="mt-10">
         <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
         <div className="flex flex-row gap-5">
-          {virtualLabProjects?.map((project) => (
-            <ProjectItem
-              key={project.id}
-              title={project.name}
-              description={project.description}
-              buttonHref={id && `${generateVlProjectUrl(id, project.id)}/home`}
-            />
-          ))}
+          {virtualLabProjects
+            ?.slice(0, 3)
+            .map((project) => (
+              <ProjectItem
+                key={project.id}
+                title={project.name}
+                description={project.description}
+                buttonHref={id && `${generateVlProjectUrl(id, project.id)}/home`}
+              />
+            ))}
         </div>
       </div>
     </div>
