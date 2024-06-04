@@ -6,9 +6,17 @@ import { UsersResponse } from '@/types/virtual-lab/members';
 import { fetchWithSession } from '@/util/utils';
 
 export async function getVirtualLabProjects(
-  id: string
+  id: string,
+  size?: number
 ): Promise<VlmResponse<VirtualLabAPIListData<Project>>> {
-  const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs/${id}/projects`);
+  const url = new URL(`${virtualLabApi.url}/virtual-labs/${id}/projects`);
+  if (size) {
+    const params = new URLSearchParams(url.search);
+    params.set('size', `${size}`);
+    url.search = params.toString();
+  }
+
+  const response = await fetchWithSession(url);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
