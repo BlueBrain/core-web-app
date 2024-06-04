@@ -4,6 +4,8 @@ import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
 const FREE_ACCESS_PAGES = ['/about'];
 
+/* Don't allow arbitray regex to avoid accidentally leaking protected pages
+only the listed pages and their nested pages are allowed */
 function isFreeAccessRoute(requestUrl: string) {
   return FREE_ACCESS_PAGES.some((p) => {
     // Create a regular expression to match the exact path or path followed by a slash
