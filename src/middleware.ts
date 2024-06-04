@@ -2,6 +2,16 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
+const FREE_ACCESS_PAGES = ['/about'];
+
+function isFreeAccessRoute(requestUrl: string) {
+  return FREE_ACCESS_PAGES.some((p) => {
+    // Create a regular expression to match the exact path or path followed by a slash
+    const regex = new RegExp(`^${p}(?:/|$)`);
+    return regex.test(requestUrl);
+  });
+}
+
 export async function middleware(request: NextRequest) {
   const session = (await getToken({ req: request })) as ReceivedSession | null;
   const sessionValid = session && Date.now() < session?.accessTokenExpires;
@@ -15,8 +25,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Unathenticated user and wants to go to /log-in, let them through
+  // Unathenticated user and wants to go to /log-in let them through
   if (!sessionValid && requestUrl === '/log-in') {
+    return NextResponse.next();
+  }
+
+  if (isFreeAccessRoute(requestUrl)) {
     return NextResponse.next();
   }
 
