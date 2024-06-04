@@ -717,11 +717,8 @@ export interface Paper extends Entity {
   name: string;
   description: string;
   tags: string[];
-
-  // TODO: remove virtualLabId and projectId properties when vlabs/project data separation is done.
   virtualLabId: string;
   projectId: string;
-
   distribution: Distribution;
 }
 

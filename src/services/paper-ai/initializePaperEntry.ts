@@ -21,7 +21,7 @@ export default async function initializePaperEntry(
 ) {
   const session = await auth();
   if (!session) {
-    throw Error('oops');
+    throw new Error('The supplied authentication is not authorized for this action');
   }
 
   const { success, data, error } = PaperSchema.safeParse({
@@ -87,7 +87,7 @@ export default async function initializePaperEntry(
     );
 
     revalidateTag(papersListTagGenerator({ virtualLabId, projectId }));
-    redirectUrl = paperHrefGenerator({ virtualLabId, projectId, '@id': result['@id'] });
+    redirectUrl = `${paperHrefGenerator({ virtualLabId, projectId, '@id': result['@id'] })}?from=create`;
   } catch (err) {
     return {
       redirect: null,
@@ -96,7 +96,7 @@ export default async function initializePaperEntry(
     };
   }
 
-  if (redirect) {
+  if (redirectUrl) {
     redirect(redirectUrl);
   }
 }

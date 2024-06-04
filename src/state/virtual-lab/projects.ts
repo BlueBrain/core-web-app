@@ -57,7 +57,7 @@ export const virtualLabProjectUsersAtomFamily = atomFamily(
 
 export const virtualLabProjectPapersCountAtomFamily = atomFamily(
   ({ virtualLabId, projectId }: { virtualLabId: string; projectId: string }) =>
-    atom<Promise<number | undefined>>(async (get) => {
+    atomWithRefresh<Promise<number | undefined>>(async (get) => {
       const session = get(sessionAtom);
       if (!session) {
         return;

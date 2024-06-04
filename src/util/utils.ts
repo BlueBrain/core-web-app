@@ -252,3 +252,11 @@ export async function fetchWithSession(
   const newArgs: typeof args = [args[0], init];
   return fetch(...newArgs); // If there is and active session setHeaders and fetch
 }
+
+export function isJSON(str: any) {
+  try {
+    return JSON.parse(str) && !!str;
+  } catch (e) {
+    return false;
+  }
+}

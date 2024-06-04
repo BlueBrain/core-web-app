@@ -26,6 +26,7 @@ import InsertPlugin from './plugins/InsertPlugin';
 import ActionPlugin from './plugins/ActionPlugin';
 import theme from './themes/appEditorCustomTheme';
 import { PaperResource } from '@/types/nexus';
+import { isJSON } from '@/util/utils';
 
 const initialConfig: InitialConfigType = {
   theme,
@@ -80,7 +81,7 @@ export default function Editor({ config, paper }: Props) {
     <LexicalComposer
       initialConfig={{
         ...initialConfig,
-        editorState: JSON.stringify(config),
+        editorState: isJSON(config as any) ? JSON.stringify(config) : undefined,
       }}
     >
       <div className="relative flex h-[calc(100%-60px)] flex-col border border-t-0 border-gray-200 pb-40">

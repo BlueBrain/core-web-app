@@ -12,11 +12,3 @@ export const updateAndMerge = <T>(
   if (match) merge(match, newVal);
   return array;
 };
-
-export function isJSON(str: string) {
-  try {
-    return JSON.parse(str) && !!str;
-  } catch (e) {
-    return false;
-  }
-}

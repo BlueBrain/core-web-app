@@ -8,6 +8,8 @@
   gap: 1em;
   padding: 0.5em;
   color: var(--custom-color-accent);
+  background-color: color-mix(in srgb, var(--custom-color-back), transparent 25%);
+  border-radius: 0 0 0.5em 0.5em;
 }
 
 .main > svg {

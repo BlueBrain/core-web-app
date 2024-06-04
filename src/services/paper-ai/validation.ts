@@ -1,11 +1,17 @@
 import { z } from 'zod';
 
-export const PaperSchema = z.object({
+const LocationSchema = z.object({
   virtualLabId: z.string().min(1),
   projectId: z.string().min(1),
+});
+
+export const PaperBaseSchema = z.object({
   title: z.string().min(1, 'Please provide a title for your paper.'),
   summary: z.string().min(1, 'Please provide a brief summary of your paper.'),
   sourceData: z.string({ invalid_type_error: 'Please provide one or more resources.' }).optional(),
+});
+
+export const PaperSchema = PaperBaseSchema.merge(LocationSchema).extend({
   generateOutline: z
     .string()
     .nullable()
@@ -23,3 +29,13 @@ export type PaperCreationAction =
       error?: string | null;
     }
   | undefined;
+
+export const PaperUpdateSchema = PaperBaseSchema.extend({
+  paper: z.any(),
+});
+
+export type PaperUpdateAction = {
+  type: 'success' | 'error' | null;
+  validationErrors?: PaperSchemaFieldErrors | null;
+  error?: string | null;
+};

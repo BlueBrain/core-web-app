@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useAtomValue } from 'jotai';
 
-import calculateJSONDigest from '../../utils/calculateJSONDigest';
+import calculateJSONDigest from '@/components/papers/utils/calculateJSONDigest';
 import sessionAtom from '@/state/session';
 import { PaperResource } from '@/types/nexus';
 import useNotification from '@/hooks/notifications';
@@ -25,9 +25,9 @@ export default function RemoteSyncPlugin({ paper }: Props) {
   const { error: errorNotify } = useNotification();
 
   useEffect(() => {
-    const $update = async () => {
+    const update = async () => {
       try {
-        if (session && paper) {
+        if (session && paper && !editor.isComposing()) {
           if (abortControllerRef.current) {
             abortControllerRef.current.abort();
           }
@@ -68,8 +68,7 @@ export default function RemoteSyncPlugin({ paper }: Props) {
       }
     };
 
-    $update();
-    const id = setInterval($update, FLUSH_SYNC_TIMEOUT);
+    const id = setInterval(update, FLUSH_SYNC_TIMEOUT);
 
     return () => clearInterval(id);
   }, [editor, session, paper, errorNotify]);
