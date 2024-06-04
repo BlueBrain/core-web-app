@@ -3,14 +3,15 @@ import { getToken } from 'next-auth/jwt';
 import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
 export async function middleware(request: NextRequest) {
-  const session = await getToken({ req: request });
-
-  const sessionValid =
-    session?.expires && new Date(session.expires as string).getTime() > Date.now();
-
+  const session = (await getToken({ req: request })) as ReceivedSession | null;
+  const sessionValid = session && Date.now() < session?.accessTokenExpires;
   const requestUrl = request.nextUrl.pathname;
 
-  // if the user is the authenticated and want to access home page
+  if (requestUrl === '/log-in') {
+    return NextResponse.next();
+  }
+
+  // If the user is the authenticated and want to access home page
   // then redirect him to the main page
   if (sessionValid && requestUrl === '/') {
     const url = request.nextUrl.clone();
@@ -26,14 +27,22 @@ export async function middleware(request: NextRequest) {
   }
 }
 
-/* NOTE: This represents a security risk, if developers forget to add a route to the list or gets the pattern
-wrong, then we might exposse protected routes. TODO: Device a better strategy (i.e) a whitelist of free access routes
-and protect everything else, although this requires carefully curating the allowed routes */
-export const config = {
-  matcher: [
-    '/',
-    '/main',
-    '/invite',
-    '/(build|simulate|simulations|main|explore|experiment-designer|svc|virtual-lab)(/.*)*', // Match base and nested routes
-  ],
+// TODO: Fix the types in auth.ts it's impossible to know that getToken returns
+// had to define what it actually recieves for now. Also make sure it doesn't return the
+// nested user data as it's repeated
+type ReceivedSession = {
+  name: string;
+  email: string;
+  sub: string;
+  accessToken: string;
+  accessTokenExpires: number;
+  refreshToken: string;
+  user: {
+    name: string;
+    email: string;
+    id: string;
+  };
+  iat: number;
+  exp: number;
+  jti: string;
 };
