@@ -1,7 +1,7 @@
 import { IS_APPLE } from '@lexical/utils';
 import { LexicalEditor, REDO_COMMAND, UNDO_COMMAND } from 'lexical';
 import React from 'react';
-import EditorButton from '../../molecules/Button';
+import EditorButton from '../../../molecules/Button';
 import { Redo, Undo } from '@/components/icons/EditorIcons';
 
 type Props = {

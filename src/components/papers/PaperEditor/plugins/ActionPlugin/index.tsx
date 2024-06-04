@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from 'antd';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
-import { PAPER_UPDATED_FAILED, PAPER_UPDATED_SUCCESS } from '../../utils/messages';
+import { PAPER_UPDATED_FAILED, PAPER_UPDATED_SUCCESS } from '../../../utils/messages';
 import { PaperResource } from '@/types/nexus';
 import useNotification from '@/hooks/notifications';
 
@@ -38,7 +38,7 @@ export default function ActionPlugin({ paper }: Props) {
   };
 
   return (
-    <div className="fixed bottom-3 right-[3.3rem] flex items-center justify-end gap-3 py-4">
+    <div className="fixed bottom-3 right-[3.3rem] z-50 flex items-center justify-end gap-3 py-4">
       <Button
         disabled={saving}
         loading={saving}

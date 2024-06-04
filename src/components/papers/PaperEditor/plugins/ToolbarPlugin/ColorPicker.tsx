@@ -4,7 +4,7 @@ import { Color } from 'antd/es/color-picker';
 import { $getSelection, LexicalEditor } from 'lexical';
 import { $patchStyleText } from '@lexical/selection';
 
-import EditorButton from '../../molecules/Button';
+import EditorButton from '../../../molecules/Button';
 import { FormatColorBg, FormatColorText } from '@/components/icons/EditorIcons';
 
 type Props = {

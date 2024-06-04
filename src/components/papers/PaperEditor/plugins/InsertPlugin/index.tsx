@@ -2,7 +2,7 @@ import { createPortal } from 'react-dom';
 import { ReactNode, useReducer, useRef, useState } from 'react';
 import { DownloadOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
-import EditorButton from '../../molecules/Button';
+import EditorButton from '../../../molecules/Button';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
 

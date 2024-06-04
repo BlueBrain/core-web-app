@@ -226,3 +226,11 @@ export const getZodErrorPath = ({ issues }: ZodError) => {
     return [...acc, ...curr.path];
   }, []);
 };
+
+export function isJSON(str: any) {
+  try {
+    return JSON.parse(str) && !!str;
+  } catch (e) {
+    return false;
+  }
+}

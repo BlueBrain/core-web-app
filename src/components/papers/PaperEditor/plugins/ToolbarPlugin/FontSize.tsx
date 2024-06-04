@@ -3,7 +3,7 @@ import { $patchStyleText } from '@lexical/selection';
 import { $getSelection, LexicalEditor } from 'lexical';
 import isNaN from 'lodash/isNaN';
 
-import EditorButton from '../../molecules/Button';
+import EditorButton from '../../../molecules/Button';
 import { TextIncrease, TextDecrease } from '@/components/icons/EditorIcons';
 
 const MIN_ALLOWED_FONT_SIZE = 8;

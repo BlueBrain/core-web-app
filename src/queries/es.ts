@@ -536,8 +536,14 @@ export const getNotValidatedMEModelQuery = (username: string) => ({
 export const getPaperCountQuery = () => ({
   size: 0,
   query: {
-    term: {
-      '@type': 'Paper',
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [{ term: { _deprecated: false } }, { term: { '@type': 'Paper' } }],
+          },
+        },
+      ],
     },
   },
   aggs: {

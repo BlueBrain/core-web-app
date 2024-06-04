@@ -15,7 +15,7 @@ import {
 } from 'lexical';
 import { MenuItemType } from 'antd/es/menu/hooks/useItems';
 
-import EditorButton from '../../molecules/Button';
+import EditorButton from '../../../molecules/Button';
 import {
   FormatStrikethrough,
   FormatSuperscript,

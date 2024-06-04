@@ -1,7 +1,7 @@
 import { IS_APPLE } from '@lexical/utils';
 import { FORMAT_TEXT_COMMAND, LexicalEditor } from 'lexical';
 import React from 'react';
-import EditorButton from '../../molecules/Button';
+import EditorButton from '../../../molecules/Button';
 import { Code, FormatBold, FormatItalic, FormatUnderlined } from '@/components/icons/EditorIcons';
 
 export default function GeneralFormat({
