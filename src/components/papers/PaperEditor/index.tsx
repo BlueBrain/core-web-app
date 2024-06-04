@@ -81,7 +81,7 @@ export default function Editor({ config, paper }: Props) {
     <LexicalComposer
       initialConfig={{
         ...initialConfig,
-        editorState: isJSON(config as any) ? JSON.stringify(config) : undefined,
+        editorState: isJSON(config) ? JSON.stringify(config) : undefined,
       }}
     >
       <div className="relative flex h-[calc(100%-60px)] flex-col border border-t-0 border-gray-200 pb-40">
