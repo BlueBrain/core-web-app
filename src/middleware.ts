@@ -26,13 +26,14 @@ export async function middleware(request: NextRequest) {
   }
 }
 
-// NOTE: use middelware to redirect only when the user want to access membership pages
-// any new page that need user auth data need to be added to this matcher
+/* NOTE: This represents a security risk, if developers forget to add a route to the list or gets the pattern
+wrong, then we might exposse protected routes. TODO: Device a better strategy (i.e) a whitelist of free access routes
+and protect everything else, although this requires carefully curating the allowed routes */
 export const config = {
   matcher: [
     '/',
     '/main',
     '/invite',
-    '/(build|simulate|simulations|main|explore|experiment-designer|svc|virtual-lab)/(.*)',
+    '/(build|simulate|simulations|main|explore|experiment-designer|svc|virtual-lab)(/.*)*', // Match base and nested routes
   ],
 };
