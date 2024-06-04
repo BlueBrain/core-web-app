@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 type Props = {
   className?: string;
@@ -88,10 +89,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
                     btnClassName,
                     'flex flex-row justify-between  border border-t-0 border-primary-7'
                   )}
-                  onClick={async () => {
-                    await signOut();
-                    window.location.href = '/log-in';
-                  }}
+                  onClick={() => signOut({ callbackUrl: `${basePath}/log-in` })}
                 >
                   <span className="font-bold">Log out</span>
                 </button>
