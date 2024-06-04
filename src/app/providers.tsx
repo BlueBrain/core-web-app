@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { ConfigProvider } from 'antd';
 import { SessionProvider } from 'next-auth/react';
-import { Provider as JotaiProvider, createStore } from 'jotai';
+import { Provider as JotaiProvider } from 'jotai';
 import { DevTools } from 'jotai-devtools';
 
 import { basePath } from '@/config';
@@ -14,8 +14,6 @@ import ThemeProvider from '@/components/ThemeProvider';
 type ProvidersProps = {
   children: ReactNode;
 };
-
-export const store = createStore();
 
 export default function Providers({ children }: ProvidersProps) {
   return (
