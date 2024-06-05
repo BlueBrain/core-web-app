@@ -8,7 +8,7 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
-import { AutoLinkNode } from '@lexical/link';
+import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
@@ -17,9 +17,10 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { SerializedEditorState } from 'lexical/LexicalEditorState';
 
+import RemoteSyncPlugin from './plugins/RemoteSyncPlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import FloatAiCommandsPlugin from './plugins/AiPlugin';
 import InsertPlugin from './plugins/InsertPlugin';
@@ -44,6 +45,7 @@ const initialConfig: InitialConfigType = {
     TableRowNode,
     AutoLinkNode,
     HorizontalRuleNode,
+    LinkNode,
   ],
 };
 
@@ -81,10 +83,11 @@ export default function Editor({ config, paper }: Props) {
     <LexicalComposer
       initialConfig={{
         ...initialConfig,
-        editorState: isJSON(config as any) ? JSON.stringify(config) : undefined,
+        editorState: isJSON(config) ? JSON.stringify(config) : undefined,
       }}
     >
       <div className="relative flex h-[calc(100%-60px)] flex-col border border-t-0 border-gray-200 pb-40">
+        <RemoteSyncPlugin {...{ paper }} />
         <CheckListPlugin />
         <ClearEditorPlugin />
         <HorizontalRulePlugin />
@@ -101,7 +104,7 @@ export default function Editor({ config, paper }: Props) {
         <AutoFocusPlugin />
         <FloatAiCommandsPlugin />
         <InsertPlugin />
-        <ActionPlugin {...{ paper }} />
+        <ActionPlugin />
       </div>
     </LexicalComposer>
   );

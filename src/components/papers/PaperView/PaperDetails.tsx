@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import { useFormState, useFormStatus } from 'react-dom';
+import { parseAsString, useQueryState } from 'nuqs';
 
 import { EDIT_PAPER_FAILED, EDIT_PAPER_SUCCESS } from '../utils/messages';
 import { FormError, FormStaleLabel } from '../molecules/Form';
@@ -21,23 +22,25 @@ function PaperEditSubmit() {
   const { pending } = useFormStatus();
 
   return (
-    <div className="justify-end self-end">
-      <Button
-        type="primary"
-        size="large"
-        className="rounded-none bg-green-700 px-14"
-        htmlType="submit"
-        form="paper-details-form"
-        disabled={pending}
-        loading={pending}
-      >
-        Save
-      </Button>
-    </div>
+    <Button
+      type="primary"
+      size="large"
+      className="rounded-none bg-green-700 px-14"
+      htmlType="submit"
+      form="paper-details-form"
+      disabled={pending}
+      loading={pending}
+    >
+      Save
+    </Button>
   );
 }
 
 export default function PaperDetails({ editable, paper, onCompleteEdit }: PaperDetailsProps) {
+  const [, toggleEditableMode] = useQueryState(
+    'mode',
+    parseAsString.withDefault('').withOptions({ clearOnDefault: true })
+  );
   const { success: successNotify, error: errorNotify } = useNotification();
   const [state, runPaperUpdateAction] = useFormState<PaperUpdateAction, FormData>(
     updatePaperDetails,
@@ -47,6 +50,10 @@ export default function PaperDetails({ editable, paper, onCompleteEdit }: PaperD
       error: null,
     }
   );
+
+  const onCancelEdit = () => {
+    toggleEditableMode('');
+  };
 
   useEffect(() => {
     if (state.type === 'success') {
@@ -134,7 +141,20 @@ export default function PaperDetails({ editable, paper, onCompleteEdit }: PaperD
           )}
         </div>
       </div>
-      {editable && <PaperEditSubmit />}
+      {editable && (
+        <div className="flex items-center justify-end gap-3 self-end">
+          <Button
+            htmlType="button"
+            type="text"
+            size="large"
+            className="rounded-none px-4"
+            onClick={onCancelEdit}
+          >
+            Cancel
+          </Button>
+          <PaperEditSubmit />
+        </div>
+      )}
     </form>
   );
 }

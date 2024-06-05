@@ -18,40 +18,80 @@ export const POST = async (request: Request) => {
       statusText: 'The supplied authentication is not authorized for this action',
     });
   }
+  let resourceJson: PaperResource | null = null;
+  let remoteConfigState: FileMetadata | null = null;
 
   try {
-    const url = composeUrl('resource', paper['@id'], {
-      org: paper.virtualLabId,
-      project: paper.projectId,
-    });
-    const resource = await fetch(url, {
-      headers: createHeaders(session.accessToken),
-      cache: 'no-store',
-    });
-    const resourceJson = (await resource.json()) as PaperResource;
+    const resourceResponse = await fetch(
+      composeUrl('resource', paper['@id'], {
+        org: paper.virtualLabId,
+        project: paper.projectId,
+      }),
+      {
+        headers: createHeaders(session.accessToken),
+        cache: 'no-store',
+      }
+    );
 
-    const { contentUrl, name } = resourceJson.distribution;
+    if (!resourceResponse.ok) {
+      const errorData = await resourceResponse.json();
+      const errorMessage =
+        errorData?.error?.message || errorData?.error || resourceResponse.statusText;
+      throw new Error(`API Error (${resourceResponse.status}): ${errorMessage}`);
+    }
+
+    resourceJson = await resourceResponse.json();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('@@error@@ [PAPER_SYNC_ROUTE][RESOURCE_FETCH]', error);
+    return new Response('ServerError: Fetch paper resource failed', {
+      status: 500,
+      statusText: 'Internal Server Error',
+    });
+  }
+
+  try {
+    const { contentUrl, name } = resourceJson!.distribution;
     const formData = new FormData();
     const dataBlob = new Blob([JSON.stringify(state)], { type: 'application/json' });
 
     formData.append('file', dataBlob, name);
 
-    const response = await fetch(contentUrl, {
+    const fileResponse = await fetch(contentUrl, {
       method: 'PUT',
       headers: createHeaders(session.accessToken, null),
       body: formData,
       cache: 'no-store',
     });
-    const remoteState: FileMetadata = await response.json();
 
+    if (!fileResponse.ok) {
+      const errorData = await fileResponse.json();
+      const errorMessage = errorData?.error?.message || errorData?.error || fileResponse.statusText;
+      throw new Error(`API Error (${fileResponse.status}): ${errorMessage}`);
+    }
+
+    remoteConfigState = await fileResponse.json();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('@@error@@ [PAPER_SYNC_ROUTE][FILE_UPDATE]', error);
+    return new Response('ServerError: Updating paper configuration file failed', {
+      status: 500,
+      statusText: 'Internal Server Error',
+    });
+  }
+
+  try {
     const updatedResource = removeMetadata({
       ...paper,
-      distribution: createDistribution(remoteState, `${remoteState._self}?rev=${remoteState._rev}`),
+      distribution: createDistribution(
+        remoteConfigState!,
+        `${remoteConfigState!._self}?rev=${remoteConfigState!._rev}`
+      ),
     });
 
-    const data = await fetch(
+    const updateResourceResponse = await fetch(
       composeUrl('resource', paper['@id'], {
-        rev: resourceJson._rev,
+        rev: resourceJson!._rev,
         sync: true,
         org: paper.virtualLabId,
         project: paper.projectId,
@@ -63,15 +103,24 @@ export const POST = async (request: Request) => {
         cache: 'no-store',
       }
     );
+    const updateResource = await updateResourceResponse.json();
+
+    if (!updateResourceResponse.ok) {
+      const errorMessage =
+        updateResource?.error?.message ||
+        updateResource?.error ||
+        updateResourceResponse.statusText;
+      throw new Error(`API Error (${updateResourceResponse.status}): ${errorMessage}`);
+    }
 
     return Response.json({
       message: 'Paper state and configuration updated successfully',
-      data: await data.json(),
+      data: updateResource,
     });
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('@@error@@ [PAPER_SYNC_ROUTE]', error);
-    return new Response('ServerError: Updating paper relative files/resources failed', {
+    console.log('@@error@@ [PAPER_SYNC_ROUTE][RESOURCE_UPDATE]', error);
+    return new Response('ServerError: Updating paper resource failed', {
       status: 500,
       statusText: 'Internal Server Error',
     });

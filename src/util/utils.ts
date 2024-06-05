@@ -227,9 +227,19 @@ export const getZodErrorPath = ({ issues }: ZodError) => {
   }, []);
 };
 
+/**
+ * Checks if the given input is a valid JSON.
+ *
+ * This function attempts to parse the input as JSON after converting it to a string.
+ * If parsing is successful and the input is not falsy, it returns `true`.
+ * Otherwise, it returns `false`.
+ *
+ * @param {*} str - The input to be checked for JSON validity.
+ * @returns {boolean} `true` if the input is a valid JSON, otherwise `false`.
+ */
 export function isJSON(str: any) {
   try {
-    return JSON.parse(str) && !!str;
+    return JSON.parse(JSON.stringify(str)) && !!str;
   } catch (e) {
     return false;
   }
