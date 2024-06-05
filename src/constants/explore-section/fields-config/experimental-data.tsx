@@ -32,7 +32,7 @@ import {
   ExperimentalNeuronDensity,
   ExperimentalSynapsesPerConnection,
   ExperimentalTrace,
-  ExperimentResource
+  ExperimentResource,
 } from '@/types/explore-section/delta-experiment';
 import { SynapticPosition, SynapticType } from '@/types/explore-section/misc';
 import { FilterTypeEnum } from '@/types/explore-section/filters';

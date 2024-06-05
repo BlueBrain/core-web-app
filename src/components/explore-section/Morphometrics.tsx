@@ -13,7 +13,7 @@ export default function Morphometrics({
   resource,
 }: {
   dataType: DataType;
-  resource: ExperimentResource
+  resource: ExperimentResource;
 }) {
   const metrics = useUnwrappedValue(sourceMorphoMetricsAtom(resource['@id']));
 

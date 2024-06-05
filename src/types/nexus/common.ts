@@ -20,7 +20,7 @@ export interface ResourceMetadata {
 }
 
 interface EntityBase extends ResourceMetadata, Entity {}
-export type EntityResource<T = any> = EntityBase & T
+export type EntityResource<T = any> = EntityBase & T;
 
 export type FileMetadata = {
   '@id': string;
