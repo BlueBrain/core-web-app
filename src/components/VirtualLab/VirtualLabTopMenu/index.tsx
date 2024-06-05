@@ -22,16 +22,16 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   }, [localRef, setProjectTopMenuRef]);
 
   const btnClassName = classNames(
-    'flex items-center h-full w-52 p-4 font-bold',
+    'w-52 p-4 font-bold',
     ghost ? 'bg-transparent' : 'bg-primary-8 border border-primary-7'
   );
 
   return (
-    <div className={classNames('flex w-full justify-between gap-6', className)}>
-      <div className="contents" ref={localRef} />
+    <div className={classNames('flex h-14 w-full justify-between', className)}>
+      <div className="flex gap-4" ref={localRef} />
       <div
         className={classNames(
-          'ml-auto flex w-fit gap-1',
+          'flex w-fit items-center justify-end gap-1',
           ghost ? 'divide-x divide-primary-7 border border-primary-7' : ''
         )}
       >
@@ -47,12 +47,12 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             key: 'about',
           },
         ].map(({ children, href, key }) => (
-          <div className={btnClassName} key={key}>
-            <Link href={href}>{children}</Link>
-          </div>
+          <Link className={btnClassName} href={href} key={key}>
+            {children}
+          </Link>
         ))}
         {!!session && (
-          <div className={classNames(btnClassName, 'flex-row justify-between')}>
+          <div className={classNames(btnClassName, 'flex flex-row justify-between')}>
             <span className="font-bold">{session?.user.name}</span>
             <UserOutlined className="mr-2 text-primary-4" />
           </div>
