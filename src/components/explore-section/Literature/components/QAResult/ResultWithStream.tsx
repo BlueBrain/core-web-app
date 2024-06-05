@@ -2,6 +2,8 @@ import { useAtomValue } from 'jotai';
 import isNil from 'lodash/isNil';
 import trim from 'lodash/trim';
 
+import gfm from 'remark-gfm';
+import Markdown from 'react-markdown';
 import useStreamGenerative, { ResultWithoutId } from '../../useStreamGenerative';
 import ResultCompact from './ResultCompact';
 import ResultError from './ResultError';
@@ -151,7 +153,29 @@ export default function withStreamResult({
     }
     return (
       <Result key={id} {...{ id, scoped }} result={current}>
-        <div className="w-full text-xl font-normal leading-7 text-blue-900">{finalAnswer}</div>
+        <div className="w-full text-xl font-normal leading-7 text-gray-700">
+          <Markdown
+            plugins={[gfm]}
+            unwrapDisallowed
+            // disallowedTypes={["heading", "thematicBreak"]}
+            renderers={{
+              link: function MsgLink({ href, children }) {
+                return (
+                  <a
+                    href={href}
+                    style={{ color: '#0050B3' }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {children}
+                  </a>
+                );
+              },
+            }}
+          >
+            {finalAnswer}
+          </Markdown>
+        </div>
       </Result>
     );
   }
