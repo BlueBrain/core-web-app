@@ -17,7 +17,7 @@ import { useWorkflowAuth } from '@/components/WorkflowLauncherBtn';
 export default function Launcher({ analysis }: { analysis?: Analysis }) {
   const { ensureWorkflowAuth } = useWorkflowAuth();
   const resourceInfo = useResourceInfoFromPath();
-  const eModel = useUnwrappedValue<Promise<EModelResource>>(detailFamily(resourceInfo));
+  const eModel = useUnwrappedValue(detailFamily(resourceInfo)) as EModelResource;
   const session = useSessionAtomValue();
   const [report, fetching] = useCumulativeAnalysisReports(eModel?._incoming, analysis?.['@id']);
   const [launching, setLaunching] = useState(false);
