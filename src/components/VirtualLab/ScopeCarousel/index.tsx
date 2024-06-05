@@ -112,7 +112,7 @@ function ScopeSelector({
   const projectTopMenuRef = useAtomValue(projectTopMenuRefAtom);
 
   const controls = (
-    <div className="flex items-center justify-between gap-28">
+    <div className="flex items-center justify-between gap-24">
       <div className="flex gap-2">
         <button
           className={classNames('text-lg', !selectedScope && 'font-bold underline')}
