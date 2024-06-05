@@ -9,15 +9,25 @@ import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 import { getVirtualLabDetail, getVirtualLabUsers } from '@/services/virtual-lab/labs';
 import { getVirtualLabProjects } from '@/services/virtual-lab/projects';
+import { VirtualLabResponse } from '@/types/virtual-lab/lab';
+import { UsersResponse } from '@/types/virtual-lab/members';
+import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
+import { Project } from '@/types/virtual-lab/projects';
 
 type Props = {
   id?: string;
 };
 
 export default async function VirtualLabHomePage({ id }: Props) {
-  const virtualLabDetail = id ? (await getVirtualLabDetail(id)).data.virtual_lab : undefined;
-  const virtualLabUsers = id ? (await getVirtualLabUsers(id)).data.users : [];
-  const virtualLabProjects = id ? (await getVirtualLabProjects(id, 3)).data.results : undefined;
+  const promises = id
+    ? [getVirtualLabDetail(id), getVirtualLabUsers(id), getVirtualLabProjects(id, 3)]
+    : undefined;
+  const data = promises && (await Promise.all(promises));
+
+  const virtualLabDetail = data && (data[0] as VirtualLabResponse).data.virtual_lab;
+  const virtualLabUsers = data && (data[1] as UsersResponse).data.users;
+  const virtualLabProjects =
+    data && (data[2] as VlmResponse<VirtualLabAPIListData<Project>>).data.results;
 
   return (
     <div className="pb-5">
