@@ -30,11 +30,11 @@ export default function DashboardTotals() {
   return (
     <div className="flex flex-row gap-7">
       <div>
-        Total labs:
+        Total labs:&nbsp;
         {renderTotals(virtualLabTotals, 'Something went wrong when fetching lab totals')}
       </div>
       <div>
-        Total projects:
+        Total projects:&nbsp;
         {renderTotals(projectTotals, 'Something went wrong when fetching project totals')}
       </div>
     </div>
