@@ -35,7 +35,7 @@ function SubmitQuestion() {
       title={isQuestionEmpty ? 'Please enter a question' : ''}
       className="w-max rounded border border-gray-200 px-4 py-1.5 font-semibold text-primary-8 disabled:text-gray-400"
       onClick={() => {
-        updateLiterature((prev) => ({ ...prev, areQAParamsVisible: false }));
+        updateLiterature((prev) => ({ ...prev, areQAParamsVisible: false, scrollToBottom: false }));
       }}
     >
       Search <SendOutlined className="ml-1 -rotate-[30deg] text-base" />

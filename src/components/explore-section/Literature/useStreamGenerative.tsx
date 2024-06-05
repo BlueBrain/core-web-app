@@ -63,7 +63,9 @@ function useStreamGenerative({
   const signal = controller?.signal;
 
   const appendAnswer = useCallback(
-    (value: string) => updateLiterature((prev) => ({ ...prev, answer: `${prev.answer}${value}` })),
+    (value: string) => {
+      updateLiterature((prev) => ({ ...prev, answer: value }));
+    },
     [updateLiterature]
   );
 
@@ -79,6 +81,7 @@ function useStreamGenerative({
         isGenerating: false,
         controller: undefined,
         query: scoped ? prev.query : '',
+        scrollToBottom: true,
       }));
       // remove the qa entry from the datasource if something goes wrong
       if (clear) {
@@ -223,8 +226,16 @@ function useStreamGenerative({
             throw new Error(`Error from ML backend`);
           }
           if (response) {
-            const parsedStreamResponse = await withStream(response);
-            const result = withTransformer(parsedStreamResponse);
+            const result = withTransformer({
+              type: 'data',
+              data: {
+                answer: response.response,
+                raw_answer: response.response,
+                metadata: [],
+                paragraphs: [],
+              },
+            });
+            // appendAnswer(response.response);
             onTransformComplete(result);
             onAfterStream?.(result);
           }
@@ -256,6 +267,7 @@ function useStreamGenerative({
     onTransformComplete,
     resetPrompt,
     onAfterStream,
+    appendAnswer,
   ]);
 }
 

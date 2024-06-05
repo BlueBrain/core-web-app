@@ -28,6 +28,7 @@ export type LiteratureAtom = {
   activeQuestionId?: string;
   isGenerating: boolean;
   controller?: AbortController;
+  scrollToBottom?: boolean;
 };
 
 export type LiteratureOptions = keyof LiteratureAtom;
@@ -48,6 +49,7 @@ const literatureAtom = atom<LiteratureAtom>({
   isFilterPanelOpen: false,
   filterValues: null,
   isGenerating: false,
+  scrollToBottom: false,
 });
 
 const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';

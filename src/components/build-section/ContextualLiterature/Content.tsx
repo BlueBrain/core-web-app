@@ -145,7 +145,6 @@ function ContextualContent() {
   const [promptResponseNode, updatePromptResponseNode] = useAtom(
     promptResponseNodesAtomFamily({ key: currentQuestion! })
   );
-
   const currentQuestionIndex = findIndex(keys(curratedQuestions), (v) => v === currentQuestion) + 1;
   const currentQuestionElement = get(curratedQuestions, currentQuestion!);
 

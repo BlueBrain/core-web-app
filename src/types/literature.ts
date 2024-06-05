@@ -126,7 +126,7 @@ export type GenerativeQAServerResponse =
       error: GenerativeQAWithoutDataResponse;
     };
 
-export type ReturnGetGenerativeQA = (input: GetGenerativeQAInput) => Promise<Response | Error>;
+export type ReturnGetGenerativeQA = (input: GetGenerativeQAInput) => Promise<AgentResponse | Error>;
 
 export type JournalSuggestionResponse = {
   title: string;
@@ -209,4 +209,15 @@ export type QuestionParameters = {
   selectedJournals: Suggestion[];
   selectedAuthors: string[];
   selectedArticleTypes: string[];
+};
+
+type Step = {
+  tool_name: string;
+  arguments: { query: string };
+};
+
+export type AgentResponse = {
+  response: string;
+  plan: any;
+  steps: Step[];
 };
