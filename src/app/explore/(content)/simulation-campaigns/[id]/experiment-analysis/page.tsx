@@ -113,25 +113,24 @@ export default function ExperimentAnalyses({
       <div className="min-h-screen flex-1 overflow-auto bg-white p-4">
         <div className="flex justify-between">
           <div className="mb-4 text-2xl font-bold text-primary-8">Experiment Analyses</div>
-          {!!analyses.length && (
-            <div>
-              <Input.Search
-                style={{ width: 150 }}
-                placeholder="Search"
-                size="middle"
-                onChange={(v) => setSearch(v.currentTarget.value.toLocaleLowerCase())}
-                allowClear
-              />
-              <button
-                onClick={() => setIsModalVisible(true)}
-                className="w-21 ml-2 h-9 border border-primary-8 bg-white px-4 py-2 text-sm font-bold text-primary-8 shadow-md"
-                type="button"
-                disabled={loading}
-              >
-                Register New Analysis
-              </button>
-            </div>
-          )}
+
+          <div>
+            <Input.Search
+              style={{ width: 150 }}
+              placeholder="Search"
+              size="middle"
+              onChange={(v) => setSearch(v.currentTarget.value.toLocaleLowerCase())}
+              allowClear
+            />
+            <button
+              onClick={() => setIsModalVisible(true)}
+              className="w-21 ml-2 h-9 border border-primary-8 bg-white px-4 py-2 text-sm font-bold text-primary-8 shadow-md"
+              type="button"
+              disabled={loading}
+            >
+              Register New Analysis
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
