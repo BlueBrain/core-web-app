@@ -6,9 +6,9 @@ import { ensureArray } from '@/util/nexus';
 import { createHeaders } from '@/util/utils';
 import { nexus } from '@/config';
 
-interface ResourceWithDistribution extends EntityResource {
+type ResourceWithDistribution = EntityResource<{
   distribution: Distribution | Distribution[];
-}
+}>;
 
 /** Fetch the file metadata for all distributions associated with a given Nexus resource. */
 async function fetchDistribution(selfId: string, session: Session) {

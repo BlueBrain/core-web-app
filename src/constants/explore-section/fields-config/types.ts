@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { FilterType } from '@/components/Filter/types';
-import { DeltaResource } from '@/types/explore-section/resources';
 import { MorphoMetricCompartment } from '@/types/explore-section/es-experiment';
 
 type TableCellAlign = 'left' | 'right' | 'center';
@@ -55,5 +54,3 @@ type NestedFieldConfig = {
   aggregationName: string;
   aggregationField: string;
 };
-
-export type DetailType = DeltaResource;

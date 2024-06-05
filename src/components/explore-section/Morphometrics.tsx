@@ -2,17 +2,18 @@ import { Divider } from 'antd';
 import startCase from 'lodash/startCase';
 import { MorphoMetricCompartment } from '@/types/explore-section/es-experiment';
 import { sourceMorphoMetricsAtom } from '@/state/explore-section/generalization';
-import { DetailType } from '@/constants/explore-section/fields-config/types';
+
 import { DataType } from '@/constants/explore-section/list-views';
 import { useMorphometrics } from '@/hooks/useMorphoMetrics';
 import { useUnwrappedValue } from '@/hooks/hooks';
+import { ExperimentResource } from '@/types/explore-section/delta-experiment';
 
 export default function Morphometrics({
   dataType,
   resource,
 }: {
   dataType: DataType;
-  resource: DetailType;
+  resource: ExperimentResource
 }) {
   const metrics = useUnwrappedValue(sourceMorphoMetricsAtom(resource['@id']));
 

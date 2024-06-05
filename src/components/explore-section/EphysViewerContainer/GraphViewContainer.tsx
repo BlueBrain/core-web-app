@@ -1,10 +1,10 @@
 import GraphViewComponent from './GraphViewComponent';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { EntityResource } from '@/types/nexus';
 
 interface GraphViewContainerProps {
   defaultStimulusType?: string;
   defaultRepetition?: string;
-  resource: DeltaResource;
+  resource: EntityResource;
 }
 
 function GraphViewContainer({

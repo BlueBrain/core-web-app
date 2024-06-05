@@ -1,7 +1,5 @@
 import { ReactNode, useEffect } from 'react';
 import Error from 'next/error';
-
-import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { useSetAtom } from 'jotai';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
@@ -10,24 +8,21 @@ import { DetailProps } from '@/types/explore-section/application';
 import DetailHeader from '@/components/explore-section/DetailHeader';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import usePathname from '@/hooks/pathname';
-import { DeltaResource } from '@/types/explore-section/resources';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
-type ExtendsExperiment<T> = T extends DeltaResource ? T : never;
-
-export default function Detail<T extends DeltaResource>({
+export default function Detail<T>({
   fields,
   children,
 }: {
   fields: DetailProps[];
-  children?: (detail: ExtendsExperiment<T>) => ReactNode;
+  children?: (detail: T) => ReactNode;
 }) {
   const setBrainRegionSidebarIsCollapsed = useSetAtom(brainRegionSidebarIsCollapsedAtom);
 
   const path = usePathname();
   const resourceInfo = useResourceInfoFromPath();
-  const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<ExtendsExperiment<T>>;
+  const detail = useLoadableValue(detailFamily(resourceInfo));
 
   useEffect(() => {
     setBrainRegionSidebarIsCollapsed(true);

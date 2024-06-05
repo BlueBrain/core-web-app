@@ -1,7 +1,7 @@
 import find from 'lodash/find';
 import { Subject } from '@/types/explore-section/resources';
 import {
-  Experiment,
+  ExperimentResource,
   ExperimentalBoutonDensity,
   ExperimentalLayerThickness,
   ExperimentalNeuronDensity,
@@ -38,7 +38,7 @@ export const ageSelectorFn = (subject: Subject | null): string => {
  * Takes delta resource and extracts subject age
  * @param {import("./types/explore-section/resources").DeltaResource} detail
  */
-export const subjectAgeSelectorFn = (detail: Experiment | null) => {
+export const subjectAgeSelectorFn = (detail: ExperimentResource | null) => {
   return ageSelectorFn(detail?.subject || null);
 };
 

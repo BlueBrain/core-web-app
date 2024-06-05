@@ -7,18 +7,18 @@ import isEqual from 'lodash/isEqual';
 
 import sessionAtom from '@/state/session';
 import { fetchResourceById, queryES } from '@/api/nexus';
-import { DeltaResource, Contributor, Subject } from '@/types/explore-section/resources';
+import { Contributor, Subject } from '@/types/explore-section/resources';
 import { Contributor as DeltaContributor } from '@/types/explore-section/delta-contributor';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
-  Experiment,
 } from '@/types/explore-section/delta-experiment';
 import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
 import { getLicenseByIdQuery } from '@/queries/es';
 import { licensesESView } from '@/config';
 import { subjectAgeSelectorFn, ageSelectorFn } from '@/util/explore-section/selector-functions';
+import { EntityResource } from '@/types/nexus';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
@@ -38,7 +38,7 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<any>>>(
   (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const resource = await fetchResourceById<DeltaResource>(info.id, session, {
+      const resource = await fetchResourceById(info.id, session, {
         org: info.org,
         project: info.project,
         rev: info.rev,
@@ -56,7 +56,7 @@ export const contributorsDataFamily = atomFamily<
   (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
+      const detail = await get(detailFamily(resourceInfo));
 
       if (!detail || !detail.contribution) return null;
 
@@ -99,7 +99,7 @@ export const latestRevisionFamily = atomFamily(
     atom<Promise<number | null>>(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
 
-      const latestRevision: DeltaResource = await fetchResourceById(
+      const latestRevision: EntityResource<{}> = await fetchResourceById(
         info.id,
         session,
         pick(info, ['org', 'project'])
@@ -109,18 +109,18 @@ export const latestRevisionFamily = atomFamily(
   isEqual
 );
 
-export const speciesDataFamily = atomFamily<ResourceInfo, Atom<Promise<Experiment | null>>>(
+export const speciesDataFamily = atomFamily<ResourceInfo, Atom<Promise<EntityResource | null>>>(
   (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
 
-      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
+      const detail = await get(detailFamily(resourceInfo));
 
       if (!detail || !detail.subject) return null;
 
       if (detail.subject?.species?.label) return detail;
 
-      const subject = await fetchResourceById<Experiment>(
+      const subject = await fetchResourceById(
         detail.subject['@id'],
         session,
         pick(info, ['org', 'project'])
@@ -136,7 +136,7 @@ export const subjectAgeDataFamily = atomFamily<ResourceInfo, Atom<Promise<string
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
 
-      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
+      const detail = await get(detailFamily(resourceInfo));
 
       if (!detail || !detail.subject) return null;
 

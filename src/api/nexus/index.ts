@@ -126,7 +126,7 @@ export function createTextFile(data: any, filename: string, session: Session) {
   return createFile(data, filename, contentType, session);
 }
 
-export async function fetchLatestRev(url: string, session: Session) {
+export async function fetchLatestRev<T>(url: string, session: Session) {
   const urlWithoutRev = url.replace(revParamRegexp, '');
 
   if (url.includes('/files/')) {
@@ -134,7 +134,7 @@ export async function fetchLatestRev(url: string, session: Session) {
     return metadata._rev;
   }
 
-  const resource = await fetchResourceById<EntityResource>(urlWithoutRev, session);
+  const resource = await fetchResourceById<EntityResource<T>>(urlWithoutRev, session);
   return resource._rev;
 }
 
@@ -237,11 +237,11 @@ export function listResourceLinksById<T>(
   }).then<T>((res) => res.json());
 }
 
-export function createResource<T extends EntityResource>(
+export function createResource<T>(
   resource: Record<string, any>,
   session: Session,
   url?: string
-): Promise<T> {
+): Promise<EntityResource<T>> {
   const createResourceApiUrl = url ?? composeUrl('resource', '', { sync: true, schema: null });
   // TODO: remove this while all entities do not have metadata in source
   const sanitizedResource = removeMetadata(resource);
@@ -250,15 +250,15 @@ export function createResource<T extends EntityResource>(
     method: 'POST',
     headers: createHeaders(session.accessToken),
     body: JSON.stringify(sanitizedResource),
-  }).then<T>((res) => res.json());
+  }).then((res) => res.json());
 }
 
-export async function updateResource(
-  resource: EntityResource,
+export async function updateResource<T>(
+  resource: EntityResource<T>,
   session: Session,
   rev?: number,
   sync: boolean = true
-): Promise<EntityResource> {
+): Promise<EntityResource<T>> {
   if (resource._createdBy && resource._createdBy.split('/').at(-1) !== session.user.username) {
     throw new Error('Trying to update resource created by another user');
   }
@@ -276,11 +276,11 @@ export async function updateResource(
   }).then((res) => res.json());
 }
 
-export async function deprecateResource(
-  resource: EntityResource,
+export async function deprecateResource<T>(
+  resource: EntityResource<T>,
   session: Session,
   options: ComposeUrlParams
-): Promise<EntityResource> {
+): Promise<EntityResource<T>> {
   const url = composeUrl('resource', resource['@id'], options);
 
   return fetch(url, {

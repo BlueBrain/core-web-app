@@ -2,15 +2,15 @@ import { DetailProps } from '@/types/explore-section/application';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import { classNames } from '@/util/utils';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
-import { DetailType } from '@/constants/explore-section/fields-config/types';
+import { EntityResource } from '@/types/nexus';
 
-type FieldProps = {
+type FieldProps<T> = {
   field: string;
   className?: string;
-  data: DetailType;
+  data: EntityResource<T>;
 };
 
-export function Field({ field, className, data }: FieldProps) {
+export function Field<T>({ field, className, data }: FieldProps<T>) {
   const fieldObj = EXPLORE_FIELDS_CONFIG[field];
 
   return (
@@ -23,13 +23,13 @@ export function Field({ field, className, data }: FieldProps) {
   );
 }
 
-export default function DetailHeader({
+export default function DetailHeader<T>({
   fields,
   detail,
   url,
 }: {
   fields: DetailProps[];
-  detail?: DetailType | undefined;
+  detail?: EntityResource<T>;
   url?: string | null;
 }) {
   if (!detail) return null;

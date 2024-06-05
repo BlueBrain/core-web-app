@@ -19,7 +19,8 @@ export interface ResourceMetadata {
   _updatedBy: string;
 }
 
-export interface EntityResource extends ResourceMetadata, Entity {}
+interface EntityBase extends ResourceMetadata, Entity {}
+export type EntityResource<T = any> = EntityBase & T
 
 export type FileMetadata = {
   '@id': string;

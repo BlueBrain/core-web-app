@@ -3,13 +3,13 @@ import { useMemo } from 'react';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import EphysPlot from '@/components/explore-section/EphysViewerContainer/EphysPlot';
-import { DeltaResource } from '@/types/explore-section/resources';
 import createDistributionDataAtom from '@/components/explore-section/EphysViewerContainer/state/DistributionDataAtom';
+import { EntityResource } from '@/types/nexus';
 
 interface GraphViewComponentProps {
   defaultStimulusType?: string;
   defaultRepetition?: string;
-  resource: DeltaResource;
+  resource: EntityResource;
 }
 
 function GraphViewComponent({

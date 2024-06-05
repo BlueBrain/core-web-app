@@ -7,7 +7,6 @@ import { loadable } from 'jotai/utils';
 import { useParams } from 'next/navigation';
 import BookmarkButton from './BookmarkButton';
 import { latestRevisionFamily } from '@/state/explore-section/detail-view-atoms';
-import { DeltaResource } from '@/types/explore-section/resources';
 import Link from '@/components/Link';
 import { InteractiveViewIcon } from '@/components/icons';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
@@ -15,13 +14,14 @@ import usePathname from '@/hooks/pathname';
 import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
+import { EntityResource } from '@/types/nexus';
 
 export default function DetailHeaderName({
   detail,
   url,
   withRevision,
 }: {
-  detail: DeltaResource;
+  detail: EntityResource;
   url?: string | null;
   withRevision?: boolean;
 }) {

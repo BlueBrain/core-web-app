@@ -1,7 +1,7 @@
-import { Experiment } from '@/types/explore-section/delta-experiment';
+import { ExperimentResource } from '@/types/explore-section/delta-experiment';
 
 type WeightFieldProps = {
-  detail: Experiment;
+  detail: ExperimentResource;
 };
 
 export default function WeightField({ detail }: WeightFieldProps) {

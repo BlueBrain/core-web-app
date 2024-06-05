@@ -13,13 +13,13 @@ import {
 } from './delta-properties';
 import { Distribution, EntityResource } from '@/types/nexus/common';
 
-type ExperimentResource = EntityResource & {
+export type ExperimentResource = EntityResource<{
   brainLocation: BrainLocation;
   contribution: Contribution;
   description: string;
   name: string;
   subject: Subject;
-};
+}>;
 
 export type ExperimentalBoutonDensity = ExperimentResource & {
   annotation: Annotation | Annotation[];
@@ -73,11 +73,3 @@ export type ReconstructedNeuronMorphology = ExperimentResource & {
   virus: string;
   version: number;
 };
-
-export type Experiment =
-  | ExperimentalBoutonDensity
-  | ExperimentalLayerThickness
-  | ExperimentalNeuronDensity
-  | ExperimentalSynapsesPerConnection
-  | ExperimentalTrace
-  | ReconstructedNeuronMorphology;

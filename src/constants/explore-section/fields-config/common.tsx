@@ -19,7 +19,7 @@ import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
-import { Experiment as DeltaExperiment } from '@/types/explore-section/delta-experiment';
+import { ExperimentResource } from '@/types/explore-section/delta-experiment';
 import { SimulationCampaign as DeltaSimulationCampaign } from '@/types/explore-section/delta-simulation-campaigns';
 import {
   ExemplarMorphologyDataType as ExemplarMorphologyEModel,
@@ -78,7 +78,7 @@ export const previewRender = ({
 };
 
 export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
-  DeltaExperiment | DeltaSimulationCampaign
+  ExperimentResource | DeltaSimulationCampaign
 > = {
   [Field.Preview]: {
     className: 'text-center',

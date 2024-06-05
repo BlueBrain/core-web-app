@@ -3,12 +3,11 @@ import { EXPERIMENTAL_DATA_FIELDS_CONFIG } from '@/constants/explore-section/fie
 import { LITERATURE_FIELDS_CONFIG } from '@/constants/explore-section/fields-config/literature';
 import { SIMULATION_CAMPAIGN_FIELDS_CONFIG } from '@/constants/explore-section/fields-config/simulation-campaign';
 import { COMMON_FIELDS_CONFIG } from '@/constants/explore-section/fields-config/common';
-import { DeltaResource } from '@/types/explore-section/resources';
 import { MODEL_DATA_FIELDS_CONFIG } from '@/constants/explore-section/fields-config/model-data';
 
 // TODO: See comment in ./src/constants/explore-section/fields-config/literature.tsx
 // (regarding what to do about this "any" type below)
-const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps<any | DeltaResource> = {
+const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps<any> = {
   ...COMMON_FIELDS_CONFIG,
   ...EXPERIMENTAL_DATA_FIELDS_CONFIG,
   ...LITERATURE_FIELDS_CONFIG,

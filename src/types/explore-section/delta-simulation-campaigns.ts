@@ -24,7 +24,7 @@ type Parameter = {
   coords: ParameterCoords;
 };
 
-export type Simulation = EntityResource & {
+export type Simulation = EntityResource<{
   completedAt: DateISOString; // TODO: Check: Does this field really exist? Is it leftover from a previous type of Simulation?
   dimensions: Record<string, number>; // TODO: Verify where this prop comes from.
   endedAt: DateISOString; // TODO: Check: Does this field really exist? Is it leftover from a previous type of Simulation?
@@ -37,7 +37,7 @@ export type Simulation = EntityResource & {
   status: SimulationStatus;
   title: string; // TODO: Verify where this prop comes from.
   wasGeneratedBy: IdWithType;
-};
+}>;
 
 export type SimCampSims = Type & {
   contentSize: ContentSize;
@@ -46,16 +46,16 @@ export type SimCampSims = Type & {
   encodingFormat: string;
 };
 
-export type SimulationCampaign = EntityResource & {
+export type SimulationCampaign = EntityResource<{
   description: string;
   brainConfiguration: string;
   name: string;
   parameter: Parameter;
   simulations: SimCampSims;
   wasGeneratedBy: IdWithType;
-};
+}>;
 
-export type SimulationCampaignExecution = EntityResource & {
+export type SimulationCampaignExecution = EntityResource<{
   endedAtTime: string;
   generated: IdWithType;
   startedAtTime: string;
@@ -64,6 +64,4 @@ export type SimulationCampaignExecution = EntityResource & {
   used_config: IdWithType;
   used_rev: number;
   wasInfluencedBy: IdWithType;
-};
-
-export type SimulationResource = SimulationCampaign | Simulation;
+}>;

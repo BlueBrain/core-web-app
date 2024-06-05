@@ -1,8 +1,6 @@
 import { NeuriteFeature } from '@/types/explore-section/delta-neurite-feature';
 import { ExploreESResponse, ExploreResource } from '@/types/explore-section/es';
 import { Contributor as DeltaContributor } from '@/types/explore-section/delta-contributor';
-import { Experiment as DeltaExperiment } from '@/types/explore-section/delta-experiment';
-import { SimulationResource as DeltaSimulationResource } from '@/types/explore-section/delta-simulation-campaigns';
 import { Image, Subject as DeltaSubject } from '@/types/explore-section/delta-properties';
 
 export type ExploreSectionResource = ExploreResource;
@@ -22,13 +20,11 @@ export interface ESResponseRaw {
 export type Source = ExploreResource;
 
 // Below is the delta response interface definitions
-export type DeltaResource = (DeltaExperiment | DeltaSimulationResource) & {
-  reason?: string;
-};
+export type DeltaResource<T> = T & { reason?: string };
 
 export type Subject = DeltaSubject;
 
-export type SerializedDeltaResource = DeltaExperiment & {
+export type SerializedDeltaResource<T> = T & {
   neuriteFeature?: NeuriteFeature[];
 };
 
