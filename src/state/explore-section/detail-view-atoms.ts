@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual';
 
 import sessionAtom from '@/state/session';
 import { fetchResourceById, queryES } from '@/api/nexus';
-import { Contributor, Subject } from '@/types/explore-section/resources';
+import { Contributor, DeltaResource, Subject } from '@/types/explore-section/resources';
 import { Contributor as DeltaContributor } from '@/types/explore-section/delta-contributor';
 import {
   ExperimentalTrace,
@@ -34,7 +34,7 @@ export const sessionAndInfoFamily = atomFamily(
   isEqual
 );
 
-export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>>>(
+export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource<any>>>>(
   (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
