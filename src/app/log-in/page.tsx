@@ -15,7 +15,7 @@ export default function Page() {
     <>
       <OBPLogo className="absolute left-10 top-10" color="text-white" />
       <div className="flex flex-col gap-8">
-        <div className="text-2xl font-bold text-white">Log in to with:</div>
+        <div className="text-2xl font-bold text-white">Log in with:</div>
         <ConfigProvider
           theme={{
             components: {
