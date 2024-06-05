@@ -140,7 +140,7 @@ deploy-aws-prod:
     NEXT_PUBLIC_BASE_PATH: /mmb-beta
     NEXT_PUBLIC_NEXUS_URL: https://sbo-nexus-delta.shapes-registry.org/v1
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
-    NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_TAG: 1.14.2
+    NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_TAG: v1.14.2
     NEXT_PUBLIC_ATLAS_ES_VIEW_ID: https://bbp.epfl.ch/neurosciencegraph/data/420e53b8-db21-4f70-a534-d799c4b59b5d
     NEXT_PUBLIC_KG_INFERENCE_BASE_URL: https://kg-inference-api.shapes-registry.org
     NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL: https://openbrainplatform.org/api/thumbnail-generation
