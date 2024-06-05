@@ -3,6 +3,7 @@ import { ExploreESResponse, ExploreResource } from '@/types/explore-section/es';
 import { Contributor as DeltaContributor } from '@/types/explore-section/delta-contributor';
 import { Experiment as DeltaExperiment } from '@/types/explore-section/delta-experiment';
 import { SimulationResource as DeltaSimulationResource } from '@/types/explore-section/delta-simulation-campaigns';
+import { Model as DeltaModel } from '@/types/explore-section/delta-model';
 import { Image, Subject as DeltaSubject } from '@/types/explore-section/delta-properties';
 
 export type ExploreSectionResource = ExploreResource;
@@ -22,7 +23,7 @@ export interface ESResponseRaw {
 export type Source = ExploreResource;
 
 // Below is the delta response interface definitions
-export type DeltaResource = (DeltaExperiment | DeltaSimulationResource) & {
+export type DeltaResource = (DeltaExperiment | DeltaSimulationResource | DeltaModel) & {
   reason?: string;
 };
 
