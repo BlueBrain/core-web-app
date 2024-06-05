@@ -23,10 +23,13 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
     setProjectTopMenuRef(localRef);
   }, [localRef, setProjectTopMenuRef]);
 
-  const btnClassName = classNames(
-    'w-52 p-4 font-bold',
-    ghost ? 'bg-transparent' : 'bg-primary-8 border border-primary-7'
-  );
+  const getMenuButtonClassName = (
+    ghost: boolean // eslint-disable-line
+  ) =>
+    classNames(
+      'w-52 p-4 font-bold',
+      ghost ? 'bg-transparent' : 'bg-primary-8 border border-primary-7'
+    );
 
   return (
     <div className={classNames('flex h-14 w-full justify-between overflow-y-visible', className)}>
@@ -45,7 +48,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
           },
         ].map(({ children, href, key }) => (
           <Link
-            className={classNames(btnClassName, 'border border-primary-7')}
+            className={classNames(getMenuButtonClassName(ghost), 'border border-primary-7')}
             href={href}
             key={key}
           >
@@ -61,10 +64,10 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
           >
             <div
               className={classNames(
-                btnClassName,
-                'flex flex-row justify-between  border border-primary-7'
+                getMenuButtonClassName(expanded ? false : ghost),
+                'flex flex-row justify-between  border border-primary-7 transition-all ease-in-out'
               )}
-              style={{ padding: '13px' }}
+              style={{ padding: '13px', transitionDuration: '3000ms' }}
               onMouseEnter={() => {
                 if (expanded) return;
                 setExpanded(true);
@@ -73,28 +76,30 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
               <span className="font-bold">{session?.user.name}</span>
               <UserOutlined className="mr-2 text-primary-4" />
             </div>
-            {expanded && (
-              <>
-                <div
-                  className={classNames(
-                    btnClassName,
-                    'flex flex-row justify-between  border border-t-0 border-primary-7'
-                  )}
-                >
-                  <span className="font-bold">Account</span>
-                </div>
-                <button
-                  type="button"
-                  className={classNames(
-                    btnClassName,
-                    'flex flex-row justify-between  border border-t-0 border-primary-7'
-                  )}
-                  onClick={() => signOut({ callbackUrl: `${basePath}/log-in` })}
-                >
-                  <span className="font-bold">Log out</span>
-                </button>
-              </>
-            )}
+
+            <div
+              className="relative z-20 transition-all ease-in-out"
+              style={{ opacity: Number(expanded), transitionDuration: '3000ms' }}
+            >
+              <div
+                className={classNames(
+                  getMenuButtonClassName(false),
+                  'flex flex-row justify-between  border border-t-0 border-primary-7'
+                )}
+              >
+                <span className="font-bold">Account</span>
+              </div>
+              <button
+                type="button"
+                className={classNames(
+                  getMenuButtonClassName(false),
+                  'flex flex-row justify-between  border border-t-0 border-primary-7'
+                )}
+                onClick={() => signOut({ callbackUrl: `${basePath}/log-in` })}
+              >
+                <span className="font-bold">Log out</span>
+              </button>
+            </div>
           </div>
         )}
 

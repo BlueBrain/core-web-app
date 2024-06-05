@@ -35,7 +35,7 @@ export default function VirtualLabBanner({
           backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
         }}
       />
-      <div className="z-[1000] flex flex-row justify-between">
+      <div className="z-10 flex flex-row justify-between">
         <div className="flex max-w-[70%] flex-col gap-2">
           <div>
             <div className="text-primary-2">{supertitle}</div>
