@@ -21,7 +21,7 @@ export const segNamesAtom = atom<string[]>(['soma[0]', 'axon[1]']);
 
 export const simulationResultsAtom = atom([1]);
 
-export const singleNeuronIdAtom = atom<string | null>('123');
+export const singleNeuronIdAtom = atom<string | null>(null);
 
 export const simulationStatusAtom = atom({
   launched: false,

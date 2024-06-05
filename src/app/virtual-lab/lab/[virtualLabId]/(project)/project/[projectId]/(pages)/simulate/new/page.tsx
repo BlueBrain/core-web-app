@@ -9,14 +9,14 @@ import { ServerSideComponentProp } from '@/types/common';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
-import { modelIdAtom } from '@/state/virtual-lab/simulate/blue-naas';
+import { singleNeuronIdAtom } from '@/state/simulate/single-neuron';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
-  const setSelectedModelId = useSetAtom(modelIdAtom);
+  const setSelectedModelId = useSetAtom(singleNeuronIdAtom);
   const router = useRouter();
 
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {

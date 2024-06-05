@@ -18,12 +18,12 @@ import {
   secNamesAtom,
   segNamesAtom,
   simulationConfigAtom,
+  singleNeuronIdAtom,
 } from '@/state/simulate/single-neuron';
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { getUUIDFromId } from '@/util/nexus';
-import { modelIdAtom } from '@/state/virtual-lab/simulate/blue-naas';
 
 const baseBannerStyle =
   'flex h-full items-center justify-center text-4xl bg-gray-950 text-gray-100';
@@ -182,7 +182,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 }
 
 export default function EModelInteractiveView() {
-  const modelId = useAtomValue(modelIdAtom);
+  const modelId = useAtomValue(singleNeuronIdAtom);
 
   const modelUUID = getUUIDFromId(modelId);
 
