@@ -8,6 +8,7 @@ import {
 } from '@/api/ontologies/types';
 import { composeUrl } from '@/util/nexus';
 import { brainRegionOntologyResource } from '@/config';
+import { Distribution } from '@/types/nexus';
 
 /**
  * Sanitizes the leaves in order to be in a uniform format. Leaves sometimes are
@@ -95,11 +96,35 @@ export const serializeBrainRegionOntologyViews = (
  * @param accessToken
  */
 const getBrainRegionOntology = async (accessToken: string): Promise<BrainRegionOntology> => {
-  const { id, org, project } = brainRegionOntologyResource;
+  const { id, org, project, tag } = brainRegionOntologyResource;
 
-  const url = composeUrl('resource', id, { org, project, source: true });
+  const url = composeUrl('resource', id, { org, project, source: true, tag });
   return fetch(url, { headers: createHeaders(accessToken) })
-    .then((r) => r.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Brain region ontology could not be retrieved');
+      }
+      return response.json();
+    })
+    .then((resource) => {
+      const distribution = resource.distribution.find(
+        (dist: Distribution) => dist.encodingFormat === 'application/ld+json'
+      );
+      if (!distribution) {
+        throw new Error('Distribution not found in brain region ontology');
+      }
+
+      return fetch(distribution.contentUrl, {
+        method: 'GET',
+        headers: createHeaders(accessToken, { Accept: '*/*' }),
+      });
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Brain region ontology file could not be retrieved');
+      }
+      return response.json();
+    })
     .then((response) => {
       const brainRegionsResponse = serializeBrainRegionsAndVolumes(response.defines);
       return {
