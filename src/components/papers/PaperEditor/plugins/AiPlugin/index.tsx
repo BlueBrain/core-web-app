@@ -12,10 +12,11 @@ import { computePosition } from '@floating-ui/core';
 import { platform } from '@floating-ui/dom';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getSelection, $isRangeSelection } from 'lexical';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
-import { AI_EXPAND_FAILED, AI_SUMMARIZE_FAILED } from '../../../utils/messages';
-import isSelectionEntireParagraph from '../../../utils/isSelectionInParagraph';
 import usePointerDown from './usePointerDown';
+import { AI_EXPAND_FAILED, AI_SUMMARIZE_FAILED } from '@/components/papers/utils/messages';
 import { classNames } from '@/util/utils';
 import { TextdirectionVertical, TextdirectionLToR } from '@/components/icons/EditorIcons';
 import useNotification from '@/hooks/notifications';
@@ -38,7 +39,7 @@ function AiCommandButton({ title, icon, onClick, className }: AiCommandButtonPro
       type="button"
       onClick={onClick}
       className={classNames(
-        'group flex items-center justify-center gap-px rounded-none px-2 py-1 hover:bg-gray-100',
+        'group flex items-center justify-center gap-2 rounded-none px-2 py-1 hover:bg-gray-100',
         className
       )}
     >
@@ -52,10 +53,13 @@ const AiCommands = forwardRef<HTMLDivElement, AiCommandsProps>(({ pos }, ref) =>
   const [editor] = useLexicalComposerContext();
   const displayFloatMenu = pos !== undefined;
   const { error: errorNotify } = useNotification();
+  const [isExpanding, setIsExpanding] = useState(false);
+  const [IsSummarizing, setIsSummarizing] = useState(false);
 
   const onSummarizeCommand = async () => {
     const selectionText = editor.getEditorState().read(() => $getSelection()?.getTextContent());
     if (selectionText) {
+      setIsSummarizing(true);
       try {
         const response = await handleAiSummarizeParagraph(selectionText);
         editor.update(() => {
@@ -64,6 +68,8 @@ const AiCommands = forwardRef<HTMLDivElement, AiCommandsProps>(({ pos }, ref) =>
         });
       } catch (error) {
         errorNotify(AI_SUMMARIZE_FAILED, undefined, 'topRight');
+      } finally {
+        setIsSummarizing(false);
       }
     }
   };
@@ -71,6 +77,7 @@ const AiCommands = forwardRef<HTMLDivElement, AiCommandsProps>(({ pos }, ref) =>
   const onExpandCommand = async () => {
     const selectionText = editor.getEditorState().read(() => $getSelection()?.getTextContent());
     if (selectionText) {
+      setIsExpanding(true);
       try {
         const response = await handleAiExpandParagraph(selectionText);
         editor.update(() => {
@@ -79,6 +86,8 @@ const AiCommands = forwardRef<HTMLDivElement, AiCommandsProps>(({ pos }, ref) =>
         });
       } catch (error) {
         errorNotify(AI_EXPAND_FAILED, undefined, 'topRight');
+      } finally {
+        setIsExpanding(false);
       }
     }
   };
@@ -97,14 +106,26 @@ const AiCommands = forwardRef<HTMLDivElement, AiCommandsProps>(({ pos }, ref) =>
       <div className="flex items-center justify-between border border-gray-300">
         <AiCommandButton
           title="Expand"
-          icon={<TextdirectionVertical className="h-5 w-5 text-primary-9" />}
+          icon={
+            isExpanding ? (
+              <Spin indicator={<LoadingOutlined className="text-sm" spin />} />
+            ) : (
+              <TextdirectionVertical className="h-5 w-5 text-primary-9" />
+            )
+          }
           className="w-24 min-w-max"
           onClick={onExpandCommand}
         />
         <AiCommandButton
           title="Summarize"
           onClick={onSummarizeCommand}
-          icon={<TextdirectionLToR className="h-5 w-5 text-primary-9" />}
+          icon={
+            IsSummarizing ? (
+              <Spin indicator={<LoadingOutlined className="text-sm" spin />} />
+            ) : (
+              <TextdirectionLToR className="h-5 w-5 text-primary-9" />
+            )
+          }
           className="w-24 min-w-max"
         />
       </div>
@@ -145,11 +166,8 @@ export default function FloatAiCommandsPlugin() {
     }
     const selection = $getSelection();
 
-    // console.log('@@selection', selection)
     if ($isRangeSelection(selection) && !selection.anchor.is(selection.focus)) {
-      if ($isRangeSelection(selection) && isSelectionEntireParagraph()) {
-        calculateAiCommandsPosition();
-      }
+      calculateAiCommandsPosition();
     } else {
       updateAiPos(undefined);
     }

@@ -4,12 +4,16 @@ import { Button, ConfigProvider, Table } from 'antd';
 import Link from 'next/link';
 import { ColumnsType } from 'antd/es/table';
 import { useRouter } from 'next/navigation';
+import { CheckOutlined } from '@ant-design/icons';
+import delay from 'lodash/delay';
 
 import { PaperResource } from '@/types/nexus';
 import { CopyIconOutline } from '@/components/icons/CopyIcon';
 import { EditIconOutline } from '@/components/icons/Edit';
 import { EyeIconOutline } from '@/components/icons/EyeIcon';
 import { paperHrefGenerator } from '@/services/paper-ai/utils';
+import { to64 } from '@/util/common';
+import { useCopyToClipboard } from '@/hooks/useCopyClipboard';
 
 type PaperListViewProps = {
   papers: Array<PaperResource>;
@@ -18,8 +22,17 @@ type PaperListViewProps = {
 
 export default function PaperListView({ papers, total }: PaperListViewProps) {
   const { push: redirect } = useRouter();
-  const onEdit = (_: PaperResource) => () => {};
-  const onCopy = (_: PaperResource) => () => {};
+  const [copiedPaper, copyPaper, resetCopy] = useCopyToClipboard();
+
+  const onEdit = (paper: PaperResource) => () => {
+    redirect(`${paperHrefGenerator(paper)}?mode=edit`);
+  };
+
+  const onCopy = (paper: PaperResource) => async () => {
+    await copyPaper(`${window.location}/${to64(paper['@id'])}`);
+    delay(resetCopy, 1000);
+  };
+
   const onView = (paper: PaperResource) => () => redirect(paperHrefGenerator(paper));
 
   const columns: ColumnsType<PaperResource> = [
@@ -56,13 +69,20 @@ export default function PaperListView({ papers, total }: PaperListViewProps) {
       key: 'actions',
       width: 'max-content',
       render: (_, paper) => {
+        const paperUrl = `${window.location}/${to64(paper['@id'])}`;
         return (
           <div className="flex items-center justify-center gap-1">
             <Button
               size="small"
               htmlType="button"
               type="link"
-              icon={<CopyIconOutline />}
+              icon={
+                copiedPaper === paperUrl ? (
+                  <CheckOutlined className="text-teal-600" />
+                ) : (
+                  <CopyIconOutline />
+                )
+              }
               onClick={onCopy(paper)}
             />
             <Button

@@ -3,11 +3,13 @@
 import dynamic from 'next/dynamic';
 import { SerializedEditorState } from 'lexical/LexicalEditorState';
 import { Button, Popconfirm, message } from 'antd';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useSetAtom } from 'jotai';
+import { ErrorBoundary } from '@sentry/nextjs';
 
 import { DELETE_PAPER_FAILED } from '../utils/messages';
+import EditorFallbackErrorComponent from './FallbackError';
 import PaperDetails from './PaperDetails';
 import { DeleteOutline, EditDocument } from '@/components/icons/EditorIcons';
 import { PaperResource } from '@/types/nexus';
@@ -23,7 +25,10 @@ export default function PaperView({
   config: SerializedEditorState;
   paper: PaperResource;
 }) {
-  const [editable, toggleDetailEditable] = useState(false);
+  const [mode, toggleEditableMode] = useQueryState(
+    'mode',
+    parseAsString.withDefault('').withOptions({ clearOnDefault: true })
+  );
   const [fromRoute, setFromRoute] = useQueryState(
     'from',
     parseAsString.withDefault('').withOptions({ clearOnDefault: true })
@@ -48,14 +53,14 @@ export default function PaperView({
   };
 
   useEffect(() => {
-    if (fromRoute) {
+    if (fromRoute && fromRoute === 'create') {
       refreshPapersCount();
       setFromRoute('');
     }
   }, [fromRoute, refreshPapersCount, setFromRoute]);
 
-  const onEditPaper = () => toggleDetailEditable(true);
-  const onCompleteEdit = () => toggleDetailEditable(false);
+  const onEditPaper = () => toggleEditableMode('edit');
+  const onCompleteEdit = () => toggleEditableMode('');
 
   return (
     <div
@@ -66,7 +71,7 @@ export default function PaperView({
         <div className="w-full bg-white px-8 py-4">
           <div className="mt-4 flex items-center justify-end bg-white">
             <div className="flex items-center justify-center gap-4">
-              {!editable && (
+              {mode !== 'edit' && (
                 <Button
                   htmlType="button"
                   type="text"
@@ -106,11 +111,19 @@ export default function PaperView({
               </Popconfirm>
             </div>
           </div>
-          <PaperDetails {...{ editable, paper, onCompleteEdit }} />
+          <PaperDetails
+            {...{
+              paper,
+              onCompleteEdit,
+              editable: mode === 'edit',
+            }}
+          />
         </div>
-        <div className="w-full flex-grow bg-white px-8 py-4">
-          <Editor {...{ config, paper }} />
-        </div>
+        <ErrorBoundary fallback={EditorFallbackErrorComponent}>
+          <div className="w-full flex-grow bg-white px-8 py-4">
+            <Editor {...{ config, paper }} />
+          </div>
+        </ErrorBoundary>
       </div>
     </div>
   );

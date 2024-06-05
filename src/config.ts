@@ -48,6 +48,7 @@ export const brainRegionOntologyResource = {
   org: env.NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_ORG,
   project: env.NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_PROJECT,
   id: env.NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_ID,
+  tag: env.NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_TAG,
 };
 
 export const atlasReleaseResource = {
