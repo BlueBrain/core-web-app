@@ -24,6 +24,7 @@ export default async function VirtualLabDetail({ id }: { id?: string }) {
         total={virtualLabDetail && virtualLabDetail.budget}
         totalSpent={300}
         remaining={350}
+        suspended={!virtualLabDetail}
       />
     </>
   );
