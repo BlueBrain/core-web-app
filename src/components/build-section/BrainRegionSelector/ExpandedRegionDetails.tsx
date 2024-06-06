@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
 
-import { unwrap } from 'jotai/utils';
+import { loadable, unwrap } from 'jotai/utils';
 
 import { getMetric } from './util';
 import { handleNavValueChange } from '@/components/BrainTree/util';
@@ -25,6 +25,7 @@ import { METypeItem } from '@/components/common/METypeHierarchy/METypeTreeItem/t
 import { SelectedBrainRegionTitle } from '@/components/common/METypeHierarchy/SelectedBrainRegionTitle';
 import { NoCompositionAvailable } from '@/components/common/METypeHierarchy/NoCompositionAvailable';
 import { metricToUnit } from '@/components/common/METypeHierarchy/MetricToUnit';
+import { useLoadable } from '@/hooks/hooks';
 
 function MeTypeDetails({
   neuronComposition,
@@ -167,7 +168,7 @@ function ExpandedRegionDetails({
 }) {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
-  const composition = useAtomValue(analysedCompositionAtom);
+  const composition = useLoadable(loadable(analysedCompositionAtom), null);
   const isConfigEditable = useAtomValue(isConfigEditableAtom);
   const [meTypeNavValue, setNavValue] = useState<NavValue>({});
   const meTypesMetadata = useAtomValue(useMemo(() => unwrap(cellTypesByIdAtom), []));

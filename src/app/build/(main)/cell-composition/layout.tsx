@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState, Suspense } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -43,11 +43,18 @@ export default function CellCompositionLayout({ children }: CellCompositionLayou
 
   return (
     <>
-      {brainRegionDetails}
+      <Suspense fallback={null}>
+        {brainRegionDetails}
+      </Suspense>
 
-      <CellCompositionTabs />
+      <Suspense fallback={null}>
+        <CellCompositionTabs />
+      </Suspense>
 
-      {children}
+      <Suspense fallback={null}>
+        {children}
+      </Suspense>
+
     </>
   );
 }
