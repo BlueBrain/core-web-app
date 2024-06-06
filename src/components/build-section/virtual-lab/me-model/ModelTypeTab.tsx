@@ -27,13 +27,13 @@ const tabs: TabInfo[] = [
     link: '/build/me-model/morphology/reconstructed',
     name: 'Morphology',
     sectionName: 'morphology',
-    description: 'Fusce Aenean Vulputate Ultricies',
+    description: 'Select a morphology to use for the single neuron model.',
   },
   {
     link: '/build/me-model/electrophysiology',
     name: 'Electrophysiology',
     sectionName: 'electrophysiology',
-    description: 'Fusce Aenean Vulputate Ultricies',
+    description: 'Select an electrical model to use for the single neuron model.',
   },
 ];
 
