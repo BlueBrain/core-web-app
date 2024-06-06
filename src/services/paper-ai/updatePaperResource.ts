@@ -1,6 +1,8 @@
 'use server';
 
 import { revalidatePath, revalidateTag } from 'next/cache';
+import uniqBy from 'lodash/uniqBy';
+import { captureException } from '@sentry/nextjs';
 
 import { PaperUpdateAction, PaperUpdateSchema } from './validation';
 import { paperHrefGenerator, papersListTagGenerator } from './utils';
@@ -53,7 +55,7 @@ export default async function updatePaperDetails(
             ...paper,
             name: title,
             description: summary,
-            sourceData,
+            sourceData: uniqBy([...paper.sourceData, ...(sourceData || [])], 'id'),
           }) as EntityResource
         ),
         cache: 'no-store',
@@ -62,9 +64,13 @@ export default async function updatePaperDetails(
 
     if (!response.ok) {
       const errorResponse = await response.json();
+      // eslint-disable-next-line no-console
+      console.log('[ERROR][UPDATE_PAPER][DELTA]', errorResponse);
       if ('reason' in errorResponse) {
+        captureException(new Error(errorResponse));
         throw new Error(errorResponse.reason);
       }
+      captureException(new Error('Failed to update paper details'));
       throw new Error('Failed to update paper details');
     }
 
@@ -88,10 +94,13 @@ export default async function updatePaperDetails(
       validationErrors: null,
       error: null,
     };
-  } catch (err: any) {
+  } catch (error: any) {
+    // eslint-disable-next-line no-console
+    console.log('[ERROR][UPDATE_PAPER]', error);
+    captureException(error);
     return {
       type: 'error',
-      error: (err as Error).message,
+      error: (error as Error).message,
       validationErrors: null,
     };
   }

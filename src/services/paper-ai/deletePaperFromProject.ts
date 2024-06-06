@@ -2,6 +2,7 @@
 
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { captureException } from '@sentry/nextjs';
 
 import { papersListTagGenerator } from './utils';
 import { deprecateResource } from '@/api/nexus';
@@ -30,7 +31,8 @@ export default async function deletePaperFromProject({ paper }: { paper: PaperRe
     );
     shouldRedirect = true;
   } catch (error) {
-    throw Error('deprecation failed');
+    captureException(new Error(`Resource deprecation failed`));
+    throw Error('Resource deprecation failed');
   }
 
   if (shouldRedirect) {

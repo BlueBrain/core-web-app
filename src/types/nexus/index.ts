@@ -1,4 +1,5 @@
 import { Entity, Distribution, ResourceMetadata, DateISOString } from './common';
+import { SourceDataItem } from '@/components/papers/PaperCreationView/data';
 import { MacroConnectomeEditEntry, SerialisibleMicroConnectomeEditEntry } from '@/types/connectome';
 import { MModelWorkflowOverrides } from '@/types/m-model';
 
@@ -720,6 +721,8 @@ export interface Paper extends Entity {
   virtualLabId: string;
   projectId: string;
   distribution: Distribution;
+  sourceData: Array<SourceDataItem>;
+  generateOutline: boolean;
 }
 
 export interface PaperResource extends ResourceMetadata, Paper {}
