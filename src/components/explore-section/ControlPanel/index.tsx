@@ -223,7 +223,7 @@ export default function ControlPanel({
   return (
     <div
       data-testid="listing-view-filter-panel"
-      className="fixed right-0 top-0 z-10 flex min-h-screen w-[480px] shrink-0 flex-col space-y-4 overflow-y-auto bg-primary-8 pl-8 pr-16 pt-6"
+      className="fixed right-0 top-0 z-10 flex h-full min-h-screen w-[480px] shrink-0 flex-col space-y-4 overflow-y-auto bg-primary-8 pl-8 pr-16 pt-6"
     >
       <div>
         <button

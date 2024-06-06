@@ -33,21 +33,24 @@ const initialCompositionAtom = atom<Promise<OriginalComposition | null>>(async (
   const session = get(sessionAtom);
 
   if (!session) return null;
+  try {
+    const compositionPayload = await get(configPayloadAtom);
 
-  const compositionPayload = await get(configPayloadAtom);
-  if (compositionPayload) {
-    // TODO: create a focus-/selectAtom under cell-composition state to directly contain configuration
-    const config = Object.values(compositionPayload)[0].configuration;
-
-    // This is a safeguard to discard and eventually overwrite configurations of older format.
-    if (config.unitCode) {
-      return {
-        version: config.version,
-        unitCode: config.unitCode,
-        hasPart: config.overrides,
-      } as unknown as OriginalComposition;
-      // TODO: add composition converter: internal representation <-> KG format, remove type casting
+    if (compositionPayload) {
+      // TODO: create a focus-/selectAtom under cell-composition state to directly contain configuration
+      const config = Object.values(compositionPayload)[0].configuration;
+      // This is a safeguard to discard and eventually overwrite configurations of older format.
+      if (config.unitCode) {
+        return {
+          version: config.version,
+          unitCode: config.unitCode,
+          hasPart: config.overrides,
+        } as unknown as OriginalComposition;
+        // TODO: add composition converter: internal representation <-> KG format, remove type casting
+      }
     }
+  } catch (e) {
+    return getCompositionData(session.accessToken);
   }
 
   return getCompositionData(session.accessToken);
