@@ -1,11 +1,11 @@
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useSetAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
 import { Button } from '../Button';
 import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
 import useNotification from '@/hooks/notifications';
 import { classNames } from '@/util/utils';
-import { useRouter } from 'next/navigation';
 import { createVirtualLab } from '@/services/virtual-lab/labs';
 import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 import { refreshAtom } from '@/state/virtual-lab/lab';
