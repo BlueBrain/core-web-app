@@ -8,3 +8,8 @@ export type Bookmark = {
 export type BookmarksByCategory = {
   [key in DataType]: Bookmark[];
 };
+
+export type BulkRemoveBookmarksResponse = {
+  successfully_deleted: Bookmark[];
+  failed_to_delete: Bookmark[];
+};
