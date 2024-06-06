@@ -62,7 +62,7 @@ export default function VirtualLabSandboxHomePage() {
       <VirtualLabBanner
         id="test"
         name="Welcome to Blue Brain Open Platform"
-        description="Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Aenean lacinia bibendum nulla sed consectetur. Donec id elit non mi porta gravida at eget metus. Vestibulum id ligula porta felis euismod semper. Maecenas faucibus mollis interdum."
+        description="This is a space open to all interested in exploring the 3D atlas of the mouse brain at a scientific, biologically realistic, multiscale level. Here you can explore the datasets of single neurons, models, and in silico simulations prepared from experimental laboratories or developed over the past two decades by the Blue Brain Project and its collaborators. Whether you are an independent researcher or a neuroscience student without an institutional account, you can explore datasets and view models and simulations."
         bottomElements={<SandboxStatistics />}
         supertitle={null}
       />
