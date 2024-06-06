@@ -99,6 +99,9 @@ module.exports = {
         '20vh': '20vh',
         '25vh': '25vh',
       },
+      listStyleType: {
+        square: 'square',
+      },
       boxShadow: {
         strongImage: '0px 22px 22px -16px rgba(0,0,0,0.36)',
       },
