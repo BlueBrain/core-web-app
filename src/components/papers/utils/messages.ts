@@ -12,3 +12,7 @@ export const EDIT_PAPER_SUCCESS =
   'Your paper has been successfully updated. All your recent changes are secure!';
 export const EDIT_PAPER_FAILED =
   'Oops! Something went wrong while trying to update the paper details, Please try again later.';
+export const DELETE_SOURCE_DATA_SUCCESS =
+  'The source $$ has been successfully removed from the list.';
+export const DELETE_SOURCE_DATA_FAILED =
+  'Unable to delete $$ due to an error. Please check and try again.';

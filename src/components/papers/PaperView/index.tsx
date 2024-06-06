@@ -2,9 +2,9 @@
 
 import dynamic from 'next/dynamic';
 import { SerializedEditorState } from 'lexical/LexicalEditorState';
-import { Button, Popconfirm, message } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import { useEffect, useTransition } from 'react';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsString, useQueryStates } from 'nuqs';
 import { useSetAtom } from 'jotai';
 import { ErrorBoundary } from '@sentry/nextjs';
 
@@ -15,6 +15,7 @@ import { DeleteOutline, EditDocument } from '@/components/icons/EditorIcons';
 import { PaperResource } from '@/types/nexus';
 import { virtualLabProjectPapersCountAtomFamily } from '@/state/virtual-lab/projects';
 import deletePaperFromProject from '@/services/paper-ai/deletePaperFromProject';
+import useNotification from '@/hooks/notifications';
 
 const Editor = dynamic(() => import('@/components/papers/PaperEditor'), { ssr: false });
 
@@ -25,14 +26,11 @@ export default function PaperView({
   config: SerializedEditorState;
   paper: PaperResource;
 }) {
-  const [mode, toggleEditableMode] = useQueryState(
-    'mode',
-    parseAsString.withDefault('').withOptions({ clearOnDefault: true })
-  );
-  const [fromRoute, setFromRoute] = useQueryState(
-    'from',
-    parseAsString.withDefault('').withOptions({ clearOnDefault: true })
-  );
+  const [{ from: fromRoute, mode }, updateQueryParams] = useQueryStates({
+    mode: parseAsString.withDefault('').withOptions({ clearOnDefault: true }),
+    from: parseAsString.withDefault('').withOptions({ clearOnDefault: true }),
+  });
+  const { error: errorNotify } = useNotification();
   const [isDeleting, startTransition] = useTransition();
   const refreshPapersCount = useSetAtom(
     virtualLabProjectPapersCountAtomFamily({
@@ -47,20 +45,24 @@ export default function PaperView({
         await deletePaperFromProject({ paper });
         refreshPapersCount();
       } catch (error) {
-        message.error(DELETE_PAPER_FAILED);
+        errorNotify(DELETE_PAPER_FAILED, undefined, 'topRight');
       }
     });
   };
 
   useEffect(() => {
-    if (fromRoute && fromRoute === 'create') {
-      refreshPapersCount();
-      setFromRoute('');
+    async function updateAndCleanRoute() {
+      if (fromRoute && fromRoute === 'create') {
+        refreshPapersCount();
+        await updateQueryParams({ from: '' });
+      }
     }
-  }, [fromRoute, refreshPapersCount, setFromRoute]);
 
-  const onEditPaper = () => toggleEditableMode('edit');
-  const onCompleteEdit = () => toggleEditableMode('');
+    updateAndCleanRoute();
+  }, [fromRoute, refreshPapersCount, updateQueryParams]);
+
+  const onEditPaper = () => updateQueryParams({ mode: 'edit' });
+  const onCompleteEdit = () => updateQueryParams({ mode: '' });
 
   return (
     <div
@@ -115,7 +117,6 @@ export default function PaperView({
             {...{
               paper,
               onCompleteEdit,
-              editable: mode === 'edit',
             }}
           />
         </div>

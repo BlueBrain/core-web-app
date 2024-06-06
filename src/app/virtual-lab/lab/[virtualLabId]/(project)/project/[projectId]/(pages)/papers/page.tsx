@@ -20,7 +20,7 @@ export default async function PapersListing({
   return (
     <div
       id="project-papers-container"
-      className="relative mt-4 flex h-full max-h-[80vh] flex-col bg-white p-8"
+      className="relative mt-4 flex h-full max-h-[calc(100vh-9rem)] flex-col bg-white p-8"
     >
       <PaperListView {...{ total, papers }} />
       <Link
