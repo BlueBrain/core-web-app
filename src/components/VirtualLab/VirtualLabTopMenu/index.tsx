@@ -1,4 +1,4 @@
-import { useEffect, useRef, ReactNode, useState } from 'react';
+import { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
@@ -18,6 +18,13 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
   const [expanded, setExpanded] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuElementsHeight, setMenuElementsHeight] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    if (!menuRef || !menuRef.current) return;
+    setMenuElementsHeight(menuRef.current.getBoundingClientRect().height);
+  }, [setMenuElementsHeight]);
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
@@ -27,7 +34,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
     ghost: boolean // eslint-disable-line
   ) =>
     classNames(
-      'w-52 p-4 font-bold',
+      'w-52 p-4 font-bold flex items-center',
       ghost ? 'bg-transparent' : 'bg-primary-8 border border-primary-7'
     );
 
@@ -51,6 +58,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             className={classNames(getMenuButtonClassName(ghost), 'border border-primary-7')}
             href={href}
             key={key}
+            style={{ height: menuElementsHeight ?? undefined }}
           >
             {children}
           </Link>
@@ -72,6 +80,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
                 if (expanded) return;
                 setExpanded(true);
               }}
+              ref={menuRef}
             >
               <span className="font-bold">{session?.user.name}</span>
               <UserOutlined className="mr-2 text-primary-4" />
