@@ -33,11 +33,6 @@
   position: relative;
 }
 
-.contentContainerSynapseEditor {
-  grid-area: content-container;
-  position: relative;
-}
-
 .extraPanelContainer {
   grid-area: extra-panel;
 }
