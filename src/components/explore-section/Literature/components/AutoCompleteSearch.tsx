@@ -113,14 +113,14 @@ export default function AutoCompleteSearch({
       }
       defaultValue={defaultValues}
       className="min-w-[128px] rounded"
-      bordered={false}
+      variant="borderless"
       size="middle"
       popupMatchSelectWidth={false}
       notFoundContent={
         isNil(initialSuggestions) ? (
           <span>Searching...</span>
         ) : (
-          !fetching && <span>No suggestions found.</span>
+          !fetching && <span className="text-primary-3">No suggestions found.</span>
         )
       }
     />
