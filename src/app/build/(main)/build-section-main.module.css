@@ -23,9 +23,11 @@
 .contentContainer {
   grid-area: content-container;
   position: relative;
-  min-width: 0;
-  min-height: 0;
-  overflow: hidden;
+}
+
+.contentContainerSynapseEditor {
+  grid-area: content-container;
+  position: relative;
 }
 
 .extraPanelContainer {
