@@ -13,6 +13,7 @@ import { DataType } from '@/constants/explore-section/list-views';
 import esb from 'elastic-builder';
 import { DataQuery } from '@/api/explore-section/resources';
 import { Bookmark, BookmarksByCategory } from '@/types/virtual-lab/bookmark';
+import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 
 describe('Library', () => {
   const labId = '3';
@@ -57,7 +58,7 @@ describe('Library', () => {
 
     renderComponent(labId, projectId);
 
-    await screen.findByText('There are no pinned datasets for morphologies');
+    await screen.findByText('There are no pinned datasets for Morphology');
     expect(screen.queryByText('item1')).not.toBeInTheDocument();
   });
 
@@ -79,6 +80,22 @@ describe('Library', () => {
     await user.click(electrophysiologyTab);
     await screen.findByText('item1');
     screen.getByText('item2');
+  });
+
+  it('opens collapsible panel for experiment if category is defined in url', async () => {
+    projectHasBookmarks(labId, projectId, []);
+    categoryQueryParam.mockReturnValue(ExperimentTypeNames.BOUTON_DENSITY);
+    renderComponent(labId, projectId);
+
+    await screen.findByText('There are no pinned datasets for Bouton density');
+  });
+
+  it('opens collapsible panel for morphologies if no catgory is defined in url', async () => {
+    projectHasBookmarks(labId, projectId, []);
+    categoryQueryParam.mockReturnValue(null);
+    renderComponent(labId, projectId);
+
+    await screen.findByText('There are no pinned datasets for Morphology');
   });
 });
 
@@ -220,6 +237,12 @@ jest.mock('next/navigation', () => {
     useRouter: () => ({
       push: (path: string) => navigateTo(path),
     }),
+    useSearchParams: () => {
+      return {
+        get: categoryQueryParam,
+        set: jest.fn(),
+      };
+    },
   };
 });
 
@@ -227,6 +250,8 @@ const getBookmarksByCategory = jest.fn();
 const buildFilters = jest.fn();
 const fetchEsResourcesByType = jest.fn();
 const navigateTo = jest.fn();
+const categoryQueryParam = jest.fn();
+
 const filtersQuery = new esb.BoolQuery();
 
 const mockHit = (resourceId: string) => ({

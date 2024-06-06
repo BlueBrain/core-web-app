@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Collapse, CollapseProps, ConfigProvider } from 'antd';
@@ -9,7 +10,10 @@ import { loadable } from 'jotai/utils';
 import ExperimentBookmarks from './ExperimentBookmarks';
 import { DataType } from '@/constants/explore-section/list-views';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
+import {
+  EXPERIMENT_DATA_TYPES,
+  ExperimentTypeNames,
+} from '@/constants/explore-section/data-types/experiment-data-types';
 
 type Props = {
   labId: string;
@@ -17,6 +21,9 @@ type Props = {
 };
 
 export default function BookmarkList({ labId, projectId }: Props) {
+  const params = useSearchParams();
+  const category = params.get('category');
+
   const bookmarks = useAtomValue(
     loadable(bookmarksForProjectAtomFamily({ virtualLabId: labId, projectId }))
   );
@@ -35,7 +42,7 @@ export default function BookmarkList({ labId, projectId }: Props) {
 
     return Object.keys(EXPERIMENT_DATA_TYPES).map((experiment) => {
       return {
-        key: experiment,
+        key: EXPERIMENT_DATA_TYPES[experiment].name,
         'data-testid': `${experiment}-tab`,
         label: (
           <div>
@@ -55,7 +62,7 @@ export default function BookmarkList({ labId, projectId }: Props) {
               projectId={projectId}
             />
           ) : (
-            <p>There are no pinned datasets for morphologies</p>
+            <p>There are no pinned datasets for {EXPERIMENT_DATA_TYPES[experiment].title}</p>
           ),
       };
     });
@@ -82,8 +89,9 @@ export default function BookmarkList({ labId, projectId }: Props) {
         >
           <Collapse
             items={collapsibleItems}
-            defaultActiveKey={[DataType.ExperimentalNeuronMorphology]}
+            defaultActiveKey={[category ?? ExperimentTypeNames.MORPHOLOGY]}
             expandIconPosition="end"
+            accordion
           />
         </ConfigProvider>
       </div>

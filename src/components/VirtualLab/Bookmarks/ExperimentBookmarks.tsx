@@ -2,6 +2,8 @@ import { useAtom, useAtomValue } from 'jotai';
 
 import { loadable } from 'jotai/utils';
 import { useRouter } from 'next/navigation';
+
+import BookmarkFooter from './BookmarkFooter';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import FilterControls from '@/components/explore-section/ExploreSectionListingView/FilterControls';
 import WithControlPanel from '@/components/explore-section/ExploreSectionListingView/WithControlPanel';
@@ -40,9 +42,8 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
     <div
       id="bookmark-list-container"
       style={{
-        height: `${dataSource.length * 100}px`,
-        maxHeight: '1000px',
-        position: 'relative',
+        height: `${dataSource.length * (dataType === DataType.ExperimentalNeuronMorphology ? 200 : 100) + 150}px`, // Morphology plugin view takes more space
+        maxHeight: '1200px',
         minHeight: '450px',
       }}
     >
@@ -73,6 +74,15 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
                   brainRegionSource="selected"
                   loading={data.state === 'loading'}
                   bookmarkScope={{ virtualLabId: labId, projectId }}
+                  renderButton={({ selectedRows, clearSelectedRows }) => (
+                    <BookmarkFooter
+                      clearSelectedRows={clearSelectedRows}
+                      selectedRows={selectedRows}
+                      virtualLabId={labId}
+                      projectId={projectId}
+                      category={dataType}
+                    />
+                  )}
                   onCellClick={(_, record) => {
                     router.push(
                       detailUrlWithinLab(
