@@ -63,9 +63,7 @@ function PresetSelector() {
       <div className="my-4 text-primary-8">
         <div>DESCRIPTION</div>
         <div>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Totam, id tenetur modi iusto
-          aspernatur culpa exercitationem explicabo quod! Perferendis consectetur provident
-          voluptatibus animi rem tenetur suscipit molestias excepturi possimus dolorem?
+          OPTIMIZATION_TARGET_DESCRIPTION
         </div>
       </div>
     </>
