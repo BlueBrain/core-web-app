@@ -6,18 +6,11 @@ import Image from 'next/image';
 type Props = {
   imagePath: string;
   title: string;
-  subtitle: string;
   body: ReactNode | string;
   bottomElement: ReactNode;
 };
 
-export default function DiscoverObpItem({
-  imagePath,
-  title,
-  subtitle,
-  body,
-  bottomElement,
-}: Props) {
+export default function DiscoverObpItem({ imagePath, title, body, bottomElement }: Props) {
   return (
     <div className="flex flex-1">
       <div className="relative top-[-60px]">
@@ -28,10 +21,9 @@ export default function DiscoverObpItem({
           alt="Circular"
           className="relative left-1/2 z-50 h-32 w-32 -translate-x-1/2 translate-y-1/2 transform rounded-full"
         />
-        <div className="rounded-none bg-white p-5 pt-20" style={{ minHeight: '66%' }}>
+        <div className="rounded-none bg-white p-10 pt-20" style={{ height: '450px' }}>
           <div className="flex flex-col">
-            <div className="uppercase text-neutral-4">{title}</div>
-            <div className="text-2xl font-bold text-primary-8">{subtitle}</div>
+            <div className="text-lg uppercase text-neutral-7">{title}</div>
             <div className="my-8 text-primary-8">{body}</div>
           </div>
         </div>

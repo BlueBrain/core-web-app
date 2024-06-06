@@ -1,9 +1,16 @@
-import { LoadingOutlined, MinusOutlined, PlusOutlined, WarningFilled } from '@ant-design/icons';
-import { Button, Spin } from 'antd';
+import {
+  EyeOutlined,
+  LoadingOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+  WarningFilled,
+} from '@ant-design/icons';
+import { Button, Spin, notification } from 'antd';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useCallback, useMemo } from 'react';
 
+import { useRouter } from 'next/navigation';
 import { addBookmark, removeBookmark } from '@/services/virtual-lab/bookmark';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
 import {
@@ -33,8 +40,10 @@ export default function BookmarkButton({
       })
     )
   );
+  const router = useRouter();
 
   const refreshBookmarks = useSetAtom(bookmarksForProjectAtomFamily({ virtualLabId, projectId }));
+  const libraryPage = `/virtual-lab/lab/${virtualLabId}/project/${projectId}/library?category=${experimentType}`;
 
   const category = useMemo(() => {
     return Object.keys(EXPERIMENT_DATA_TYPES).find(
@@ -42,15 +51,63 @@ export default function BookmarkButton({
     )! as DataType;
   }, [experimentType]);
 
+  const notifySuccess = useCallback(
+    (action: 'add' | 'remove') => {
+      if (action === 'add') {
+        notification.success({
+          message: 'Resource successfully added to the library',
+          duration: 3,
+          placement: 'bottomRight',
+          description: <Button onClick={() => router.push(libraryPage)}>View in Library</Button>,
+        });
+      } else {
+        notification.success({
+          message: 'Resource successfully removed from the library',
+          duration: 2,
+          placement: 'bottomRight',
+        });
+      }
+    },
+    [router, libraryPage]
+  );
+
+  const notifyError = useCallback((action: 'add' | 'remove', err: any) => {
+    if (action === 'add') {
+      notification.error({
+        message: 'Resource could not be added to the library',
+        description: err ?? null,
+        duration: 3,
+        placement: 'bottomRight',
+      });
+    } else {
+      notification.error({
+        message: 'Resource could not be removed from the library',
+        description: err ?? null,
+        duration: 3,
+        placement: 'bottomRight',
+      });
+    }
+  }, []);
+
   const saveToLibrary = useCallback(async () => {
-    await addBookmark(virtualLabId, projectId, { resourceId, category });
-    refreshBookmarks();
-  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks]);
+    try {
+      await addBookmark(virtualLabId, projectId, { resourceId, category });
+      refreshBookmarks();
+      notifySuccess('add');
+    } catch (err) {
+      notifyError('add', err);
+    }
+  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks, notifySuccess, notifyError]);
 
   const removeFromLibrary = useCallback(async () => {
-    await removeBookmark(virtualLabId, projectId, { resourceId, category });
-    refreshBookmarks();
-  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks]);
+    try {
+      await removeBookmark(virtualLabId, projectId, { resourceId, category });
+      refreshBookmarks();
+      notifySuccess('remove');
+    } catch (err) {
+      notifyError('remove', err);
+    }
+  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks, notifySuccess, notifyError]);
 
   const isBookmarked = useMemo(() => {
     return (
@@ -68,14 +125,26 @@ export default function BookmarkButton({
   }
 
   return isBookmarked ? (
-    <Button
-      type="text"
-      className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
-      onClick={removeFromLibrary}
-    >
-      Remove from library
-      <MinusOutlined className="border border-neutral-2 px-4 py-3" />
-    </Button>
+    <>
+      <Button
+        type="text"
+        className="mr-3 flex h-[36px] items-center gap-2 px-1 text-gray-500 hover:!bg-transparent"
+        onClick={() => {
+          router.push(libraryPage);
+        }}
+      >
+        View in library
+        <EyeOutlined />
+      </Button>
+      <Button
+        type="text"
+        className="mr-3 flex h-[36px] items-center gap-2 px-1 text-gray-500 hover:!bg-transparent"
+        onClick={removeFromLibrary}
+      >
+        Remove from library
+        <MinusCircleOutlined />
+      </Button>
+    </>
   ) : (
     <Button
       type="text"

@@ -65,7 +65,13 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
       </div>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className={styles.contentContainer}>{children}</div>
+        <div
+          className={
+            isSynapseEditor ? styles.contentContainerSynapseEditor : styles.contentContainer
+          }
+        >
+          {children}
+        </div>
       </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>

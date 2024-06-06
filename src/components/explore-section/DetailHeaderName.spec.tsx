@@ -14,7 +14,7 @@ describe('DetailHeaderName', () => {
   const virtualLabId = '456';
   const projectId = '123';
 
-  it.only('allows a user to save a resource to a project library', async () => {
+  it('allows a user to save a resource to a project library', async () => {
     weAreInRoute({ virtualLabId, projectId, experimentType: ExperimentTypeNames.MORPHOLOGY });
     bookmarksInclude([]);
 
@@ -108,6 +108,9 @@ jest.mock('next/navigation', () => ({
   usePathname: () => usePathname(),
   useParams: () => useParams(),
   useSearchParams: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
 }));
 
 const addBookmark = jest.fn();

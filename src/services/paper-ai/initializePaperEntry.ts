@@ -1,5 +1,7 @@
 'use server';
 
+import { ZodError } from 'zod';
+
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createHeadlessEditor } from '@lexical/headless';
@@ -8,13 +10,14 @@ import { LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { CodeNode } from '@lexical/code';
+import { captureException } from '@sentry/nextjs';
 
 import generateOutlineAi from './generateOutlineAi';
-import { PaperCreationAction, PaperSchema } from './validation';
+import { PaperCreationAction, PaperSchema, PaperSchemaType } from './validation';
 import { paperHrefGenerator, papersListTagGenerator } from './utils';
-import { createFile, createResource } from '@/api/nexus';
 import { auth } from '@/auth';
-import { PaperResource } from '@/types/nexus';
+import { createFile, createResource } from '@/api/nexus';
+import { FileMetadata, PaperResource } from '@/types/nexus';
 import { composeUrl, createDistribution } from '@/util/nexus';
 
 const DEFAULT_EDITOR_STATE =
@@ -40,8 +43,11 @@ export async function getJson(markdown: string) {
         }
       );
       resolve(JSON.stringify(editor.getEditorState().toJSON()));
-    } catch (er) {
-      reject(er);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('[ERROR][INIT_PAPER][JSON_MARKDOWN]', error);
+      captureException(error);
+      reject(error);
     }
   });
 
@@ -53,31 +59,46 @@ export default async function initializePaperEntry(
   paper: FormData
 ) {
   const session = await auth();
+
   if (!session) {
     throw new Error('The supplied authentication is not authorized for this action');
   }
 
-  const { success, data, error } = PaperSchema.safeParse({
-    virtualLabId: paper.get('virtual-lab-id'),
-    projectId: paper.get('project-id'),
-    title: paper.get('title'),
-    summary: paper.get('summary'),
-    sourceData: paper.get('source-data') ?? 'sourced-data',
-    generateOutline: paper.get('generate-outline'),
-  });
+  let data: PaperSchemaType | null = null;
+  let redirectUrl: string | null = null;
+  let fileMetadata: FileMetadata | null = null;
 
-  if (!success && error) {
+  try {
+    data = await PaperSchema.parseAsync({
+      virtualLabId: paper.get('virtual-lab-id'),
+      projectId: paper.get('project-id'),
+      title: paper.get('title'),
+      summary: paper.get('summary'),
+      sourceData: paper.get('source-data'),
+      generateOutline: paper.get('generate-outline'),
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('[ERROR][INIT_PAPER][DATA_VALIDATION]', error);
+    captureException(error);
+    if (error instanceof ZodError) {
+      return {
+        error: error.message,
+        validationErrors: error.flatten().fieldErrors,
+        redirect: null,
+      };
+    }
     return {
-      error: error.message,
-      validationErrors: error.flatten().fieldErrors,
+      error: (error as any).message,
+      validationErrors: null,
       redirect: null,
     };
   }
 
-  let redirectUrl: string | null = null;
+  const { virtualLabId, projectId, title, summary, generateOutline, sourceData } = data!;
+
   try {
-    const { virtualLabId, projectId, title, summary, sourceData, generateOutline } = data;
-    const fileUrl = composeUrl('file', '', { org: data.virtualLabId, project: data.projectId });
+    const fileUrl = composeUrl('file', '', { org: virtualLabId, project: projectId });
 
     let EDITOR_STATE = DEFAULT_EDITOR_STATE;
     if (generateOutline) {
@@ -85,14 +106,25 @@ export default async function initializePaperEntry(
       EDITOR_STATE = await getJson(result);
     }
 
-    const fileMetadata = await createFile(
+    fileMetadata = await createFile(
       EDITOR_STATE,
       DEFAULT_EDITOR_CONFIG_NAME,
       DEFAULT_EDITOR_CONFIG_FORMAT,
       session,
       fileUrl
     );
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('[ERROR][INIT_PAPER][FILE_CREATE]', error);
+    captureException(error);
+    return {
+      redirect: null,
+      validationErrors: null,
+      error: 'Create Paper configuration failed',
+    };
+  }
 
+  try {
     const resourceUrl = composeUrl('resource', '', {
       org: virtualLabId,
       project: projectId,
@@ -102,15 +134,15 @@ export default async function initializePaperEntry(
 
     const result = await createResource<PaperResource>(
       {
-        '@context': ['https://bbp.neuroshapes.org'],
-        '@type': ['Paper', 'Entity'],
-        name: title,
-        description: summary,
         sourceData,
         generateOutline,
         virtualLabId,
         projectId,
         tags: [],
+        name: title,
+        description: summary,
+        '@context': ['https://bbp.neuroshapes.org'],
+        '@type': ['Paper', 'Entity'],
         distribution: createDistribution(
           fileMetadata,
           composeUrl('file', fileMetadata['@id'], {
@@ -123,14 +155,16 @@ export default async function initializePaperEntry(
       session,
       resourceUrl
     );
-
     revalidateTag(papersListTagGenerator({ virtualLabId, projectId }));
     redirectUrl = `${paperHrefGenerator({ virtualLabId, projectId, '@id': result['@id'] })}?from=create`;
-  } catch (err) {
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('[ERROR][INIT_PAPER][RESOURCE_CREATE]', error);
+    captureException(error);
     return {
       redirect: null,
       validationErrors: null,
-      error: (err as { message: string }).message,
+      error: 'Creating paper resource failed',
     };
   }
 

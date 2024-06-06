@@ -1,3 +1,5 @@
+import { captureException } from '@sentry/nextjs';
+
 import { auth } from '@/auth';
 import { FileMetadata, PaperResource } from '@/types/nexus';
 import { composeUrl, createDistribution, removeMetadata } from '@/util/nexus';
@@ -37,13 +39,13 @@ export const POST = async (request: Request) => {
       const errorData = await resourceResponse.json();
       const errorMessage =
         errorData?.error?.message || errorData?.error || resourceResponse.statusText;
+      captureException(new Error(errorMessage));
       throw new Error(`API Error (${resourceResponse.status}): ${errorMessage}`);
     }
 
     resourceJson = await resourceResponse.json();
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('@@error@@ [PAPER_SYNC_ROUTE][RESOURCE_FETCH]', error);
+    captureException(error);
     return new Response('ServerError: Fetch paper resource failed', {
       status: 500,
       statusText: 'Internal Server Error',
@@ -72,8 +74,7 @@ export const POST = async (request: Request) => {
 
     remoteConfigState = await fileResponse.json();
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('@@error@@ [PAPER_SYNC_ROUTE][FILE_UPDATE]', error);
+    captureException(error);
     return new Response('ServerError: Updating paper configuration file failed', {
       status: 500,
       statusText: 'Internal Server Error',
@@ -118,8 +119,7 @@ export const POST = async (request: Request) => {
       data: updateResource,
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('@@error@@ [PAPER_SYNC_ROUTE][RESOURCE_UPDATE]', error);
+    captureException(error);
     return new Response('ServerError: Updating paper resource failed', {
       status: 500,
       statusText: 'Internal Server Error',

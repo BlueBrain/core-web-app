@@ -60,7 +60,11 @@ export default function DefaultListView({
   return (
     <div className="h-full bg-[#d1d1d1]" data-testid="explore-section-listing-view">
       <div className="relative grid h-full max-h-[calc(100vh-3.3rem)] w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden">
-        <WithControlPanel dataType={dataType} brainRegionSource={brainRegionSource}>
+        <WithControlPanel
+          dataType={dataType}
+          brainRegionSource={brainRegionSource}
+          className="relative"
+        >
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
             <>
               <FilterControls

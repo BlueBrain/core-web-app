@@ -99,6 +99,9 @@ module.exports = {
         '20vh': '20vh',
         '25vh': '25vh',
       },
+      listStyleType: {
+        square: 'square',
+      },
       boxShadow: {
         strongImage: '0px 22px 22px -16px rgba(0,0,0,0.36)',
       },
@@ -108,6 +111,7 @@ module.exports = {
       },
       animation: {
         'slide-out': 'slide-out 2s ease-in-out',
+        'slide-up': 'slide-up 0.5s ease-in-out',
         'scale-down': 'scale-down .6s cubic-bezier(.55,-0.04,.91,.94) forwards',
         'fade-in': 'fade-in 1.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both',
       },
@@ -129,6 +133,18 @@ module.exports = {
             maxHeight: 0,
             paddingTop: 0,
             paddingBottom: 0,
+          },
+        },
+        'slide-up': {
+          from: {
+            opacity: 0,
+            transform: 'translateY(100%)',
+            transitionTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
+          },
+          to: {
+            opacity: 1,
+            transform: 'translateY(0)',
+            transitionTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
           },
         },
         'scale-down': {

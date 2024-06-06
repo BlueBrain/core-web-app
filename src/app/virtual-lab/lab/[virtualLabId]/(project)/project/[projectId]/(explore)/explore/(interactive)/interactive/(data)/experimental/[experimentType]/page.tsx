@@ -11,6 +11,7 @@ export default function VirtualLabExperimentListingView() {
   const currentExperiment = Object.keys(EXPERIMENT_DATA_TYPES).find(
     (key) => EXPERIMENT_DATA_TYPES[key].name === params?.experimentType ?? ''
   );
+
   if (!currentExperiment) notFound();
   return (
     <WithExploreExperiment

@@ -12,12 +12,14 @@ import { ExploreDataBrainRegionSource } from '@/types/explore-section/applicatio
 import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
 import { BookmarkScope } from '@/state/virtual-lab/bookmark';
+import { classNames } from '@/util/utils';
 
 export default function WithControlPanel({
   children,
   dataType,
   brainRegionSource,
   bookmarkScope,
+  className,
 }: {
   children: (props: {
     activeColumns?: string[];
@@ -28,6 +30,7 @@ export default function WithControlPanel({
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
   bookmarkScope?: BookmarkScope;
+  className?: string;
 }) {
   const activeColumns = useAtomValue(
     useMemo(() => unwrap(activeColumnsAtom({ dataType })), [dataType])
@@ -48,7 +51,12 @@ export default function WithControlPanel({
 
   return (
     <>
-      <section className="relative flex h-full w-full min-w-0 flex-col gap-5 bg-white before:shadow-lg after:shadow-md">
+      <section
+        className={classNames(
+          'flex h-full w-full min-w-0 flex-col gap-5 bg-white before:shadow-lg after:shadow-md',
+          className
+        )}
+      >
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel, filters })}
       </section>
       {displayControlPanel && filters && (

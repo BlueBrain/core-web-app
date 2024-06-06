@@ -1,5 +1,9 @@
 import { DataType } from '@/constants/explore-section/list-views';
-import { Bookmark, BookmarksByCategory } from '@/types/virtual-lab/bookmark';
+import {
+  Bookmark,
+  BookmarksByCategory,
+  BulkRemoveBookmarksResponse,
+} from '@/types/virtual-lab/bookmark';
 
 export async function addBookmark(lab: string, labProject: string, bookmark: Bookmark) {
   return getBookmarkedItems(lab, labProject).then((items) => {
@@ -18,6 +22,29 @@ export async function removeBookmark(lab: string, labProject: string, bookmark: 
       )
     );
   });
+}
+
+// Temporary function to be replaced by REST api
+export async function bulkRemoveBookmarks(
+  lab: string,
+  labProject: string,
+  bookmarksToRemove: Bookmark[]
+): Promise<BulkRemoveBookmarksResponse> {
+  const bookmarks = await getBookmarkedItems(lab, labProject).then((items) => {
+    localStorage.setItem(
+      keyFor(lab, labProject),
+      JSON.stringify(
+        items.filter(
+          (i) =>
+            !bookmarksToRemove.some(
+              (b) => b.category === i.category && b.resourceId === i.resourceId
+            )
+        )
+      )
+    );
+    return items;
+  });
+  return { successfully_deleted: bookmarks, failed_to_delete: [] };
 }
 
 const keyFor = (lab: string, project: string): string => `bookmarkedItems-${lab}-${project}`;
