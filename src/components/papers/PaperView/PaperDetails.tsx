@@ -113,7 +113,7 @@ export default function PaperDetails({ paper, onCompleteEdit }: PaperDetailsProp
       action={runPaperUpdateAction}
     >
       <div className="my-4 flex w-full flex-col gap-8 bg-white">
-        <input id="paper" name="paper" value={JSON.stringify(paper)} hidden />
+        <input id="paper" name="paper" defaultValue={JSON.stringify(paper)} hidden />
         <div className="flex w-full flex-col">
           <FormStaleLabel title="Title" className={editable ? 'font-bold' : 'font-normal'} />
           {editable ? (

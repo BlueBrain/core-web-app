@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useAtomValue } from 'jotai';
@@ -7,6 +9,7 @@ import sessionAtom from '@/state/session';
 import { PaperResource } from '@/types/nexus';
 import useNotification from '@/hooks/notifications';
 import { createHeaders } from '@/util/utils';
+import { env } from '@/env.mjs';
 
 const FLUSH_SYNC_TIMEOUT = 10000;
 export const EDITOR_AUTO_SAVE_SUCCESS_EVENT = 'EDITOR_AUTO_SAVE_SUCCESS_EVENT';
@@ -41,7 +44,7 @@ export default function RemoteSyncPlugin({ paper }: Props) {
 
           if (currentDigest !== prevDigest) {
             window.dispatchEvent(new CustomEvent(EDITOR_AUTO_SAVING_START_EVENT));
-            const result = await fetch('/api/paper-ai/sync', {
+            const result = await fetch(`/${env.NEXT_PUBLIC_BASE_PATH}/api/paper-ai/sync`, {
               method: 'POST',
               headers: createHeaders(session.accessToken),
               body: JSON.stringify({
