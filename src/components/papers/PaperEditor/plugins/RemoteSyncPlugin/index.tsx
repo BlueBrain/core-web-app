@@ -44,7 +44,7 @@ export default function RemoteSyncPlugin({ paper }: Props) {
 
           if (currentDigest !== prevDigest) {
             window.dispatchEvent(new CustomEvent(EDITOR_AUTO_SAVING_START_EVENT));
-            const result = await fetch(`/${env.NEXT_PUBLIC_BASE_PATH}/api/paper-ai/sync`, {
+            const result = await fetch(`${env.NEXT_PUBLIC_BASE_PATH}/api/paper-ai/sync`, {
               method: 'POST',
               headers: createHeaders(session.accessToken),
               body: JSON.stringify({
