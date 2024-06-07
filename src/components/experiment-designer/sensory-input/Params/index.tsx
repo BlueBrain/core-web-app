@@ -148,8 +148,7 @@ export default function Params({ focusedAtom }: Props) {
 
   return (
     <GenericParamWrapper
-      description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
-      sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
+      description="Configure the sensory inputs to neuron populations."
       listAtoms={listAtoms}
       RowRenderer={InputBlock}
       onRemoveGroup={removeGroup}
