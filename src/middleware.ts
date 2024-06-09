@@ -15,8 +15,8 @@ function isFreeAccessRoute(requestUrl: string) {
 }
 
 export async function middleware(request: NextRequest) {
-  const session = await getToken<false, { accesTokenExpires: number }>({ req: request });
-  const sessionValid = session && Date.now() < session.accesTokenExpires;
+  const session = await getToken<false, { accessTokenExpires: number }>({ req: request });
+  const sessionValid = session && Date.now() < session.accessTokenExpires;
   const requestUrl = request.nextUrl.pathname;
 
   // If the user is authenticated and wants to access the home page or log-in page

@@ -1,5 +1,5 @@
 import { DefaultSession } from 'next-auth';
-import { JWT, GetTokenParams } from 'next-auth/jwt';
+import { GetTokenParams } from 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface Session {
@@ -12,9 +12,18 @@ declare module 'next-auth' {
 }
 
 declare module 'next-auth/jwt' {
-  /* Extend the type of getToken to optionally take
-extra properties for JWT */
-  declare function getToken<R extends boolean = false, E = any>(
+  /* Override type of getToken to return Token instead of JWT
+  Allow user to specify extra properties through E.
+  Next-auth's JWT is not typesafe since it extends Record<string, unknown>  which
+  allows for any property to exist in JWT */
+  function getToken<R extends boolean = false, E = any>(
     params: GetTokenParams<R>
-  ): Promise<R extends true ? string : (JWT & E) | null>;
+  ): Promise<R extends true ? string : (Token & E) | null>;
+
+  interface Token {
+    name?: string | null;
+    email?: string | null;
+    picture?: string | null;
+    sub?: string;
+  }
 }

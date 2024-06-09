@@ -73,9 +73,9 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             <div
               className={classNames(
                 getMenuButtonClassName(expanded ? false : ghost),
-                'flex flex-row justify-between  border border-primary-7 transition-all ease-in-out'
+                'flex cursor-pointer flex-row  justify-between border border-primary-7 transition-all ease-in-out'
               )}
-              style={{ padding: '13px', transitionDuration: '3000ms' }}
+              style={{ padding: '13px', transitionDuration: '1000ms' }}
               onMouseEnter={() => {
                 if (expanded) return;
                 setExpanded(true);
@@ -88,7 +88,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
 
             <div
               className="relative z-20 transition-all ease-in-out"
-              style={{ opacity: Number(expanded), transitionDuration: '3000ms' }}
+              style={{ opacity: Number(expanded), transitionDuration: '1000ms' }}
             >
               <div
                 className={classNames(
