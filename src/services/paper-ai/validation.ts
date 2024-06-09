@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import isNil from 'lodash/isNil';
+
 import { isJSON } from '@/util/utils';
 
 const LocationSchema = z.object({
@@ -13,8 +15,21 @@ export const PaperBaseSchema = z.object({
 
 const SourceDataSchema = z
   .string()
-  .refine(isJSON)
-  .transform((v) => JSON.parse(v))
+  .optional()
+  .nullable()
+  .refine(
+    (val) => {
+      if (isNil(val)) return true;
+      return isJSON(val);
+    },
+    {
+      message: 'The data source is not in the correct format.',
+    }
+  )
+  .transform((v) => {
+    if (isJSON(v)) return JSON.parse(String(v));
+    return [];
+  })
   .pipe(
     z.array(
       z.object(
@@ -24,7 +39,7 @@ const SourceDataSchema = z
           type: z.string().or(z.array(z.string())),
           category: z.string(),
         },
-        { message: 'data source is missing required properties.' }
+        { message: 'The data source is missing required properties.' }
       )
     )
   )

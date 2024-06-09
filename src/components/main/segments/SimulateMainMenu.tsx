@@ -31,28 +31,25 @@ const EXPLORE_SIM_CAMP_BASE_URM = '/explore/simulation-campaigns/test';
 
 const CURATED_TEMPLATES = [
   {
-    id: 'Quis pariatur eiusmod aute id. - 1',
-    name: 'Template n°1',
-    description:
-      'Officia officia consectetur ut cillum in est adipisicing laboris in incididunt fugiat ipsum reprehenderit voluptate.',
+    id: 'SpontaneousActivitySimulation',
+    name: 'Spontaneous activity simulation',
+    description: 'Simulate 5 seconds of spontaneous activity.',
   },
   {
-    id: 'Quis pariatur eiusmod aute id. - 2',
-    name: 'Template n°2',
-    description:
-      'Officia officia consectetur ut cillum in est adipisicing laboris in incididunt fugiat ipsum reprehenderit voluptate.',
+    id: 'StimulusEvokedActivitySimulation',
+    name: 'Stimulus-evoked activity simulation',
+    description: 'Simulate 10 repetitions of a whisker-like thalamic stimulus.',
   },
   {
-    id: 'Quis pariatur eiusmod aute id. - 3',
-    name: 'Template n°3',
-    description:
-      'Officia officia consectetur ut cillum in est adipisicing laboris in incididunt fugiat ipsum reprehenderit voluptate.',
+    id: 'MedialSeptumInput',
+    name: 'Medial septum input',
+    description: 'Simulate Medial septum cholinergic and GABAergic projections to hippocampus CA1.',
   },
   {
-    id: 'Quis pariatur eiusmod aute id. - 4',
-    name: 'Template n°4',
+    id: 'CorticothalamicInput(inVitro)',
+    name: 'Corticothalamic input (in vitro)',
     description:
-      'Officia officia consectetur ut cillum in est adipisicing laboris in incididunt fugiat ipsum reprehenderit voluptate.',
+      'Simulate cortical input to the VPM nucleus of the thalamus in vitro optogenetics experiments.',
   },
 ];
 
@@ -111,8 +108,7 @@ function NewExperiment() {
         </Link>
       </div>
       <p className="mb-4 line-clamp-2 w-3/5 select-none font-normal text-gray-400">
-        Cillum duis duis dolor nulla. Proident ad eiusmod ut anim magna minim magna ea ex mollit et
-        eu Exercitation eiusmod sint qui est elit in irure aliqua commodo irure do eiusmod ad.
+        Configure a new in-silico experiment by stimulating a circuit or a brain region.
       </p>
     </div>
   );
@@ -148,8 +144,7 @@ export function BrowseSimulations() {
         Browse simulation experiments
       </h2>
       <p className="line-clamp-2 w-1/3 text-left font-normal text-gray-400">
-        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-        anim id est laborum.
+        Browse existing in-silico experiments.
       </p>
       <EyeIcon className="absolute right-12 top-1/2 h-5 w-5 -translate-y-1/2 text-primary-8 group-hover:text-white" />
     </Link>
@@ -352,7 +347,7 @@ export default function MainMenu() {
         opened={openMySimulations}
         onSelect={() => toggleMySimulation()}
         title="My simulation experiments"
-        description="Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        description="Browse your own experiments."
       >
         {() => <MySimulations />}
       </CollapsibleMenuItem>

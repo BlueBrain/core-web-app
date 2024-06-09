@@ -25,7 +25,7 @@ export default async function updatePaperDetails(
     const { success, data, error } = PaperUpdateSchema.safeParse({
       title: paperData.get('title'),
       summary: paperData.get('summary'),
-      sourceData: paperData.get('source-data') ?? 'source data',
+      sourceData: paperData.get('source-data'),
       paper: paperData.get('paper'),
     });
 

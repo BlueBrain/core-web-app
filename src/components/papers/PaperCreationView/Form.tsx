@@ -101,7 +101,9 @@ export default function Form({ virtualLabId, projectId }: Props) {
         <div className="flex w-full flex-col items-start justify-start">
           <div className="flex w-full items-center justify-between gap-2">
             <FormActiveLabel title="Source data" />
-            <div className="text-primary-8">{sourcesData.length} selected</div>
+            {!!sourcesData.length && (
+              <div className="text-primary-8">{sourcesData.length} selected</div>
+            )}
           </div>
           <div className="relative w-full">
             <SourceDataPicker
