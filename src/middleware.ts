@@ -4,7 +4,7 @@ import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
 const FREE_ACCESS_PAGES = ['/', '/log-in', '/about*'];
 
-/* Don't allow arbitray regex to avoid accidentally leaking protected pages
+/* Don't allow arbitrary regex to avoid accidentally leaking protected pages
 Only two patterns allowed, exact match or /path* which matches the path
 and all sub-routes
 */
@@ -38,7 +38,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Redirect to Keycloak's login and if successful back to the originally requested page
-  // if not authenticated
+  // If not authenticated redirect to Keycloak's login and if successful back to the originally requested page
   return nextAuthMiddleware(request as NextRequestWithAuth);
 }
