@@ -39,5 +39,6 @@ export async function middleware(request: NextRequest) {
   }
 
   // If not authenticated redirect to Keycloak's login and if successful back to the originally requested page
+  // Otherwise let them through
   return nextAuthMiddleware(request as NextRequestWithAuth);
 }
