@@ -2,15 +2,16 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
-const FREE_ACCESS_PAGES = ['/about'];
+const FREE_ACCESS_PAGES = ['/', '/log-in', '/about*'];
 
 /* Don't allow arbitray regex to avoid accidentally leaking protected pages
-only the listed pages and their nested pages are allowed */
+Only two patterns allowed, exact match or /path* which matches the path
+and all sub-routes
+*/
 function isFreeAccessRoute(requestUrl: string) {
   return FREE_ACCESS_PAGES.some((p) => {
-    // Create a regular expression to match the exact path or path followed by a slash
-    const regex = new RegExp(`^${p}(?:/|$)`);
-    return regex.test(requestUrl);
+    if (p === requestUrl) return true;
+    return p.endsWith('*') && requestUrl.startsWith(p.slice(0, -1));
   });
 }
 
@@ -27,18 +28,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Unathenticated user and wants to go to /log-in let them through
-  if (!sessionValid && requestUrl === '/log-in') {
+  // Let them through if they're trying to access a public page or they have a valid session
+  if (isFreeAccessRoute(requestUrl) || sessionValid) {
     return NextResponse.next();
   }
 
-  if (isFreeAccessRoute(requestUrl)) {
-    return NextResponse.next();
-  }
-
-  // If the user is not authenticated redirect them to the login page
-  // if it's log in is successful then redirect them to the originally requested page
-  if (!sessionValid && requestUrl !== '/') {
-    return nextAuthMiddleware(request as NextRequestWithAuth);
-  }
+  // Redirect to Keycloak's login and if successful back to the originally requested page
+  return nextAuthMiddleware(request as NextRequestWithAuth);
 }
