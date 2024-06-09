@@ -19,7 +19,7 @@ export default function Providers({ children }: ProvidersProps) {
   return (
     <ConfigProvider theme={commonAntdTheme}>
       <JotaiProvider>
-        <DevTools {...{ isInitialOpen: false }} />
+        {process.env.NEXT_PUBLIC_JOTAI_DEVTOOLS_ENABLED && <DevTools {...{ isInitialOpen: false }} />}
         <ThemeProvider>
           <SessionProvider basePath={`${basePath}/api/auth`} refetchInterval={2 * 60}>
             <SessionStateProvider>{children}</SessionStateProvider>

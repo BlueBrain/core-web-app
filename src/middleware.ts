@@ -10,8 +10,13 @@ and all sub-routes
 */
 function isFreeAccessRoute(requestUrl: string) {
   return FREE_ACCESS_PAGES.some((p) => {
-    if (p === requestUrl) return true;
-    return p.endsWith('*') && requestUrl.startsWith(p.slice(0, -1));
+    if (p.endsWith('*')) {
+      // Remove the trailing '*' to get the base path
+      const basePath = p.slice(0, -1);
+      // Matches basePath or all subroutes
+      return requestUrl === basePath || requestUrl.startsWith(basePath + '/'); //eslint-disable-line
+    }
+    return p === requestUrl;
   });
 }
 
