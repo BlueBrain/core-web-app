@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
   const sessionValid = session && Date.now() < session.accesTokenExpires;
   const requestUrl = request.nextUrl.pathname;
 
-  // If the user is authenticated and wants to access home page or log-in page
+  // If the user is authenticated and wants to access the home page or log-in page
   // then redirect to the main page
   if (sessionValid && (requestUrl === '/' || requestUrl === '/log-in')) {
     const url = request.nextUrl.clone();
@@ -36,9 +36,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // If the user is not authenticated at all
-  // then redirect them to the home/login page
-  // if it's successful then redirect him to the origin request page
+  // If the user is not authenticated redirect them to the login page
+  // if it's log in is successful then redirect them to the originally requested page
   if (!sessionValid && requestUrl !== '/') {
     return nextAuthMiddleware(request as NextRequestWithAuth);
   }
