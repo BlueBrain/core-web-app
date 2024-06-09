@@ -33,11 +33,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Let them through if they're trying to access a public page or they have a valid session
-  if (isFreeAccessRoute(requestUrl) || sessionValid) {
+  // Let them through if they're trying to access a public page
+  if (isFreeAccessRoute(requestUrl)) {
     return NextResponse.next();
   }
 
   // Redirect to Keycloak's login and if successful back to the originally requested page
+  // if not authenticated
   return nextAuthMiddleware(request as NextRequestWithAuth);
 }
