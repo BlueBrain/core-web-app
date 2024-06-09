@@ -15,8 +15,8 @@ function isFreeAccessRoute(requestUrl: string) {
 }
 
 export async function middleware(request: NextRequest) {
-  const session = (await getToken({ req: request })) as ReceivedSession | null;
-  const sessionValid = session && Date.now() < session?.accessTokenExpires;
+  const session = await getToken<false, { accesTokenExpires: number }>({ req: request });
+  const sessionValid = session && Date.now() < session.accesTokenExpires;
   const requestUrl = request.nextUrl.pathname;
 
   // If the user is authenticated and wants to access home page or log-in page
@@ -43,23 +43,3 @@ export async function middleware(request: NextRequest) {
     return nextAuthMiddleware(request as NextRequestWithAuth);
   }
 }
-
-// TODO: Fix the types in auth.ts it's impossible to know that getToken returns
-// had to define what it actually recieves for now. Also make sure it doesn't return the
-// nested user data as it's repeated
-type ReceivedSession = {
-  name: string;
-  email: string;
-  sub: string;
-  accessToken: string;
-  accessTokenExpires: number;
-  refreshToken: string;
-  user: {
-    name: string;
-    email: string;
-    id: string;
-  };
-  iat: number;
-  exp: number;
-  jti: string;
-};
