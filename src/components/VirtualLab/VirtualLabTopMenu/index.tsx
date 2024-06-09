@@ -28,7 +28,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
-  }, [localRef, setProjectTopMenuRef]);
+  }, [setProjectTopMenuRef]);
 
   const getMenuButtonClassName = (
     ghost: boolean // eslint-disable-line
