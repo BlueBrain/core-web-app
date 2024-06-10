@@ -8,12 +8,14 @@ import ResultError from './ResultError';
 import ResultSuccess from './ResultSuccess';
 import { GenerativeQA } from '@/types/literature';
 import { literatureAtom } from '@/state/literature';
+import gfm from 'remark-gfm';
+import Markdown from 'react-markdown';
 
 function ResultOnStreamAnswer() {
   const { answer } = useAtomValue(literatureAtom);
 
   return (
-    <div className="flex w-full items-start text-xl font-normal leading-7 text-blue-900">
+    <div className="flex w-full items-start text-xl font-normal leading-7 text-gray-700">
       {answer}
     </div>
   );
@@ -152,7 +154,29 @@ export default function withStreamResult({
     }
     return (
       <Result key={id} {...{ id, scoped }} result={current}>
-        <div className="w-full text-xl font-normal leading-7 text-blue-900">{finalAnswer}</div>
+        <div className="w-full text-xl font-normal leading-7 text-gray-700">
+          <Markdown
+            plugins={[gfm]}
+            unwrapDisallowed
+            // disallowedTypes={["heading", "thematicBreak"]}
+            renderers={{
+              link: function MsgLink({ href, children }) {
+                return (
+                  <a
+                    href={href}
+                    style={{ color: '#0050B3' }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {children}
+                  </a>
+                );
+              },
+            }}
+          >
+            {finalAnswer}
+          </Markdown>
+        </div>
       </Result>
     );
   }

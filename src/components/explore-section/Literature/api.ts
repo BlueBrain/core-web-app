@@ -52,19 +52,17 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
     const urlQueryParams =
       paramsWithFilters.toString().length > 0 ? `?${paramsWithFilters.toString()}` : '';
 
-    const url = `${bbsMlBaseUrl}/qa/streamed_generative${urlQueryParams}`;
+    const url = `https://ml.agent.kcp.bbp.epfl.ch/streamed_qa`;
     const response = await fetch(url, {
       signal,
       method: 'POST',
       headers: new Headers({
         accept: 'text/event-stream',
         'Content-Type': 'application/json',
-        'cache-control': 'no-cache',
       }),
       body: JSON.stringify({
-        query: question,
-        retriever_k: 700,
-        use_reranker: true,
+        inputs: question,
+        parameters: {},
       }),
     });
 

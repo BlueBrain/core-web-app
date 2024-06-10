@@ -125,21 +125,16 @@ function useStreamGenerative({
       const decoder = new TextDecoder();
       let value: Uint8Array | undefined;
       let done: boolean = false;
-      let captureErrorAtStart = true;
+
+      let completeAnswer = '';
+
       if (reader) {
         while (!done) {
           ({ value, done } = await reader.read());
           if (done) break;
           const decodedChunk = decoder.decode(value, { stream: true });
-          if (isJSON(decodedChunk) && captureErrorAtStart) {
-            type = 'error';
-            // normalize the Error to be handle by try/catch block
-            jsonMetadataPart = JSON.stringify({
-              Error: { ...(JSON.parse(decodedChunk).detail ?? {}) },
-            });
-            break;
-          }
-          captureErrorAtStart = false;
+          completeAnswer += decodedChunk;
+
           // Keep receiving the stream until one of the separators is captured.
           // separator oneOf<data|error>
           if (decodedChunk.search(STREAM_JSON_DATA_SEPARATOR_REGEX) !== -1) {
@@ -149,20 +144,19 @@ function useStreamGenerative({
           }
           if (stopAppendAnswer) {
             jsonMetadataPart += decodedChunk;
+            console.log('JSON', jsonMetadataPart);
           } else if (!stopAppendAnswer) {
             appendAnswer(decodedChunk);
           }
         }
         try {
-          const splittedStream = jsonMetadataPart.split(STREAM_JSON_DATA_SEPARATOR_REGEX);
-          data = JSON.parse(splittedStream.at(-1) ?? '') as GenerativeQAResponse;
-
-          if (!type) {
-            if (jsonMetadataPart.match(DATA_SEPERATOR)) type = 'data';
-            if (jsonMetadataPart.match(ERROR_SEPERATOR)) type = 'error';
-          }
-
-          return { type, data };
+          const resonse: GenerativeQAResponse = {
+            raw_answer: completeAnswer,
+            answer: completeAnswer,
+            metadata: [],
+            paragraphs: [],
+          };
+          return { type: 'data', data: resonse };
         } catch (error) {
           const err = new Error(`Parsing ML metadata ${error}`);
           captureException(err);

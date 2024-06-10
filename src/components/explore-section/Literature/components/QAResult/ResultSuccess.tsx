@@ -63,7 +63,6 @@ export default function ResultSuccess({
   };
 
   const activeFilters = selectedQuestionForFilter === id ? getActiveFiltersCount(filterValues) : 0;
-
   return (
     <ResultContainer id={id} moreSpace={collpaseQuestion || expandArticles}>
       <>
