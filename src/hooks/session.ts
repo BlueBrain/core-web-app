@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 
 import { signIn, useSession, getSession as getSessionFromApi } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { usePrevious } from './hooks';
 import sessionAtom from '@/state/session';
 
 export type SessionOrNull = Session | null;
@@ -41,6 +42,12 @@ export { getSessionLocked, setSession };
 export default function useSessionState() {
   const currentSession = useSession();
   const [session, setSessionState] = useAtom(sessionAtom);
+  const previousSession = usePrevious(currentSession);
+
+  // If user logs-out in another window refresh page, (middleware will redirect to login if in a secured page)
+  if (currentSession?.status === 'unauthenticated' && previousSession?.status === 'authenticated') {
+    window.location.reload();
+  }
 
   useEffect(() => {
     if (currentSession?.status === 'unauthenticated') {
