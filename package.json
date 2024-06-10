@@ -12,6 +12,7 @@
     "prettier:check": "prettier --check . --log-level warn",
     "prettier:write": "prettier --write . --log-level warn",
     "test": "jest --watch",
+    "test:fail": "jest Library --silent",
     "test:ci": "jest",
     "analyze": "ANALYZE=true npm run build"
   },

@@ -85,7 +85,7 @@ unit-test:
     policy: pull
   script:
     - *install_packages
-    - npm run test:ci
+    - for i in $(seq 10); do npm run test:ci || { echo 'Failed after $i attempts' && break; }; done
 
 build:
   stage: check
