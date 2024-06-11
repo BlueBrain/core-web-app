@@ -128,6 +128,16 @@ jest.mock('src/services/virtual-lab/bookmark', () => ({
   removeBookmark: jest.fn(),
 }));
 
+jest.mock('@/hooks/useAccessToken', () => {
+  const actual = jest.requireActual('@/hooks/useAccessToken');
+
+  return {
+    ...actual,
+    __esModule: true,
+    useAccessToken: () => 'abc',
+  };
+});
+
 const weAreInRoute = ({
   virtualLabId,
   projectId,

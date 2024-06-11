@@ -41,6 +41,7 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
   return (
     <div
       id="bookmark-list-container"
+      data-testid={`${dataType}-tab-panel`}
       style={{
         height: `${dataSource.length * (dataType === DataType.ExperimentalNeuronMorphology ? 200 : 100) + 150}px`, // Morphology plugin view takes more space
         maxHeight: '1200px',
