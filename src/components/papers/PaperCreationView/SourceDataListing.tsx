@@ -22,12 +22,22 @@ type RowProps = {
 function Row({ disabled, deleting, resource, onDeleteSourceData }: RowProps) {
   return (
     <div className="grid w-full grid-cols-3 gap-3 border-b border-gray-100 px-3 py-3 last:border-none hover:bg-gray-100">
-      <div className="font-bold text-primary-8">{resource.name}</div>
+      <div className="line-clamp-1 font-bold text-primary-8" title={resource.name}>
+        {resource.name}
+      </div>
       <div className="font-normal text-primary-8">{resource.category}</div>
       <div className="flex items-center justify-end gap-2">
-        <Button key="view" size="small" htmlType="button" type="link" icon={<EyeOutlined />} />
+        <Button
+          key="view"
+          title="View source"
+          size="small"
+          htmlType="button"
+          type="link"
+          icon={<EyeOutlined />}
+        />
         <Button
           key="delete"
+          title="Delete source"
           size="small"
           htmlType="button"
           type="link"

@@ -1,10 +1,10 @@
-import { env } from '@/env.mjs';
+import { bbsMlPrivateUrl } from '@/config';
 
 export default async function generateOutlineAi(
   title: string,
   description: string
 ): Promise<string> {
-  const response = await fetch(`${env.NEXT_PUBLIC_BBS_ML_BASE_URL}/qa/passthrough`, {
+  const response = await fetch(`${bbsMlPrivateUrl}/qa/passthrough`, {
     headers: {
       'Content-Type': 'application/json',
     },
