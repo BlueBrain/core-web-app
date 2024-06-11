@@ -21,7 +21,7 @@ export default function SideMenu({ links, lab, project }: Props) {
     <div
       ref={ref}
       className={classNames(
-        'relative flex h-screen flex-col bg-primary-9 text-light transition-transform ease-in-out',
+        'relative flex min-h-screen flex-col bg-primary-9 text-light transition-transform ease-in-out',
         expanded
           ? 'w-80 items-start justify-start px-5 shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
           : 'w-10 items-center justify-between pt-6 will-change-auto'
