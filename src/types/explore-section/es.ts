@@ -20,6 +20,16 @@ export type ESeModel = ESHitSource & {
   mType: ElectrophysiologyOrMorphologyType;
   brainRegion: BrainRegion;
   image?: EModelAnalysisImage[] | EModelAnalysisImage;
+  memodel?: {
+    emodelResource: {
+      '@id': string;
+      name: string;
+    };
+    neuronMorphology: {
+      '@id': string;
+      name: string;
+    };
+  };
 };
 
 export type ExploreResource = Experiment | Simulation | SimulationCampaign | ESeModel;
