@@ -284,7 +284,6 @@ function buildBrainRegionIndex(brainRegions: BrainRegion[]) {
 
       const leafNotations = brainRegion?.leaves
         ?.map((leadId) => brainRegionByIdMap.get(leadId))
-        .filter((leaf) => leaf?.representedInAnnotation) // TODO: Update init() function to use brainRegionsWithRepresentationAtom, and then remove this line.
         ?.map((br) => br?.notation as string);
 
       if (Array.isArray(leafNotations) && leafNotations.length === 0) {
@@ -462,7 +461,11 @@ function createParamIndex(
     workerState.paramIndex[variantName]?.[hemisphereDirection] ?? new Map();
 
   const applyEntryForSingleParam = (entry: any) => {
-    const paramValue = entry[paramName as string];
+    // TODO remove randomization when we have latest micro-connectome data.
+    const paramValue =
+      Math.random() < 0.05
+        ? Math.random()
+        : entry[paramName as string] * (1.2 + Math.random() / 2.5);
 
     const brainRegionKey = createKey(entry.source_region, entry.target_region);
     const mtypeKey = createKey(entry.source_mtype, entry.target_mtype);
@@ -490,7 +493,10 @@ function createParamIndex(
   };
 
   const applyEntryForAllParams = (entry: any) => {
-    const paramValues = paramNames.map((currParamName) => entry[currParamName]);
+    // TODO remove randomization when we have latest micro-connectome data.
+    const paramValues = paramNames.map((currParamName) =>
+      Math.random() < 0.05 ? Math.random() : entry[currParamName] * (1.2 + Math.random() / 2.5)
+    );
 
     const brainRegionKey = createKey(entry.source_region, entry.target_region);
     const mtypeKey = createKey(entry.source_mtype, entry.target_mtype);
@@ -889,14 +895,7 @@ export function createAggregatedParamView(
               const paramValue = srcDstMtypeMap.get(srcDstMtypeKey)?.[paramIdx];
 
               if (paramValue !== undefined) {
-                // TODO remove randomisation
-                // paramValues.push(paramValue as number); // TODO fix the type/type-check.
-                if (Math.random() < 0.05) {
-                  paramValues.push(Math.random());
-                  return;
-                }
-
-                paramValues.push((paramValue as number) * (1.2 + Math.random() / 2.5));
+                paramValues.push(paramValue as number);
               } else {
                 nPathwaysNotSet += 1;
               }

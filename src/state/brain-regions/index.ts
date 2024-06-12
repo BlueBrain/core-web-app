@@ -122,13 +122,19 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
   Promise<BrainRegion[] | null>,
   BrainRegionWithRepresentation[] | null
 >(brainRegionsAtom, (brainRegions) => {
-  const inAnnotationBrainRegionsReducer = brainRegions
-    ? getInAnnotationBrainRegionsReducer(brainRegions)
-    : null;
+  if (!brainRegions) return null;
 
-  return !!brainRegions && inAnnotationBrainRegionsReducer
-    ? brainRegions?.reduce<BrainRegionWithRepresentation[]>(inAnnotationBrainRegionsReducer, [])
-    : null;
+  const brainRegionsWithRepresentation = brainRegions
+    .reduce<BrainRegionWithRepresentation[]>(getInAnnotationBrainRegionsReducer(brainRegions), [])
+
+  const brIdSet = brainRegionsWithRepresentation.reduce((set, br) => set.add(br.id), new Set<string>());
+
+  // Filter out brain regions without representation also from the .leaves and .hasPart properties.
+  return brainRegionsWithRepresentation.map(({leaves, hasPart, ...rest}) => ({
+    leaves: leaves?.filter(id => brIdSet.has(id)),
+    hasPart: hasPart?.filter(id => brIdSet.has(id)),
+    ...rest
+  }));
 });
 
 type BrainRegionId = string;
@@ -138,7 +144,7 @@ export const brainRegionIdByNotationMapAtom = selectAtom<
   Promise<BrainRegion[] | null>,
   Map<string, string> | null
 >(
-  brainRegionsAtom,
+  brainRegionsWithRepresentationAtom,
   (brainRegions) =>
     brainRegions?.reduce(
       (idByNotationMap, brainRegion) => idByNotationMap.set(brainRegion.notation, brainRegion.id),
@@ -150,7 +156,7 @@ export const brainRegionByNotationMapAtom = selectAtom<
   Promise<BrainRegion[] | null>,
   Map<BrainRegionNotation, BrainRegion> | null
 >(
-  brainRegionsAtom,
+  brainRegionsWithRepresentationAtom,
   (brainRegions) =>
     brainRegions?.reduce(
       (map, brainRegion) => map.set(brainRegion.notation, brainRegion),
@@ -162,7 +168,7 @@ export const brainRegionNotationByIdMapAtom = selectAtom<
   Promise<BrainRegion[] | null>,
   Map<BrainRegionId, BrainRegionNotation> | null
 >(
-  brainRegionsAtom,
+  brainRegionsWithRepresentationAtom,
   (brainRegions) =>
     brainRegions?.reduce(
       (map, brainRegion) => map.set(brainRegion.id, brainRegion.notation),
@@ -174,7 +180,7 @@ export const brainRegionByIdMapAtom = selectAtom<
   Promise<BrainRegion[] | null>,
   Map<BrainRegionNotation, BrainRegion> | null
 >(
-  brainRegionsAtom,
+  brainRegionsWithRepresentationAtom,
   (brainRegions) =>
     brainRegions?.reduce((map, brainRegion) => map.set(brainRegion.id, brainRegion), new Map()) ??
     null
