@@ -2,18 +2,16 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Button } from 'antd';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import throttle from 'lodash/throttle';
 
 import { PositionedPopover } from './PositionedPopover';
 import TraceLoader from './TraceLoader';
-import { useEModelUUID } from '@/services/bluenaas-single-cell/hooks';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import { SimAction } from '@/types/simulate/single-neuron';
 import { PlotData, TraceData } from '@/services/bluenaas-single-cell/types';
-import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import {
   blueNaasInstanceRefAtom,
   simulationPlotDataAtom,
@@ -24,6 +22,8 @@ import {
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import { useSessionAtomValue } from '@/hooks/hooks';
+import { getUUIDFromId } from '@/util/nexus';
+import { modelIdAtom } from '@/state/virtual-lab/simulate/blue-naas';
 
 const baseBannerStyle =
   'flex h-full items-center justify-center text-4xl bg-gray-950 text-gray-100';
@@ -182,37 +182,24 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 }
 
 export default function EModelInteractiveView() {
-  const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
+  const modelId = useAtomValue(modelIdAtom);
 
-  const eModelUUID = useEModelUUID();
+  const modelUUID = getUUIDFromId(modelId);
 
   const [blueNaasModelId, setBlueNaasModelId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // TODO: remove this when model fetchable from backend
   useEffect(() => {
-    setSelectedEModel({
-      name: 'EM__1372346__cADpyr__13',
-      id: 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/e990f748-a856-4be0-a7d3-9f0bc336447c',
-      eType: 'cADpyr',
-      mType: 'L5_TPC:A',
-      isOptimizationConfig: false,
-      rev: 10,
-      brainRegion: 'http://api.brain-map.org/api/v2/data/Structure/8',
-    });
-  }, [setSelectedEModel]);
-
-  useEffect(() => {
-    if (!eModelUUID || selectedEModel?.isOptimizationConfig) return;
+    if (!modelUUID) return;
 
     const init = async () => {
       setBlueNaasModelId(null);
       setLoading(true);
-      setBlueNaasModelId(eModelUUID);
+      setBlueNaasModelId(modelUUID);
     };
 
     init();
-  }, [eModelUUID, selectedEModel?.isOptimizationConfig]);
+  }, [modelUUID]);
 
   if (!blueNaasModelId) {
     const msg = loading ? 'Loading...' : 'Select a leaf region and an already built E-Model';

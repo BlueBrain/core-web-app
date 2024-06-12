@@ -1,7 +1,7 @@
-import { env } from '@/env.mjs';
+import { bbsMlBaseUrl } from '@/config';
 
 export default async function handleAiSummarizeParagraph(text: string): Promise<string> {
-  const response = await fetch(`${env.NEXT_PUBLIC_BBS_ML_BASE_URL}/qa/passthrough`, {
+  const response = await fetch(`${bbsMlBaseUrl}/qa/passthrough`, {
     headers: {
       'Content-Type': 'application/json',
     },

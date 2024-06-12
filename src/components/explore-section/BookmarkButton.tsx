@@ -18,6 +18,7 @@ import {
   ExperimentTypeNames,
 } from '@/constants/explore-section/data-types/experiment-data-types';
 import { DataType } from '@/constants/explore-section/list-views';
+import { useAccessToken } from '@/hooks/useAccessToken';
 
 type Props = {
   virtualLabId: string;
@@ -32,6 +33,7 @@ export default function BookmarkButton({
   resourceId,
   experimentType,
 }: Props) {
+  const token = useAccessToken()!;
   const bookmarks = useAtomValue(
     loadable(
       bookmarksForProjectAtomFamily({
@@ -75,14 +77,14 @@ export default function BookmarkButton({
     if (action === 'add') {
       notification.error({
         message: 'Resource could not be added to the library',
-        description: err ?? null,
+        description: (err as Error)?.message ?? null,
         duration: 3,
         placement: 'bottomRight',
       });
     } else {
       notification.error({
         message: 'Resource could not be removed from the library',
-        description: err ?? null,
+        description: (err as Error)?.message ?? null,
         duration: 3,
         placement: 'bottomRight',
       });
@@ -91,23 +93,41 @@ export default function BookmarkButton({
 
   const saveToLibrary = useCallback(async () => {
     try {
-      await addBookmark(virtualLabId, projectId, { resourceId, category });
+      await addBookmark(virtualLabId, projectId, { resourceId, category }, token);
       refreshBookmarks();
       notifySuccess('add');
     } catch (err) {
       notifyError('add', err);
     }
-  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks, notifySuccess, notifyError]);
+  }, [
+    virtualLabId,
+    projectId,
+    resourceId,
+    category,
+    refreshBookmarks,
+    notifySuccess,
+    notifyError,
+    token,
+  ]);
 
   const removeFromLibrary = useCallback(async () => {
     try {
-      await removeBookmark(virtualLabId, projectId, { resourceId, category });
+      await removeBookmark(virtualLabId, projectId, { resourceId, category }, token);
       refreshBookmarks();
       notifySuccess('remove');
     } catch (err) {
       notifyError('remove', err);
     }
-  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks, notifySuccess, notifyError]);
+  }, [
+    virtualLabId,
+    projectId,
+    resourceId,
+    category,
+    refreshBookmarks,
+    notifySuccess,
+    notifyError,
+    token,
+  ]);
 
   const isBookmarked = useMemo(() => {
     return (
@@ -121,7 +141,7 @@ export default function BookmarkButton({
   }
 
   if (bookmarks.state === 'hasError') {
-    return <WarningFilled title="Bookmark status could not be loaded" />;
+    return <WarningFilled title="Bookmark status could not be loaded" className="mr-2" />;
   }
 
   return isBookmarked ? (

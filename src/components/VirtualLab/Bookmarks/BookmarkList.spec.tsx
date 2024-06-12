@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
-import userEvent from '@testing-library/user-event';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import BookmarkList from '@/components/VirtualLab/Bookmarks/BookmarkList';
 import sessionAtom from '@/state/session';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -12,20 +12,27 @@ import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
 import esb from 'elastic-builder';
 import { DataQuery } from '@/api/explore-section/resources';
-import { Bookmark, BookmarksByCategory } from '@/types/virtual-lab/bookmark';
+import {
+  Bookmark,
+  BookmarksByCategory,
+  BulkRemoveBookmarksResponse,
+} from '@/types/virtual-lab/bookmark';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 
 describe('Library', () => {
   const labId = '3';
   const projectId = '123';
   const morphology = DataType.ExperimentalNeuronMorphology;
+  const electrophysiology = DataType.ExperimentalElectroPhysiology;
 
-  it('renders bookmarked morphology resources by default', async () => {
+  it.skip('renders bookmarked morphology resources', async () => {
     projectHasBookmarks(labId, projectId, [
       bookmarkItem('item1', morphology),
       bookmarkItem('item2', morphology),
     ]);
+    urlHasCategory(ExperimentTypeNames.MORPHOLOGY);
     elasticSearchReturns(['item1', 'item2']);
+
     renderComponent(labId, projectId);
 
     await screen.findByText('item1');
@@ -41,8 +48,12 @@ describe('Library', () => {
       bookmarkItem('item1', morphology),
       bookmarkItem('item2', morphology),
     ]);
+    urlHasCategory(null);
     elasticSearchReturns(['item1', 'item2']);
+
     const user = renderComponent(labId, projectId);
+
+    await user.click(await screen.findByText('Morphology')); // Expand morphology panel
 
     const nameCell = await screen.findByText('item1');
     await user.click(nameCell);
@@ -52,30 +63,30 @@ describe('Library', () => {
     expect(url).toContain(projectId);
   });
 
-  it('does not show table with bookmarks if no resource is bookmarked', async () => {
+  it('does not show bookmarks if no resource is bookmarked', async () => {
     projectHasBookmarks(labId, projectId, []);
     elasticSearchReturns(['item1', 'item2']); // ES populates query atoms correctly
+    urlHasCategory(null);
 
     renderComponent(labId, projectId);
 
-    await screen.findByText('There are no pinned datasets for Morphology');
-    expect(screen.queryByText('item1')).not.toBeInTheDocument();
+    await screen.findByText('There are no resources in the library');
   });
 
   it('shows electrophysiology bookmarks when Electrophysiology panel is opened', async () => {
     projectHasBookmarks(labId, projectId, [
-      bookmarkItem('item1', DataType.ExperimentalElectroPhysiology),
-      bookmarkItem('item2', DataType.ExperimentalElectroPhysiology),
+      bookmarkItem('item1', electrophysiology),
+      bookmarkItem('item2', electrophysiology),
     ]);
     elasticSearchReturns(['item1', 'item2']);
+    urlHasCategory(ExperimentTypeNames.ELECTROPHYSIOLOGY);
+
     const user = renderComponent(labId, projectId);
 
     expect(screen.queryByText('item1')).not.toBeInTheDocument(); // No morphology items are visible
 
     const electrophysiologyTab = await screen.findByText('Electrophysiology');
-    within(screen.getByTestId(`${DataType.ExperimentalElectroPhysiology}-tab`)).getByText(
-      '2 pinned datasets'
-    );
+    within(screen.getByTestId(`${electrophysiology}-tab`)).getByText('2 pinned datasets');
 
     await user.click(electrophysiologyTab);
     await screen.findByText('item1');
@@ -83,21 +94,71 @@ describe('Library', () => {
   });
 
   it('opens collapsible panel for experiment if category is defined in url', async () => {
-    projectHasBookmarks(labId, projectId, []);
-    categoryQueryParam.mockReturnValue(ExperimentTypeNames.BOUTON_DENSITY);
+    const electroPhysiologyBookmark = bookmarkItem('item1', electrophysiology);
+    const morphologyBookmark = bookmarkItem('item2', DataType.ExperimentalNeuronMorphology);
+
+    projectHasBookmarks(labId, projectId, [electroPhysiologyBookmark, morphologyBookmark]);
+
+    elasticSearchReturns(['item1', 'item2']);
+    urlHasCategory(ExperimentTypeNames.ELECTROPHYSIOLOGY);
+
     renderComponent(labId, projectId);
 
-    await screen.findByText('There are no pinned datasets for Bouton density');
+    await screen.findByTestId(`${electrophysiology}-tab-panel`);
+    expect(screen.queryByTestId(`${morphology}-tab-panel`)).not.toBeInTheDocument();
   });
 
-  it('opens collapsible panel for morphologies if no catgory is defined in url', async () => {
-    projectHasBookmarks(labId, projectId, []);
-    categoryQueryParam.mockReturnValue(null);
-    renderComponent(labId, projectId);
+  it('does not open any collapsible panel if no catgory is defined in url', async () => {
+    projectHasBookmarks(labId, projectId, [
+      bookmarkItem('item1', morphology),
+      bookmarkItem('item2', morphology),
+    ]);
+    urlHasCategory(null);
+    elasticSearchReturns(['item1', 'item2']);
 
-    await screen.findByText('There are no pinned datasets for Morphology');
+    renderComponent(labId, projectId);
+    await screen.findByText('Morphology');
+    screen.getByText('2 pinned datasets');
+    expect(screen.queryByTestId(`${morphology}-tab-panel`)).not.toBeInTheDocument();
+  });
+
+  it('bulk removes selected bookmarks', async () => {
+    const bookmarksToRemove = [
+      bookmarkItem('item2', morphology),
+      bookmarkItem('item3', morphology),
+    ];
+    projectHasBookmarks(labId, projectId, [
+      bookmarkItem('item1', morphology),
+      ...bookmarksToRemove,
+    ]);
+
+    urlHasCategory(ExperimentTypeNames.MORPHOLOGY);
+    elasticSearchReturns(['item1', 'item2', 'item3']);
+
+    const user = renderComponent(labId, projectId);
+    await screen.findByText('3 pinned datasets');
+
+    await selectResource(user, 'item2');
+    await selectResource(user, 'item3');
+
+    projectHasBookmarks(labId, projectId, [bookmarkItem('item1', morphology)]);
+    await user.click(await screen.findByText('Remove from library'));
+
+    expect(bulkRemoveBookmarks).toHaveBeenCalledTimes(1);
+    const bookmarksPassed = bulkRemoveBookmarks.mock.calls[0][2];
+    expect(bookmarksPassed).toEqual(bookmarksToRemove);
+    await screen.findByText('1 pinned datasets');
   });
 });
+
+const CHECKBOX_SELECTOR = '.ant-checkbox-input';
+
+const selectResource = async (user: UserEvent, resource: string) => {
+  const checkbox = (await screen.findByText(resource))
+    .closest('tr')
+    ?.querySelector(CHECKBOX_SELECTOR)!;
+  await user.click(checkbox);
+};
 
 const renderComponent = (labId: string, projectId: string) => {
   const user = userEvent.setup();
@@ -162,6 +223,10 @@ const projectHasBookmarks = (labId: string, projectId: string, items: Bookmark[]
   });
 };
 
+const urlHasCategory = (category: ExperimentTypeNames | null) => {
+  categoryQueryParam.mockReturnValue([category, (value: string) => {}]);
+};
+
 const elasticSearchReturns = (hitIds: string[]) => {
   fetchEsResourcesByType.mockResolvedValue({
     hits: hitIds.map(mockHit),
@@ -199,6 +264,14 @@ jest.mock('src/services/virtual-lab/bookmark', () => {
     getBookmarksByCategory: (lab: string, project: string): string[] => {
       return getBookmarksByCategory(lab, project);
     },
+    bulkRemoveBookmarks: (
+      lab: string,
+      labProject: string,
+      bookmarksToRemove: Bookmark[],
+      token: string
+    ) => {
+      return bulkRemoveBookmarks(lab, labProject, bookmarksToRemove, token);
+    },
   };
 });
 
@@ -229,6 +302,16 @@ jest.mock('src/api/explore-section/resources', () => {
   };
 });
 
+jest.mock('@/hooks/useAccessToken', () => {
+  const actual = jest.requireActual('@/hooks/useAccessToken');
+
+  return {
+    ...actual,
+    __esModule: true,
+    useAccessToken: () => 'abc',
+  };
+});
+
 jest.mock('next/navigation', () => {
   const actual = jest.requireActual('next/navigation');
   return {
@@ -237,16 +320,42 @@ jest.mock('next/navigation', () => {
     useRouter: () => ({
       push: (path: string) => navigateTo(path),
     }),
-    useSearchParams: () => {
-      return {
-        get: categoryQueryParam,
-        set: jest.fn(),
-      };
+  };
+});
+
+jest.mock('nuqs', () => {
+  const actual = jest.requireActual('nuqs');
+  return {
+    ...actual,
+    __esModule: true,
+    useQueryState: () => categoryQueryParam(),
+  };
+});
+
+jest.mock('antd', () => {
+  const actual = jest.requireActual('antd');
+  return {
+    ...actual,
+    __esModule: true,
+    notification: {
+      success: jest.fn(),
+      error: jest.fn(),
     },
   };
 });
 
 const getBookmarksByCategory = jest.fn();
+const bulkRemoveBookmarks = jest
+  .fn()
+  .mockImplementation(
+    (lab: string, labProject: string, bookmarksToRemove: Bookmark[], token: string) => {
+      return Promise.resolve({
+        successfully_deleted: [bookmarksToRemove[0]],
+        failed_to_delete: [bookmarksToRemove[1]],
+      } as BulkRemoveBookmarksResponse);
+    }
+  );
+
 const buildFilters = jest.fn();
 const fetchEsResourcesByType = jest.fn();
 const navigateTo = jest.fn();

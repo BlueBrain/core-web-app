@@ -5,9 +5,10 @@ import { redirect } from 'next/navigation';
 import { captureException } from '@sentry/nextjs';
 
 import { papersListTagGenerator } from './utils';
-import { deprecateResource } from '@/api/nexus';
 import { PaperResource } from '@/types/nexus';
 import { auth } from '@/auth';
+import { composeUrl } from '@/util/nexus';
+import { createHeaders } from '@/util/utils';
 
 export default async function deletePaperFromProject({ paper }: { paper: PaperResource }) {
   const session = await auth();
@@ -17,12 +18,21 @@ export default async function deletePaperFromProject({ paper }: { paper: PaperRe
 
   let shouldRedirect = false;
   try {
-    await deprecateResource(paper, session, {
-      org: paper.virtualLabId,
-      project: paper.projectId,
-      rev: paper._rev,
-      sync: true,
-    });
+    const response = await fetch(
+      composeUrl('resource', paper['@id'], {
+        org: paper.virtualLabId,
+        project: paper.projectId,
+        rev: paper._rev,
+        sync: true,
+      }),
+      {
+        method: 'DELETE',
+        headers: createHeaders(session.accessToken),
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Resource deprecation failed');
+    }
     revalidateTag(
       papersListTagGenerator({
         virtualLabId: paper.virtualLabId,

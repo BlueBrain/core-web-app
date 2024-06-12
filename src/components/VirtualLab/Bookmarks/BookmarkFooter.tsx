@@ -7,6 +7,7 @@ import { bulkRemoveBookmarks } from '@/services/virtual-lab/bookmark';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
 import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 import { Bookmark } from '@/types/virtual-lab/bookmark';
+import { useAccessToken } from '@/hooks/useAccessToken';
 
 type Props = {
   selectedRows: ExploreESHit<ExploreResource>[];
@@ -24,6 +25,7 @@ export default function BookmarkFooter({
   clearSelectedRows,
 }: Props) {
   const refreshBookmarks = useSetAtom(bookmarksForProjectAtomFamily({ virtualLabId, projectId }));
+  const token = useAccessToken()!;
 
   const notifySuccess = useCallback(() => {
     notification.success({
@@ -46,7 +48,6 @@ export default function BookmarkFooter({
           : 'There was an error when removing resources from the library',
         description: failedBookmarks?.length ? (
           <ul>
-            $
             {failedResourceNames.map((r) => (
               <li key={r}>{r}</li>
             ))}
@@ -64,7 +65,8 @@ export default function BookmarkFooter({
       const response = await bulkRemoveBookmarks(
         virtualLabId,
         projectId,
-        selectedRows.map((r) => ({ category, resourceId: r._source['@id'] }))
+        selectedRows.map((r) => ({ category, resourceId: r._source['@id'] })),
+        token
       );
       refreshBookmarks();
       if (response.failed_to_delete?.length > 0) {

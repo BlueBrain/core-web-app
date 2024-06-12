@@ -63,9 +63,11 @@ function PresetSelector() {
       <div className="my-4 text-primary-8">
         <div>DESCRIPTION</div>
         <div>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Totam, id tenetur modi iusto
-          aspernatur culpa exercitationem explicabo quod! Perferendis consectetur provident
-          voluptatibus animi rem tenetur suscipit molestias excepturi possimus dolorem?
+          Optimization target selects the target stimulation protocols (e-codes) and electrical
+          features (e-features) combinations to extract from intracellular electrophysiological
+          traces. The pipeline will try to find the best combination of e-codes, amplitudes, and
+          e-features that match the data available in the recordings. The optimization and
+          validation steps of e-model building use these targets.
         </div>
       </div>
     </>

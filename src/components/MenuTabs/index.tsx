@@ -61,6 +61,7 @@ export default function MenuTabs({
     <div
       className={clsx(
         'text-center text-sm font-medium dark:border-gray-700 dark:text-gray-400',
+        'text-white',
         classNames?.containerName
       )}
     >
