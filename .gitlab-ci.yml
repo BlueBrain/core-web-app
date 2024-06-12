@@ -160,6 +160,7 @@ deploy-aws-prod:
       --build-arg=NEXT_PUBLIC_VIRTUAL_LAB_API_URL
       --build-arg=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
       --build-arg=NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_TAG
+      --build-arg=NEXT_PUBLIC_BBS_ML_PRIVATE_BASE_URL
       --build-arg=NODE_OPTIONS
   only:
     - develop
