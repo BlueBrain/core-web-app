@@ -16,20 +16,18 @@ export type SessionOrNull = Session | null;
 */
 function SessionFromAPILock() {
   let session: SessionOrNull = null;
-  let sessionPromise: Promise<SessionOrNull> | null = null;
+  let resolvePromise: ((value: true) => void) | null = null;
+  const sessionPromise = new Promise((r) => {
+    resolvePromise = r;
+  });
 
   return {
     async getSession() {
       if (session) return session;
-
-      if (!sessionPromise) {
-        sessionPromise = getSessionFromApi();
-      }
-
-      session = await sessionPromise;
-      return session;
+      if (await sessionPromise) return session;
     },
     setSession(newSession: SessionOrNull) {
+      if (newSession && resolvePromise) resolvePromise(true);
       session = newSession;
     },
   };
