@@ -1,15 +1,29 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useSetAtom } from 'jotai';
+
 import GenericButton from '@/components/Global/GenericButton';
 import Link from '@/components/Link';
 import { ServerSideComponentProp } from '@/types/common';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
+import { modelIdAtom } from '@/state/virtual-lab/simulate/blue-naas';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { ExploreESHit } from '@/types/explore-section/es';
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
+  const setSelectedModelId = useSetAtom(modelIdAtom);
+  const router = useRouter();
+
+  const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
+    setSelectedModelId(model._source['@id']);
+    router.push('/simulate/single-neuron/edit');
+  };
+
   const simulatePage = `/virtual-lab/lab/${virtualLabId}/project/${projectId}/simulate`;
 
   return (
@@ -28,8 +42,12 @@ export default function VirtualLabProjectSimulateNewPage({
           brainRegionSource="selected"
           selectionType="radio"
           enableDownload
-          renderButton={() => (
-            <Btn className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2">
+          renderButton={({ selectedRows }) => (
+            <Btn
+              className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2"
+              // as we use radio button instead of checkbox, we have a single model to pass
+              onClick={() => onModelSelected(selectedRows[0])}
+            >
               New Simulation
             </Btn>
           )}

@@ -133,3 +133,10 @@ export function setRev(url: string, rev: number | string) {
 
   return urlObj.toString();
 }
+
+export function getUUIDFromId(id: string | null) {
+  if (!id) return null;
+  if (!id.includes('/')) return id;
+
+  return id.split('/').at(-1) as string;
+}
