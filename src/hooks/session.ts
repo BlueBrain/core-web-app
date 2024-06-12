@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { signIn, useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
@@ -39,10 +39,27 @@ const { getSession: getSessionLocked, setSession } = initClientSession();
 
 export { getSessionLocked, setSession };
 
-export default function useSessionState() {
+// Ensures a function is called just once during the component lifecycle and return the
+// result like useMemo with no dependencies but guaranteed to never re-run
+// See useMemo caveats: https://react.dev/reference/react/useMemo#caveats
+function useOnce<T>(func: () => T): T | undefined {
+  const executedRef = useRef(false);
+  const resultRef = useRef<T>();
+
+  if (!executedRef.current) {
+    resultRef.current = func();
+    executedRef.current = true;
+  }
+
+  return resultRef.current;
+}
+
+export default function useSessionState(initialSession: SessionOrNull) {
   const currentSession = useSession();
   const [session, setSessionState] = useAtom(sessionAtom);
   const previousSession = usePrevious(currentSession);
+
+  useOnce(() => setSession(initialSession));
 
   // If user logs-out in another window refresh page, (middleware will redirect to login if in a secured page)
   if (currentSession?.status === 'unauthenticated' && previousSession?.status === 'authenticated') {

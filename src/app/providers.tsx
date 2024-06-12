@@ -10,12 +10,14 @@ import { basePath } from '@/config';
 import commonAntdTheme from '@/theme/antd';
 import SessionStateProvider from '@/components/SessionStateProvider';
 import ThemeProvider from '@/components/ThemeProvider';
+import { SessionOrNull } from '@/hooks/session';
 
 type ProvidersProps = {
   children: ReactNode;
+  session: SessionOrNull;
 };
 
-export default function Providers({ children }: ProvidersProps) {
+export default function Providers({ children, session }: ProvidersProps) {
   return (
     <ConfigProvider theme={commonAntdTheme}>
       <JotaiProvider>
@@ -24,7 +26,7 @@ export default function Providers({ children }: ProvidersProps) {
         )}
         <ThemeProvider>
           <SessionProvider basePath={`${basePath}/api/auth`} refetchInterval={2 * 60}>
-            <SessionStateProvider>{children}</SessionStateProvider>
+            <SessionStateProvider session={session}>{children}</SessionStateProvider>
           </SessionProvider>
         </ThemeProvider>
       </JotaiProvider>
