@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
   // then redirect to the main page
   if (sessionValid && (requestUrl === '/' || requestUrl === '/log-in')) {
     const url = request.nextUrl.clone();
-    url.pathname = `/main`;
+    url.pathname = `/virtual-lab`;
     return NextResponse.redirect(url);
   }
 
