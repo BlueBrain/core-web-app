@@ -62,6 +62,7 @@ function withButtonOrLink(WrapperComponent: ComponentType<EntrypointMenuItem>) {
     return null;
   };
 }
+
 function EntrypointMenuSingleItem({ title, bgcolor }: { title: string; bgcolor: string }) {
   return (
     <div

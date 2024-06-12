@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint & npx tsc --noEmit",
+    "lint": "next lint && npx tsc --noEmit",
     "lint:fix": "next lint --fix",
     "prettier:check": "prettier --check . --log-level warn",
     "prettier:write": "prettier --write . --log-level warn",
