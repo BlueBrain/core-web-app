@@ -15,6 +15,7 @@ export type SessionOrNull = Session | null;
    useSessionState updates it to keep the session 'fresh'.
 */
 function SessionFromAPILock() {
+  let sessionSet = false;
   let session: SessionOrNull = null;
   let resolvePromise: ((value: true) => void) | null = null;
   const sessionPromise = new Promise((r) => {
@@ -23,12 +24,14 @@ function SessionFromAPILock() {
 
   return {
     async getSession() {
-      if (session) return session;
-      if (await sessionPromise) return session;
+      if (session || sessionSet) return session;
+      await sessionPromise;
+      return session;
     },
     setSession(newSession: SessionOrNull) {
-      if (newSession && resolvePromise) resolvePromise(true);
+      sessionSet = true;
       session = newSession;
+      if (resolvePromise) resolvePromise(true);
     },
   };
 }
