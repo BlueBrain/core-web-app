@@ -124,16 +124,21 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
 >(brainRegionsAtom, (brainRegions) => {
   if (!brainRegions) return null;
 
-  const brainRegionsWithRepresentation = brainRegions
-    .reduce<BrainRegionWithRepresentation[]>(getInAnnotationBrainRegionsReducer(brainRegions), [])
+  const brainRegionsWithRepresentation = brainRegions.reduce<BrainRegionWithRepresentation[]>(
+    getInAnnotationBrainRegionsReducer(brainRegions),
+    []
+  );
 
-  const brIdSet = brainRegionsWithRepresentation.reduce((set, br) => set.add(br.id), new Set<string>());
+  const brIdSet = brainRegionsWithRepresentation.reduce(
+    (set, br) => set.add(br.id),
+    new Set<string>()
+  );
 
   // Filter out brain regions without representation also from the .leaves and .hasPart properties.
-  return brainRegionsWithRepresentation.map(({leaves, hasPart, ...rest}) => ({
-    leaves: leaves?.filter(id => brIdSet.has(id)),
-    hasPart: hasPart?.filter(id => brIdSet.has(id)),
-    ...rest
+  return brainRegionsWithRepresentation.map(({ leaves, hasPart, ...rest }) => ({
+    leaves: leaves?.filter((id) => brIdSet.has(id)),
+    hasPart: hasPart?.filter((id) => brIdSet.has(id)),
+    ...rest,
   }));
 });
 

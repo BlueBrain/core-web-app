@@ -215,8 +215,9 @@ export function useGetParentSelections() {
 
     const parentSelectionBrainRegion = brainRegionByIdMap?.get(parentSelectionBrainRegionId);
 
-    const parentSelectionSiblingBrainRegions = brainRegions
-      .filter((br) => br.isPartOf === parentSelectionBrainRegion?.isPartOf);
+    const parentSelectionSiblingBrainRegions = brainRegions.filter(
+      (br) => br.isPartOf === parentSelectionBrainRegion?.isPartOf
+    );
 
     const parentSelections = parentSelectionSiblingBrainRegions
       .map((br) => br.notation)
