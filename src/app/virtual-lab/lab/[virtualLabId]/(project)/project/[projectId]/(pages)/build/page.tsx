@@ -4,13 +4,20 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import ScopeCarousel from '@/components/VirtualLab/ScopeCarousel';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
+import GenericButton from '@/components/Global/GenericButton';
+import Link from '@/components/Link';
 
 export default function VirtualLabProjectBuildPage() {
   return (
     <div className="flex flex-col gap-10 pt-14">
       <ScopeCarousel />
-      <div className="flex flex-col gap-2 bg-white px-4 pt-10">
-        <h3 className="text-3xl font-bold text-primary-8">Model library</h3>
+      <div className="flex flex-col">
+        <div className="flex justify-between">
+          <GenericButton text="Models" className="bg-white text-2xl font-bold text-primary-8" />
+          <Link href="/build/me-model/morphology/reconstructed">
+            <GenericButton text="New model ＋" className="bg-primary-6 text-white" />
+          </Link>
+        </div>
         <ExploreSectionListingView
           dataType={DataType.CircuitMEModel}
           brainRegionSource="selected"
