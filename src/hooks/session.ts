@@ -2,19 +2,18 @@
 
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
-
-import { signIn, useSession, getSession as getSessionFromApi } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { usePrevious } from './hooks';
 import sessionAtom from '@/state/session';
 
 export type SessionOrNull = Session | null;
 
-/* Calls /api/auth if no other caller has or waits the session
-   Ensures  /api/auth is called at most once per page load 
-   useSessionState updates it to keep the session 'fresh'.
+/* 
+   Waits for useSessionState to set the session.
+   useSessionState updates it to always have the latest token available.
 */
-function SessionFromAPILock() {
+function initClientSession() {
   let sessionSet = false;
   let session: SessionOrNull = null;
   let resolvePromise: ((value: true) => void) | null = null;
@@ -29,14 +28,14 @@ function SessionFromAPILock() {
       return session;
     },
     setSession(newSession: SessionOrNull) {
-      sessionSet = true;
       session = newSession;
+      sessionSet = true;
       if (resolvePromise) resolvePromise(true);
     },
   };
 }
 
-const { getSession: getSessionLocked, setSession } = SessionFromAPILock();
+const { getSession: getSessionLocked, setSession } = initClientSession();
 
 export { getSessionLocked, setSession };
 
