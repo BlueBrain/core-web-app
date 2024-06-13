@@ -38,7 +38,6 @@ export function buildSimulationDetailURL(
 }
 
 // TODO: Figure out how to handle custom config later
-// TODO: Remove temporary git user and password
 function getMultiAnalysisWorkflowConfig(
   analysis: Analysis[],
   targets: string[][],
@@ -47,22 +46,19 @@ function getMultiAnalysisWorkflowConfig(
   const configs = analysis.map(
     (a, i) => `{"AnalyseSimCampaign":  {
       "source_code_url": "${a['@id']}",
-        "analysis_config": {
-          "simulation_campaign": "$SIMULATION_CAMPAIGN_FILE",
-          "output": "$SCRATCH_PATH",
-          "report_type": "spikes",
-          "report_name": "raster",
-          "node_sets": ${JSON.stringify(targets[i] && targets[i].length ? targets[i] : ['AAA'])}, 
-          "cell_step": 1
-
+      "command": "python '$CODE_PATH/run.py' '$CONFIG_FILE' '$OUTPUT_FILE'",
+      "analysis_config": {
+        "simulation_campaign": "$SIMULATION_CAMPAIGN_FILE",
+        "output": "$SCRATCH_PATH",
+        "report_type": "spikes",
+        "report_name": "raster",
+        "node_sets": ${JSON.stringify(targets[i] && targets[i].length ? targets[i] : ['AAA'])},
+        "cell_step": 1
         }
     }, "CloneGitRepo": {
       "git_url": "${a.codeRepository['@id']}",
       "git_ref": "${a.branch}",
-      "subdirectory": "${a.subdirectory}",
-      "command": "${a.command}",
-      "git_user": "GUEST",
-      "git_password": "WCY_qpuGG8xpKz_S8RNg"}}`
+      "subdirectory": "${a.subdirectory}"}}`
   );
 
   return `[MultiAnalyseSimCampaign]
