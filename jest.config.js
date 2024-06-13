@@ -27,7 +27,8 @@ const customJestConfig = {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
-  testTimeout: 10_000, // Default is 5000 ms which is a bit low for our ci (MemoryRequest - 4Gi, MemoryLimit - 8Gi)
+  testTimeout: 10_000, // Default is 5000 ms which is a bit low for our ci (MemoryRequest - 4Gi, MemoryLimit - 8Gi),
+  showSeed: true,
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

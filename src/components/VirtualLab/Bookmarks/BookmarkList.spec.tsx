@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
@@ -25,7 +25,11 @@ describe('Library', () => {
   const morphology = DataType.ExperimentalNeuronMorphology;
   const electrophysiology = DataType.ExperimentalElectroPhysiology;
 
-  it.skip('renders bookmarked morphology resources', async () => {
+  beforeEach(() => {
+    fetchEsResourcesByType.mockClear();
+  });
+
+  it('renders bookmarked morphology resources', async () => {
     projectHasBookmarks(labId, projectId, [
       bookmarkItem('item1', morphology),
       bookmarkItem('item2', morphology),
@@ -34,6 +38,8 @@ describe('Library', () => {
     elasticSearchReturns(['item1', 'item2']);
 
     renderComponent(labId, projectId);
+
+    await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
 
     await screen.findByText('item1');
     screen.getByText('item2');
@@ -55,6 +61,7 @@ describe('Library', () => {
 
     await user.click(await screen.findByText('Morphology')); // Expand morphology panel
 
+    await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
     const nameCell = await screen.findByText('item1');
     await user.click(nameCell);
     const url = navigateTo.mock.calls[0][0];
@@ -138,6 +145,7 @@ describe('Library', () => {
     const user = renderComponent(labId, projectId);
     await screen.findByText('3 pinned datasets');
 
+    await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
     await selectResource(user, 'item2');
     await selectResource(user, 'item3');
 

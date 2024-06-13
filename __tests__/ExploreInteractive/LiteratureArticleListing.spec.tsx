@@ -19,6 +19,7 @@ import sessionAtom from '@/state/session';
 import { articleListingFilterPanelOpenAtom } from '@/state/explore-section/literature-filters';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 
 const ML_DATE_FORMAT = 'yyyy-MM-dd';
 const UI_DATE_FORMAT = 'dd-MM-yyyy';
@@ -154,10 +155,10 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('shows all experiment types as options', async () => {
-    await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
+    const user = await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
 
     const expTypesMenuButton = await selectExperimentTypesBtn();
-    click(expTypesMenuButton);
+    await user.click(expTypesMenuButton);
 
     const options = screen.getAllByRole('menuitem');
     expect(options.length).toEqual(Object.keys(EXPERIMENT_DATA_TYPES).length);
@@ -168,10 +169,10 @@ describe('LiteratureArticleListingPage', () => {
       push: jest.fn(),
     };
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
-    await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
+    const user = await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
 
     const expTypesMenuButton = await selectExperimentTypesBtn();
-    click(expTypesMenuButton);
+    await user.click(expTypesMenuButton);
 
     const electrophysiologyExperiment =
       DATA_TYPES_TO_CONFIGS[DataType.ExperimentalElectroPhysiology];
@@ -179,7 +180,7 @@ describe('LiteratureArticleListingPage', () => {
       name: electrophysiologyExperiment.title,
     });
 
-    click(electrophysiologyOption);
+    await user.click(electrophysiologyOption);
 
     expect(mockRouter.push).toHaveBeenCalledWith(
       `/explore/interactive/literature/electrophysiology?brainRegion=${encodeURIComponent(
@@ -231,9 +232,9 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('opens filter panel without reloading data', async () => {
-    renderComponentWithRoute(neuronDensity.name);
+    const user = await renderComponentWithRoute(neuronDensity.name);
 
-    await openFilterPanel();
+    await openFilterPanel(user);
 
     screen.getByTestId('article-list-filters');
 
@@ -243,16 +244,14 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('filters articles by date', async () => {
-    renderComponentWithRoute(neuronDensity.name);
-    await openFilterPanel();
+    const user = await renderComponentWithRoute(neuronDensity.name);
+    await openFilterPanel(user);
 
     expect(mockFetchArticlesForBrainRegionAndExperiment).toHaveBeenCalledTimes(1);
     mockFetchArticlesForBrainRegionAndExperiment.mockClear();
 
     const selectedDate = selectTodayAsDate('start');
-    applyFilters();
-
-    screen.getByTestId('initial data loading');
+    await applyFilters(user);
 
     expect(mockFetchArticlesForBrainRegionAndExperiment).toHaveBeenCalledTimes(1);
     const dateParams = filtersPassedToApi().publicationDate;
@@ -265,14 +264,14 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('calls api with the right value if end date is selected', async () => {
-    renderComponentWithRoute(neuronDensity.name);
-    await openFilterPanel();
+    const user = await renderComponentWithRoute(neuronDensity.name);
+    await openFilterPanel(user);
 
     expect(mockFetchArticlesForBrainRegionAndExperiment).toHaveBeenCalledTimes(1);
     mockFetchArticlesForBrainRegionAndExperiment.mockClear();
 
     const selectedDate = selectTodayAsDate('end');
-    applyFilters();
+    await applyFilters(user);
 
     expect(mockFetchArticlesForBrainRegionAndExperiment).toHaveBeenCalledTimes(1);
     const dateParams = filtersPassedToApi().publicationDate;
@@ -281,15 +280,14 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('filters articles by authors', async () => {
-    renderComponentWithRoute(neuronDensity.name);
-    await openFilterPanel();
+    const user = await renderComponentWithRoute(neuronDensity.name);
+    await openFilterPanel(user);
     mockFetchArticlesForBrainRegionAndExperiment.mockClear();
     typeInInput('Authors', 'Tunt');
     await selectSuggestion('Tunt');
 
-    applyFilters();
+    await applyFilters(user);
 
-    screen.getByTestId('initial data loading');
     expect(mockFetchArticlesForBrainRegionAndExperiment).toHaveBeenCalledTimes(1);
     const authorParamsPassed = filtersPassedToApi().authors;
     expect(authorParamsPassed).toEqual(['Cheryl Tunt']);
@@ -301,38 +299,38 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('does not call author suggestions endpoint again if author is not selected', async () => {
-    renderComponentWithRoute(neuronDensity.name);
-    await openFilterPanel();
+    const user = await renderComponentWithRoute(neuronDensity.name);
+    await openFilterPanel(user);
 
     // Called once to load initial suggestions
     expect(mockAuthorsSuggestions).toHaveBeenCalledTimes(1);
     mockAuthorsSuggestions.mockClear();
 
     selectTodayAsDate('end');
-    applyFilters();
+    await applyFilters(user);
     expect(mockAuthorsSuggestions).not.toHaveBeenCalled();
   });
 
   test('resets filters', async () => {
-    renderComponentWithRoute(neuronDensity.name);
-    await openFilterPanel();
+    const user = await renderComponentWithRoute(neuronDensity.name);
+    await openFilterPanel(user);
 
     selectTodayAsDate('start');
 
     typeInInput('Authors', 'Tunt');
     await selectSuggestion('Tunt');
 
-    applyFilters();
+    await applyFilters(user);
     await expectActiveFiltersCount(2);
 
-    await openFilterPanel();
+    await openFilterPanel(user);
 
     const resetFiltersButton = getButton('Clear filters');
-    click(resetFiltersButton);
+    await user.click(resetFiltersButton);
 
     await expectActiveFiltersCount(0);
 
-    await openFilterPanel();
+    await openFilterPanel(user);
     const dateInputAfter = screen.getByPlaceholderText('Start date');
     expect(dateInputAfter).toHaveValue('');
     const authorInputAfter = screen.getByLabelText('Authors', {
@@ -342,8 +340,8 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('resets filters that are not applied', async () => {
-    renderComponentWithRoute(neuronDensity.name);
-    await openFilterPanel();
+    const user = await renderComponentWithRoute(neuronDensity.name);
+    await openFilterPanel(user);
 
     selectTodayAsDate('start');
 
@@ -351,9 +349,9 @@ describe('LiteratureArticleListingPage', () => {
     await selectSuggestion('Tunt');
 
     const clearFiltersButton = await findButton('Clear filters');
-    click(clearFiltersButton);
+    user.click(clearFiltersButton);
 
-    await openFilterPanel();
+    await openFilterPanel(user);
 
     const dateInputAfter = screen.getByPlaceholderText('Start date');
     expect(dateInputAfter).toHaveValue('');
@@ -365,8 +363,8 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('shows applied filters when panel is reopened', async () => {
-    renderComponentWithRoute(neuronDensity.name);
-    await openFilterPanel();
+    const user = await renderComponentWithRoute(neuronDensity.name);
+    await openFilterPanel(user);
 
     const date = selectTodayAsDate('start');
 
@@ -379,10 +377,10 @@ describe('LiteratureArticleListingPage', () => {
     typeInInput('Article type', 'abstract');
     await selectSuggestion('abstract');
 
-    applyFilters();
+    await applyFilters(user);
     await expectActiveFiltersCount(4);
 
-    await openFilterPanel();
+    await openFilterPanel(user);
 
     const dateInput = screen.getByPlaceholderText('Start date');
     expect(dateInput).toHaveValue(format(new Date(date), UI_DATE_FORMAT));
@@ -425,8 +423,8 @@ describe('LiteratureArticleListingPage', () => {
     return mockFetchArticlesForBrainRegionAndExperiment.mock.calls[callNumber][3];
   };
 
-  const applyFilters = () => {
-    click(getButton('Apply'));
+  const applyFilters = async (user: UserEvent) => {
+    await user.click(getButton('Apply'));
   };
 
   const typeInInput = (inputName: string, text: string) => {
@@ -442,10 +440,11 @@ describe('LiteratureArticleListingPage', () => {
     fireEvent.mouseDown(selectedAuthor);
   };
 
-  const openFilterPanel = async () => {
+  const openFilterPanel = async (user: UserEvent) => {
     const filterBtn = await findButton('filter');
-    click(filterBtn);
+    await user.click(filterBtn);
   };
+
   const selectExperimentTypesBtn = async () => await screen.findByTestId(EXPERIMENT_TYPES_BTN);
   const articleListLoadingTestId = 'initial data loading';
 
@@ -457,6 +456,8 @@ describe('LiteratureArticleListingPage', () => {
     name?: string,
     config?: { waitForArticles?: boolean; authenticatedUser?: boolean }
   ) => {
+    const user = userEvent.setup();
+
     const spy = useParams as unknown as jest.Mock;
     spy.mockReturnValue({ 'experiment-data-type': name });
 
@@ -470,6 +471,7 @@ describe('LiteratureArticleListingPage', () => {
     if (config?.waitForArticles) {
       await screen.findByTestId('total-article-count', {}, { timeout: 5000 });
     }
+    return user;
   };
 
   const HydrateAtoms = ({ initialValues, children }: any) => {
@@ -507,11 +509,3 @@ describe('LiteratureArticleListingPage', () => {
     );
   }
 });
-
-const click = (element: HTMLElement) => {
-  act(() => {
-    fireEvent.click(element);
-    fireEvent.focus(element);
-    fireEvent.mouseDown(element);
-  });
-};

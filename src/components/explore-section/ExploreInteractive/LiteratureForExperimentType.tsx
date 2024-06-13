@@ -37,7 +37,7 @@ export default function LiteratureForExperimentType() {
     <>
       {totalByExperimentAndBrainRegion.state === 'loading' && (
         <>
-          {[...Array(6)].map((s) => (
+          {[...Array.from({ length: 6 }, (_, index) => index)].map((s) => (
             <StatItemSkeleton key={`literature-skeleton${s}`} />
           ))}
         </>
