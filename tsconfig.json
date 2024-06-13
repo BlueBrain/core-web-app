@@ -24,6 +24,13 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/**/*.mjs", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "**/__tests__", "**/*test*", "**/*spec.tsx"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.spec.tsx",
+    "src/**/*.mjs",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
 }

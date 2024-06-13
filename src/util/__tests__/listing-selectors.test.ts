@@ -359,7 +359,7 @@ describe('Selectors', () => {
   describe('selectorFnSpecies', () => {
     it('returns correct value if single layer', () => {
       const result = selectorFnSpecies({
-        identifier: 'http://purl.obolibrary.org/obo/NCBITaxon_10090',
+        '@id': 'http://purl.obolibrary.org/obo/NCBITaxon_10090',
         label: 'Mus musculus',
       });
       expect(result).toBe('Mus musculus');

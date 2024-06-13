@@ -15,13 +15,13 @@ describe('selectorFunctions', () => {
         subjectAgeSelectorFn({
           subject: {
             '@type': 'Subject',
+            '@id': 'NCBITaxon:10090',
+            strain: { label: 'Strain label' },
             age: {
               minValue: 20,
               maxValue: 30,
               period: 'Post-natal',
               unitCode: 'days',
-              label: '',
-              unit: '',
             },
             species: {
               '@id': 'NCBITaxon:10090',
@@ -38,12 +38,12 @@ describe('selectorFunctions', () => {
         subjectAgeSelectorFn({
           subject: {
             '@type': 'Subject',
+            '@id': 'NCBITaxon:10090',
+            strain: { label: 'Strain label' },
             age: {
               period: 'Post-natal',
               unitCode: 'days',
               value: 21,
-              label: '',
-              unit: '',
             },
             species: {
               '@id': 'NCBITaxon:10090',

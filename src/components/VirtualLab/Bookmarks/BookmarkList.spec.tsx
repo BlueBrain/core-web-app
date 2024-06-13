@@ -3,6 +3,7 @@ import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
 import userEvent, { UserEvent } from '@testing-library/user-event';
+import esb from 'elastic-builder';
 import BookmarkList from '@/components/VirtualLab/Bookmarks/BookmarkList';
 import sessionAtom from '@/state/session';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -10,7 +11,6 @@ import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
-import esb from 'elastic-builder';
 import { DataQuery } from '@/api/explore-section/resources';
 import {
   Bookmark,
@@ -232,7 +232,7 @@ const projectHasBookmarks = (labId: string, projectId: string, items: Bookmark[]
 };
 
 const urlHasCategory = (category: ExperimentTypeNames | null) => {
-  categoryQueryParam.mockReturnValue([category, (value: string) => {}]);
+  categoryQueryParam.mockReturnValue([category, () => {}]);
 };
 
 const elasticSearchReturns = (hitIds: string[]) => {
@@ -355,14 +355,12 @@ jest.mock('antd', () => {
 const getBookmarksByCategory = jest.fn();
 const bulkRemoveBookmarks = jest
   .fn()
-  .mockImplementation(
-    (lab: string, labProject: string, bookmarksToRemove: Bookmark[], token: string) => {
-      return Promise.resolve({
-        successfully_deleted: [bookmarksToRemove[0]],
-        failed_to_delete: [bookmarksToRemove[1]],
-      } as BulkRemoveBookmarksResponse);
-    }
-  );
+  .mockImplementation((lab: string, labProject: string, bookmarksToRemove: Bookmark[]) => {
+    return Promise.resolve({
+      successfully_deleted: [bookmarksToRemove[0]],
+      failed_to_delete: [bookmarksToRemove[1]],
+    } as BulkRemoveBookmarksResponse);
+  });
 
 const buildFilters = jest.fn();
 const fetchEsResourcesByType = jest.fn();
