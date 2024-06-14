@@ -4,17 +4,18 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
 import GenericButton from '@/components/Global/GenericButton';
-import Link from '@/components/Link';
 
 export default function VirtualLabProjectSimulatePage() {
   return (
     <div className="flex flex-col pt-14">
-      <div className="flex">
+      {/* TODO: Add carousel of different scales */}
+      <div className="flex justify-between">
         <GenericButton text="Simulations" className="bg-white text-2xl font-bold text-primary-8" />
-        <div className="grow" />
-        <Link href="simulate/new">
-          <GenericButton text="New simulation ＋" className="bg-primary-6 text-white" />
-        </Link>
+        <GenericButton
+          text="New simulation ＋"
+          className="bg-primary-6 text-white"
+          href="simulate/new"
+        />
       </div>
       <ExploreSectionListingView
         dataType={DataType.SimulationCampaigns}

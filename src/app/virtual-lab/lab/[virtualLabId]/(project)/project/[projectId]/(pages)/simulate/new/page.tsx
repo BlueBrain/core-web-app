@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useSetAtom } from 'jotai';
 
 import GenericButton from '@/components/Global/GenericButton';
-import Link from '@/components/Link';
 import { ServerSideComponentProp } from '@/types/common';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
@@ -28,12 +27,9 @@ export default function VirtualLabProjectSimulateNewPage({
 
   return (
     <div className="flex flex-col pt-14">
-      <div className="flex align-middle">
+      <div className="flex justify-between align-middle">
         <div className="text-2xl font-bold text-white">Create new simulation</div>
-        <div className="grow" />
-        <Link href={simulatePage}>
-          <GenericButton text="Cancel" className="text-white hover:text-white" />
-        </Link>
+        <GenericButton text="Cancel" className="text-white hover:text-white" href={simulatePage} />
       </div>
       {/* TODO: replace this list with items saved in Model Library */}
       <div className="h-[70vh]" id="explore-table-container-for-observable">

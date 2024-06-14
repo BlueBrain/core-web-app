@@ -5,7 +5,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import Link from '@/components/Link';
 import GenericButton from '@/components/Global/GenericButton';
 
 type Props = {
@@ -18,17 +17,16 @@ export default function BrainConfigSelectorLayout({ children }: Props) {
       <div className="flex flex-col">
         <span className="text-4xl font-bold">New</span>
         <span className="text-2xl">Simulation Campaign</span>
-        <Link href="/main">
-          <GenericButton
-            className="mt-6 flex items-center justify-around border border-primary-3 text-primary-3"
-            text={
-              <>
-                <ArrowLeftOutlined />
-                Back to Main
-              </>
-            }
-          />
-        </Link>
+        <GenericButton
+          className="mt-6 flex items-center justify-around border border-primary-3 text-primary-3"
+          text={
+            <>
+              <ArrowLeftOutlined />
+              Back to Main
+            </>
+          }
+          href="/main"
+        />
       </div>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
