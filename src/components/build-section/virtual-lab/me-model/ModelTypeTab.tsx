@@ -24,13 +24,13 @@ type TabInfo = {
 
 const tabs: TabInfo[] = [
   {
-    link: '/build/me-model/morphology/reconstructed',
+    link: '/build/me-model/build/morphology/reconstructed',
     name: 'Morphology',
     sectionName: 'morphology',
     description: 'Select a morphology to use for the single neuron model.',
   },
   {
-    link: '/build/me-model/electrophysiology',
+    link: '/build/me-model/build/electrophysiology',
     name: 'Electrophysiology',
     sectionName: 'electrophysiology',
     description: 'Select an electrical model to use for the single neuron model.',

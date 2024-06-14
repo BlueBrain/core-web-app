@@ -14,7 +14,7 @@ export default function VirtualLabProjectBuildPage() {
       <div className="flex flex-col">
         <div className="flex justify-between">
           <GenericButton text="Models" className="bg-white text-2xl font-bold text-primary-8" />
-          <Link href="/build/me-model/morphology/reconstructed">
+          <Link href="/build/me-model/build/morphology/reconstructed">
             <GenericButton text="New model ＋" className="bg-primary-6 text-white" />
           </Link>
         </div>
