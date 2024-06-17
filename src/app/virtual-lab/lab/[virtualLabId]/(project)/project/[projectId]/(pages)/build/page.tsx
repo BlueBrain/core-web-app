@@ -8,9 +8,9 @@ import GenericButton from '@/components/Global/GenericButton';
 
 export default function VirtualLabProjectBuildPage() {
   return (
-    <div className="flex flex-col gap-10 pt-14">
+    <div className="flex h-full flex-col gap-10 pt-14">
       <ScopeCarousel />
-      <div className="flex flex-col">
+      <div className="flex h-full flex-col">
         <div className="flex justify-between">
           <GenericButton text="Models" className="bg-white text-2xl font-bold text-primary-8" />
           <GenericButton
@@ -19,17 +19,19 @@ export default function VirtualLabProjectBuildPage() {
             href="/build/me-model/build/morphology/reconstructed"
           />
         </div>
-        <ExploreSectionListingView
-          dataType={DataType.CircuitMEModel}
-          brainRegionSource="selected"
-          selectionType="radio"
-          enableDownload
-          renderButton={() => (
-            <Btn className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2">
-              Use ME-Model
-            </Btn>
-          )}
-        />
+        <div id="explore-table-container-for-observable" className="h-full">
+          <ExploreSectionListingView
+            dataType={DataType.CircuitMEModel}
+            brainRegionSource="selected"
+            selectionType="radio"
+            enableDownload
+            renderButton={() => (
+              <Btn className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2">
+                Use ME-Model
+              </Btn>
+            )}
+          />
+        </div>
       </div>
     </div>
   );
