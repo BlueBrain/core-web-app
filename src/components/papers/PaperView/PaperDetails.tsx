@@ -10,7 +10,7 @@ import {
   EDIT_PAPER_SUCCESS,
 } from '../utils/messages';
 import { FormError, FormStaleLabel } from '../molecules/Form';
-import SourceDataListing from '../PaperCreationView/SourceDataListing';
+import SourceDataListing from '../PaperCreationView/SourceData/Listing';
 import { SourceDataItem } from '../PaperCreationView/data';
 import { PaperResource } from '@/types/nexus';
 import { classNames } from '@/util/utils';

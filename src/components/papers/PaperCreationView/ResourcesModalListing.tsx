@@ -1,7 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Modal } from 'antd';
 
-import { SourceDataActiveTab, SourceDataCategory, SourceDataGroupTabsEnum } from './data';
+import { SourceDataActiveTab, SourceDataCategory } from './data';
 import { DataType } from '@/constants/explore-section/list-views';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { Btn } from '@/components/Btn';
@@ -15,7 +15,7 @@ type HeaderProps = {
 type ModalProps = {
   open: boolean;
   sourceDataCategory: SourceDataCategory | null;
-  name: SourceDataGroupTabsEnum;
+  name: SourceDataActiveTab;
   onClose: () => void;
   onRowClick: (props: RenderButtonProps, category: SourceDataActiveTab) => void;
 };
@@ -46,9 +46,9 @@ function Body({ type, category, onRowClick }: BodyProps) {
   return (
     <div className="h-full" id="explore-table-container-for-observable">
       <ExploreSectionListingView
+        enableDownload
         dataType={type as DataType}
         brainRegionSource="root"
-        enableDownload
         selectionType="checkbox"
         renderButton={(props) => (
           <Btn

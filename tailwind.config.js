@@ -114,6 +114,7 @@ module.exports = {
         'slide-up': 'slide-up 0.5s ease-in-out',
         'scale-down': 'scale-down .6s cubic-bezier(.55,-0.04,.91,.94) forwards',
         'fade-in': 'fade-in 1.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both',
+        'fade-out': 'fade-out 1.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both',
       },
       keyframes: {
         'slide-out': {
@@ -163,6 +164,14 @@ module.exports = {
           },
           '100%': {
             opacity: 1,
+          },
+        },
+        'fade-out': {
+          '0%': {
+            opacity: 1,
+          },
+          '100%': {
+            opacity: 0,
           },
         },
       },

@@ -6,7 +6,7 @@ import { Button } from 'antd';
 
 import { FormActiveLabel, FormError } from '../molecules/Form';
 import { SourceDataItem } from './data';
-import SourceDataPicker from './SourceDataPicker';
+import SourceDataPicker from './SourceData/Picker';
 import initializePaperEntry from '@/services/paper-ai/initializePaperEntry';
 import { PaperCreationAction } from '@/services/paper-ai/validation';
 

@@ -4,16 +4,15 @@ import { CloseOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import reject from 'lodash/reject';
 import uniqBy from 'lodash/uniqBy';
 
-import ResourcesListingModal from './ResourcesModalListing';
-import SourceDataListing from './SourceDataListing';
+import ResourcesListingModal from '../ResourcesModalListing';
 import {
   SOURCE_DATA_GROUP_LIST,
   SOURCE_GROUP_TAB,
   SourceDataActiveTab,
   SourceDataCategory,
-  SourceDataGroupTabsEnum,
   SourceDataItem,
-} from './data';
+} from '../data';
+import SourceDataListing from './Listing';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 import MenuTabs from '@/components/MenuTabs';
 import { classNames } from '@/util/utils';
@@ -49,16 +48,13 @@ export default function SourceDataPicker({
   updateSourcesData: React.Dispatch<React.SetStateAction<SourceDataItem[]>>;
 }) {
   const [showSourceDataList, toggleShowSourceDataList] = useReducer((val) => !val, false);
-  const [activeSourceGroupTab, setSourceGroupTab] = useState('models');
+  const [activeSourceGroupTab, setSourceGroupTab] = useState<SourceDataActiveTab>('models');
   const [openListingModal, setOpenListingModal] = useState(false);
   const [sourcesDataCategory, setSourceDataCategory] = useState<SourceDataCategory | null>(null);
 
   const sourceDataGroup = SOURCE_DATA_GROUP_LIST.find(({ id }) => id === activeSourceGroupTab);
-  const activeSourceCategory = Object.entries(SourceDataGroupTabsEnum).find(
-    ([_, val]) => val === activeSourceGroupTab
-  )?.[0]! as SourceDataGroupTabsEnum;
 
-  const onTabClick = (value: string) => setSourceGroupTab(value);
+  const onTabClick = (value: SourceDataActiveTab) => setSourceGroupTab(value);
 
   const onSourceDataItemClick = (value: SourceDataCategory) => () => {
     setSourceDataCategory(value);
@@ -84,6 +80,7 @@ export default function SourceDataPicker({
       )
     );
     onListingModalClose();
+    toggleShowSourceDataList();
   };
 
   const onDeleteSourceData = (resource: SourceDataItem) => {
@@ -106,7 +103,7 @@ export default function SourceDataPicker({
             <div className="flex items-center justify-between gap-5">
               <MenuTabs
                 items={SOURCE_GROUP_TAB}
-                onTabClick={onTabClick}
+                onTabClick={(category) => onTabClick(category as SourceDataActiveTab)}
                 activeKey={activeSourceGroupTab}
                 classNames={{
                   tabItemClassName: 'text-gray-400',
@@ -152,7 +149,7 @@ export default function SourceDataPicker({
         open={openListingModal}
         onClose={onListingModalClose}
         sourceDataCategory={sourcesDataCategory}
-        name={activeSourceCategory}
+        name={activeSourceGroupTab}
         onRowClick={onRowClick}
       />
     </div>

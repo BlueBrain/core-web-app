@@ -1,13 +1,13 @@
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 import { DataType } from '@/constants/explore-section/list-views';
 
-export enum SourceDataGroupTabsEnum {
-  'Models' = 'models',
-  'Simulations' = 'simulations',
-  'Experimental data' = 'experimental-data',
-}
+export const SourceDataGroupTabsEnum = {
+  models: 'Models',
+  simulations: 'Simulations',
+  'experimental-data': 'Experimental data',
+};
 
-export type SourceDataActiveTab = `${SourceDataGroupTabsEnum}`;
+export type SourceDataActiveTab = keyof typeof SourceDataGroupTabsEnum;
 
 export type SourceDataCategory = {
   id: string;
@@ -22,9 +22,9 @@ export type SourceDataItem = {
   category: SourceDataActiveTab;
 };
 
-export const SOURCE_GROUP_TAB = Object.keys(SourceDataGroupTabsEnum).map((key) => ({
-  id: SourceDataGroupTabsEnum[key as keyof typeof SourceDataGroupTabsEnum],
-  label: key,
+export const SOURCE_GROUP_TAB = Object.entries(SourceDataGroupTabsEnum).map(([key, value]) => ({
+  id: key,
+  label: value,
 }));
 
 const Models: Array<SourceDataCategory> = [
@@ -40,11 +40,11 @@ const Models: Array<SourceDataCategory> = [
 ];
 
 export const SOURCE_DATA_GROUP_LIST: Array<{
-  id: SourceDataGroupTabsEnum;
+  id: SourceDataActiveTab;
   list: Array<Omit<SourceDataCategory, 'category'>>;
 }> = [
   {
-    id: SourceDataGroupTabsEnum['Experimental data'],
+    id: 'experimental-data',
     list: Object.keys(EXPERIMENT_DATA_TYPES).map((key) => ({
       id: key,
       name: EXPERIMENT_DATA_TYPES[key].title,
@@ -52,11 +52,11 @@ export const SOURCE_DATA_GROUP_LIST: Array<{
     })),
   },
   {
-    id: SourceDataGroupTabsEnum.Models,
+    id: 'models',
     list: Models,
   },
   {
-    id: SourceDataGroupTabsEnum.Simulations,
+    id: 'simulations',
     list: Models,
   },
 ];
