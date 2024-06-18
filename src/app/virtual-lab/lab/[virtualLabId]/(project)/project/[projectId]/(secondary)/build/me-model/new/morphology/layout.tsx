@@ -42,12 +42,12 @@ type MorphologyTab = {
 
 const morphologyTabs: MorphologyTab[] = [
   {
-    link: '/build/me-model/build/morphology/reconstructed',
+    link: 'reconstructed',
     name: 'Reconstructed Morphology',
     morphType: 'reconstructed',
   },
   {
-    link: '/build/me-model/build/morphology/synthetised',
+    link: 'synthetised',
     name: 'Synthetised Morphology',
     morphType: 'synthetised',
     disabled: true,

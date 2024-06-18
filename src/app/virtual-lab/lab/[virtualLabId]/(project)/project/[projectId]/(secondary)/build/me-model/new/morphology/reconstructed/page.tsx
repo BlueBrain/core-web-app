@@ -29,7 +29,7 @@ export default function ReconstrucedMorphologyPage() {
 
       const morph = selectedRows[0]._source as ReconstructedNeuronMorphology;
       setSelectedMModelId(morph['@id']);
-      router.push('/build/me-model/build/electrophysiology');
+      router.push('../electrophysiology');
     },
     [setSelectedMModelId, router]
   );

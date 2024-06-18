@@ -16,7 +16,7 @@ export default function VirtualLabProjectBuildPage() {
           <GenericButton
             text="New model ＋"
             className="bg-primary-6 text-white"
-            href="/build/me-model/build/morphology/reconstructed"
+            href="build/me-model/new/morphology/reconstructed"
           />
         </div>
         <div id="explore-table-container-for-observable" className="h-full">
@@ -26,7 +26,7 @@ export default function VirtualLabProjectBuildPage() {
             selectionType="radio"
             enableDownload
             renderButton={() => (
-              <Btn className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2">
+              <Btn className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2" disabled>
                 Use ME-Model
               </Btn>
             )}

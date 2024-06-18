@@ -5,9 +5,14 @@ import SideMenu from '@/components/SideMenu';
 import { Content, Label, LinkItemKey, Role } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 
-export default function Nav() {
-  // TODO: get this params from state
-  const params = { virtualLabId: 'TODO', projectId: 'TODO' };
+type Props = {
+  params: {
+    virtualLabId: string;
+    projectId: string;
+  };
+};
+
+export default function Nav({ params }: Props) {
   const labUrl = generateLabUrl(params.virtualLabId);
 
   const labProjectUrl = `${labUrl}/project/${params.projectId}`;

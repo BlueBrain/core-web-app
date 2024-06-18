@@ -33,6 +33,8 @@ export default function GenericButton({
     href ? 'hover:!text-white hover:!border-white leading-9' : '',
   ].join(' ');
 
+  const getUrl = () => (href.startsWith('/') ? `${basePath}${href}` : `./${href}`);
+
   return (
     <Button
       className={classNames(className, conditionalStyles, defaultStyle)}
@@ -41,7 +43,7 @@ export default function GenericButton({
       disabled={disabled}
       loading={loading}
       type={href ? 'link' : 'default'}
-      href={href ? `${basePath}${href}` : undefined}
+      href={href ? getUrl() : undefined}
     >
       {text}
     </Button>

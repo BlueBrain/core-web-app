@@ -5,11 +5,18 @@ import { meModelSectionAtom } from '@/state/virtual-lab/build/me-model';
 import { MEModelSection } from '@/types/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
 
-export default function ModelTypeTab() {
+type Props = {
+  params: {
+    virtualLabId: string;
+    projectId: string;
+  };
+};
+
+export default function ModelTypeTab({ params }: Props) {
   return (
     <div className="grid grid-cols-2">
       {tabs.map((tab) => (
-        <Item key={tab.link} tab={tab} />
+        <Item key={tab.link} tab={tab} params={params} />
       ))}
     </div>
   );
@@ -24,13 +31,13 @@ type TabInfo = {
 
 const tabs: TabInfo[] = [
   {
-    link: '/build/me-model/build/morphology/reconstructed',
+    link: 'morphology/reconstructed',
     name: 'Morphology',
     sectionName: 'morphology',
     description: 'Select a morphology to use for the single neuron model.',
   },
   {
-    link: '/build/me-model/build/electrophysiology',
+    link: 'electrophysiology',
     name: 'Electrophysiology',
     sectionName: 'electrophysiology',
     description: 'Select an electrical model to use for the single neuron model.',
@@ -39,9 +46,10 @@ const tabs: TabInfo[] = [
 
 type ItemProps = {
   tab: TabInfo;
+  params: Props['params'];
 };
 
-function Item({ tab }: ItemProps) {
+function Item({ tab, params }: ItemProps) {
   const meModelSection = useAtomValue(meModelSectionAtom);
 
   const isSelected = meModelSection === tab.sectionName;
@@ -51,8 +59,11 @@ function Item({ tab }: ItemProps) {
     'p-5 inline-block'
   );
 
+  const labProjectUrl = `${params.virtualLabId}/project/${params.projectId}`;
+  const url = `/virtual-lab/lab/${labProjectUrl}/build/me-model/new/${tab.link}`;
+
   return (
-    <Link href={tab.link} className={style}>
+    <Link href={url} className={style}>
       <div className="text-2xl font-bold">{tab.name}</div>
       <div className="font-thin">{tab.description}</div>
     </Link>
