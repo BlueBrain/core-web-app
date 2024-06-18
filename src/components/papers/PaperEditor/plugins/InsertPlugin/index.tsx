@@ -1,41 +1,19 @@
 import { createPortal } from 'react-dom';
-import { ReactNode, useReducer, useRef, useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import { DownloadOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
-import EditorButton from '../../../molecules/Button';
+import useImageUploader from '../ImagePlugin/useImageUploader';
+import EditorButton from '@/components/papers/molecules/Button';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
-import { classNames } from '@/util/utils';
+import InsertButton from '@/components/papers/molecules/InsertButton';
+import uploadBinaries from '@/services/paper-ai/uploadBinaries';
+import { PaperResource } from '@/types/nexus';
+import { composeUrl } from '@/util/nexus';
+import { useAccessToken } from '@/hooks/useAccessToken';
 
-const blockInsert = [
-  {
-    key: 'image',
-    label: 'Image',
-  },
-  {
-    key: 'gallery',
-    label: 'Gallery',
-  },
-  {
-    key: 'video',
-    label: 'Video',
-  },
-  {
-    key: 'analysis',
-    label: 'Analysis',
-  },
-  {
-    key: 'graph',
-    label: 'Graph',
-  },
-  {
-    key: 'code',
-    label: 'Code',
-  },
-  {
-    key: 'footnote',
-    label: 'Footnote',
-  },
-];
+type Props = {
+  paper: PaperResource;
+};
 
 const generateInsert = [
   {
@@ -56,41 +34,72 @@ const generateInsert = [
   },
 ];
 
-function InsertButton({
-  icon,
-  label,
-  className,
-}: {
-  icon: ReactNode;
-  label: string;
-  className: string;
-}) {
-  return (
-    <button
-      type="button"
-      className={classNames(
-        'flex h-11 w-40 min-w-max items-center justify-between gap-2 rounded-none px-3 py-2 text-primary-8',
-        'border border-gray-200 hover:bg-gray-200',
-        className
-      )}
-    >
-      <span className="text-primary-8">{label}</span>
-      {icon}
-    </button>
-  );
-}
-
-export default function InsertPlugin() {
+export default function InsertPlugin({ paper }: Props) {
   const ref = useRef(null);
+  const accessToken = useAccessToken();
   const [showMenu, toggleShowMenu] = useReducer((val) => !val, false);
   const [floatingInsertElem, setFloatingInsertElem] = useState<HTMLDivElement | null>(null);
+  const uploadUrl = composeUrl('file', '', { org: paper.virtualLabId, project: paper.projectId });
 
-  useOnClickOutside(ref, toggleShowMenu);
+  const create = useImageUploader({
+    onUpload: (images, callback) =>
+      uploadBinaries({
+        uploadUrl,
+        callback,
+        images,
+        accessToken: accessToken!,
+        location: {
+          id: paper['@id'],
+          org: paper.virtualLabId,
+          project: paper.projectId,
+        },
+      }),
+  });
+
+  const [createImageDialogModal, ImageDialogContext] = create({
+    id: 'uniq-image-uploader',
+    multiple: false,
+  });
+
   const onRef = (_floatingInsertElem: HTMLDivElement) => {
     if (_floatingInsertElem !== null) {
       setFloatingInsertElem(_floatingInsertElem);
     }
   };
+
+  const blockInsert = [
+    {
+      key: 'image',
+      label: 'Image',
+      onClick: createImageDialogModal,
+    },
+    {
+      key: 'gallery',
+      label: 'Gallery',
+    },
+    {
+      key: 'video',
+      label: 'Video',
+    },
+    {
+      key: 'analysis',
+      label: 'Analysis',
+    },
+    {
+      key: 'graph',
+      label: 'Graph',
+    },
+    {
+      key: 'code',
+      label: 'Code',
+    },
+    {
+      key: 'footnote',
+      label: 'Footnote',
+    },
+  ];
+
+  useOnClickOutside(ref, toggleShowMenu);
 
   return (
     <div className="fixed bottom-24 right-16 z-20 flex items-center justify-end">
@@ -139,12 +148,13 @@ export default function InsertPlugin() {
                     Blocks
                   </div>
                   <div className="grid w-full grid-flow-col grid-rows-4">
-                    {blockInsert.map(({ key, label }) => (
+                    {blockInsert.map(({ key, label, onClick }) => (
                       <InsertButton
                         key={key}
                         icon={<PlusOutlined />}
                         label={label}
                         className="border-l-0 border-t-0"
+                        onClick={onClick}
                       />
                     ))}
                   </div>
@@ -154,6 +164,7 @@ export default function InsertPlugin() {
             floatingInsertElem as HTMLElement
           )}
       </div>
+      {ImageDialogContext}
     </div>
   );
 }

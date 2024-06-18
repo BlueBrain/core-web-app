@@ -20,6 +20,8 @@ import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { SerializedEditorState } from 'lexical/LexicalEditorState';
 
+import InlineImageNode from './plugins/ImagePlugin/InlineImage/Node';
+import InlineImagesPlugin from './plugins/ImagePlugin/InlineImage';
 import RemoteSyncPlugin from './plugins/RemoteSyncPlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import FloatAiCommandsPlugin from './plugins/AiPlugin';
@@ -46,6 +48,7 @@ const initialConfig: InitialConfigType = {
     AutoLinkNode,
     HorizontalRuleNode,
     LinkNode,
+    InlineImageNode,
   ],
 };
 
@@ -86,7 +89,10 @@ export default function Editor({ config, paper }: Props) {
         editorState: isJSON(config) ? JSON.stringify(config) : undefined,
       }}
     >
-      <div className="relative flex h-[calc(100%-60px)] flex-col border border-t-0 border-gray-200 pb-40">
+      <div
+        id="paper-editor"
+        className="relative flex h-[calc(100%-60px)] flex-col border border-t-0 border-gray-200 pb-40"
+      >
         <RemoteSyncPlugin {...{ paper }} />
         <CheckListPlugin />
         <ClearEditorPlugin />
@@ -103,7 +109,8 @@ export default function Editor({ config, paper }: Props) {
         <HistoryPlugin />
         <AutoFocusPlugin />
         <FloatAiCommandsPlugin />
-        <InsertPlugin />
+        <InlineImagesPlugin />
+        <InsertPlugin {...{ paper }} />
         <ActionPlugin />
       </div>
     </LexicalComposer>

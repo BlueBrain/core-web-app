@@ -83,6 +83,16 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'sbo-nexus-delta.shapes-registry.org',
+        port: '',
+        pathname: '/v1/files/**',
+      },
+    ],
+  },
 };
 
 export default withBundleAnalyzer(withSentryConfig(nextConfig, SentryWebpackPluginOptions));

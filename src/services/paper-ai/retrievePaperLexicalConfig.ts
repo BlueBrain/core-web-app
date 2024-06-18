@@ -1,11 +1,13 @@
 import { Session } from 'next-auth';
 import { SerializedEditorState } from 'lexical/LexicalEditorState';
 import { captureException } from '@sentry/nextjs';
+import find from 'lodash/find';
 
+import { DEFAULT_EDITOR_CONFIG_NAME } from './utils';
 import { fetchJsonFileByUrl } from '@/api/nexus';
 import { PaperResource } from '@/types/nexus';
 import { from64 } from '@/util/common';
-import { composeUrl } from '@/util/nexus';
+import { composeUrl, ensureArray } from '@/util/nexus';
 import { createHeaders } from '@/util/utils';
 
 export default async function retrievePaperLexicalConfig({
@@ -54,8 +56,13 @@ export default async function retrievePaperLexicalConfig({
   }
 
   try {
+    const configFile = find<PaperResource['distribution']>(
+      ensureArray(remotePaperResource.distribution),
+      ['name', DEFAULT_EDITOR_CONFIG_NAME]
+    );
+
     editorStateObj = await fetchJsonFileByUrl<SerializedEditorState>(
-      remotePaperResource.distribution.contentUrl,
+      configFile?.contentUrl!,
       session
     );
   } catch (error) {

@@ -477,3 +477,78 @@
   outline: 2px solid rgb(60, 132, 244);
   user-select: none;
 }
+
+#paper-editor span.inline-editor-image {
+  cursor: default;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
+
+#paper-editor .inline-editor-image img {
+  max-width: 100%;
+  cursor: default;
+}
+
+#paper-editor .inline-editor-image img.focused {
+  outline: 2px solid rgb(60, 132, 244);
+}
+
+#paper-editor .inline-editor-image img.focused.draggable {
+  cursor: grab;
+}
+
+#paper-editor .inline-editor-image img.focused.draggable:active {
+  cursor: grabbing;
+}
+
+#paper-editor .inline-editor-image .image-caption-container .tree-view-output {
+  margin: 0;
+  border-radius: 0;
+}
+
+#paper-editor .inline-editor-image.position-full {
+  margin: 0 0 1em 0;
+}
+
+#paper-editor .inline-editor-image.position-left {
+  float: left;
+  max-width: 50%;
+  width: 100%;
+  margin: 0 1em 0 0;
+}
+
+#paper-editor .inline-editor-image.position-right {
+  float: right;
+  max-width: 50%;
+  width: 100%;
+  margin: 0 0 0 1em;
+}
+
+#paper-editor .inline-editor-image .image-edit-button {
+  display: block;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 8px;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  min-width: 60px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+#paper-editor .inline-editor-image .image-edit-button:hover {
+  background-color: rgba(60, 132, 244, 0.5);
+}
+
+#paper-editor .inline-editor-image .image-caption-container {
+  display: block;
+  background-color: #f4f4f4;
+  min-width: 100%;
+  color: #000;
+  overflow: hidden;
+}

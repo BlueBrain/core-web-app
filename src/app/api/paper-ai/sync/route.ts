@@ -1,9 +1,13 @@
 import { captureException } from '@sentry/nextjs';
+import find from 'lodash/find';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { auth } from '@/auth';
-import { FileMetadata, PaperResource } from '@/types/nexus';
-import { composeUrl, createDistribution, removeMetadata } from '@/util/nexus';
+import { Distribution, FileMetadata, PaperResource } from '@/types/nexus';
+import { composeUrl, createDistribution, ensureArray, removeMetadata } from '@/util/nexus';
 import { createHeaders } from '@/util/utils';
+import { DEFAULT_EDITOR_CONFIG_NAME } from '@/services/paper-ai/utils';
+import updateArray from '@/util/updateArray';
 
 type RequestBody = {
   paper: PaperResource;
@@ -53,7 +57,12 @@ export const POST = async (request: Request) => {
   }
 
   try {
-    const { contentUrl, name } = resourceJson!.distribution;
+    const configFile = find<PaperResource['distribution']>(
+      ensureArray(resourceJson!.distribution),
+      ['name', DEFAULT_EDITOR_CONFIG_NAME]
+    );
+
+    const { contentUrl, name } = configFile!;
     const formData = new FormData();
     const dataBlob = new Blob([JSON.stringify(state)], { type: 'application/json' });
 
@@ -63,7 +72,6 @@ export const POST = async (request: Request) => {
       method: 'PUT',
       headers: createHeaders(session.accessToken, null),
       body: formData,
-      cache: 'no-store',
     });
 
     if (!fileResponse.ok) {
@@ -82,12 +90,21 @@ export const POST = async (request: Request) => {
   }
 
   try {
-    const updatedResource = removeMetadata({
-      ...paper,
-      distribution: createDistribution(
+    const distribution = updateArray<Distribution>({
+      array: cloneDeep(ensureArray(resourceJson!.distribution)),
+      keyfn(item) {
+        if (item.name === DEFAULT_EDITOR_CONFIG_NAME) return true;
+        return false;
+      },
+      newVal: createDistribution(
         remoteConfigState!,
         `${remoteConfigState!._self}?rev=${remoteConfigState!._rev}`
       ),
+    });
+
+    const updatedResource = removeMetadata({
+      ...paper,
+      distribution,
     });
 
     const updateResourceResponse = await fetch(
@@ -101,7 +118,6 @@ export const POST = async (request: Request) => {
         method: 'PUT',
         headers: createHeaders(session.accessToken),
         body: JSON.stringify(updatedResource),
-        cache: 'no-store',
       }
     );
     const updateResource = await updateResourceResponse.json();

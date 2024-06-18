@@ -96,15 +96,25 @@ export default async function initializePaperEntry(
   }
 
   const { virtualLabId, projectId, title, summary, generateOutline, sourceData } = data!;
-
+  let EDITOR_STATE = DEFAULT_EDITOR_STATE;
   try {
-    const fileUrl = composeUrl('file', '', { org: virtualLabId, project: projectId });
-
-    let EDITOR_STATE = DEFAULT_EDITOR_STATE;
     if (generateOutline) {
       const result = await generateOutlineAi(title, summary);
       EDITOR_STATE = await getJson(result);
     }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('[ERROR][INIT_PAPER][GENERATE_OUTLINE]', error);
+    captureException(error);
+    return {
+      redirect: null,
+      validationErrors: null,
+      error: 'Generate paper outline failed',
+    };
+  }
+
+  try {
+    const fileUrl = composeUrl('file', '', { org: virtualLabId, project: projectId });
 
     fileMetadata = await createFile(
       EDITOR_STATE,
@@ -155,6 +165,7 @@ export default async function initializePaperEntry(
       session,
       resourceUrl
     );
+
     revalidateTag(papersListTagGenerator({ virtualLabId, projectId }));
     redirectUrl = `${paperHrefGenerator({ virtualLabId, projectId, '@id': result['@id'] })}?from=create`;
   } catch (error) {
