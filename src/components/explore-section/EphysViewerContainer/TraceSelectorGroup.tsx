@@ -38,7 +38,7 @@ function TraceSelectorGroup({
     return (
       <label // eslint-disable-line jsx-a11y/label-has-associated-control
         className={classNames(
-          'block flex h-[32px] w-[32px] cursor-pointer items-center rounded hover:opacity-75',
+          'flex h-[32px] w-[32px] cursor-pointer items-center rounded hover:opacity-75',
           isSelected ? 'border-[#1890ff]' : 'border-[#1890ff00]'
         )}
         style={{

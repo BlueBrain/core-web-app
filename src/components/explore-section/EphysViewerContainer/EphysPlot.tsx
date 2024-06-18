@@ -5,13 +5,7 @@ import StimulusPlot from './StimulusPlot';
 import ResponsePlot from './ResponsePlot';
 import OptionSelect from '@/components/explore-section/EphysViewerContainer/OptionSelect';
 import TraceSelectorGroup from '@/components/explore-section/EphysViewerContainer/TraceSelectorGroup';
-import {
-  ZoomRanges,
-  Repetition,
-  IndexDataValue,
-  RABIndex,
-  TraceData,
-} from '@/types/explore-section/misc';
+import { Repetition, IndexDataValue, RABIndex, TraceData } from '@/types/explore-section/misc';
 
 interface EphysPlotProps {
   options: Record<string, TraceData>;
@@ -21,7 +15,7 @@ interface EphysPlotProps {
 }
 
 function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: EphysPlotProps) {
-  const [zoomRanges, setZoomRanges] = React.useState<ZoomRanges | null>(null);
+  const [reset, setReset] = React.useState<boolean>(false);
 
   const [selectedDataSet, setSelectedDataSet] = React.useState<string>(
     defaultStimulusType || Object.keys(index.data)[0]
@@ -86,7 +80,7 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
     setSelectedDataSet(value);
     setSelectedRepetition(Object.keys(index.data[value].repetitions)[0]);
     setSelectedSweeps([]);
-    setZoomRanges(null);
+    setReset(!reset);
   };
 
   const handlePreviewSweep = (value?: string) => {
@@ -100,7 +94,7 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
   const handleRepetitionChange = (value: string) => {
     setSelectedRepetition(value);
     setSelectedSweeps([]);
-    setZoomRanges(null);
+    setReset(!reset);
   };
 
   const sweepObject = {
@@ -139,8 +133,8 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
             type="button"
             className="bg-transparant h-[32px] self-end text-dark"
             onClick={() => {
+              setReset(!reset);
               setSelectedSweeps([]);
-              setZoomRanges(null);
             }}
           >
             Reset
@@ -149,22 +143,20 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
       </div>
       <div className="flex flex-col gap-10 2xl:flex-row">
         <StimulusPlot
+          reset={reset}
           setSelectedSweeps={setSelectedSweeps}
           metadata={selectedMetadata}
           sweeps={sweepObject}
           dataset={selectedDataSet}
           options={options}
-          zoomRanges={zoomRanges}
-          onZoom={setZoomRanges}
         />
         <ResponsePlot
+          reset={reset}
+          setSelectedSweeps={setSelectedSweeps}
           metadata={selectedMetadata}
           sweeps={sweepObject}
           dataset={selectedDataSet}
-          setSelectedSweeps={setSelectedSweeps}
           options={options}
-          zoomRanges={zoomRanges}
-          onZoom={setZoomRanges}
         />
       </div>
     </div>

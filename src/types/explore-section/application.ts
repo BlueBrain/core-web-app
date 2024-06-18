@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
-import { IndexDataValue, ZoomRanges } from '@/types/explore-section/misc';
+import { IndexDataValue } from '@/types/explore-section/misc';
 import { FlattenedExploreESResponse, ExploreResource } from '@/types/explore-section/es';
 
 import { Filter, GteLteValue } from '@/components/Filter/types';
@@ -34,6 +34,7 @@ export type ListViewAtoms<T> = {
 };
 
 export type PlotProps = {
+  reset: boolean;
   setSelectedSweeps: (sweeps: string[]) => void;
   metadata?: IndexDataValue;
   sweeps: {
@@ -44,8 +45,6 @@ export type PlotProps = {
   };
   dataset: string;
   options: any;
-  zoomRanges: ZoomRanges | null;
-  onZoom: (zoomRanges: ZoomRanges) => void;
 };
 
 export type FilterValues = {

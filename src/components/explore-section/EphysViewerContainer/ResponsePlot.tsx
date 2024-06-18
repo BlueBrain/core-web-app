@@ -5,22 +5,29 @@ import { convertVolts } from '@/util/explore-section/plotHelpers';
 import useConfig from '@/components/explore-section/EphysViewerContainer/hooks/useConfig';
 import optimizePlotData from '@/util/explore-section/optimizeTrace';
 import { PlotProps } from '@/types/explore-section/application';
+import { ZoomRanges } from '@/types/explore-section/misc';
 
 const Plot = createPlotlyComponent(Plotly);
 
 const DEFAULT_RESPONSE_UNIT = 'mV';
 
 function ResponsePlot({
-  metadata,
+  reset,
   setSelectedSweeps,
+  metadata,
   sweeps: { selectedSweeps, previewSweep, allSweeps, colorMapper },
   dataset,
   options,
-  zoomRanges,
-  onZoom,
 }: PlotProps) {
   const isVolts = metadata && metadata.v_unit === 'volts';
-  const { config, layout, font, style } = useConfig({ selectedSweeps });
+
+  const [zoomRanges, setZoomRanges] = React.useState<ZoomRanges | null>(null);
+
+  React.useEffect(() => {
+    setZoomRanges(null);
+  }, [reset]);
+
+  const { config, layout, font, style } = useConfig();
 
   const rawData = React.useMemo(() => {
     const deltaTime = metadata ? metadata?.dt : 1;
@@ -96,7 +103,7 @@ function ResponsePlot({
           'yaxis.range[0]': y1,
           'yaxis.range[1]': y2,
         } = e;
-        onZoom({ x: [x1, x2], y: [y1, y2] });
+        setZoomRanges({ x: [x1, x2], y: [y1, y2] });
       }}
       layout={{
         title: 'Recording',

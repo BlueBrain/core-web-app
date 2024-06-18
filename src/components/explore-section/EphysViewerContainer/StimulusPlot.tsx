@@ -7,24 +7,30 @@ import { convertAmperes, Amperes } from '@/util/explore-section/plotHelpers';
 import optimizePlotData from '@/util/explore-section/optimizeTrace';
 import useConfig from '@/components/explore-section/EphysViewerContainer/hooks/useConfig';
 import { PlotProps } from '@/types/explore-section/application';
+import { ZoomRanges } from '@/types/explore-section/misc';
 
 const Plot = createPlotlyComponent(Plotly);
 
 const DEFAULT_STIMULUS_UNIT = 'pA';
 
 function StimulusPlot({
-  metadata,
+  reset,
   setSelectedSweeps,
+  metadata,
   sweeps: { selectedSweeps, previewSweep, allSweeps, colorMapper },
   dataset,
   options,
-  zoomRanges,
-  onZoom,
 }: PlotProps) {
   const [stimulusUnit, setStimulusUnit] = React.useState<Amperes>(DEFAULT_STIMULUS_UNIT);
 
+  const [zoomRanges, setZoomRanges] = React.useState<ZoomRanges | null>(null);
+
+  React.useEffect(() => {
+    setZoomRanges(null);
+  }, [reset]);
+
   const isAmperes = metadata && metadata.i_unit === 'amperes';
-  const { config, layout, font, style, antBreakpoints } = useConfig({ selectedSweeps });
+  const { config, layout, font, style, antBreakpoints } = useConfig();
 
   const rawData = React.useMemo(() => {
     const deltaTime = metadata ? metadata?.dt : 1;
@@ -106,7 +112,7 @@ function StimulusPlot({
             'yaxis.range[0]': y1,
             'yaxis.range[1]': y2,
           } = e;
-          onZoom({ x: [x1, x2], y: [y1, y2] });
+          setZoomRanges({ x: [x1, x2], y: [y1, y2] });
         }}
         layout={{
           title: 'Stimulus',

@@ -10,11 +10,7 @@ interface UseConfigResponse {
   style: CSSProperties;
 }
 
-interface UseConfigProps {
-  selectedSweeps: string[];
-}
-
-const useConfig = ({ selectedSweeps }: UseConfigProps): UseConfigResponse => {
+const useConfig = (): UseConfigResponse => {
   const antBreakpoints = useBreakpoint();
 
   return {
@@ -24,7 +20,7 @@ const useConfig = ({ selectedSweeps }: UseConfigProps): UseConfigResponse => {
       responsive: true,
     },
     layout: {
-      showlegend: antBreakpoints.md || Boolean(selectedSweeps.length),
+      showlegend: false,
       legend: antBreakpoints.md
         ? {}
         : {
