@@ -19,7 +19,7 @@ export default function VirtualLabProjectBuildPage() {
             href="build/me-model/new/morphology/reconstructed"
           />
         </div>
-        <div id="explore-table-container-for-observable" className="h-full">
+        <div id="explore-table-container-for-observable" className="h-screen">
           <ExploreSectionListingView
             dataType={DataType.CircuitMEModel}
             brainRegionSource="selected"

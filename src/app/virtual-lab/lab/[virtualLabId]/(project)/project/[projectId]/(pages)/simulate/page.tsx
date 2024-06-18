@@ -7,8 +7,7 @@ import GenericButton from '@/components/Global/GenericButton';
 
 export default function VirtualLabProjectSimulatePage() {
   return (
-    <div className="flex flex-col pt-14">
-      {/* TODO: Add carousel of different scales */}
+    <div className="flex h-full flex-col pt-14">
       <div className="flex justify-between">
         <GenericButton text="Simulations" className="bg-white text-2xl font-bold text-primary-8" />
         <GenericButton
@@ -17,17 +16,19 @@ export default function VirtualLabProjectSimulatePage() {
           href="simulate/new"
         />
       </div>
-      <ExploreSectionListingView
-        dataType={DataType.SimulationCampaigns}
-        brainRegionSource="selected"
-        selectionType="radio"
-        enableDownload
-        renderButton={() => (
-          <Btn className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2">
-            Use ME-Model
-          </Btn>
-        )}
-      />
+      <div id="explore-table-container-for-observable" className="h-screen">
+        <ExploreSectionListingView
+          dataType={DataType.SimulationCampaigns}
+          brainRegionSource="selected"
+          selectionType="radio"
+          enableDownload
+          renderButton={() => (
+            <Btn className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2">
+              Use ME-Model
+            </Btn>
+          )}
+        />
+      </div>
     </div>
   );
 }
