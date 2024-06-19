@@ -74,7 +74,7 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
       esResourceViewFn: (_value, record) => {
         const { _source: source } = record;
 
-        const morphId = (source as ESeModel)?.memodel?.neuronMorphology['@id'] || '';
+        const morphId = (source as ESeModel)?.memodel?.neuronMorphology?.['@id'] || '';
         return <MorphPreviewFromId id={morphId} height={116} width={184} />;
       },
     },
