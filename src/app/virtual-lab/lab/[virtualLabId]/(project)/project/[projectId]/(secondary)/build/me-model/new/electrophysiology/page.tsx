@@ -11,8 +11,16 @@ import { Btn } from '@/components/Btn';
 import { ESeModel, ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 import { createMEModelAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { usePendingValidationModal } from '@/components/build-section/virtual-lab/me-model/pending-validation-modal-hook';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
-export default function ElectrophysiologyPage() {
+type Params = {
+  params: {
+    virtualLabId: string;
+    projectId: string;
+  };
+};
+
+export default function ElectrophysiologyPage({ params }: Params) {
   const setMEModelSection = useSetAtom(meModelSectionAtom);
   const setSelectedEModelId = useSetAtom(selectedEModelIdAtom);
   const createMEModel = useSetAtom(createMEModelAtom);
@@ -29,7 +37,8 @@ export default function ElectrophysiologyPage() {
     const emodel = selectedRows[0]._source as ESeModel;
     setSelectedEModelId(emodel['@id']);
     createMEModel();
-    createModal();
+    const virtualLabHomeLink = `${generateVlProjectUrl(params.virtualLabId, params.projectId)}/home`;
+    createModal(virtualLabHomeLink);
   };
 
   return (

@@ -6,7 +6,12 @@ import { CloseOutlined } from '@ant-design/icons';
 
 import BluePyEModelContainer from './BluePyEModelContainer';
 
-function ModalContent({ onClose }: { onClose: () => void }) {
+type ModalProps = {
+  onClose: () => void;
+  vlHomeLink: string;
+};
+
+function ModalContent({ onClose, vlHomeLink }: ModalProps) {
   return (
     <>
       <div className="flex flex-col items-start justify-start gap-y-3">
@@ -32,11 +37,11 @@ function ModalContent({ onClose }: { onClose: () => void }) {
         >
           Cancel
         </Button>
-        {/* TODO: add link to virtual lab project */}
         <Button
-          type="primary"
+          type="link"
           ghost
-          className="ml-2 inline-flex items-center justify-center rounded-none px-8 py-6"
+          className="ml-2 inline-flex items-center justify-center rounded-none border border-solid border-primary-8 px-8 py-6"
+          href={vlHomeLink}
         >
           Go to Project home
         </Button>
@@ -52,7 +57,7 @@ export function usePendingValidationModal() {
   const destroyRef = useRef<() => void>();
   const onClose = () => destroyRef?.current?.();
 
-  function createModal() {
+  function createModal(vlHomeLink: string) {
     const { destroy } = modal.confirm({
       title: null,
       icon: null,
@@ -68,7 +73,7 @@ export function usePendingValidationModal() {
       },
       closeIcon: <CloseOutlined className="text-2xl text-primary-8" />,
       className: '![&>.ant-modal-content]:bg-red-500',
-      content: <ModalContent onClose={onClose} />,
+      content: <ModalContent onClose={onClose} vlHomeLink={vlHomeLink} />,
     });
     destroyRef.current = destroy;
     return destroy;
