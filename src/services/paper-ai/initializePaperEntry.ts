@@ -44,9 +44,10 @@ export async function getJson(markdown: string) {
       );
       resolve(JSON.stringify(editor.getEditorState().toJSON()));
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('[ERROR][INIT_PAPER][JSON_MARKDOWN]', error);
-      captureException(error);
+      captureException(error, {
+        tags: { section: 'paper', feature: 'init_paper' },
+        extra: { action: 'server_generate_paper_outline_markdown' },
+      });
       reject(error);
     }
   });
@@ -78,9 +79,6 @@ export default async function initializePaperEntry(
       generateOutline: paper.get('generate-outline'),
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][INIT_PAPER][DATA_VALIDATION]', error);
-    captureException(error);
     if (error instanceof ZodError) {
       return {
         error: error.message,
@@ -103,9 +101,6 @@ export default async function initializePaperEntry(
       EDITOR_STATE = await getJson(result);
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][INIT_PAPER][GENERATE_OUTLINE]', error);
-    captureException(error);
     return {
       redirect: null,
       validationErrors: null,
@@ -124,9 +119,14 @@ export default async function initializePaperEntry(
       fileUrl
     );
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][INIT_PAPER][FILE_CREATE]', error);
-    captureException(error);
+    captureException(error, {
+      tags: { section: 'paper', feature: 'init_paper' },
+      extra: {
+        virtualLabId,
+        projectId,
+        action: 'server_create_paper_nexus_config_file',
+      },
+    });
     return {
       redirect: null,
       validationErrors: null,
@@ -169,9 +169,14 @@ export default async function initializePaperEntry(
     revalidateTag(papersListTagGenerator({ virtualLabId, projectId }));
     redirectUrl = `${paperHrefGenerator({ virtualLabId, projectId, '@id': result['@id'] })}?from=create`;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][INIT_PAPER][RESOURCE_CREATE]', error);
-    captureException(error);
+    captureException(error, {
+      tags: { section: 'paper', feature: 'init_paper' },
+      extra: {
+        virtualLabId,
+        projectId,
+        action: 'server_create_paper_nexus_resource',
+      },
+    });
     return {
       redirect: null,
       validationErrors: null,

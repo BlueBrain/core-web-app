@@ -1,3 +1,5 @@
+import { captureException } from '@sentry/nextjs';
+
 import { papersListCountTagGenerator, papersListTagGenerator } from './utils';
 import { nexus } from '@/config';
 import { getPaperCountQuery, getPaperListQuery } from '@/queries/es';
@@ -35,6 +37,14 @@ export default async function retrievePapersList({
   if (!response.ok) {
     const errorData = await response.json();
     const errorMessage = errorData?.error?.message || errorData?.error || response.statusText;
+    captureException(new Error(errorMessage), {
+      tags: { section: 'paper', feature: 'get_papers_list' },
+      extra: {
+        virtualLabId,
+        projectId,
+        action: 'delta_fetch_paper_list',
+      },
+    });
     throw new Error(`API Error (${response.status}): ${errorMessage}`);
   }
   const json = await response.json();
@@ -74,6 +84,14 @@ export async function retrievePapersListCount({
   if (!response.ok) {
     const errorData = await response.json();
     const errorMessage = errorData?.error?.message || errorData?.error || response.statusText;
+    captureException(new Error(errorMessage), {
+      tags: { section: 'paper', feature: 'get_papers_list' },
+      extra: {
+        virtualLabId,
+        projectId,
+        action: 'delta_fetch_papers_count',
+      },
+    });
     throw new Error(`API Error (${response.status}): ${errorMessage}`);
   }
   const json = await response.json();
