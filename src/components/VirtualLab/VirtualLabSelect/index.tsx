@@ -32,7 +32,6 @@ export default function VirtualLabSelect() {
               id={vl.id}
               name={vl.name}
               description={vl.description}
-              withLink
               bottomElements={<VirtualLabMainStatistics id={vl.id} created_at={vl.created_at} />}
             />
           );

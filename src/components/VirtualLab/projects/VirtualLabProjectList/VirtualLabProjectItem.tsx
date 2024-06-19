@@ -91,7 +91,7 @@ export default function VirtualLabProjectItem({ project }: { project: Project })
 
   return (
     <Link
-      className="flex flex-col gap-3 rounded-md border border-primary-6 p-9"
+      className="flex flex-col gap-3 rounded-md border border-primary-6 bg-primary-9 p-9 hover:brightness-110"
       href={`${projectUrl}/home`}
     >
       <div className="flex items-start justify-between">

@@ -12,7 +12,6 @@ type Props = {
   description: string;
   bottomElements: ReactNode;
   supertitle?: string | null;
-  withLink?: boolean;
   withEditButton?: boolean;
 };
 
@@ -22,36 +21,32 @@ export default function VirtualLabBanner({
   id,
   bottomElements,
   supertitle = 'Virtual Lab Name',
-  withLink = false,
   withEditButton = false,
 }: Props) {
   const labUrl = generateLabUrl(id);
 
   return (
-    <div className="relative flex min-h-[250px] flex-col justify-between gap-4 bg-primary-8 p-8">
+    <div className="relative min-h-[250px] bg-primary-8 hover:brightness-110">
       <div
         className={styles.bannerImg}
         style={{
           backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
         }}
       />
-      <div className="z-[1000] flex flex-row justify-between">
-        <div className="flex max-w-[70%] flex-col gap-2">
-          <div>
+      <Link
+        className="absolute left-0 top-0 flex h-full w-full flex-col p-8"
+        href={`${labUrl}/overview`}
+      >
+        <div className="flex grow flex-row justify-between">
+          <div className="flex max-w-[70%] flex-col gap-2">
             <div className="text-primary-2">{supertitle}</div>
-            {withLink ? (
-              <Link className="text-5xl font-bold" href={`${labUrl}/overview`}>
-                {name}
-              </Link>
-            ) : (
-              <div className="text-5xl font-bold">{name}</div>
-            )}
+            <span className="text-5xl font-bold">{name}</span>
+            <div>{description}</div>
           </div>
-          <div>{description}</div>
+          {withEditButton && <EditOutlined />}
         </div>
-        {withEditButton && <EditOutlined />}
-      </div>
-      {bottomElements}
+        <div className="mt-auto">{bottomElements}</div>
+      </Link>
     </div>
   );
 }

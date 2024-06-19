@@ -52,7 +52,6 @@ export default function VirtualLabAndProject({
         id={id}
         name={name}
         description={description}
-        withLink
         bottomElements={<VirtualLabMainStatistics id={id} created_at={createdAt} />}
       />
       {!showOnlyLabs && <div className="ml-20 mt-5 flex flex-col gap-5">{renderProjects()}</div>}
