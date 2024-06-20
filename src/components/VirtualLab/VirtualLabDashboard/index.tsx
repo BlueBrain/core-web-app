@@ -1,50 +1,26 @@
 'use client';
 
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Modal, Select, Spin, Switch } from 'antd';
-import { useAtom, useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
-import { useCallback, useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Modal, Select, Switch } from 'antd';
+import { useAtom } from 'jotai';
+import { useState } from 'react';
 
 import { CreateVirtualLabButton } from '../VirtualLabTopMenu/CreateVirtualLabButton';
 import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import VirtualLabAndProject from './VirtualLabAndProject';
 import DashboardTotals from './DashboardTotals';
-import {
-  newProjectModalOpenAtom,
-  virtualLabIdAtom,
-  virtualLabsOfUserAtom,
-} from '@/state/virtual-lab/lab';
+import { newProjectModalOpenAtom, virtualLabIdAtom } from '@/state/virtual-lab/lab';
 
 import useNotification from '@/hooks/notifications';
 import { Project } from '@/types/virtual-lab/projects';
+import { VirtualLab } from '@/types/virtual-lab/lab';
 
-export default function VirtualLabDashboard() {
-  const virtualLabs = useAtomValue(loadable(virtualLabsOfUserAtom));
+export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
   const [, setOpen] = useAtom(newProjectModalOpenAtom);
   const [virtualLabId, setVirtualLabId] = useAtom(virtualLabIdAtom);
   const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
   const notification = useNotification();
-
-  const renderVirtualLabs = useCallback(() => {
-    if (virtualLabs.state === 'loading') {
-      return <Spin indicator={<LoadingOutlined />} />;
-    }
-    if (virtualLabs.state === 'hasData') {
-      return virtualLabs.data?.results.map((vl) => (
-        <VirtualLabAndProject
-          key={vl.id}
-          id={vl.id}
-          name={vl.name}
-          description={vl.description}
-          createdAt={vl.created_at}
-          showOnlyLabs={showOnlyLabs}
-        />
-      ));
-    }
-    return null;
-  }, [virtualLabs, showOnlyLabs]);
 
   return (
     <>
@@ -63,7 +39,16 @@ export default function VirtualLabDashboard() {
             <div className="text-5xl font-bold uppercase">Your virtual labs and projects</div>
             <DashboardTotals />
           </div>
-          {renderVirtualLabs()}
+          {virtualLabs.map((vl) => (
+            <VirtualLabAndProject
+              key={vl.id}
+              id={vl.id}
+              name={vl.name}
+              description={vl.description}
+              createdAt={vl.created_at}
+              showOnlyLabs={showOnlyLabs}
+            />
+          ))}
           <div className="fixed bottom-5 right-5">
             <Button
               className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
@@ -78,53 +63,49 @@ export default function VirtualLabDashboard() {
         </div>
       </div>
 
-      {virtualLabs.state === 'hasData' && virtualLabs.data && (
-        <>
-          <Modal
-            title={null}
-            open={isProjectModalVisible}
-            footer={
-              <div>
-                <Button key="back" onClick={() => setIsProjectModalVisible(false)}>
-                  Cancel
-                </Button>
-                <Button
-                  key="submit"
-                  type="primary"
-                  onClick={() => {
-                    setIsProjectModalVisible(false);
-                    setVirtualLabId(virtualLabId);
-                    setOpen(true);
-                  }}
-                  disabled={!virtualLabId}
-                >
-                  OK
-                </Button>
-              </div>
-            }
-            width={500}
-            onCancel={() => setIsProjectModalVisible(false)}
-          >
-            <span className="my-3 block font-bold text-primary-8">
-              Please select a Virtual lab for this project
-            </span>
-            <Select
-              style={{ width: 200 }}
-              options={virtualLabs.data.results.map((vl) => ({ label: vl.name, value: vl.id }))}
-              onChange={(v) => setVirtualLabId(v)}
-            />
-          </Modal>
-          {!!virtualLabId && (
-            <NewProjectModal
-              onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
-              onSuccess={(newProject: Project) => {
-                notification.success(`${newProject.name} has been created.`);
-              }}
-              virtualLabId={virtualLabId}
-            />
-          )}
-        </>
-      )}
+      <>
+        <Modal
+          title={null}
+          open={isProjectModalVisible}
+          footer={
+            <div>
+              <Button key="back" onClick={() => setIsProjectModalVisible(false)}>
+                Cancel
+              </Button>
+              <Button
+                key="submit"
+                type="primary"
+                onClick={() => {
+                  setIsProjectModalVisible(false);
+                  setVirtualLabId(virtualLabId);
+                  setOpen(true);
+                }}
+                disabled={!virtualLabId}
+              >
+                OK
+              </Button>
+            </div>
+          }
+          width={500}
+          onCancel={() => setIsProjectModalVisible(false)}
+        >
+          <span className="my-3 block font-bold text-primary-8">Project Location</span>
+          <Select
+            style={{ width: 200 }}
+            options={virtualLabs.map((vl) => ({ label: vl.name, value: vl.id }))}
+            onChange={(v) => setVirtualLabId(v)}
+          />
+        </Modal>
+        {!!virtualLabId && (
+          <NewProjectModal
+            onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
+            onSuccess={(newProject: Project) => {
+              notification.success(`${newProject.name} has been created.`);
+            }}
+            virtualLabId={virtualLabId}
+          />
+        )}
+      </>
     </>
   );
 }

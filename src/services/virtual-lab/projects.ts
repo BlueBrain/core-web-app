@@ -1,17 +1,22 @@
-import { createVLApiHeaders } from './common';
+import { createApiHeaders } from './common';
 import { virtualLabApi } from '@/config';
 import { Project, ProjectResponse } from '@/types/virtual-lab/projects';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
+import { fetchWithSession } from '@/util/utils';
 
 export async function getVirtualLabProjects(
   id: string,
-  token: string
+  size?: number
 ): Promise<VlmResponse<VirtualLabAPIListData<Project>>> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/projects`, {
-    method: 'GET',
-    headers: createVLApiHeaders(token),
-  });
+  const url = new URL(`${virtualLabApi.url}/virtual-labs/${id}/projects`);
+  if (size) {
+    const params = new URLSearchParams(url.search);
+    params.set('size', `${size}`);
+    url.search = params.toString();
+  }
+
+  const response = await fetchWithSession(url);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
@@ -27,7 +32,7 @@ export async function getVirtualLabProjectDetails(
     `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}`,
     {
       method: 'GET',
-      headers: createVLApiHeaders(token),
+      headers: createApiHeaders(token),
     }
   );
   if (!response.ok) {
@@ -45,7 +50,7 @@ export async function getVirtualLabProjectUsers(
     `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}/users`,
     {
       method: 'GET',
-      headers: createVLApiHeaders(token),
+      headers: createApiHeaders(token),
     }
   );
   if (!response.ok) {
@@ -59,7 +64,7 @@ export async function getUsersProjects(
 ): Promise<VlmResponse<VirtualLabAPIListData<Project>>> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/projects`, {
     method: 'GET',
-    headers: createVLApiHeaders(token),
+    headers: createApiHeaders(token),
   });
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
@@ -84,7 +89,7 @@ export async function createProject(
 ): Promise<VlmResponse<{ project: Project }>> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects`, {
     method: 'POST',
-    headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name,
       description,
@@ -122,7 +127,7 @@ export async function inviteUser({
     `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}/invites`,
     {
       method: 'POST',
-      headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+      headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email,
         role,

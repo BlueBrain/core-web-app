@@ -5,9 +5,10 @@ import { Collapse, CollapseProps, ConfigProvider } from 'antd';
 
 type Props = {
   title?: ReactNode;
-  total: number;
+  total?: number;
   totalSpent: number;
   remaining: number;
+  suspended?: boolean;
 };
 
 export default function BudgetPanel({
@@ -15,6 +16,7 @@ export default function BudgetPanel({
   total,
   totalSpent,
   remaining,
+  suspended,
 }: Props) {
   const items: CollapseProps['items'] = [
     {
@@ -49,7 +51,10 @@ export default function BudgetPanel({
   ];
 
   return (
-    <div className="mt-[3px] flex flex-col gap-5 bg-primary-8 p-3">
+    <div
+      className="mt-[3px] flex flex-col gap-5 bg-primary-8 p-3"
+      style={{ minHeight: suspended ? 119.5 : undefined, boxSizing: 'content-box' }}
+    >
       <ConfigProvider
         theme={{
           components: {
@@ -59,12 +64,14 @@ export default function BudgetPanel({
           },
         }}
       >
-        <Collapse
-          bordered={false}
-          expandIconPosition="end"
-          items={items}
-          defaultActiveKey={['1']}
-        />
+        {!!title && total !== undefined && (
+          <Collapse
+            bordered={false}
+            expandIconPosition="end"
+            items={items}
+            defaultActiveKey={['1']}
+          />
+        )}
       </ConfigProvider>
     </div>
   );

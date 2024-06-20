@@ -1,4 +1,4 @@
-import { createVLApiHeaders } from './common';
+import { createApiHeaders } from './common';
 import { PaymentMethod, VlabBalance, VlabBudgetTopup } from '@/types/virtual-lab/billing';
 import { virtualLabApi } from '@/config';
 
@@ -55,7 +55,7 @@ export type SetupIntentResponse = {
 export async function generateSetupIntent(id: string, token: string): Promise<SetupIntentResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/setup-intent`, {
     method: 'POST',
-    headers: createVLApiHeaders(token),
+    headers: createApiHeaders(token),
   });
 
   if (!response.ok) {
@@ -70,7 +70,7 @@ export async function getVirtualLabPaymentMethods(
 ): Promise<VirtualLabPaymentMethodsResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods`, {
     method: 'GET',
-    headers: createVLApiHeaders(token),
+    headers: createApiHeaders(token),
   });
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
@@ -84,7 +84,7 @@ export async function getVirtualLabBalanceDetails(
 ): Promise<VirtualLabBalanceResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/balance`, {
     method: 'GET',
-    headers: createVLApiHeaders(token),
+    headers: createApiHeaders(token),
   });
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
@@ -100,7 +100,7 @@ export async function addVirtualLabBudget(
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/budget-topup`, {
     method: 'POST',
     headers: {
-      ...createVLApiHeaders(token),
+      ...createApiHeaders(token),
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -122,7 +122,7 @@ export async function addNewPaymentMethodToVirtualLab(
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods`, {
     method: 'POST',
     headers: {
-      ...createVLApiHeaders(token),
+      ...createApiHeaders(token),
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
@@ -144,7 +144,7 @@ export async function updateDefaultPaymentMethodToVirtualLab(
     {
       method: 'PATCH',
       headers: {
-        ...createVLApiHeaders(token),
+        ...createApiHeaders(token),
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ payment_method_id: paymentMethodId }),
@@ -166,7 +166,7 @@ export async function deletePaymentMethodToVirtualLab(
     `${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods/${paymentMethodId}`,
     {
       method: 'DELETE',
-      headers: createVLApiHeaders(token),
+      headers: createApiHeaders(token),
     }
   );
 

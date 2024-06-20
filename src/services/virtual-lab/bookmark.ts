@@ -1,5 +1,5 @@
 import { captureException } from '@sentry/nextjs';
-import { createVLApiHeaders } from './common';
+import { createApiHeaders } from './common';
 import { DataType } from '@/constants/explore-section/list-views';
 import { virtualLabApi } from '@/config';
 import {
@@ -64,7 +64,7 @@ export async function addBookmark(
     `${virtualLabApi.url}/virtual-labs/${lab}/projects/${labProject}/bookmarks`,
     {
       method: 'POST',
-      headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+      headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
       body: JSON.stringify(bookmark),
     }
   );
@@ -88,7 +88,7 @@ export async function removeBookmark(
     `${virtualLabApi.url}/virtual-labs/${lab}/projects/${labProject}/bookmarks?resource_id=${encodeURIComponent(bookmark.resourceId)}&category=${bookmark.category}`,
     {
       method: 'DELETE',
-      headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+      headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
     }
   );
   if (!response.ok) {
@@ -107,7 +107,7 @@ export async function getBookmarksByCategory(
     `${virtualLabApi.url}/virtual-labs/${lab}/projects/${labProject}/bookmarks`,
     {
       method: 'GET',
-      headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+      headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
     }
   );
   if (!response.ok) {
@@ -127,7 +127,7 @@ export async function bulkRemoveBookmarks(
     `${virtualLabApi.url}/virtual-labs/${lab}/projects/${labProject}/bookmarks/bulk-delete`,
     {
       method: 'POST',
-      headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+      headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
       body: JSON.stringify(bookmarksToRemove),
     }
   );

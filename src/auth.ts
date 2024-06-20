@@ -124,6 +124,9 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
     maxAge: 1800,
   },
+  pages: {
+    signIn: '/log-in',
+  },
 } satisfies NextAuthOptions;
 
 function auth(

@@ -2,37 +2,43 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
+const FREE_ACCESS_PAGES = ['/', '/log-in', '/getting-started', '/about*'];
+
+/* Don't allow arbitrary regex to avoid accidentally leaking protected pages
+Only two patterns allowed, exact match or /path* which matches the path
+and all sub-routes
+*/
+function isFreeAccessRoute(requestUrl: string) {
+  return FREE_ACCESS_PAGES.some((p) => {
+    if (p.endsWith('*')) {
+      // Remove the trailing '*' to get the base path
+      const basePath = p.slice(0, -1);
+      // Matches basePath or all subroutes
+      return requestUrl === basePath || requestUrl.startsWith(basePath + '/'); //eslint-disable-line
+    }
+    return p === requestUrl;
+  });
+}
+
 export async function middleware(request: NextRequest) {
-  const session = await getToken({ req: request });
-
-  const sessionValid =
-    session?.expires && new Date(session.expires as string).getTime() > Date.now();
-
+  const session = await getToken<false, { accessTokenExpires: number }>({ req: request });
+  const sessionValid = session && Date.now() < session.accessTokenExpires;
   const requestUrl = request.nextUrl.pathname;
 
-  // if the user is the authenticated and want to access home page
-  // then redirect him to the main page
-  if (sessionValid && requestUrl === '/') {
+  // If the user is authenticated and wants to access the home page or log-in page
+  // then redirect to the main page
+  if (sessionValid && (requestUrl === '/' || requestUrl === '/log-in')) {
     const url = request.nextUrl.clone();
-    url.pathname = `/main`;
+    url.pathname = `/virtual-lab`;
     return NextResponse.redirect(url);
   }
 
-  // if the user is not authenticated at all
-  // then redirect him to the home/login page
-  // if it's successfull then redirect him to the origin request page
-  if (!sessionValid && requestUrl !== '/') {
-    return nextAuthMiddleware(request as NextRequestWithAuth);
+  // Let them through if they're trying to access a public page
+  if (isFreeAccessRoute(requestUrl)) {
+    return NextResponse.next();
   }
-}
 
-// NOTE: use middelware to redirect only when the user want to access membership pages
-// any new page that need user auth data need to be added to this matcher
-export const config = {
-  matcher: [
-    '/',
-    '/main',
-    '/invite',
-    '/(build|simulate|simulations|main|explore|experiment-designer|svc|virtual-lab)/(.*)',
-  ],
-};
+  // If not authenticated redirect to Keycloak's login and if successful back to the originally requested page
+  // Otherwise let them through
+  return nextAuthMiddleware(request as NextRequestWithAuth);
+}

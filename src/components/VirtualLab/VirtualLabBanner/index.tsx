@@ -7,9 +7,9 @@ import { generateLabUrl } from '@/util/virtual-lab/urls';
 import styles from './virtual-lab-banner.module.css';
 
 type Props = {
-  id: string;
-  name: string;
-  description: string;
+  id?: string;
+  name?: string;
+  description?: string;
   bottomElements: ReactNode;
   supertitle?: string | null;
   withEditButton?: boolean;
@@ -23,7 +23,7 @@ export default function VirtualLabBanner({
   supertitle = 'Virtual Lab Name',
   withEditButton = false,
 }: Props) {
-  const labUrl = generateLabUrl(id);
+  const labUrl = id && generateLabUrl(id);
 
   return (
     <div className="relative min-h-[250px] bg-primary-8 hover:brightness-110">

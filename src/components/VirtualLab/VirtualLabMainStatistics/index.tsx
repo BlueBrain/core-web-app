@@ -1,3 +1,5 @@
+'use client';
+
 import { unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { CalendarOutlined, UserOutlined } from '@ant-design/icons';
@@ -9,8 +11,8 @@ import { formatDate } from '@/util/utils';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 
 type Props = {
-  id: string;
-  created_at: string;
+  id?: string;
+  created_at?: string;
 };
 
 export default function VirtualLabMainStatistics({ id, created_at }: Props) {
@@ -40,7 +42,7 @@ export default function VirtualLabMainStatistics({ id, created_at }: Props) {
       <VirtualLabStatistic
         icon={<CalendarOutlined style={iconStyle} />}
         title="Creation date"
-        detail={formatDate(created_at)}
+        detail={created_at && formatDate(created_at)}
       />
     </div>
   );

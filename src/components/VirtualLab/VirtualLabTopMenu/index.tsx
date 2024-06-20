@@ -1,10 +1,11 @@
-import { useEffect, useRef, ReactNode } from 'react';
+import { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
 import { UserOutlined } from '@ant-design/icons';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 type Props = {
   className?: string;
@@ -16,25 +17,31 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   const { data: session } = useSession();
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
+  const [expanded, setExpanded] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuElementsHeight, setMenuElementsHeight] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    if (!menuRef || !menuRef.current) return;
+    setMenuElementsHeight(menuRef.current.getBoundingClientRect().height);
+  }, [setMenuElementsHeight]);
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
-  }, [localRef, setProjectTopMenuRef]);
+  }, [setProjectTopMenuRef]);
 
-  const btnClassName = classNames(
-    'flex items-center h-full w-52 p-4 font-bold',
-    ghost ? 'bg-transparent' : 'bg-primary-8 border border-primary-7'
-  );
+  const getMenuButtonClassName = (
+    ghost: boolean // eslint-disable-line
+  ) =>
+    classNames(
+      'w-52 p-4 font-bold flex items-center',
+      ghost ? 'bg-transparent' : 'bg-primary-8 border border-primary-7'
+    );
 
   return (
-    <div className={classNames('flex w-full justify-between gap-6', className)}>
-      <div className="contents" ref={localRef} />
-      <div
-        className={classNames(
-          'ml-auto flex w-fit gap-1',
-          ghost ? 'divide-x divide-primary-7 border border-primary-7' : ''
-        )}
-      >
+    <div className={classNames('flex h-14 w-full justify-between overflow-y-visible', className)}>
+      <div className="flex gap-4" ref={localRef} />
+      <div className={classNames('flex w-fit justify-end')}>
         {[
           {
             children: 'Getting Started',
@@ -47,16 +54,64 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             key: 'about',
           },
         ].map(({ children, href, key }) => (
-          <div className={btnClassName} key={key}>
-            <Link href={href}>{children}</Link>
-          </div>
+          <Link
+            className={classNames(getMenuButtonClassName(ghost), 'border border-primary-7')}
+            href={href}
+            key={key}
+            style={{ height: menuElementsHeight ?? undefined }}
+          >
+            {children}
+          </Link>
         ))}
         {!!session && (
-          <div className={classNames(btnClassName, 'flex-row justify-between')}>
-            <span className="font-bold">{session?.user.name}</span>
-            <UserOutlined className="mr-2 text-primary-4" />
+          <div
+            onMouseLeave={() => {
+              if (!expanded) return;
+              setExpanded(false);
+            }}
+          >
+            <div
+              className={classNames(
+                getMenuButtonClassName(expanded ? false : ghost),
+                'flex cursor-pointer flex-row  justify-between border border-primary-7 transition-all ease-in-out'
+              )}
+              style={{ padding: '13px', transitionDuration: '1000ms' }}
+              onMouseEnter={() => {
+                if (expanded) return;
+                setExpanded(true);
+              }}
+              ref={menuRef}
+            >
+              <span className="font-bold">{session?.user.name}</span>
+              <UserOutlined className="mr-2 text-primary-4" />
+            </div>
+
+            <div
+              className="relative z-20 transition-all ease-in-out"
+              style={{ opacity: Number(expanded), transitionDuration: '1000ms' }}
+            >
+              <div
+                className={classNames(
+                  getMenuButtonClassName(false),
+                  'flex flex-row justify-between  border border-t-0 border-primary-7'
+                )}
+              >
+                <span className="font-bold">Account</span>
+              </div>
+              <button
+                type="button"
+                className={classNames(
+                  getMenuButtonClassName(false),
+                  'flex flex-row justify-between  border border-t-0 border-primary-7'
+                )}
+                onClick={() => signOut({ callbackUrl: `${basePath}/log-in` })}
+              >
+                <span className="font-bold">Log out</span>
+              </button>
+            </div>
           </div>
         )}
+
         {extraItems}
       </div>
     </div>

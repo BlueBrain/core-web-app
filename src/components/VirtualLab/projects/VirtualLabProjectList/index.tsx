@@ -93,31 +93,17 @@ export function NewProjectModal({
   };
 
   return (
-    <>
-      <Modal
-        style={{ minWidth: 600 }}
-        footer={
-          <NewProjectModalFooter
-            close={() => setOpen(false)}
-            loading={loading}
-            onSubmit={onSubmit}
-          />
-        }
-        onCancel={() => setOpen(false)}
-        open={open}
-        styles={{ mask: { backgroundColor: '#0050B3D9' } }}
-      >
-        <NewProjectModalForm form={form} members={members} />
-      </Modal>
-      <button
-        type="button"
-        className="flex w-[200px] justify-between border border-primary-7 p-3"
-        onClick={() => setOpen(true)}
-      >
-        <span className="font-bold">New project</span>
-        <PlusOutlined />
-      </button>
-    </>
+    <Modal
+      style={{ minWidth: 600 }}
+      footer={
+        <NewProjectModalFooter close={() => setOpen(false)} loading={loading} onSubmit={onSubmit} />
+      }
+      onCancel={() => setOpen(false)}
+      open={open}
+      styles={{ mask: { backgroundColor: '#0050B3D9' } }}
+    >
+      <NewProjectModalForm form={form} members={members} />
+    </Modal>
   );
 }
 
