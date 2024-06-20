@@ -11,6 +11,7 @@ import { Btn } from '@/components/Btn';
 import { singleNeuronIdAtom } from '@/state/simulate/single-neuron';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
@@ -23,7 +24,7 @@ export default function VirtualLabProjectSimulateNewPage({
     router.push('/simulate/single-neuron/edit');
   };
 
-  const simulatePage = `/virtual-lab/lab/${virtualLabId}/project/${projectId}/simulate`;
+  const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;
 
   return (
     <div className="flex flex-col pt-14">

@@ -9,6 +9,7 @@ import { PaperResource } from '@/types/nexus';
 import { auth } from '@/auth';
 import { composeUrl } from '@/util/nexus';
 import { createHeaders } from '@/util/utils';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 export default async function deletePaperFromProject({ paper }: { paper: PaperResource }) {
   const session = await auth();
@@ -46,6 +47,6 @@ export default async function deletePaperFromProject({ paper }: { paper: PaperRe
   }
 
   if (shouldRedirect) {
-    redirect(`/virtual-lab/lab/${paper.virtualLabId}/project/${paper.projectId}/papers`);
+    redirect(`${generateVlProjectUrl(paper.virtualLabId, paper.projectId)}/papers`);
   }
 }

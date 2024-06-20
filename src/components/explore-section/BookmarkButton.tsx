@@ -19,6 +19,7 @@ import {
 } from '@/constants/explore-section/data-types/experiment-data-types';
 import { DataType } from '@/constants/explore-section/list-views';
 import { useAccessToken } from '@/hooks/useAccessToken';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 type Props = {
   virtualLabId: string;
@@ -45,7 +46,7 @@ export default function BookmarkButton({
   const router = useRouter();
 
   const refreshBookmarks = useSetAtom(bookmarksForProjectAtomFamily({ virtualLabId, projectId }));
-  const libraryPage = `/virtual-lab/lab/${virtualLabId}/project/${projectId}/library?category=${experimentType}`;
+  const libraryPage = `${generateVlProjectUrl(virtualLabId, projectId)}/library?category=${experimentType}`;
 
   const category = useMemo(() => {
     return Object.keys(EXPERIMENT_DATA_TYPES).find(

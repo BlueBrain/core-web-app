@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import PaperListView from '@/components/papers/PaperListView';
 import { ServerSideComponentProp } from '@/types/common';
 import retrievePapersList from '@/services/paper-ai/retrievePapersList';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 export default async function PapersListing({
   params: { virtualLabId, projectId },
@@ -26,7 +27,7 @@ export default async function PapersListing({
       <Link
         className="mt-auto flex max-w-max items-center justify-center self-end bg-primary-8 px-8 py-4 text-white"
         type="primary"
-        href={`/virtual-lab/lab/${virtualLabId}/project/${projectId}/papers/create`}
+        href={`${generateVlProjectUrl(virtualLabId, projectId)}/papers/create`}
       >
         Create new paper
       </Link>

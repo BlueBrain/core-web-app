@@ -4,6 +4,7 @@ import Link from '@/components/Link';
 import { meModelSectionAtom } from '@/state/virtual-lab/build/me-model';
 import { MEModelSection } from '@/types/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 type Props = {
   params: {
@@ -59,8 +60,7 @@ function Item({ tab, params }: ItemProps) {
     'p-5 inline-block'
   );
 
-  const labProjectUrl = `${params.virtualLabId}/project/${params.projectId}`;
-  const url = `/virtual-lab/lab/${labProjectUrl}/build/me-model/new/${tab.link}`;
+  const url = `${generateVlProjectUrl(params.virtualLabId, params.projectId)}/build/me-model/new/${tab.link}`;
 
   return (
     <Link href={url} className={style}>

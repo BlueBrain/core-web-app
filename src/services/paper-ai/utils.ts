@@ -1,5 +1,6 @@
 import { PaperResource } from '@/types/nexus';
 import { to64 } from '@/util/common';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 const PAPERS_LIST_TAG = 'papers-list';
 const PAPERS_LIST_COUNT_TAG = 'papers-list-count';
@@ -33,5 +34,5 @@ export const paperHrefGenerator = ({
   virtualLabId,
   '@id': id,
 }: Pick<PaperResource, '@id' | 'projectId' | 'virtualLabId'>) => {
-  return `/virtual-lab/lab/${virtualLabId}/project/${projectId}/papers/${to64(id)}`;
+  return `${generateVlProjectUrl(virtualLabId, projectId)}/papers/${to64(id)}`;
 };

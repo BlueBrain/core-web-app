@@ -29,6 +29,7 @@ type Props = {
 
 export default function VerticalLinks({ virtualLabId, projectId, links, currentPage }: Props) {
   const { push } = useRouter();
+  // TODO: make vlId and projectId mandaroty and use generateVlProjectUrl
   const onClick = (href: string) => () =>
     push(`/virtual-lab/lab/${virtualLabId}/project/${projectId}/${href}`);
   const selectedLayout = useSelectedLayoutSegment();
