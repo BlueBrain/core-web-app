@@ -12,7 +12,7 @@ export default function VirtualLabProjectBuildPage() {
       <ScopeCarousel />
       <div className="flex h-full flex-col">
         <div className="flex justify-between">
-          <GenericButton text="Models" className="bg-white text-2xl font-bold text-primary-8" />
+          <GenericButton text="ME-Models" className="bg-white text-2xl font-bold text-primary-8" />
           <GenericButton
             text="New model ＋"
             className="bg-primary-6 text-white"
