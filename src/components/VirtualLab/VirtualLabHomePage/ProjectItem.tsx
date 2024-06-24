@@ -12,9 +12,11 @@ export default function ProjectItem({ title, description, buttonHref }: Props) {
       <div className="text-xl font-bold">{title}</div>
       <div className="truncate">{description}</div>
       {buttonHref && (
-        <Link className="border px-6 py-2 font-semibold" type="button" href={buttonHref}>
-          View project
-        </Link>
+        <div className="my-2">
+          <Link className="border px-6 py-2 font-semibold" type="button" href={buttonHref}>
+            View project
+          </Link>
+        </div>
       )}
     </div>
   );
