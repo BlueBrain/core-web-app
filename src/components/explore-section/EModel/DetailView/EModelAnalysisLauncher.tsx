@@ -11,7 +11,7 @@ import { EModelResource } from '@/types/explore-section/delta-model';
 import { useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
-import PDFViewer from '@/components/explore-section/EModel/DetailView/PDFViewer';
+import PDFViewer from '@/components/explore-section/common/pdf/PDFViewer';
 import { useWorkflowAuth } from '@/components/WorkflowLauncherBtn';
 
 export default function Launcher({ analysis }: { analysis?: Analysis }) {

@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 
 import { meModelResourceAtom } from '@/state/virtual-lab/build/me-model';
-import { PDFViewerContainer } from '@/components/explore-section/EModel/DetailView/PDFViewerContainer';
+import { PDFViewerContainer } from '@/components/explore-section/common/pdf/PDFViewerContainer';
 import { composeUrl, ensureArray } from '@/util/nexus';
 import { FileDistribution } from '@/types/explore-section/delta-properties';
 import { nexus } from '@/config';

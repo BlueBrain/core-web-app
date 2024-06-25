@@ -1,7 +1,7 @@
 'use client';
 
 import { Loadable } from 'jotai/vanilla/utils/loadable';
-import { PDFViewerContainer } from './PDFViewerContainer';
+import { PDFViewerContainer } from '@/components/explore-section/common/pdf/PDFViewerContainer';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { EModelResource } from '@/types/explore-section/delta-model';
 import { useLoadableValue } from '@/hooks/hooks';
