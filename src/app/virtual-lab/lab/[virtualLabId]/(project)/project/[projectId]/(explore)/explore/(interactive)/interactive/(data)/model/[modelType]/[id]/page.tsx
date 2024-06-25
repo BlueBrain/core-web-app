@@ -1,50 +1,33 @@
 'use client';
 
-import { Suspense } from 'react';
-import { UseQueryStateReturn, parseAsString, useQueryState, Options } from 'nuqs';
+import dynamic from 'next/dynamic';
 
-import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import Detail from '@/components/explore-section/Detail';
-import { E_MODEL_FIELDS } from '@/constants/explore-section/detail-views-fields';
-import SectionTabs, {
-  EMODEL_TABS,
-  EmodelTabKeys,
-} from '@/components/explore-section/EModel/DetailView/SectionTabs';
-import {
-  Analysis,
-  Configuration,
-  Simulation,
-} from '@/components/explore-section/EModel/DetailView';
-import If from '@/components/ConditionalRenderer/If';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
-export default function EModelPage() {
-  const [activeTab] = useQueryState(
-    'tab',
-    parseAsString.withDefault(EMODEL_TABS.at(0)!.key)
-  ) as UseQueryStateReturn<EmodelTabKeys, Options>;
+const EModelDetailView = dynamic(
+  () => import('@/components/explore-section/EModel/DetailView/View')
+);
+const MEModelDetailView = dynamic(
+  () => import('@/components/explore-section/MEModel/DetailView/View')
+);
 
-  return (
-    <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={E_MODEL_FIELDS}>
-        {() => (
-          <>
-            <SectionTabs />
-            <div className="w-full flex-1">
-              <Suspense fallback={<CentralLoadingSpinner />}>
-                <If id="configuration" condition={activeTab === 'configuration'}>
-                  <Configuration />
-                </If>
-                <If id="analysis" condition={activeTab === 'analysis'}>
-                  <Analysis />
-                </If>
-                <If id="simulation" condition={activeTab === 'simulation'}>
-                  <Simulation />
-                </If>
-              </Suspense>
-            </div>
-          </>
-        )}
-      </Detail>
-    </Suspense>
-  );
+type Params = {
+  params: {
+    modelType: string;
+    projectId: string;
+    virtualLabId: string;
+  };
+};
+
+export default function DetailPage({ params }: Params) {
+  const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+
+  switch (params.modelType) {
+    case 'e-model':
+      return <EModelDetailView />;
+    case 'me-model':
+      return <MEModelDetailView vlProjectUrl={vlProjectUrl} />;
+    default:
+      break;
+  }
 }
