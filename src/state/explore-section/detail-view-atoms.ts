@@ -63,13 +63,16 @@ export const contributorsDataFamily = atomFamily<
       const contributions = ensureArray(detail.contribution);
 
       const contributors = await Promise.all(
-        contributions.map((contribution) =>
-          fetchResourceById<Contributor>(
+        contributions.map(async (contribution) => {
+          if (contribution?.agent?.name)
+            return pick(contribution.agent, ['@id', '@type', 'name']) as Contributor;
+
+          return fetchResourceById<Contributor>(
             contribution?.agent['@id'],
             session,
             pick(info, ['org', 'project'])
-          )
-        )
+          );
+        })
       );
 
       return contributors;

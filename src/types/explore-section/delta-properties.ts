@@ -16,7 +16,7 @@ export type BrainLocation = Type & {
 };
 
 export type Contribution = Type<'Contribution'> & {
-  agent: IdLabelWithType<string[]>;
+  agent: IdLabelWithType<string[]> & { name?: string };
 };
 
 export type Derivation = Type & {
