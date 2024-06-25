@@ -20,6 +20,9 @@ export type ESeModel = ESHitSource & {
   mType: ElectrophysiologyOrMorphologyType;
   brainRegion: BrainRegion;
   image?: EModelAnalysisImage[] | EModelAnalysisImage;
+};
+
+export type ESmeModel = ESeModel & {
   memodel?: {
     emodelResource: {
       '@id': string;
