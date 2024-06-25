@@ -16,7 +16,8 @@ export default function VirtualLabHomePage({ id }: Props) {
         <VirtualLabDetail id={id} />
       </Suspense>
       <VirtualLabCTABanner
-        title="Create your first project"
+        id={id}
+        title="Create a project"
         subtitle="In order to start exploring brain regions, building models and simulate neuron, create a project"
       />
       <DiscoverObpPanel />

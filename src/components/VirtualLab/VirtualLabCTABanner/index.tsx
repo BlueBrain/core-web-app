@@ -1,14 +1,27 @@
+'use client';
+
+import Link from 'next/link';
+import { useSetAtom } from 'jotai';
+import { newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
 import { basePath } from '@/config';
 import styles from './virtual-lab-cta-banner.module.css';
 
 type Props = {
+  id?: string;
   title: string;
   subtitle: string;
 };
 
-export default function VirtualLabCTABanner({ title, subtitle }: Props) {
+export default function VirtualLabCTABanner({ title, subtitle, id }: Props) {
+  const setNewProjectModalOpenAtom = useSetAtom(newProjectModalOpenAtom);
   return (
-    <div className="relative mt-10 flex rounded-xl bg-gradient-to-r from-[#345D36] to-[#6DC371] p-8">
+    <Link
+      onClick={() => {
+        if (id) setNewProjectModalOpenAtom(true);
+      }}
+      href={id ? `${basePath}/virtual-lab/lab/${id}/projects` : '#'}
+      className="relative mt-10 flex rounded-xl bg-gradient-to-r from-[#345D36] to-[#6DC371] p-8"
+    >
       <div
         className={styles.bannerImg}
         style={{
@@ -19,6 +32,6 @@ export default function VirtualLabCTABanner({ title, subtitle }: Props) {
         <h4 className="text-2xl font-bold">{title}</h4>
         <p>{subtitle}</p>
       </div>
-    </div>
+    </Link>
   );
 }

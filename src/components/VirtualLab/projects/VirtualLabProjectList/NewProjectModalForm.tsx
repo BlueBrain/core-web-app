@@ -4,7 +4,8 @@ import { useState, useEffect, useReducer } from 'react';
 import { useAtom } from 'jotai';
 import { MailOutlined } from '@ant-design/icons';
 import VirtualLabMemberIcon from '../../VirtualLabMemberIcon';
-import { InvitedMember, selectedMembersAtom, formItems, NewProjectModalInput } from './shared';
+import { InvitedMember, selectedMembersAtom } from './shared';
+import NewProjectModalInputs from './NewProjectModalInputs';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 const { Option } = Select;
@@ -66,7 +67,7 @@ export default function NewProjectModalForm({
           },
         }}
       >
-        {formItems.map(NewProjectModalInput)}
+        <NewProjectModalInputs />
         {members?.map((member) => (
           <div key={member.id} className="text-primary-8">
             <VirtualLabMemberIcon
