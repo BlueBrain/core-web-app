@@ -229,7 +229,7 @@ export default function ExploreSectionTable({
   brainRegionSource,
   hasError,
   loading,
-  renderButton,
+  renderButton = defaultRenderButton,
   onCellClick,
   selectionType,
   bookmarkScope,
@@ -248,15 +248,12 @@ export default function ExploreSectionTable({
     setDisplayLoadMoreBtn((state) => {
       return value ?? !state;
     });
-  return (
-    <>
-      {enableDownload ? (
-        <WithRowSelection
-          renderButton={renderButton ?? defaultRenderButton}
-          dataType={dataType}
-          selectionType={selectionType}
-        >
-          {(rowSelection) => (
+
+  if (enableDownload) {
+    return (
+      <WithRowSelection dataType={dataType} selectionType={selectionType}>
+        {(rowSelection, selectedRows, clearSelectedRows) => (
+          <>
             <BaseTable
               columns={columns}
               dataSource={dataSource}
@@ -268,20 +265,40 @@ export default function ExploreSectionTable({
               showLoadMore={toggleDisplayMore}
               onCellClick={onCellClick}
             />
-          )}
-        </WithRowSelection>
-      ) : (
-        <BaseTable
-          columns={columns}
-          dataSource={dataSource}
-          hasError={hasError}
-          loading={loading}
-          rowKey={(row) => row._source._self}
-          dataType={dataType}
-          showLoadMore={toggleDisplayMore}
-          onCellClick={onCellClick}
-        />
-      )}
+            <div className="relative flex grow items-center justify-between">
+              <div className="grow" />
+              {displayLoadMoreBtn && (
+                <div className="flex grow items-center">
+                  <LoadMoreButton
+                    dataType={dataType}
+                    brainRegionSource={brainRegionSource}
+                    bookmarkScope={bookmarkScope}
+                    hide={toggleDisplayMore}
+                  />
+                </div>
+              )}
+              <div className="grow">
+                {!!selectedRows.length && renderButton({ selectedRows, clearSelectedRows })}
+              </div>
+            </div>
+          </>
+        )}
+      </WithRowSelection>
+    );
+  }
+
+  return (
+    <>
+      <BaseTable
+        columns={columns}
+        dataSource={dataSource}
+        hasError={hasError}
+        loading={loading}
+        rowKey={(row) => row._source._self}
+        dataType={dataType}
+        showLoadMore={toggleDisplayMore}
+        onCellClick={onCellClick}
+      />
       {displayLoadMoreBtn && (
         <LoadMoreButton
           dataType={dataType}

@@ -21,12 +21,14 @@ export type RenderButtonProps = {
 export default function WithRowSelection({
   children,
   dataType,
-  renderButton,
   selectionType = 'checkbox',
 }: {
-  children: (rowSelection: RowSelection) => ReactNode;
+  children: (
+    rowSelection: RowSelection,
+    selectedRows: ExploreESHit<ExploreSectionResource>[],
+    clearSelectedRows: () => void
+  ) => ReactNode;
   dataType: DataType;
-  renderButton?: (props: RenderButtonProps) => ReactNode;
   selectionType?: RowSelectionType;
 }) {
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom({ dataType }));
@@ -34,15 +36,18 @@ export default function WithRowSelection({
 
   return (
     <>
-      {children({
-        selectedRowKeys: selectedRows.map(
-          ({ _source }: ExploreESHit<ExploreSectionResource>) => _source._self
-        ),
-        onChange: (_keys: Key[], rows: ExploreESHit<ExploreSectionResource>[]) =>
-          setSelectedRows(() => rows),
-        type: selectionType,
-      })}
-      {!!(renderButton && selectedRows.length) && renderButton({ selectedRows, clearSelectedRows })}
+      {children(
+        {
+          selectedRowKeys: selectedRows.map(
+            ({ _source }: ExploreESHit<ExploreSectionResource>) => _source._self
+          ),
+          onChange: (_keys: Key[], rows: ExploreESHit<ExploreSectionResource>[]) =>
+            setSelectedRows(() => rows),
+          type: selectionType,
+        },
+        selectedRows,
+        clearSelectedRows
+      )}
     </>
   );
 }
