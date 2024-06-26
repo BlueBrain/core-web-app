@@ -267,16 +267,16 @@ export default function ExploreSectionTable({
             />
             <div className="relative flex grow items-center justify-between">
               <div className="grow" />
-              {displayLoadMoreBtn && (
-                <div className="flex grow items-center">
+              <div className="flex grow items-center">
+                {displayLoadMoreBtn && (
                   <LoadMoreButton
                     dataType={dataType}
                     brainRegionSource={brainRegionSource}
                     bookmarkScope={bookmarkScope}
                     hide={toggleDisplayMore}
                   />
-                </div>
-              )}
+                )}
+              </div>
               <div className="grow">
                 {!!selectedRows.length && renderButton({ selectedRows, clearSelectedRows })}
               </div>

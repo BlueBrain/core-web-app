@@ -53,7 +53,7 @@ export default function WithControlPanel({
     <>
       <section
         className={classNames(
-          'flex h-full w-full min-w-0 flex-col gap-5 bg-white before:shadow-lg after:shadow-md',
+          'flex h-full w-full min-w-0 flex-col bg-white before:shadow-lg after:shadow-md',
           className
         )}
       >
