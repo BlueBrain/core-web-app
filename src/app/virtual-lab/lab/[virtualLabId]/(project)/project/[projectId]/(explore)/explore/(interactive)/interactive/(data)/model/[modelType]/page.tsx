@@ -6,11 +6,11 @@ import dynamic from 'next/dynamic';
 import { DataType } from '@/constants/explore-section/list-views';
 import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
 
-const WithExploreEModel = dynamic(
-  () => import('@/components/explore-section/EModel/WithExploreEModel')
+const ExploreEModelTable = dynamic(
+  () => import('@/components/explore-section/EModel/ExploreEModelTable')
 );
-const WithExploreMEModel = dynamic(
-  () => import('@/components/explore-section/MEModel/WithExploreMEModel')
+const ExploreMEModelTable = dynamic(
+  () => import('@/components/explore-section/MEModel/ExploreMEModelTable')
 );
 
 export default function VirtualLabModelListingView() {
@@ -23,7 +23,7 @@ export default function VirtualLabModelListingView() {
   switch (currentModel as DataType) {
     case 'CircuitEModel':
       return (
-        <WithExploreEModel
+        <ExploreEModelTable
           enableDownload
           dataType={currentModel as DataType}
           brainRegionSource="selected"
@@ -31,7 +31,7 @@ export default function VirtualLabModelListingView() {
       );
     case 'CircuitMEModel':
       return (
-        <WithExploreMEModel
+        <ExploreMEModelTable
           enableDownload
           dataType={currentModel as DataType}
           brainRegionSource="selected"

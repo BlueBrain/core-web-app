@@ -8,7 +8,7 @@ import { detailUrlBuilder } from '@/util/common';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { DataType } from '@/constants/explore-section/list-views';
 
-export default function WithExploreMEModel({
+export default function ExploreMEModelTable({
   enableDownload,
   dataType,
   brainRegionSource,
