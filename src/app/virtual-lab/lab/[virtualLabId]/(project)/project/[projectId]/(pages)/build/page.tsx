@@ -3,10 +3,26 @@
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import ScopeCarousel from '@/components/VirtualLab/ScopeCarousel';
 import { DataType } from '@/constants/explore-section/list-views';
-import { Btn } from '@/components/Btn';
 import GenericButton from '@/components/Global/GenericButton';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { detailUrlBuilder } from '@/util/common';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { ExploreESHit } from '@/types/explore-section/es';
 
-export default function VirtualLabProjectBuildPage() {
+type Params = {
+  params: {
+    projectId: string;
+    virtualLabId: string;
+  };
+};
+
+export default function VirtualLabProjectBuildPage({ params }: Params) {
+  const generateDetailUrl = (model: ExploreESHit<ExploreSectionResource>) => {
+    const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+    const baseBuildUrl = `${vlProjectUrl}/build/me-model/view`;
+    return `${detailUrlBuilder(baseBuildUrl, model)}`;
+  };
+
   return (
     <div className="flex h-full flex-col gap-10 pt-14">
       <ScopeCarousel />
@@ -25,10 +41,15 @@ export default function VirtualLabProjectBuildPage() {
             brainRegionSource="selected"
             selectionType="radio"
             enableDownload
-            renderButton={() => (
-              <Btn className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2" disabled>
-                Use ME-Model
-              </Btn>
+            renderButton={({ selectedRows }) => (
+              <div className="mr-5 flex justify-end gap-2">
+                <GenericButton
+                  text="View model"
+                  className="bg-primary-9  text-white hover:!bg-primary-7"
+                  href={generateDetailUrl(selectedRows[0])}
+                />
+                {/* TODO: integrate button 'add to library' when support models */}
+              </div>
             )}
           />
         </div>
