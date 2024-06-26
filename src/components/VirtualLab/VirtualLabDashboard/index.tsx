@@ -92,7 +92,9 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
         width={500}
         onCancel={() => setIsProjectModalVisible(false)}
       >
-        <span className="my-3 block font-bold text-primary-8">Project Location</span>
+        <span className="my-3 block font-bold text-primary-8">
+          Please select a Virtual lab for this project
+        </span>
         <Select
           style={{ width: 200 }}
           options={virtualLabs.map((vl) => ({ label: vl.name, value: vl.id }))}
