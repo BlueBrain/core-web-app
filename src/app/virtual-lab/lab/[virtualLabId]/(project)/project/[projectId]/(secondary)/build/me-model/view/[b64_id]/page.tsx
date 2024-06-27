@@ -20,7 +20,7 @@ export default function MEModelViewPage({ params }: Params) {
 
   useEffect(() => {
     setBackToListPath(`${vlProjectUrl}/build`);
-  }, []);
+  }, [setBackToListPath, vlProjectUrl]);
 
   return <MEModelDetailView vlProjectUrl={vlProjectUrl} />;
 }

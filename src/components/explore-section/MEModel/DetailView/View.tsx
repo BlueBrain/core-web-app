@@ -36,7 +36,7 @@ export default function MEModelDetailView({ vlProjectUrl }: Props) {
     if (!id) return;
 
     setInitializeSummary(id);
-  }, [id]);
+  }, [setInitializeSummary, id]);
 
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
