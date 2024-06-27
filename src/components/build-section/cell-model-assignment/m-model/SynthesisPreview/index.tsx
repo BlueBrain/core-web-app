@@ -1,7 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import debounce from 'lodash/debounce';
+import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 
 import PlotRenderer from './PlotRenderer';
@@ -13,6 +12,7 @@ import sessionAtom from '@/state/session';
 import { SynthesisPreviewInterface, SynthesisPreviewApiPlotResponse } from '@/types/m-model';
 import { classNames } from '@/util/utils';
 import { synthesisUrl } from '@/config';
+import { useDebouncedCallback } from '@/hooks/hooks';
 
 type Props = {
   className?: string;
@@ -46,30 +46,30 @@ export default function SynthesisPreview({ className }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const selectedMModelId = useAtomValue(selectedMModelIdAtom);
 
-  const getImagesDebounced = useCallback(
-    (abortController: AbortController, config: SynthesisPreviewInterface, token: string) =>
-      debounce(async () => {
-        setIsLoading(true);
-        try {
-          const imgs = await getImages(config, token, {
-            signal: abortController.signal,
-          });
-          setImgSources({
-            barcode: { src: imgs.barcode },
-            diagram: { src: imgs.diagram },
-            image: { src: imgs.image },
-            synthesis: { src: imgs.synthesis },
-          });
-        } catch (err) {
-          if (err instanceof Error && err.name !== 'AbortError') {
-            // Handle any error not caused by the Abort Controller aborting the request
-            throw new Error(`Error using preview synthesis API ${err}`);
-          }
-        } finally {
-          setIsLoading(false);
+  const getImagesDebounced = useDebouncedCallback(
+    async (abortController: AbortController, config: SynthesisPreviewInterface, token: string) => {
+      setIsLoading(true);
+      try {
+        const imgs = await getImages(config, token, {
+          signal: abortController.signal,
+        });
+        setImgSources({
+          barcode: { src: imgs.barcode },
+          diagram: { src: imgs.diagram },
+          image: { src: imgs.image },
+          synthesis: { src: imgs.synthesis },
+        });
+      } catch (err) {
+        if (err instanceof Error && err.name !== 'AbortError') {
+          // Handle any error not caused by the Abort Controller aborting the request
+          throw new Error(`Error using preview synthesis API ${err}`);
         }
-      }, debounceDelay)(),
-    []
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+    debounceDelay
   );
 
   useEffect(() => {

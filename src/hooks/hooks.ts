@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Atom } from 'jotai/vanilla';
 import { unwrap, loadable } from 'jotai/utils';
 import { usePathname } from 'next/navigation';
+import debounce from 'lodash/debounce';
 import sessionAtom from '@/state/session';
 
 export function usePrevious<T>(value: T) {
@@ -47,4 +48,22 @@ export function useEnsuredPath() {
   const path = usePathname();
   if (!path) throw new Error('Invalid pathname');
   return path;
+}
+
+type RestParameters<T extends (...args: any) => any> = T extends (
+  first: any,
+  ...rest: infer R
+) => any
+  ? R
+  : never;
+
+type DebounceParams = RestParameters<typeof debounce>;
+
+export function useDebouncedCallback<T extends (...args: any) => any>(
+  func: T,
+  deps: DependencyList,
+  ...params: DebounceParams
+) {
+  // eslint-disable-next-line
+  return useCallback(debounce(func, ...params), deps);
 }
