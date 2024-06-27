@@ -8,31 +8,32 @@ import {
 import { Button, Spin, notification } from 'antd';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { useCallback, useMemo } from 'react';
+import { HTMLProps, ReactNode, useCallback, useMemo } from 'react';
 
 import { useRouter } from 'next/navigation';
 import { addBookmark, removeBookmark } from '@/services/virtual-lab/bookmark';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
-import {
-  EXPERIMENT_DATA_TYPES,
-  ExperimentTypeNames,
-} from '@/constants/explore-section/data-types/experiment-data-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 import { DataType } from '@/constants/explore-section/list-views';
 import { useAccessToken } from '@/hooks/useAccessToken';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { BookmarksSupportedTypes, isExperiment, isModel } from '@/types/virtual-lab/bookmark';
+import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
 
 type Props = {
   virtualLabId: string;
   projectId: string;
   resourceId: string;
-  experimentType: ExperimentTypeNames;
+  type: BookmarksSupportedTypes;
+  customButtom?: (props: HTMLProps<HTMLButtonElement>) => ReactNode;
 };
 
 export default function BookmarkButton({
   virtualLabId,
   projectId,
   resourceId,
-  experimentType,
+  type,
+  customButtom,
 }: Props) {
   const token = useAccessToken()!;
   const bookmarks = useAtomValue(
@@ -46,13 +47,21 @@ export default function BookmarkButton({
   const router = useRouter();
 
   const refreshBookmarks = useSetAtom(bookmarksForProjectAtomFamily({ virtualLabId, projectId }));
-  const libraryPage = `${generateVlProjectUrl(virtualLabId, projectId)}/library?category=${experimentType}`;
+  const libraryPage = `${generateVlProjectUrl(virtualLabId, projectId)}/library?category=${type}`;
 
   const category = useMemo(() => {
-    return Object.keys(EXPERIMENT_DATA_TYPES).find(
-      (experimentKey) => EXPERIMENT_DATA_TYPES[experimentKey].name === experimentType
-    )! as DataType;
-  }, [experimentType]);
+    if (isExperiment(type)) {
+      return Object.keys(EXPERIMENT_DATA_TYPES).find(
+        (experimentKey) => EXPERIMENT_DATA_TYPES[experimentKey].name === type
+      )! as DataType;
+    }
+    if (isModel(type)) {
+      return Object.keys(MODEL_DATA_TYPES).find(
+        (model) => MODEL_DATA_TYPES[model].name === type
+      )! as DataType;
+    }
+    throw new Error(`Resource of type ${type} cannot be bookmarked`);
+  }, [type]);
 
   const notifySuccess = useCallback(
     (action: 'add' | 'remove') => {
@@ -145,27 +154,8 @@ export default function BookmarkButton({
     return <WarningFilled title="Bookmark status could not be loaded" className="mr-2" />;
   }
 
-  return isBookmarked ? (
-    <>
-      <Button
-        type="text"
-        className="mr-3 flex h-[36px] items-center gap-2 px-1 text-gray-500 hover:!bg-transparent"
-        onClick={() => {
-          router.push(libraryPage);
-        }}
-      >
-        View in library
-        <EyeOutlined />
-      </Button>
-      <Button
-        type="text"
-        className="mr-3 flex h-[36px] items-center gap-2 px-1 text-gray-500 hover:!bg-transparent"
-        onClick={removeFromLibrary}
-      >
-        Remove from library
-        <MinusCircleOutlined />
-      </Button>
-    </>
+  const addButton = customButtom ? (
+    customButtom({ onClick: saveToLibrary, children: 'Add to Library' })
   ) : (
     <Button
       type="text"
@@ -175,5 +165,42 @@ export default function BookmarkButton({
       Save to library
       <PlusOutlined className="border border-neutral-2 px-4 py-3" />
     </Button>
+  );
+
+  const removeButton = customButtom ? (
+    customButtom({ onClick: removeFromLibrary, children: 'Remove from library' })
+  ) : (
+    <Button
+      type="text"
+      className="mr-3 flex h-[36px] items-center gap-2 px-1 text-gray-500 hover:!bg-transparent"
+      onClick={removeFromLibrary}
+    >
+      Remove from library
+      <MinusCircleOutlined />
+    </Button>
+  );
+
+  const viewBookmarkButton = customButtom ? (
+    customButtom({ onClick: () => router.push(libraryPage), children: 'View in library' })
+  ) : (
+    <Button
+      type="text"
+      className="mr-3 flex h-[36px] items-center gap-2 px-1 text-gray-500 hover:!bg-transparent"
+      onClick={() => {
+        router.push(libraryPage);
+      }}
+    >
+      View in library
+      <EyeOutlined />
+    </Button>
+  );
+
+  return isBookmarked ? (
+    <>
+      {viewBookmarkButton}
+      {removeButton}
+    </>
+  ) : (
+    addButton
   );
 }

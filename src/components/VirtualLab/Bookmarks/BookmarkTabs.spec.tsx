@@ -4,7 +4,7 @@ import { useHydrateAtoms } from 'jotai/utils';
 
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import esb from 'elastic-builder';
-import BookmarkList from '@/components/VirtualLab/Bookmarks/BookmarkList';
+import BookmarkTabs from '@/components/VirtualLab/Bookmarks/BookmarkTabs';
 import sessionAtom from '@/state/session';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
@@ -15,9 +15,11 @@ import { DataQuery } from '@/api/explore-section/resources';
 import {
   Bookmark,
   BookmarksByCategory,
+  BookmarksSupportedTypes,
   BulkRemoveBookmarksResponse,
 } from '@/types/virtual-lab/bookmark';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
+import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 
 describe('Library', () => {
   const labId = '3';
@@ -77,7 +79,7 @@ describe('Library', () => {
 
     renderComponent(labId, projectId);
 
-    await screen.findByText('There are no resources in the library');
+    await screen.findByText('There are no experiments resources in the library');
   });
 
   it('shows electrophysiology bookmarks when Electrophysiology panel is opened', async () => {
@@ -156,6 +158,52 @@ describe('Library', () => {
     const bookmarksPassed = bulkRemoveBookmarks.mock.calls[0][2];
     expect(bookmarksPassed).toEqual(bookmarksToRemove);
     await screen.findByText('1 pinned datasets');
+  }, 20_000);
+
+  it('activates the model tab if url has a model category as query param', async () => {
+    projectHasBookmarks(labId, projectId, [bookmarkItem('item1', DataType.CircuitEModel)]);
+    urlHasCategory(ModelTypeNames.E_MODEL);
+    elasticSearchReturns(['item1', 'item2']);
+
+    renderComponent(labId, projectId);
+    await screen.findByText('item1');
+  });
+
+  it('activates the experiment tab if url has an experiment category as query param', async () => {
+    projectHasBookmarks(labId, projectId, [bookmarkItem('item1', DataType.CircuitEModel)]);
+    urlHasCategory(ExperimentTypeNames.MORPHOLOGY);
+    elasticSearchReturns(['item1']);
+
+    renderComponent(labId, projectId);
+    await screen.findByText('There are no experiments resources in the library');
+  });
+
+  it('does not render collapsible panel for e-models if no e-model resource is bookmarked', async () => {
+    projectHasBookmarks(labId, projectId, [bookmarkItem('item1', DataType.CircuitMEModel)]);
+    urlHasCategory(ModelTypeNames.ME_MODEL);
+    elasticSearchReturns(['item1', 'item2']);
+
+    renderComponent(labId, projectId);
+    await screen.findByText('item1');
+    expect(screen.queryByText('E-model')).not.toBeInTheDocument();
+  });
+
+  it('shows empty models tab if no model is bookmarked but url has model category', async () => {
+    projectHasBookmarks(labId, projectId, []);
+    urlHasCategory(ModelTypeNames.ME_MODEL);
+    elasticSearchReturns([]);
+
+    renderComponent(labId, projectId);
+    await screen.findByText('There are no models resources in the library');
+  });
+
+  it('shows closed e-models panel if url has me-model category but there are no me-model bookmarks', async () => {
+    projectHasBookmarks(labId, projectId, [bookmarkItem('item1', DataType.CircuitEModel)]);
+    urlHasCategory(ModelTypeNames.ME_MODEL);
+    elasticSearchReturns(['item1']);
+
+    renderComponent(labId, projectId);
+    await screen.findByText('E-model');
   });
 });
 
@@ -204,7 +252,7 @@ function BookmarkListProvider(labId: string, projectId: string) {
         ],
       ]}
     >
-      <BookmarkList labId={labId} projectId={projectId} />
+      <BookmarkTabs labId={labId} projectId={projectId} />
     </TestProvider>
   );
 }
@@ -231,7 +279,7 @@ const projectHasBookmarks = (labId: string, projectId: string, items: Bookmark[]
   });
 };
 
-const urlHasCategory = (category: ExperimentTypeNames | null) => {
+const urlHasCategory = (category: BookmarksSupportedTypes | null) => {
   categoryQueryParam.mockReturnValue([category, () => {}]);
 };
 

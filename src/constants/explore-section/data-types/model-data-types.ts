@@ -2,11 +2,16 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DataTypeConfig, DataTypeGroup } from '@/types/explore-section/data-types';
 
+export enum ModelTypeNames {
+  E_MODEL = 'e-model',
+  ME_MODEL = 'me-model',
+}
+
 export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
   [DataType.CircuitEModel]: {
     title: 'E-model',
     group: DataTypeGroup.ModelData,
-    name: 'e-model',
+    name: ModelTypeNames.E_MODEL,
     columns: [
       Field.Name,
       Field.EModelResponse,
@@ -25,7 +30,7 @@ export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
   [DataType.CircuitMEModel]: {
     title: 'ME-model',
     group: DataTypeGroup.ModelData,
-    name: 'me-model',
+    name: ModelTypeNames.ME_MODEL,
     columns: [
       Field.Name,
       Field.MEModelMorphologyPreview,

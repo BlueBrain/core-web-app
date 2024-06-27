@@ -1,8 +1,12 @@
 import { generateVlProjectUrl } from './virtual-lab/urls';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
-import { BASE_EXPERIMENTAL_EXPLORE_PATH } from '@/constants/explore-section/paths';
+import {
+  BASE_EXPERIMENTAL_EXPLORE_PATH,
+  BASE_MODEL_EXPLORE_PATH,
+} from '@/constants/explore-section/paths';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
+import { BookmarkTabsName, BookmarksSupportedTypes } from '@/types/virtual-lab/bookmark';
 
 export const switchStateType = {
   COUNT: 'count',
@@ -42,9 +46,10 @@ export const detailUrlWithinLab = (
   labProjectId: string,
   resourceProjectLabel: string,
   resourceId: string,
-  resourceType: ExperimentTypeNames
+  experimentOrModel: BookmarkTabsName,
+  resourceType: BookmarksSupportedTypes
 ) =>
-  `${generateVlProjectUrl(labId, labProjectId)}${BASE_EXPERIMENTAL_EXPLORE_PATH}${resourceType}/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
+  `${generateVlProjectUrl(labId, labProjectId)}${experimentOrModel === BookmarkTabsName.EXPERIMENTS ? BASE_EXPERIMENTAL_EXPLORE_PATH : BASE_MODEL_EXPLORE_PATH}${resourceType}/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
 
 export const detailUrlOutsideLab = (
   projectLabel: string,

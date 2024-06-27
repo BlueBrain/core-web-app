@@ -15,6 +15,8 @@ import usePathname from '@/hooks/pathname';
 import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
+import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
+import { BookmarksSupportedTypes } from '@/types/virtual-lab/bookmark';
 
 export default function DetailHeaderName({
   detail,
@@ -36,11 +38,14 @@ export default function DetailHeaderName({
   const session = useAtomValue(sessionAtom);
   const [fetching, setFetching] = useState<boolean>(false);
 
-  const { virtualLabId, projectId, experimentType } = useParams<{
+  const { virtualLabId, projectId, experimentType, modelType } = useParams<{
     virtualLabId?: string;
     projectId?: string;
     experimentType?: ExperimentTypeNames;
+    modelType?: ModelTypeNames;
   }>();
+
+  const experimentOrModelType: BookmarksSupportedTypes | undefined = experimentType ?? modelType;
 
   // revisions builder
   const items: MenuProps['items'] = useMemo(() => {
@@ -87,12 +92,12 @@ export default function DetailHeaderName({
         </div>
         {session && (
           <div className="flex">
-            {virtualLabId && projectId && experimentType && (
+            {virtualLabId && projectId && experimentOrModelType && (
               <BookmarkButton
                 virtualLabId={virtualLabId}
                 projectId={projectId}
                 resourceId={detail['@id']}
-                experimentType={experimentType}
+                type={experimentOrModelType}
               />
             )}
             <div className="flex items-center gap-2">
