@@ -74,7 +74,7 @@ export default function FilterControls({
   return (
     <div
       className={classNames(
-        'grid max-h-14 w-full flex-1 grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5',
+        'grid max-h-14 w-full flex-1 grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5 py-5',
         className
       )}
     >

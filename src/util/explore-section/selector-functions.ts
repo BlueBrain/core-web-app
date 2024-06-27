@@ -12,6 +12,7 @@ import { Annotation, SeriesStatistic } from '@/types/explore-section/delta-prope
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 import { formatNumber } from '@/util/common';
+import { NeuronMorphology } from '@/types/e-model';
 
 const seriesArrayFunc = (series: SeriesStatistic | SeriesStatistic[] | undefined) =>
   series && ensureArray(series);
@@ -44,7 +45,11 @@ export const subjectAgeSelectorFn = (detail: Experiment | null) => {
 
 // renders mtype or 'no MType text if not present
 export const mTypeSelectorFn = (
-  detail: ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
+  detail:
+    | ExperimentalBoutonDensity
+    | ExperimentalNeuronDensity
+    | ExperimentalTrace
+    | NeuronMorphology
 ) => {
   const entity = find(annotationArrayFunc(detail?.annotation), (o: Annotation) =>
     o['@type'].includes('MTypeAnnotation')

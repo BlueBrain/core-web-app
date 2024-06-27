@@ -6,6 +6,7 @@ import { NeuronMorphology } from '@/types/e-model';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import { DataType } from '@/constants/explore-section/list-views';
 import { DisplayMessages } from '@/constants/display-messages';
+import { mTypeSelectorFn } from '@/util/explore-section/selector-functions';
 
 const subtitleStyle = 'uppercase font-thin text-slate-600';
 
@@ -64,7 +65,7 @@ function MorphDetails({ morph }: { morph: NeuronMorphology }) {
 
       <div>
         <div className={subtitleStyle}>M-Type</div>
-        <div>{morph?.mType || DisplayMessages.UNKNOWN}</div>
+        <div>{mTypeSelectorFn(morph) || DisplayMessages.UNKNOWN}</div>
       </div>
 
       <div>

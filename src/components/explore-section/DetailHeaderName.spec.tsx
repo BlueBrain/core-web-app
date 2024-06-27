@@ -8,7 +8,8 @@ import sessionAtom from '@/state/session';
 import { DeltaResource } from '@/types/explore-section/resources';
 import { DataType } from '@/constants/explore-section/list-views';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
-import { Bookmark } from '@/types/virtual-lab/bookmark';
+import { Bookmark, isExperiment } from '@/types/virtual-lab/bookmark';
+import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 
 describe('DetailHeaderName', () => {
   const virtualLabId = '456';
@@ -59,6 +60,24 @@ describe('DetailHeaderName', () => {
     const removeButton = await screen.findByText('Remove from library');
     bookmarksInclude([]); // Simulate resource removed from db
     await user.click(removeButton);
+
+    await screen.findByText('Save to library');
+  });
+
+  it('shows add bookmark button if user is on an e-model resource', async () => {
+    weAreInRoute({ virtualLabId, projectId, modelType: ModelTypeNames.E_MODEL });
+    bookmarksInclude([]);
+
+    renderComponent(mockDeltaResource);
+
+    await screen.findByText('Save to library');
+  });
+
+  it('shows add bookmark button if user is on an me-model resource', async () => {
+    weAreInRoute({ virtualLabId, projectId, modelType: ModelTypeNames.ME_MODEL });
+    bookmarksInclude([]);
+
+    renderComponent(mockDeltaResource);
 
     await screen.findByText('Save to library');
   });
@@ -142,15 +161,24 @@ const weAreInRoute = ({
   virtualLabId,
   projectId,
   experimentType,
+  modelType,
 }: {
   virtualLabId: string;
   projectId: string;
-  experimentType: ExperimentTypeNames;
+  experimentType?: ExperimentTypeNames;
+  modelType?: ModelTypeNames;
 }) => {
-  useParams.mockReturnValue({ virtualLabId, projectId, experimentType });
-  usePathname.mockReturnValue(
-    `/virtual-lab/lab/${virtualLabId}/project/${projectId}/explore/interactive/experimental/morphology/somename`
-  );
+  useParams.mockReturnValue({ virtualLabId, projectId, experimentType, modelType });
+  const resourceType = experimentType ?? modelType ?? ExperimentTypeNames.MORPHOLOGY;
+  if (isExperiment(resourceType)) {
+    usePathname.mockReturnValue(
+      `/virtual-lab/lab/${virtualLabId}/project/${projectId}/explore/interactive/experimental/${resourceType}/somename`
+    );
+  } else {
+    usePathname.mockReturnValue(
+      `/virtual-lab/lab/${virtualLabId}/project/${projectId}/explore/interactive/model/${modelType}/somename`
+    );
+  }
 };
 
 const bookmarksInclude = (resourceIds: string[]) => {

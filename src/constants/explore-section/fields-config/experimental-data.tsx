@@ -62,7 +62,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
     filter: null,
     render: {
       esResourceViewFn: selectorFnBrainRegion,
-      deltaResourceViewFn: (resource) => resource.brainLocation.brainRegion.label,
+      deltaResourceViewFn: (r) => selectorFnBasic(r.brainLocation?.brainRegion.label),
     },
     vocabulary: {
       plural: 'Brain Regions',

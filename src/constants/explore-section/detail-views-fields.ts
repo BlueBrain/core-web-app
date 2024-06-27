@@ -210,4 +210,25 @@ export const E_MODEL_FIELDS = [
   {
     field: Field.EType,
   },
-];
+] as DetailProps[];
+
+export const ME_MODEL_FIELDS = [
+  {
+    field: Field.BrainRegion,
+    className: 'col-span-2',
+  },
+  {
+    field: Field.CreatedBy,
+    className: 'col-span-2',
+  },
+  {
+    field: Field.CreatedAt,
+    className: 'col-span-2',
+  },
+  {
+    field: Field.MType,
+  },
+  {
+    field: Field.EType,
+  },
+] as DetailProps[];

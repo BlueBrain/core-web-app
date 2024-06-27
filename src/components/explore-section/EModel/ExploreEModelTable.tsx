@@ -29,7 +29,7 @@ function buildEModelEntry(source: ESeModel): EModelMenuItem {
   } as EModelMenuItem;
 }
 
-export default function WithExploreEModel({
+export default function ExploreEModelTable({
   enableDownload,
   dataType,
   brainRegionSource,

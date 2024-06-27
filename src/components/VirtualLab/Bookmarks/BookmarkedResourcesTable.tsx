@@ -15,14 +15,25 @@ import {
   EXPERIMENT_DATA_TYPES,
   ExperimentTypeNames,
 } from '@/constants/explore-section/data-types/experiment-data-types';
+import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
+import {
+  MODEL_DATA_TYPES,
+  ModelTypeNames,
+} from '@/constants/explore-section/data-types/model-data-types';
 
 type Props = {
   dataType: DataType;
   labId: string;
   projectId: string;
+  bookmarkTabName: BookmarkTabsName;
 };
 
-export default function ExperimentBookmarks({ dataType, labId, projectId }: Props) {
+export default function BookmarkedResourcesTable({
+  dataType,
+  labId,
+  projectId,
+  bookmarkTabName,
+}: Props) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
   const router = useRouter();
@@ -91,7 +102,10 @@ export default function ExperimentBookmarks({ dataType, labId, projectId }: Prop
                         projectId,
                         record._source.project.label,
                         record._id,
-                        EXPERIMENT_DATA_TYPES[dataType].name as ExperimentTypeNames
+                        bookmarkTabName,
+                        bookmarkTabName === BookmarkTabsName.EXPERIMENTS
+                          ? (EXPERIMENT_DATA_TYPES[dataType].name as ExperimentTypeNames)
+                          : (MODEL_DATA_TYPES[dataType].name as ModelTypeNames)
                       )
                     );
                   }}

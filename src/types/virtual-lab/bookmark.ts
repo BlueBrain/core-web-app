@@ -1,3 +1,5 @@
+import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
+import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { DataType } from '@/constants/explore-section/list-views';
 
 export type Bookmark = {
@@ -13,3 +15,18 @@ export type BulkRemoveBookmarksResponse = {
   successfully_deleted: Bookmark[];
   failed_to_delete: Bookmark[];
 };
+
+export type BookmarksSupportedTypes = ExperimentTypeNames | ModelTypeNames;
+
+export const isExperiment = (t: BookmarksSupportedTypes): t is ExperimentTypeNames => {
+  return Object.values(ExperimentTypeNames).includes(t as ExperimentTypeNames);
+};
+
+export const isModel = (t: BookmarksSupportedTypes): t is ModelTypeNames => {
+  return Object.values(ModelTypeNames).includes(t as ModelTypeNames);
+};
+
+export enum BookmarkTabsName {
+  EXPERIMENTS = 'experiments',
+  MODELS = 'models',
+}
