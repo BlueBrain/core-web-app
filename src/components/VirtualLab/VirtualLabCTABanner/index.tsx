@@ -14,12 +14,13 @@ type Props = {
 
 export default function VirtualLabCTABanner({ title, subtitle, id }: Props) {
   const setNewProjectModalOpenAtom = useSetAtom(newProjectModalOpenAtom);
+
   return (
     <Link
       onClick={() => {
         if (id) setNewProjectModalOpenAtom(true);
       }}
-      href={id ? `${basePath}/virtual-lab/lab/${id}/projects` : '#'}
+      href={id ? `/virtual-lab/lab/${id}/projects` : '#'}
       className="relative mt-10 flex rounded-xl bg-gradient-to-r from-[#345D36] to-[#6DC371] p-8"
     >
       <div

@@ -32,6 +32,14 @@ export default async function deletePaperFromProject({ paper }: { paper: PaperRe
       }
     );
     if (!response.ok) {
+      captureException(new Error(await response.json()), {
+        tags: { section: 'paper', feature: 'delete_paper' },
+        extra: {
+          virtualLabId: paper.virtualLabId,
+          projectId: paper.projectId,
+          action: 'delta_delete_paper_resource',
+        },
+      });
       throw new Error('Resource deprecation failed');
     }
     revalidateTag(
@@ -42,7 +50,14 @@ export default async function deletePaperFromProject({ paper }: { paper: PaperRe
     );
     shouldRedirect = true;
   } catch (error) {
-    captureException(new Error(`Resource deprecation failed`));
+    captureException(error, {
+      tags: { section: 'paper', feature: 'delete_paper' },
+      extra: {
+        virtualLabId: paper.virtualLabId,
+        projectId: paper.projectId,
+        action: 'server_delete_paper_resource',
+      },
+    });
     throw Error('Resource deprecation failed');
   }
 

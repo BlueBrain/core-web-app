@@ -54,6 +54,7 @@ const theme: EditorThemeClasses = {
   },
   hr: 'app-editor-theme__hr',
   image: 'editor-image',
+  gallery: 'editor-gallery',
   indent: 'app-editor-theme__indent',
   inlineImage: 'inline-editor-image',
   layoutContainer: 'app-editor-theme__layoutContainer',

@@ -1,3 +1,5 @@
+import { captureException } from '@sentry/nextjs';
+
 import {
   FileType,
   OnUploadInput,
@@ -25,7 +27,7 @@ export default async function* uploadBinaries({
         headers: createHeaders(accessToken, {
           'x-nxs-file-metadata': JSON.stringify({
             name: image.name || image.id,
-            // TODO: use filename without extension rather then `id` (which one is better),
+            // TODO: use filename without extension rather then `id` (which one is better ??),
             // TODO: image.file.name.replace(/\.[^/.]+$/, "")
             description: image.alt ?? '',
           }),
@@ -33,6 +35,14 @@ export default async function* uploadBinaries({
         body: formData,
       });
       if (!result.ok) {
+        captureException(new Error(await result.json()), {
+          tags: { section: 'paper', feature: 'upload_paper_binaries' },
+          extra: {
+            virtualLabId: location.org,
+            projectId: location.project,
+            action: 'delta_upload_binary_file',
+          },
+        });
         yield { source: 'image', status: 'failed', id: image.id };
       }
       const metadata = await result.json();
@@ -60,6 +70,14 @@ export default async function* uploadBinaries({
     );
     const remotePaperResource: PaperResource = await resourceResponse.json();
     if (!resourceResponse.ok) {
+      captureException(new Error(await resourceResponse.json()), {
+        tags: { section: 'paper', feature: 'upload_paper_binaries' },
+        extra: {
+          virtualLabId: location.org,
+          projectId: location.project,
+          action: 'delta_fetch_latest_paper_details',
+        },
+      });
       yield { source: 'resource', status: 'failed' };
     }
     const paperDistribution = ensureArray(remotePaperResource.distribution);
@@ -69,6 +87,7 @@ export default async function* uploadBinaries({
       ...remotePaperResource,
       distribution,
     }) as PaperResource;
+
     const response = await fetch(
       composeUrl('resource', remotePaperResource['@id'], {
         rev: remotePaperResource._rev,
@@ -83,12 +102,28 @@ export default async function* uploadBinaries({
       }
     );
     if (!response.ok) {
+      captureException(new Error(await response.json()), {
+        tags: { section: 'paper', feature: 'upload_paper_binaries' },
+        extra: {
+          virtualLabId: location.org,
+          projectId: location.project,
+          action: 'delta_update_paper_resource_distribution',
+        },
+      });
       yield { source: 'resource', status: 'failed' };
     }
     // Update the paper editor
     callback?.(distributions, images);
     yield { source: 'resource', status: 'success' };
   } catch (error) {
+    captureException(error, {
+      tags: { section: 'paper', feature: 'upload_paper_binaries' },
+      extra: {
+        virtualLabId: location.org,
+        projectId: location.project,
+        action: 'server_upload_paper_binaries',
+      },
+    });
     yield null;
   }
 }

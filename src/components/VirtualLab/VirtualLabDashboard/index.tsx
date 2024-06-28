@@ -5,13 +5,13 @@ import { Button, Modal, Select, Switch } from 'antd';
 import { useAtom, useSetAtom } from 'jotai';
 import { useState } from 'react';
 
-import { CreateVirtualLabButton } from '../VirtualLabTopMenu/CreateVirtualLabButton';
+import CreateVirtualLabButton from '../CreateVirtualLabButton';
 import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import VirtualLabAndProject from './VirtualLabAndProject';
 import DashboardTotals from './DashboardTotals';
+
 import { newProjectModalOpenAtom, virtualLabIdAtom } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
-
 import useNotification from '@/hooks/notifications';
 import { Project } from '@/types/virtual-lab/projects';
 import { VirtualLab } from '@/types/virtual-lab/lab';
