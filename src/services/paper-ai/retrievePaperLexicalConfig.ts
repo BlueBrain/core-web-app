@@ -42,16 +42,26 @@ export default async function retrievePaperLexicalConfig({
       const errorData = await resourceResponse.json();
       const errorMessage =
         errorData?.error?.message || errorData?.error || resourceResponse.statusText;
-      // eslint-disable-next-line no-console
-      console.log('[ERROR][PAPER_FETCH]', errorData);
-      captureException(errorMessage);
+      captureException(new Error(errorMessage), {
+        tags: { section: 'paper', feature: 'get_paper_config' },
+        extra: {
+          virtualLabId,
+          projectId,
+          action: 'delta_fetch_latest_paper_details',
+        },
+      });
       throw new Error(`API Error (${resourceResponse.status}): ${errorMessage}`);
     }
     remotePaperResource = await resourceResponse.json();
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][PAPER_FETCH]', error);
-    captureException(error);
+    captureException(error, {
+      tags: { section: 'paper', feature: 'get_paper_config' },
+      extra: {
+        virtualLabId,
+        projectId,
+        action: 'server_fetch_latest_paper_details',
+      },
+    });
     throw new Error('Paper resource not found');
   }
 
@@ -66,9 +76,14 @@ export default async function retrievePaperLexicalConfig({
       session
     );
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][FILE_CONFIG_FETCH]', error);
-    captureException(error);
+    captureException(error, {
+      tags: { section: 'paper', feature: 'get_paper_config' },
+      extra: {
+        virtualLabId,
+        projectId,
+        action: 'server_fetch_latest_paper_config_file',
+      },
+    });
     throw new Error('Paper configuration not found');
   }
 

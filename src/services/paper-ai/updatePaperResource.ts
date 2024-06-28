@@ -21,28 +21,70 @@ export default async function updatePaperDetails(
     throw new Error('The supplied authentication is not authorized for this action');
   }
 
+  const { success, data, error } = PaperUpdateSchema.safeParse({
+    title: paperData.get('title'),
+    summary: paperData.get('summary'),
+    sourceData: paperData.get('source-data'),
+    paper: paperData.get('paper'),
+  });
+
+  if (!success && error) {
+    return {
+      type: 'error',
+      error: error.message,
+      validationErrors: error.flatten().fieldErrors,
+    };
+  }
+
+  const { title, summary, sourceData } = data;
+  const paper = JSON.parse(data.paper) as PaperResource;
+  let remotePaperResource = null;
+
   try {
-    const { success, data, error } = PaperUpdateSchema.safeParse({
-      title: paperData.get('title'),
-      summary: paperData.get('summary'),
-      sourceData: paperData.get('source-data'),
-      paper: paperData.get('paper'),
-    });
-
-    if (!success && error) {
-      return {
-        type: 'error',
-        error: error.message,
-        validationErrors: error.flatten().fieldErrors,
-      };
-    }
-
-    const { title, summary, sourceData } = data;
-    const paper = JSON.parse(data.paper) as PaperResource;
-
-    const response = await fetch(
+    const resourceResponse = await fetch(
       composeUrl('resource', paper['@id'], {
         rev: paper._rev,
+        sync: true,
+        org: paper.virtualLabId,
+        project: paper.projectId,
+      }),
+      {
+        headers: createHeaders(session.accessToken),
+        cache: 'no-store',
+      }
+    );
+
+    if (!resourceResponse.ok) {
+      const errorData = await resourceResponse.json();
+      const errorMessage =
+        errorData?.error?.message || errorData?.error || resourceResponse.statusText;
+      captureException(errorMessage, {
+        tags: { section: 'paper', feature: 'update_papers' },
+        extra: {
+          virtualLabId: paper.virtualLabId,
+          projectId: paper.projectId,
+          action: 'delta_fetch_latest_paper_details',
+        },
+      });
+      throw new Error(`API Error (${resourceResponse.status}): ${errorMessage}`);
+    }
+    remotePaperResource = await resourceResponse.json();
+  } catch (err) {
+    captureException(err, {
+      tags: { section: 'paper', feature: 'update_papers' },
+      extra: {
+        virtualLabId: paper.virtualLabId,
+        projectId: paper.projectId,
+        action: 'server_fetch_latest_paper_details',
+      },
+    });
+    throw new Error('Paper resource not found');
+  }
+
+  try {
+    const response = await fetch(
+      composeUrl('resource', paper['@id'], {
+        rev: remotePaperResource._rev,
         sync: true,
         org: paper.virtualLabId,
         project: paper.projectId,
@@ -58,19 +100,20 @@ export default async function updatePaperDetails(
             sourceData: uniqBy([...paper.sourceData, ...(sourceData || [])], 'id'),
           }) as EntityResource
         ),
-        cache: 'no-store',
       }
     );
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      // eslint-disable-next-line no-console
-      console.log('[ERROR][UPDATE_PAPER][DELTA]', errorResponse);
-      if ('reason' in errorResponse) {
-        captureException(new Error(errorResponse));
-        throw new Error(errorResponse.reason);
-      }
-      captureException(new Error('Failed to update paper details'));
+      captureException(new Error(errorResponse), {
+        tags: { section: 'paper', feature: 'update_papers' },
+        extra: {
+          virtualLabId: paper.virtualLabId,
+          projectId: paper.projectId,
+          action: 'delta_update_paper_details',
+          reason: 'reason' in errorResponse ? errorResponse.reason : undefined,
+        },
+      });
       throw new Error('Failed to update paper details');
     }
 
@@ -94,13 +137,18 @@ export default async function updatePaperDetails(
       validationErrors: null,
       error: null,
     };
-  } catch (error: any) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][UPDATE_PAPER]', error);
-    captureException(error);
+  } catch (err: any) {
+    captureException(err, {
+      tags: { section: 'paper', feature: 'update_papers' },
+      extra: {
+        virtualLabId: paper.virtualLabId,
+        projectId: paper.projectId,
+        action: 'server_update_paper_details',
+      },
+    });
     return {
       type: 'error',
-      error: (error as Error).message,
+      error: err instanceof Error ? err.message : 'Unknown error',
       validationErrors: null,
     };
   }

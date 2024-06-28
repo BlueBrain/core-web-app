@@ -43,17 +43,27 @@ export default async function updatePaperSourceData(
       const errorData = await resourceResponse.json();
       const errorMessage =
         errorData?.error?.message || errorData?.error || resourceResponse.statusText;
-      // eslint-disable-next-line no-console
-      console.log('[ERROR][INIT_PAPER][FETCH_RESOURCE_NEXUS]', errorData);
-      captureException(errorMessage);
+      captureException(new Error(errorMessage), {
+        tags: { section: 'paper', feature: 'delete_paper_source_data' },
+        extra: {
+          virtualLabId: paper.virtualLabId,
+          projectId: paper.projectId,
+          action: 'delta_fetch_latest_paper_details',
+        },
+      });
       throw new Error(`API Error (${resourceResponse.status}): ${errorMessage}`);
     }
 
     resourceJson = await resourceResponse.json();
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][INIT_PAPER][FETCH_RESOURCE]', error);
-    captureException(error);
+    captureException(error, {
+      tags: { section: 'paper', feature: 'delete_paper_source_data' },
+      extra: {
+        virtualLabId: paper.virtualLabId,
+        projectId: paper.projectId,
+        action: 'server_fetch_latest_paper_details',
+      },
+    });
     return {
       status: 'error',
     };
@@ -85,13 +95,15 @@ export default async function updatePaperSourceData(
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      // eslint-disable-next-line no-console
-      console.log('[ERROR][INIT_PAPER][DELETE_SOURCE_DATA_NEXUS]', errorResponse);
-      if ('reason' in errorResponse) {
-        captureException(errorResponse);
-        throw new Error(errorResponse.reason);
-      }
-      captureException('Failed to update paper source data details');
+      captureException('Failed to update paper source data details', {
+        tags: { section: 'paper', feature: 'delete_paper_source_data' },
+        extra: {
+          virtualLabId: paper.virtualLabId,
+          projectId: paper.projectId,
+          action: 'delta_update_paper_source_data',
+          reason: 'reason' in errorResponse ? errorResponse.reason : undefined,
+        },
+      });
       throw new Error('Failed to update paper source data details');
     }
 
@@ -107,9 +119,14 @@ export default async function updatePaperSourceData(
       status: 'success',
     };
   } catch (error: any) {
-    // eslint-disable-next-line no-console
-    console.log('[ERROR][INIT_PAPER][DELETE_SOURCE_DATA]', error);
-    captureException(error);
+    captureException(error, {
+      tags: { section: 'paper', feature: 'delete_paper_source_data' },
+      extra: {
+        virtualLabId: paper.virtualLabId,
+        projectId: paper.projectId,
+        action: 'server_update_paper_source_data',
+      },
+    });
     return {
       status: 'error',
     };
