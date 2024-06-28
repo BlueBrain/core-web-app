@@ -15,7 +15,13 @@ type Props = {
   paper: PaperResource;
 };
 
-const generateInsert = [
+type InsertItem = {
+  key: string;
+  label: string;
+  onClick?: () => void;
+};
+
+const generateInsert: Array<InsertItem> = [
   {
     key: 'abstract',
     label: 'Abstract',
@@ -61,13 +67,18 @@ export default function InsertPlugin({ paper }: Props) {
     multiple: false,
   });
 
+  const [createGalleryDialogModal, GalleryDialogContext] = create({
+    id: 'gallery-uploader',
+    multiple: true,
+  });
+
   const onRef = (_floatingInsertElem: HTMLDivElement) => {
     if (_floatingInsertElem !== null) {
       setFloatingInsertElem(_floatingInsertElem);
     }
   };
 
-  const blockInsert = [
+  const blockInsert: Array<InsertItem> = [
     {
       key: 'image',
       label: 'Image',
@@ -76,6 +87,7 @@ export default function InsertPlugin({ paper }: Props) {
     {
       key: 'gallery',
       label: 'Gallery',
+      onClick: createGalleryDialogModal,
     },
     {
       key: 'video',
@@ -165,6 +177,7 @@ export default function InsertPlugin({ paper }: Props) {
           )}
       </div>
       {ImageDialogContext}
+      {GalleryDialogContext}
     </div>
   );
 }

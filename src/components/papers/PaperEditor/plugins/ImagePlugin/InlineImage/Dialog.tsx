@@ -1,5 +1,5 @@
 import { ChangeEventHandler, useCallback, useState } from 'react';
-import { Upload, Image, UploadProps, Button, Select, Checkbox, CheckboxProps } from 'antd';
+import { Upload, UploadProps, Button, Select, Checkbox, CheckboxProps, Image } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useRouter } from 'next/navigation';
@@ -28,7 +28,7 @@ type ActionsProps = {
   onTriggerUpload: () => void;
 };
 
-function Actions({ uploading, onClose, onTriggerUpload }: ActionsProps) {
+export function Actions({ uploading, onClose, onTriggerUpload }: ActionsProps) {
   return (
     <div className="mt-8 flex items-center justify-end gap-2">
       <Button
@@ -83,7 +83,6 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
       const distribution = distributions[0];
       const file = files[0];
       const dimensions = await getImageDimensions(distribution.contentUrl);
-
       editor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, {
         alt: distribution.name,
         src: distribution.contentUrl,
@@ -111,9 +110,9 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
       )) {
         if (value?.status === 'success') {
           setUploadtatus(value);
-          setUploading(false);
           router.refresh();
-          delay(onClose, 100);
+          delay(onClose, 1000);
+          setUploading(false);
         }
       }
     }
@@ -121,6 +120,7 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
 
   return (
     <div className="w-full">
+      <h1 className="mb-4 text-2xl font-bold text-primary-9">Insert Image</h1>
       <Upload
         withCredentials
         beforeUpload={beforeUpload}
@@ -139,20 +139,21 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
         showUploadList={false}
         accept="image/*"
       >
-        <div className="flex h-36 w-full items-center justify-center [&_.ant-image]:!h-28">
-          {image?.preview ? (
+        <div className="relative flex h-36 w-full items-center justify-center">
+          {image?.preview && (
             <Image
+              key={image.id}
               src={image.preview}
-              alt={alt}
               preview={false}
-              className="!h-[inherit] object-cover"
+              rootClassName="w-full h-full  absolute inset-0"
+              className="-z-10 !h-full w-full rounded-md object-cover object-center opacity-30"
+              alt="gallery thumbnail"
             />
-          ) : (
-            <button className="w-full" type="button">
-              <PlusOutlined />
-              <div className="mt-2">Upload</div>
-            </button>
           )}
+          <button className="z-10 w-full" type="button">
+            <PlusOutlined />
+            <div className="mt-2">Click or drag file to this area to upload</div>
+          </button>
         </div>
       </Upload>
       <div className="my-3 flex w-full flex-col gap-2">

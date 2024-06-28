@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 import type { DOMConversionMap, DOMExportOutput, EditorConfig, NodeKey } from 'lexical';
 
 import { DecoratorNode } from 'lexical';
@@ -159,16 +159,14 @@ export default class InlineImageNode extends DecoratorNode<JSX.Element> {
 
   decorate(): JSX.Element {
     return (
-      <Suspense fallback={null}>
-        <InlineImage
-          src={this.__src}
-          alt={this.__alt}
-          width={this.__width}
-          height={this.__height}
-          nodeKey={this.getKey()}
-          position={this.__position}
-        />
-      </Suspense>
+      <InlineImage
+        src={this.__src}
+        alt={this.__alt}
+        width={this.__width}
+        height={this.__height}
+        nodeKey={this.getKey()}
+        position={this.__position}
+      />
     );
   }
 }

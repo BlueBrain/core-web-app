@@ -21,7 +21,9 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { SerializedEditorState } from 'lexical/LexicalEditorState';
 
 import InlineImageNode from './plugins/ImagePlugin/InlineImage/Node';
+import GalleryNode from './plugins/GalleryPlugin/Node';
 import InlineImagesPlugin from './plugins/ImagePlugin/InlineImage';
+import GalleryPlugin from './plugins/GalleryPlugin';
 import RemoteSyncPlugin from './plugins/RemoteSyncPlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import FloatAiCommandsPlugin from './plugins/AiPlugin';
@@ -49,6 +51,7 @@ const initialConfig: InitialConfigType = {
     HorizontalRuleNode,
     LinkNode,
     InlineImageNode,
+    GalleryNode,
   ],
 };
 
@@ -110,6 +113,7 @@ export default function Editor({ config, paper }: Props) {
         <AutoFocusPlugin />
         <FloatAiCommandsPlugin />
         <InlineImagesPlugin />
+        <GalleryPlugin />
         <InsertPlugin {...{ paper }} />
         <ActionPlugin />
       </div>

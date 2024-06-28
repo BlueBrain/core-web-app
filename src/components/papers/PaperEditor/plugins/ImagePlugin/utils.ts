@@ -13,16 +13,11 @@ import {
 } from 'lexical';
 
 // eslint-disable-next-line import/no-cycle
+import GalleryNode from '../GalleryPlugin/Node';
+// eslint-disable-next-line import/no-cycle
 import InlineImageNode from './InlineImage/Node';
 
 import { Distribution } from '@/types/nexus';
-
-declare global {
-  interface DragEvent {
-    rangeOffset?: number;
-    rangeParent?: Node;
-  }
-}
 
 export interface ImagePayload {
   key?: NodeKey;
@@ -47,6 +42,16 @@ export type SerializedInlineImageNode = Spread<
   },
   SerializedLexicalNode
 >;
+
+export type GalleryPayload = {
+  title: string;
+  description: string;
+  images: Array<string>;
+};
+
+export type InsertGalleryPayload = Readonly<GalleryPayload>;
+
+export type SerializedGalleryNode = Spread<GalleryPayload, SerializedLexicalNode>;
 
 export type UploadImage = {
   id: string;
@@ -106,6 +111,9 @@ export const INSERT_INLINE_IMAGE_COMMAND: LexicalCommand<InlineImagePayload> = c
   'INSERT_INLINE_IMAGE_COMMAND'
 );
 
+export const INSERT_GALLERY_COMMAND: LexicalCommand<GalleryPayload> =
+  createCommand('INSERT_GALLERY_COMMAND');
+
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> = createCommand(
   'RIGHT_CLICK_IMAGE_COMMAND'
 );
@@ -123,6 +131,10 @@ export function $isInlineImageNode(node: LexicalNode | null | undefined): node i
   return node instanceof InlineImageNode;
 }
 
+export function $isGalleryNode(node: LexicalNode | null | undefined): node is GalleryNode {
+  return node instanceof GalleryNode;
+}
+
 export function $createInlineImageNode({
   alt,
   position,
@@ -134,8 +146,12 @@ export function $createInlineImageNode({
   return $applyNodeReplacement(new InlineImageNode(src, alt, position, width, height, key));
 }
 
-export function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
+export function $createGalleryNode(
+  title: string,
+  description: string,
+  images: Array<string>
+): GalleryNode {
+  return $applyNodeReplacement(new GalleryNode(title, description, images));
 }
 
 export const Direction = {

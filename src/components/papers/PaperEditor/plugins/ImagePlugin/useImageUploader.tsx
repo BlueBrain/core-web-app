@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import { ConfigProvider, Modal } from 'antd';
 
+import InsertGalleryDialog from '../GalleryPlugin/Dialog';
 import InsertImageDialog from './InlineImage/Dialog';
 import { UploaderGenerator } from './utils';
 import { classNames } from '@/util/utils';
@@ -27,7 +28,15 @@ type ContentProps = {
 function Content({ multiple, onUpload, onClose }: ContentProps) {
   return (
     <div>
-      {!multiple && (
+      {multiple ? (
+        <InsertGalleryDialog
+          key="paper-insert-gallery-dialog"
+          {...{
+            onClose,
+            onUpload,
+          }}
+        />
+      ) : (
         <InsertImageDialog
           key="paper-insert-image-dialog"
           {...{
@@ -61,7 +70,7 @@ export default function useImageUploader({ onUpload }: UploaderProps): UseImageU
             '[&_.ant-modal-confirm-body]:!w-full [&_.ant-modal-confirm-paragraph]:max-w-full'
           ),
           styles: {
-            body: { padding: '60px 40px 20px' },
+            body: { padding: '20px' },
           },
           closeIcon: <CloseOutlined className="text-2xl " />,
           content: (

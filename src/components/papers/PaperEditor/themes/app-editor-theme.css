@@ -552,3 +552,7 @@
   color: #000;
   overflow: hidden;
 }
+
+.editor-gallery {
+  padding: 1em 0;
+}
