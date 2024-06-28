@@ -50,16 +50,25 @@ export function useEnsuredPath() {
   return path;
 }
 
-type RestParameters<T extends (...args: any) => any> = T extends (
-  first: any,
-  ...rest: infer R
-) => any
-  ? R
-  : never;
-
+type Function = (...args: any) => any;
+type RestParameters<T> = T extends (first: any, ...rest: infer R) => any ? R : never;
 type DebounceParams = RestParameters<typeof debounce>;
 
-export function useDebouncedCallback<T extends (...args: any) => any>(
+/**
+  Creates a debounced callback that delays invoking func until after 
+  wait milliseconds have elapsed since the last time the debounced function was invoked. 
+  See: https://lodash.com/docs/4.17.15#debounce
+ 
+  The callback will be memoized so that it only changes if one of the deps has changed.
+   
+  @param func The function to debounce.
+  @param deps The dependency array.
+  @param wait The number of milliseconds to delay.
+  @param options The options object. (See lodash.debounce docs).
+
+  @returns - The memoized, debounced version of the callback.
+*/
+export function useDebouncedCallback<T extends Function>(
   func: T,
   deps: DependencyList,
   ...params: DebounceParams
