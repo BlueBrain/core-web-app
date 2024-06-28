@@ -10,8 +10,8 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
-import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
 import { OBPLogo } from '@/components/Entrypoint/segments/Splash';
+import CreateVirtualLabButton from '@/components/VirtualLab/CreateVirtualLabButton';
 
 export default function VirtualLabSandboxLayout({ children }: { children: ReactNode }) {
   const currentPage = usePathname().split('/').pop();
