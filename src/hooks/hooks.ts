@@ -64,6 +64,6 @@ export function useDebouncedCallback<T extends (...args: any) => any>(
   deps: DependencyList,
   ...params: DebounceParams
 ) {
-  // eslint-disable-next-line
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(debounce(func, ...params), deps);
 }
