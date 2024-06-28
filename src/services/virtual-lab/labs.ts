@@ -3,10 +3,10 @@ import { virtualLabApi } from '@/config';
 import { VirtualLab, VirtualLabResponse } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
-import { fetchWithSession } from '@/util/utils';
+import authFetch from '@/authFetch';
 
 export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse> {
-  const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs/${id}`);
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`);
 
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
@@ -15,9 +15,7 @@ export async function getVirtualLabDetail(id: string): Promise<VirtualLabRespons
 }
 
 export async function getVirtualLabUsers(virtualLabId: string): Promise<UsersResponse> {
-  const response = await fetchWithSession(
-    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/users`
-  );
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/users`);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
@@ -27,7 +25,7 @@ export async function getVirtualLabUsers(virtualLabId: string): Promise<UsersRes
 export async function getVirtualLabsOfUser(): Promise<
   VlmResponse<VirtualLabAPIListData<VirtualLab>>
 > {
-  const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs`);
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs`);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }

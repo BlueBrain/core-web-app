@@ -3,7 +3,7 @@ import { virtualLabApi } from '@/config';
 import { Project, ProjectResponse } from '@/types/virtual-lab/projects';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
-import { fetchWithSession } from '@/util/utils';
+import authFetch from '@/authFetch';
 
 export async function getVirtualLabProjects(
   id: string,
@@ -16,7 +16,7 @@ export async function getVirtualLabProjects(
     url.search = params.toString();
   }
 
-  const response = await fetchWithSession(url);
+  const response = await authFetch(url);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
