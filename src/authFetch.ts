@@ -35,5 +35,5 @@ export default async function authFetch(
   };
   const newArgs: typeof args = [args[0], init];
 
-  return fetch(...newArgs); // If there is and active session set Authorization and fetch
+  return fetch(...newArgs); // If there is an active session set Authorization and fetch
 }
