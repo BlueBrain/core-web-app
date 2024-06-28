@@ -2,7 +2,7 @@ import { Session } from 'next-auth';
 import { isServer } from './config';
 import { getClientSession } from './hooks/session';
 
-/*
+/**
   Gets the current session. 
   Works server and client side. 
 */
@@ -18,9 +18,9 @@ export async function getSession() {
   return await getClientSession();
 }
 
-/*
-    Adds Authorization header with the accessToken, and calls fetch.
-    See fetch for call signature: https://developer.mozilla.org/fr/docs/Web/API/fetch
+/**
+  Adds Authorization header with the accessToken, and calls fetch.
+  See fetch for call signature: https://developer.mozilla.org/fr/docs/Web/API/fetch
 */
 export default async function authFetch(
   ...args: Parameters<typeof fetch>
