@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSetAtom } from 'jotai';
-import { useSession } from 'next-auth/react';
 
 import PlanForm from './PlanForm';
 import { Step, VirtualLabWithOptionalId } from './types';
@@ -35,15 +34,11 @@ export default function CreateVirtualLabModal({ closeModalFn }: { closeModalFn: 
   const refreshVirtualLabs = useSetAtom(virtualLabsOfUserAtom);
   const notification = useNotification();
   const router = useRouter();
-  const session = useSession();
 
   const onVirtualLabCreate = async () => {
-    if (!session.data) {
-      return;
-    }
     setLoading(true);
 
-    return createVirtualLab({ lab: virtualLab, token: session.data.accessToken })
+    return createVirtualLab({ lab: virtualLab })
       .then((response) => {
         notification.success(`${response.data.virtual_lab.name} has been created.`);
         refreshVirtualLabs();

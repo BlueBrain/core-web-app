@@ -101,12 +101,8 @@ export const virtualLabPlansAtom = atom<
       }>
     | undefined
   >
->(async (get) => {
-  const session = get(sessionAtom);
-  if (!session) {
-    return;
-  }
-  const { data } = await getPlans(session.accessToken);
+>(async () => {
+  const { data } = await getPlans();
   const { all_plans: allPlans } = data;
 
   return allPlans;
