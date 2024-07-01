@@ -41,7 +41,7 @@ export default function BookmarkedResourcesTable({
     loadable(
       dataAtom({
         dataType,
-        brainRegionSource: 'selected',
+        brainRegionSource: 'root',
         bookmarkScope: { virtualLabId: labId, projectId },
       })
     )
@@ -62,7 +62,7 @@ export default function BookmarkedResourcesTable({
       <div className="grid h-full w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto">
         <WithControlPanel
           dataType={dataType}
-          brainRegionSource="selected"
+          brainRegionSource="root"
           bookmarkScope={{ virtualLabId: labId, projectId }}
         >
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
@@ -83,7 +83,7 @@ export default function BookmarkedResourcesTable({
                   dataSource={dataSource}
                   enableDownload
                   dataType={dataType}
-                  brainRegionSource="selected"
+                  brainRegionSource="root"
                   loading={data.state === 'loading'}
                   bookmarkScope={{ virtualLabId: labId, projectId }}
                   renderButton={({ selectedRows, clearSelectedRows }) => (
