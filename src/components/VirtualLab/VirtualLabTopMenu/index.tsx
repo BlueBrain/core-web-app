@@ -1,4 +1,6 @@
-import { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
+'use client';
+
+import React, { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
@@ -19,7 +21,10 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
   const [expanded, setExpanded] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [menuElementsHeight, setMenuElementsHeight] = useState<number | null>(null);
+  const [menuElementsHeight, setMenuElementsHeight] = useState<number>();
+
+  // Don't render menu if height hasn't been established, otherwise they will show disparate heights.
+  const canRenderMenu = menuElementsHeight !== undefined;
 
   useLayoutEffect(() => {
     if (!menuRef || !menuRef.current) return;
@@ -38,31 +43,28 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
       ghost ? 'bg-transparent' : 'bg-primary-8 border border-primary-7'
     );
 
+  const renderMenuLink = (text: string, href: string) => (
+    <Link
+      className={classNames(getMenuButtonClassName(ghost), 'border border-primary-7')}
+      href={href}
+      style={{ height: menuElementsHeight }}
+    >
+      {text}
+    </Link>
+  );
+
   return (
     <div className={classNames('flex w-full justify-between overflow-y-visible', className)}>
       <div className="flex gap-4" ref={localRef} />
+
       <div className={classNames('flex w-fit justify-end')}>
-        {[
-          {
-            children: 'Getting Started',
-            href: '/getting-started',
-            key: 'getting-started',
-          },
-          {
-            children: 'About',
-            href: '/about',
-            key: 'about',
-          },
-        ].map(({ children, href, key }) => (
-          <Link
-            className={classNames(getMenuButtonClassName(ghost), 'border border-primary-7')}
-            href={href}
-            key={key}
-            style={{ height: menuElementsHeight ?? undefined }}
-          >
-            {children}
-          </Link>
-        ))}
+        {canRenderMenu && (
+          <>
+            {renderMenuLink('Getting Started', '/getting-started')}
+            {renderMenuLink('About', '/about')}
+          </>
+        )}
+
         {!!session && (
           <div
             className="hover:z-20"
@@ -76,7 +78,12 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
                 getMenuButtonClassName(expanded ? false : ghost),
                 'flex cursor-pointer flex-row  justify-between border border-primary-7 transition-all ease-in-out'
               )}
-              style={{ padding: '13px', transitionDuration: '1000ms' }}
+              style={{
+                padding: '13px',
+                transitionDuration: '1000ms',
+                // Mount so that we can determine the height but don't show yet.
+                visibility: canRenderMenu ? 'visible' : 'hidden',
+              }}
               onMouseEnter={() => {
                 if (expanded) return;
                 setExpanded(true);
