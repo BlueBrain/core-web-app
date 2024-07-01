@@ -62,6 +62,7 @@ export default function MEModelDetailView({ vlProjectUrl }: Props) {
               className="fixed bottom-10 right-10 w-[200px] bg-primary-9 font-bold text-white hover:!bg-primary-7"
               href={`${vlProjectUrl}/build/me-model/new/morphology/reconstructed`}
             />
+            <div className="absolute right-7 top-5 font-thin text-gray-400">View mode</div>
           </>
         )}
       </Detail>

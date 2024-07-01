@@ -1,5 +1,5 @@
-import { atom } from 'jotai';
-import { atomFamily, atomWithRefresh } from 'jotai/utils';
+import { PrimitiveAtom, atom } from 'jotai';
+import { atomFamily, atomWithRefresh, atomWithDefault } from 'jotai/utils';
 import isEqual from 'lodash/isEqual';
 
 import sessionAtom from '../session';
@@ -21,9 +21,12 @@ export const virtualLabProjectsAtomFamily = atomFamily((virtualLabId: string) =>
   })
 );
 
-export const virtualLabProjectDetailsAtomFamily = atomFamily(
-  ({ virtualLabId, projectId }: { virtualLabId: string; projectId: string }) =>
-    atom<Promise<Project | undefined>>(async (get) => {
+export const virtualLabProjectDetailsAtomFamily = atomFamily<
+  { virtualLabId: string; projectId: string },
+  PrimitiveAtom<Promise<Project | undefined>>
+>(
+  ({ virtualLabId, projectId }) =>
+    atomWithDefault(async (get) => {
       const session = get(sessionAtom);
       if (!session) {
         return;

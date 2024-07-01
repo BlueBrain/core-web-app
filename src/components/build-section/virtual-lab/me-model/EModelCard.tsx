@@ -1,16 +1,40 @@
 import { useAtomValue } from 'jotai';
 import { Empty } from 'antd';
+import { useParams } from 'next/navigation';
 
 import { selectedEModelAtom } from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import { EModel } from '@/types/e-model';
 import { DisplayMessages } from '@/constants/display-messages';
+import { detailUrlWithinLab } from '@/util/common';
+import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
+import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 
 const subtitleStyle = 'uppercase font-thin text-slate-600';
 
 export default function EModelCard() {
   const selectedEModel = useAtomValue(selectedEModelAtom);
+  const { virtualLabId, projectId } = useParams<{
+    virtualLabId?: string;
+    projectId?: string;
+  }>();
+
+  const generateDetailUrl = () => {
+    if (!selectedEModel) return '';
+    if (!virtualLabId || !projectId) return selectedEModel['@id'];
+
+    const idParts = selectedEModel['@id'].split('/');
+    const orgProj = `${idParts.at(-3)}/${idParts.at(-2)}`;
+    return detailUrlWithinLab(
+      virtualLabId,
+      projectId,
+      orgProj,
+      selectedEModel['@id'],
+      BookmarkTabsName.MODELS,
+      ModelTypeNames.E_MODEL
+    );
+  };
 
   if (!selectedEModel) return null;
 
@@ -18,7 +42,7 @@ export default function EModelCard() {
     <div className="w-full border p-10">
       <div className="flex justify-between">
         <div className={classNames('text-2xl', subtitleStyle)}>E-Model</div>
-        <a href={selectedEModel['@id']} target="_blank" className="font-bold text-primary-8">
+        <a href={generateDetailUrl()} target="_blank" className="font-bold text-primary-8">
           More details
         </a>
       </div>

@@ -54,7 +54,7 @@ export default function BookmarkedResourcesTable({
       id="bookmark-list-container"
       data-testid={`${dataType}-tab-panel`}
       style={{
-        height: `${dataSource.length * (dataType === DataType.ExperimentalNeuronMorphology ? 200 : 100) + 150}px`, // Morphology plugin view takes more space
+        height: `${dataSource.length * 200 + 150}px`,
         maxHeight: '1200px',
         minHeight: '450px',
       }}

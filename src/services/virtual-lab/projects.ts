@@ -147,3 +147,30 @@ export async function inviteUser({
 
   throw new Error(`Undocumented error, ${response.status}`);
 }
+
+export async function patchProject(
+  formData: Partial<Project>,
+  virtualLabId: string,
+  projectId: string
+): Promise<
+  VlmResponse<{
+    project: Project;
+  }>
+> {
+  return fetchWithSession(
+    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    }
+  ).then(async (response) => {
+    if (!response.ok) {
+      const { details, message } = await response.json();
+
+      throw new Error(message, { cause: details });
+    }
+
+    return response.json();
+  });
+}

@@ -205,6 +205,23 @@ describe('Library', () => {
     renderComponent(labId, projectId);
     await screen.findByText('E-model');
   });
+
+  it('does not switch tabs if a models panel is closed', async () => {
+    projectHasBookmarks(labId, projectId, [bookmarkItem('item1', DataType.CircuitMEModel)]);
+    urlHasCategory(ModelTypeNames.ME_MODEL);
+    elasticSearchReturns(['item1', 'item2']);
+
+    const user = renderComponent(labId, projectId);
+    await screen.findByText('item1');
+
+    // Close the panel
+    await user.click(screen.getByText('ME-model'));
+
+    // Wait for panel to close
+    waitFor(() => expect(screen.queryByText('item1')).not.toBeInTheDocument());
+    // The panel header for me-model is still visible because tabs didnt switch to experiments.
+    screen.getByText('ME-model');
+  });
 });
 
 const CHECKBOX_SELECTOR = '.ant-checkbox-input';

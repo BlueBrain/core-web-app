@@ -6,7 +6,7 @@ import VirtualLabProjects from './VirtualLabProjects';
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 
 type Props = {
-  id?: string;
+  id: string;
 };
 
 export default function VirtualLabHomePage({ id }: Props) {

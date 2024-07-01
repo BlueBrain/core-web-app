@@ -19,12 +19,17 @@ import {
 } from '@/services/virtual-lab/billing';
 import { PaymentMethod, VlabBalance } from '@/types/virtual-lab/billing';
 
-export const virtualLabDetailAtomFamily = atomFamily<string, PrimitiveAtom<Promise<VirtualLab>>>(
-  (virtualLabId) =>
-    atomWithDefault(async () => {
-      const response = await getVirtualLabDetail(virtualLabId);
-      return response.data.virtual_lab;
-    })
+export const virtualLabDetailAtomFamily = atomFamily<
+  string | undefined,
+  PrimitiveAtom<Promise<VirtualLab | null>>
+>((virtualLabId) =>
+  atomWithDefault(async () => {
+    const response = await getVirtualLabDetail(virtualLabId);
+    if (response === null) {
+      return null;
+    }
+    return response.data.virtual_lab;
+  })
 );
 
 export const virtualLabMembersAtomFamily = atomFamily((virtualLabId?: string) =>

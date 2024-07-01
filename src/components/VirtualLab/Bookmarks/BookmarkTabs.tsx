@@ -101,10 +101,8 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
               expandIconPosition="end"
               accordion
               onChange={(key) => {
-                if (Array.isArray(key)) {
+                if (Array.isArray(key) && key.length === 1) {
                   setActivePanel(key[0]);
-                } else {
-                  setActivePanel(key);
                 }
               }}
             />

@@ -39,7 +39,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
     );
 
   return (
-    <div className={classNames('flex h-14 w-full justify-between overflow-y-visible', className)}>
+    <div className={classNames('flex w-full justify-between overflow-y-visible', className)}>
       <div className="flex gap-4" ref={localRef} />
       <div className={classNames('flex w-fit justify-end')}>
         {[
@@ -65,6 +65,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
         ))}
         {!!session && (
           <div
+            className="hover:z-20"
             onMouseLeave={() => {
               if (!expanded) return;
               setExpanded(false);
@@ -87,7 +88,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
             </div>
 
             <div
-              className="relative z-20 transition-all ease-in-out"
+              className="relative transition-all ease-in-out"
               style={{ opacity: Number(expanded), transitionDuration: '1000ms' }}
             >
               <div

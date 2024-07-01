@@ -6,6 +6,7 @@ import { useSetAtom } from 'jotai';
 import MEModelDetailView from '@/components/explore-section/MEModel/DetailView/View';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 
 type Params = {
   params: {
@@ -22,5 +23,10 @@ export default function MEModelViewPage({ params }: Params) {
     setBackToListPath(`${vlProjectUrl}/build`);
   }, [setBackToListPath, vlProjectUrl]);
 
-  return <MEModelDetailView vlProjectUrl={vlProjectUrl} />;
+  return (
+    <div className="grid grid-cols-[min-content_auto] bg-white">
+      <Nav params={params} />
+      <MEModelDetailView vlProjectUrl={vlProjectUrl} />
+    </div>
+  );
 }

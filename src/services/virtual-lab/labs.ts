@@ -4,7 +4,8 @@ import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
 import authFetch from '@/authFetch';
 
-export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse> {
+export async function getVirtualLabDetail(id?: string): Promise<VirtualLabResponse | null> {
+  if (!id) return null;
   const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`);
 
   if (!response.ok) {

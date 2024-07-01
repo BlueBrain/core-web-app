@@ -32,7 +32,7 @@ export default function Tabs() {
           title={title}
           key={key}
           className={classNames(
-            'w-1/3 flex-[1_1_33%] py-3 text-center text-xl font-semibold transition-all duration-200 ease-out',
+            'w-1/3 flex-[1_1_33%] border py-3 text-center text-xl font-semibold transition-all duration-200 ease-out',
             activeTab === key ? 'bg-primary-9 text-white' : 'bg-white text-primary-9'
           )}
         >
