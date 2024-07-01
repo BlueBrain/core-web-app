@@ -1,5 +1,5 @@
 import {
-  EyeOutlined,
+  EyeFilled,
   LoadingOutlined,
   MinusCircleOutlined,
   PlusOutlined,
@@ -8,9 +8,10 @@ import {
 import { Button, Spin, notification } from 'antd';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { HTMLProps, ReactNode, useCallback, useMemo } from 'react';
-
+import { HTMLProps, ReactNode, useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+
+import { Btn } from '../Btn';
 import { addBookmark, removeBookmark } from '@/services/virtual-lab/bookmark';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
@@ -36,6 +37,7 @@ export default function BookmarkButton({
   customButtom,
 }: Props) {
   const token = useAccessToken()!;
+  const [saving, setSaving] = useState(false);
   const bookmarks = useAtomValue(
     loadable(
       bookmarksForProjectAtomFamily({
@@ -63,25 +65,27 @@ export default function BookmarkButton({
     throw new Error(`Resource of type ${type} cannot be bookmarked`);
   }, [type]);
 
-  const notifySuccess = useCallback(
-    (action: 'add' | 'remove') => {
-      if (action === 'add') {
-        notification.success({
-          message: 'Resource successfully added to the library',
-          duration: 3,
-          placement: 'bottomRight',
-          description: <Button onClick={() => router.push(libraryPage)}>View in Library</Button>,
-        });
-      } else {
-        notification.success({
-          message: 'Resource successfully removed from the library',
-          duration: 2,
-          placement: 'bottomRight',
-        });
-      }
-    },
-    [router, libraryPage]
-  );
+  const notifySuccess = useCallback(() => {
+    notification.open({
+      message: (
+        <div className="flex items-center divide-x">
+          <div className="px-7 text-white">Added to the library</div>
+          <Btn onClick={() => router.push(libraryPage)} className="bg-secondary-2 font-normal">
+            View in Library
+            <EyeFilled />
+          </Btn>
+        </div>
+      ),
+      description: null,
+      className: 'bg-secondary-2 w-max h-[50px] flex p-0',
+      style: {
+        height: '50px',
+        padding: '0',
+      },
+      closeIcon: null,
+      placement: 'bottom',
+    });
+  }, [router, libraryPage]);
 
   const notifyError = useCallback((action: 'add' | 'remove', err: any) => {
     if (action === 'add') {
@@ -103,11 +107,14 @@ export default function BookmarkButton({
 
   const saveToLibrary = useCallback(async () => {
     try {
+      setSaving(true);
       await addBookmark(virtualLabId, projectId, { resourceId, category }, token);
       refreshBookmarks();
-      notifySuccess('add');
+      notifySuccess();
     } catch (err) {
       notifyError('add', err);
+    } finally {
+      setSaving(false);
     }
   }, [
     virtualLabId,
@@ -122,22 +129,15 @@ export default function BookmarkButton({
 
   const removeFromLibrary = useCallback(async () => {
     try {
+      setSaving(true);
       await removeBookmark(virtualLabId, projectId, { resourceId, category }, token);
       refreshBookmarks();
-      notifySuccess('remove');
     } catch (err) {
       notifyError('remove', err);
+    } finally {
+      setSaving(false);
     }
-  }, [
-    virtualLabId,
-    projectId,
-    resourceId,
-    category,
-    refreshBookmarks,
-    notifySuccess,
-    notifyError,
-    token,
-  ]);
+  }, [virtualLabId, projectId, resourceId, category, refreshBookmarks, notifyError, token]);
 
   const isBookmarked = useMemo(() => {
     return (
@@ -146,12 +146,17 @@ export default function BookmarkButton({
     );
   }, [bookmarks, resourceId, category]);
 
-  if (bookmarks.state === 'loading') {
-    return <Spin className="border border-neutral-2 px-3 py-2" indicator={<LoadingOutlined />} />;
+  if (saving || bookmarks.state === 'loading') {
+    return <Spin className="px-3 py-2" indicator={<LoadingOutlined />} />;
   }
 
   if (bookmarks.state === 'hasError') {
-    return <WarningFilled title="Bookmark status could not be loaded" className="mr-2" />;
+    return (
+      <WarningFilled
+        title="Bookmark status could not be loaded"
+        className="mx-2 w-max px-2 text-warning"
+      />
+    );
   }
 
   const addButton = customButtom ? (
@@ -180,27 +185,5 @@ export default function BookmarkButton({
     </Button>
   );
 
-  const viewBookmarkButton = customButtom ? (
-    customButtom({ onClick: () => router.push(libraryPage), children: 'View in library' })
-  ) : (
-    <Button
-      type="text"
-      className="mr-3 flex h-[36px] items-center gap-2 px-1 text-gray-500 hover:!bg-transparent"
-      onClick={() => {
-        router.push(libraryPage);
-      }}
-    >
-      View in library
-      <EyeOutlined />
-    </Button>
-  );
-
-  return isBookmarked ? (
-    <>
-      {viewBookmarkButton}
-      {removeButton}
-    </>
-  ) : (
-    addButton
-  );
+  return isBookmarked ? removeButton : addButton;
 }
