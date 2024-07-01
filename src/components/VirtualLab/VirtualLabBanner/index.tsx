@@ -1,9 +1,8 @@
 'use client';
 
-import { ChangeEvent, CSSProperties, ReactNode, useCallback, useState } from 'react';
+import { ChangeEvent, CSSProperties, ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import debounce from 'lodash/debounce';
 import { Button, ConfigProvider, Input } from 'antd';
 import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -12,7 +11,7 @@ import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
 
 import { basePath } from '@/config';
 import useUpdateVirtualLab, { useUpdateProject } from '@/hooks/useUpdateVirtualLab';
-import { useUnwrappedValue } from '@/hooks/hooks';
+import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
 import useNotification from '@/hooks/notifications';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
@@ -209,9 +208,8 @@ export function LabDetailBanner({ createdAt, description, id, name }: Props & { 
   const updateVirtualLab = useUpdateVirtualLab(id);
   const notify = useNotification();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onChange = useCallback(
-    debounce(async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = useDebouncedCallback(
+    async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { target } = e;
       const fieldName = target.getAttribute('name');
       const { value } = target;
@@ -223,8 +221,9 @@ export function LabDetailBanner({ createdAt, description, id, name }: Props & { 
             `Something went wrong when attempting to update the Virtual lab ${fieldName}.`
           )
         );
-    }, 600),
-    [notify, updateVirtualLab]
+    },
+    [notify, updateVirtualLab],
+    600
   );
 
   const { button: editBtn, isEditable } = useEditBtn();
@@ -262,9 +261,8 @@ export function ProjectDetailBanner({
   const updateProject = useUpdateProject(virtualLabId, projectId);
   const notify = useNotification();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onChange = useCallback(
-    debounce(async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = useDebouncedCallback(
+    async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { target } = e;
       const fieldName = target.getAttribute('name');
       const { value } = target;
@@ -274,8 +272,9 @@ export function ProjectDetailBanner({
         .catch(() =>
           notify.error(`Something went wrong when attempting to update the project ${fieldName}.`)
         );
-    }, 600),
-    [notify, updateProject]
+    },
+    [notify, updateProject],
+    600
   );
 
   const { button: editBtn, isEditable } = useEditBtn();
