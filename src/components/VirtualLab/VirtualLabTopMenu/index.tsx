@@ -54,7 +54,10 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   );
 
   return (
-    <div className={classNames('flex w-full justify-between overflow-y-visible', className)}>
+    <div
+      className={classNames('flex w-full justify-between overflow-y-visible', className)}
+      style={{ maxHeight: 50 }}
+    >
       <div className="flex gap-4" ref={localRef} />
 
       <div className={classNames('flex w-fit justify-end')}>
