@@ -110,7 +110,10 @@ export function createFile(
 
   return fetch(url, {
     method: 'POST',
-    headers: createHeaders(session.accessToken, null),
+    headers: createHeaders(session.accessToken, {
+      // mandatory to upload to a S3 storage (AWS)
+      'x-nxs-file-content-length': dataBlob.size.toString(),
+    }),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
 }
