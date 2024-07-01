@@ -107,4 +107,4 @@ export const launchedSimCampaignListAtom = atom<Promise<LaunchedSimCampUIConfigT
   }
 );
 
-export const selectedSimulationScopeAtom = atom<SimulationType | null>(null);
+export const selectedSimulationScopeAtom = atom<SimulationType | null>(SimulationType.SingleNeuron);
