@@ -5,7 +5,8 @@ import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
 import { fetchWithSession } from '@/util/utils';
 
-export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse> {
+export async function getVirtualLabDetail(id?: string): Promise<VirtualLabResponse | null> {
+  if (!id) return null;
   const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs/${id}`);
 
   if (!response.ok) {
@@ -36,16 +37,15 @@ export async function getVirtualLabsOfUser(): Promise<
 
 export async function patchVirtualLab(
   formData: Partial<VirtualLab>,
-  id: string,
-  token: string
+  id?: string
 ): Promise<
   VlmResponse<{
     virtual_lab: VirtualLab;
   }>
 > {
-  return fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
+  return fetchWithSession(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'PATCH',
-    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),
   }).then(async (response) => {
     if (!response.ok) {

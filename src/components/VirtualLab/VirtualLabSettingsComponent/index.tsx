@@ -16,12 +16,13 @@ import FormPanel, { renderInput, renderTextArea } from './FormPanel';
 import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
 
-import { deleteVirtualLab, patchVirtualLab } from '@/services/virtual-lab/labs';
+import { deleteVirtualLab } from '@/services/virtual-lab/labs';
 import {
   virtualLabDetailAtomFamily,
   virtualLabsOfUserAtom,
   virtualLabPlansAtom,
 } from '@/state/virtual-lab/lab';
+import useUpdateVirtualLab from '@/hooks/useUpdateVirtualLab';
 import { VALID_EMAIL_REGEXP, classNames } from '@/util/utils';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
@@ -79,24 +80,9 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     defaultValue: '',
   });
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
-  const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
   const refreshVirtualLabsOfUser = useSetAtom(virtualLabsOfUserAtom);
 
-  const updateVirtualLab = useCallback(
-    async (formData: Partial<VirtualLab>): Promise<void> => {
-      return patchVirtualLab(formData, id, token).then((responseJSON) => {
-        const { data } = responseJSON;
-        const { virtual_lab: virtualLab } = data;
-
-        setVirtualLabDetail(
-          new Promise((resolve) => {
-            resolve(virtualLab);
-          })
-        );
-      });
-    },
-    [id, setVirtualLabDetail, token]
-  );
+  const updateVirtualLab = useUpdateVirtualLab(id);
 
   const onChangePanel = (key: string | string[]) => setActivePanel(String(key));
 
