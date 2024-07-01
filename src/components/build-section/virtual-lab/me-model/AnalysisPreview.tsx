@@ -18,7 +18,13 @@ export default function AnalysisPreview() {
   const meModelResource = useAtomValue(meModelResourceAtom);
   const image = meModelResource?.image;
 
-  if (!image) return null;
+  if (!image || meModelResource?.status !== 'done') {
+    return (
+      <div className="flex h-full items-center justify-center text-4xl font-bold text-primary-9">
+        ME-Model analysis are being generated
+      </div>
+    );
+  }
 
   const distributions = ensureArray(image).map((i) => {
     // to be used in filter dropdown of PDFViewerContainer

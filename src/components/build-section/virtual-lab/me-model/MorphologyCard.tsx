@@ -1,4 +1,5 @@
 import { useAtomValue } from 'jotai';
+import { useParams } from 'next/navigation';
 
 import { selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
@@ -7,11 +8,34 @@ import CardVisualization from '@/components/explore-section/CardView/CardVisuali
 import { DataType } from '@/constants/explore-section/list-views';
 import { DisplayMessages } from '@/constants/display-messages';
 import { mTypeSelectorFn } from '@/util/explore-section/selector-functions';
+import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
+import { detailUrlWithinLab } from '@/util/common';
+import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 
 const subtitleStyle = 'uppercase font-thin text-slate-600';
 
 export default function MorphologyCard() {
   const selectedMModel = useAtomValue(selectedMModelAtom);
+  const { virtualLabId, projectId } = useParams<{
+    virtualLabId?: string;
+    projectId?: string;
+  }>();
+
+  const generateDetailUrl = () => {
+    if (!selectedMModel) return '';
+    if (!virtualLabId || !projectId) return selectedMModel['@id'];
+
+    const idParts = selectedMModel['@id'].split('/');
+    const orgProj = `${idParts.at(-3)}/${idParts.at(-2)}`;
+    return detailUrlWithinLab(
+      virtualLabId,
+      projectId,
+      orgProj,
+      selectedMModel['@id'],
+      BookmarkTabsName.EXPERIMENTS,
+      ExperimentTypeNames.MORPHOLOGY
+    );
+  };
 
   if (!selectedMModel) return null;
 
@@ -19,7 +43,7 @@ export default function MorphologyCard() {
     <div className="w-full border p-10">
       <div className="flex justify-between">
         <div className={classNames('text-2xl', subtitleStyle)}>M-Model</div>
-        <a href={selectedMModel['@id']} target="_blank" className="font-bold text-primary-8">
+        <a href={generateDetailUrl()} target="_blank" className="font-bold text-primary-8">
           More details
         </a>
       </div>
