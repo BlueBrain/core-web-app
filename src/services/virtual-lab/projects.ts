@@ -157,14 +157,11 @@ export async function patchProject(
     project: Project;
   }>
 > {
-  return fetchWithSession(
-    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}`,
-    {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    }
-  ).then(async (response) => {
+  return authFetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData),
+  }).then(async (response) => {
     if (!response.ok) {
       const { details, message } = await response.json();
 

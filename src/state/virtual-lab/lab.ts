@@ -24,11 +24,9 @@ export const virtualLabDetailAtomFamily = atomFamily<
   PrimitiveAtom<Promise<VirtualLab | null>>
 >((virtualLabId) =>
   atomWithDefault(async () => {
+    if (!virtualLabId) return null;
     const response = await getVirtualLabDetail(virtualLabId);
-    if (response === null) {
-      return null;
-    }
-    return response.data.virtual_lab;
+    return response?.data.virtual_lab ?? null;
   })
 );
 
