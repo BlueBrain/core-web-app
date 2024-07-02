@@ -6,8 +6,8 @@ import { loadable, unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { SwapOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-
-import { virtualLabDetailAtomFamily, virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
+import { detailAtom } from '../VirtualLabBanner';
+import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
@@ -16,10 +16,8 @@ type Props = {
   virtualLabId: string;
 };
 
-function VirtualLabTitle({ virtualLabId }: Props) {
-  const virtualLab = useAtomValue(
-    useMemo(() => unwrap(virtualLabDetailAtomFamily(virtualLabId)), [virtualLabId])
-  );
+function VirtualLabTitle() {
+  const virtualLab = useAtomValue(detailAtom);
 
   return (
     <div className="text-5xl font-bold uppercase text-primary-5" style={{ minHeight: '84px' }}>
@@ -85,7 +83,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
   ];
   return (
     <div className="mr-5 flex w-full flex-col gap-5">
-      <VirtualLabTitle virtualLabId={virtualLabId} />
+      <VirtualLabTitle />
       <Link
         href="/virtual-lab"
         className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"

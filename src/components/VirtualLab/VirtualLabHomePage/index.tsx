@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import VirtualLabCTABanner from '../VirtualLabCTABanner';
+import VirtualLabDetailServer from './VirtualLabDetailServer';
 import VirtualLabDetail from './VirtualLabDetail';
 import VirtualLabUsers from './VirtualLabUsers';
 import VirtualLabProjects from './VirtualLabProjects';
@@ -13,7 +14,7 @@ export default function VirtualLabHomePage({ id }: Props) {
   return (
     <div className="pb-5">
       <Suspense fallback={<VirtualLabDetail />}>
-        <VirtualLabDetail id={id} />
+        <VirtualLabDetailServer id={id} />
       </Suspense>
       <VirtualLabCTABanner
         id={id}

@@ -1,14 +1,13 @@
 'use client';
 
 import { ChangeEvent, CSSProperties, ReactNode, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { Button, ConfigProvider, Input } from 'antd';
 import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-
 import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
-
+import { VirtualLab } from '@/types/virtual-lab/lab';
 import { basePath } from '@/config';
 import useUpdateVirtualLab, { useUpdateProject } from '@/hooks/useUpdateVirtualLab';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
@@ -18,8 +17,9 @@ import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 import { classNames } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
-
 import styles from './virtual-lab-banner.module.css';
+
+export const detailAtom = atom<VirtualLab | null>(null);
 
 function BackgroundImg({
   backgroundImage,
@@ -208,7 +208,17 @@ export function LabDetailBanner({ createdAt, description, id, name }: Props & { 
   const updateVirtualLab = useUpdateVirtualLab(id);
   const notify = useNotification();
 
-  const onChange = useDebouncedCallback(
+  const [detail, setDetail] = useAtom(detailAtom);
+  const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { target } = e;
+    const fieldName = target.getAttribute('name');
+    if (!fieldName || !detail) return;
+    const { value } = target;
+    setDetail({ ...detail, [fieldName]: value });
+    handleUpdate(e);
+  };
+
+  const handleUpdate = useDebouncedCallback(
     async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { target } = e;
       const fieldName = target.getAttribute('name');
