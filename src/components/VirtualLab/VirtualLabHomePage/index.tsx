@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import VirtualLabCTABanner from '../VirtualLabCTABanner';
 import VirtualLabDetailServer from './VirtualLabDetailServer';
-import VirtualLabDetail from './VirtualLabDetail';
+import VirtualLabDetail, { VirtualLabDetailSkeleton } from './VirtualLabDetail';
 import VirtualLabUsers from './VirtualLabUsers';
 import VirtualLabProjects from './VirtualLabProjects';
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
@@ -13,7 +13,9 @@ type Props = {
 export default function VirtualLabHomePage({ id }: Props) {
   return (
     <div className="pb-5">
-      <VirtualLabDetailServer id={id} />
+      <Suspense fallback={<VirtualLabDetailSkeleton />}>
+        <VirtualLabDetailServer id={id} />
+      </Suspense>
 
       <VirtualLabCTABanner
         id={id}
