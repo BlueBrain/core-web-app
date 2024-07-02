@@ -12,13 +12,13 @@ import { VirtualLab } from '@/types/virtual-lab/lab';
 import { basePath } from '@/config';
 import styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
 
-export default function WelcomeUserBanner() {
+export default function WelcomeUserBanner({ title }: { title?: string }) {
   const { data } = useSession();
   const params = useSearchParams();
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';
   const [show, setShow] = useState<boolean>(!!params.get('invite_accepted'));
   const [explodeConfetti, setExplodeConfetti] = useState(false);
-  const title = useAtomValue(getAtom<VirtualLab>('vlab'))?.name;
+  const vlabTitle = useAtomValue(getAtom<VirtualLab>('vlab'))?.name;
 
   useEffect(() => {
     setExplodeConfetti(true);
@@ -43,7 +43,7 @@ export default function WelcomeUserBanner() {
             }}
           />
           <div>
-            <p>You are now part of the {title}!</p>
+            <p>You are now part of the {title ?? vlabTitle}!</p>
             <h4 className="text-xl font-bold">Welcome {userName}</h4>
           </div>
           <Button
