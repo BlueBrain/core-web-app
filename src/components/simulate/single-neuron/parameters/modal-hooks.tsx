@@ -7,17 +7,20 @@ import { CloseOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
 import CloneIcon from '@/components/icons/Clone';
 import { createSingleNeuronSimulationAtom } from '@/state/simulate/single-neuron-setter';
+import useNotification from '@/hooks/notifications';
 
 function ModalContent({ onClose }: { onClose: () => void }) {
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
   const [formValid, setFormValid] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const { success: successNotify } = useNotification();
 
   const saveSimulation = async () => {
     setIsSaving(true);
     const title = form.getFieldValue('name');
     const description = form.getFieldValue('description');
     await createSingleNeuronSimulation(title, description);
+    successNotify('Simulation saved!');
     setIsSaving(false);
   };
 
