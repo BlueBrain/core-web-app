@@ -705,10 +705,13 @@ export interface SingleNeuronSimulation extends Entity {
   name: string;
   description: string;
   used: {
-    '@type': 'EModel';
+    '@type': 'EModel' | 'MEModel';
     '@id': string;
   };
   distribution: Distribution;
+  injectionLocation: string;
+  recordingLocation: string[];
+  brainLocation?: BrainLocation;
 }
 
 export interface SingleNeuronSimulationResource extends ResourceMetadata, SingleNeuronSimulation {}

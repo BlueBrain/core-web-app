@@ -1,6 +1,6 @@
 import type { EModelMenuItem, MEModelMenuItem } from './e-model';
 import { ESeModel } from './explore-section/es';
-import { Entity, ResourceMetadata } from '@/types/nexus';
+import { BrainLocation, Entity, ResourceMetadata } from '@/types/nexus';
 
 export type { MEModelMenuItem };
 
@@ -77,6 +77,7 @@ export interface MEModel extends Entity {
   image?: ESeModel['image'];
   validated: boolean;
   status: 'initalized' | 'processing' | 'done';
+  brainLocation?: BrainLocation; // it will be added later when the me-model analysis is run
 }
 
 export interface MEModelResource extends ResourceMetadata, MEModel {}
