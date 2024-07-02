@@ -1,13 +1,17 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
 import { LabDetailBanner } from '../VirtualLabBanner';
 import WelcomeUserBanner from './WelcomeUserBanner';
 import BudgetPanel from './BudgetPanel';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 export default function VirtualLabDetail({ id }: { id?: string }) {
-  const virtualLabDetail = useAtomValue(virtualLabDetailAtomFamily(id));
+  /* 
+  Unwrap prevents flashing when transitioning from the pre-rendered
+  content to the data downloaded by client caused by jotai re-triggering Suspense
+  */
+  const virtualLabDetail = useUnwrappedValue(virtualLabDetailAtomFamily(id));
 
   return (
     <>
@@ -16,7 +20,7 @@ export default function VirtualLabDetail({ id }: { id?: string }) {
         <LabDetailBanner
           createdAt={virtualLabDetail?.created_at}
           description={virtualLabDetail?.description}
-          id={id}
+          id={virtualLabDetail?.id}
           name={virtualLabDetail?.name}
         />
       </div>

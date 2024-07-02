@@ -243,7 +243,8 @@ export function LabDetailBanner({ createdAt, description, id, name }: Props & { 
             <StaticValues description={description} name={name} />
           )}
         </BannerWrapper>
-        {editBtn}
+        {/* Don't show button if no id (Suspense mode) */}
+        {!!id && editBtn}
       </div>
     </BackgroundImg>
   );
