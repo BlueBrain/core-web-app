@@ -88,7 +88,7 @@ describe('Library', () => {
       bookmarkItem('item2', electrophysiology),
     ]);
     elasticSearchReturns(['item1', 'item2']);
-    urlHasCategory(ExperimentTypeNames.ELECTROPHYSIOLOGY);
+    urlHasCategory(null);
 
     const user = renderComponent(labId, projectId);
 
