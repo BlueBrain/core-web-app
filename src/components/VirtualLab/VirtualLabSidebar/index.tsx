@@ -20,7 +20,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
   const currentPage = usePathname().split('/').pop();
   const virtualLab = useAtomValue(getAtom<VirtualLab>('vlab'));
   const projects = useUnwrappedValue(virtualLabProjectsAtomFamily(virtualLabId));
-  const users = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
+  const users = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId))?.length;
 
   const linkItems: LinkItem[] = [
     { key: LinkItemKey.Lab, content: 'Overview', href: 'overview' },
@@ -39,7 +39,9 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
       content: (
         <div className="flex justify-between">
           <span>Team</span>
-          <span className="font-normal text-primary-3">{users?.length}</span>
+          {users !== undefined && (
+            <span className="font-normal text-primary-3">{`${users} member${users !== 1 ? 's' : ''}`}</span>
+          )}
         </div>
       ),
       href: 'team',
