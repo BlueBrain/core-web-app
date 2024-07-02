@@ -59,7 +59,7 @@ export default function BookmarkedResourcesTable({
         minHeight: '450px',
       }}
     >
-      <div className="grid w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto">
+      <div className="grid h-full w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto">
         <WithControlPanel
           dataType={dataType}
           brainRegionSource="selected"

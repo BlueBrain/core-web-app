@@ -100,6 +100,7 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
               defaultActiveKey={activePanel ? [activePanel] : []}
               expandIconPosition="end"
               accordion
+              destroyInactivePanel
               onChange={(key) => {
                 if (Array.isArray(key) && key.length === 1) {
                   setActivePanel(key[0]);
