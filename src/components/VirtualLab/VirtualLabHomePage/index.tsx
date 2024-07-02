@@ -13,9 +13,8 @@ type Props = {
 export default function VirtualLabHomePage({ id }: Props) {
   return (
     <div className="pb-5">
-      <Suspense fallback={<VirtualLabDetail />}>
-        <VirtualLabDetailServer id={id} />
-      </Suspense>
+      <VirtualLabDetailServer id={id} />
+
       <VirtualLabCTABanner
         id={id}
         title="Create a project"

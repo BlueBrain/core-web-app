@@ -202,13 +202,16 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
   );
 }
 
-export function LabDetailBanner({ createdAt, description, id, name }: Props & { id?: string }) {
-  const users = useAtomValue(unwrap(virtualLabMembersAtomFamily(id)));
+export function LabDetailBanner() {
+  const [detail, setDetail] = useAtom(detailAtom);
+  const users = useAtomValue(unwrap(virtualLabMembersAtomFamily(detail?.id)));
 
-  const updateVirtualLab = useUpdateVirtualLab(id);
+  const updateVirtualLab = useUpdateVirtualLab(detail?.id);
   const notify = useNotification();
 
-  const [detail, setDetail] = useAtom(detailAtom);
+  const name = detail?.name;
+  const description = detail?.description;
+
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { target } = e;
     const fieldName = target.getAttribute('name');
@@ -243,7 +246,7 @@ export function LabDetailBanner({ createdAt, description, id, name }: Props & { 
       <div className={linkClassName}>
         <BannerWrapper
           admin={users?.find((user) => user.role === 'admin')?.name || '-'}
-          createdAt={createdAt}
+          createdAt={detail?.created_at}
           label="Virtual lab Name"
           userCount={users?.length || 0}
         >
@@ -254,7 +257,7 @@ export function LabDetailBanner({ createdAt, description, id, name }: Props & { 
           )}
         </BannerWrapper>
         {/* Don't show button if no id (Suspense mode) */}
-        {!!id && editBtn}
+        {!!detail?.id && editBtn}
       </div>
     </BackgroundImg>
   );
