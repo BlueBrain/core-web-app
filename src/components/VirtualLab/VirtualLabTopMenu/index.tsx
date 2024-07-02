@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
+import { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession, signOut } from 'next-auth/react';
 import dynamic from 'next/dynamic';
