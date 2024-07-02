@@ -1,35 +1,32 @@
 import { captureException } from '@sentry/nextjs';
 
-import {
-  FileType,
-  OnUploadInput,
-  UploaderGeneratorResponse,
-} from '@/components/papers/PaperEditor/plugins/ImagePlugin/utils';
+import { createHeaders } from '@/util/utils';
+import { FileType } from '@/components/papers/uploader/utils';
+import { OnUploadInput, UploaderGeneratorResponse } from '@/components/papers/uploader/types';
 import { Distribution, FileMetadata, PaperResource } from '@/types/nexus';
 import { composeUrl, createDistribution, ensureArray, removeMetadata } from '@/util/nexus';
-import { createHeaders } from '@/util/utils';
 
 export default async function* uploadBinaries({
   accessToken,
   uploadUrl,
-  images,
+  files,
   location,
   callback,
 }: OnUploadInput): AsyncGenerator<UploaderGeneratorResponse> {
   const distributions: Array<Distribution> = [];
   try {
     // Upload images and yield the result to show the status on tht thumbnail
-    for (const image of images) {
+    for (const f of files) {
       const formData = new FormData();
-      formData.append('file', image.file as FileType, image.file.name);
+      formData.append('file', f.file as FileType, f.file.name);
       const result = await fetch(uploadUrl, {
         method: 'post',
         headers: createHeaders(accessToken, {
           'x-nxs-file-metadata': JSON.stringify({
-            name: image.name || image.id,
+            name: f.name || f.id,
             // TODO: use filename without extension rather then `id` (which one is better ??),
             // TODO: image.file.name.replace(/\.[^/.]+$/, "")
-            description: image.alt ?? '',
+            description: f.alt ?? '',
           }),
         }),
         body: formData,
@@ -43,7 +40,7 @@ export default async function* uploadBinaries({
             action: 'delta_upload_binary_file',
           },
         });
-        yield { source: 'image', status: 'failed', id: image.id };
+        yield { source: 'binary', status: 'failed', id: f.id };
       }
       const metadata = await result.json();
       distributions.push(
@@ -56,7 +53,7 @@ export default async function* uploadBinaries({
           })
         )
       );
-      yield { source: 'image', status: 'success', id: image.id };
+      yield { source: 'binary', status: 'success', id: f.id };
     }
     // Update the paper resource
     const resourceResponse = await fetch(
@@ -68,6 +65,7 @@ export default async function* uploadBinaries({
         headers: createHeaders(accessToken),
       }
     );
+
     const remotePaperResource: PaperResource = await resourceResponse.json();
     if (!resourceResponse.ok) {
       captureException(new Error(await resourceResponse.json()), {
@@ -113,7 +111,7 @@ export default async function* uploadBinaries({
       yield { source: 'resource', status: 'failed' };
     }
     // Update the paper editor
-    callback?.(distributions, images);
+    callback?.(distributions, files);
     yield { source: 'resource', status: 'success' };
   } catch (error) {
     captureException(error, {

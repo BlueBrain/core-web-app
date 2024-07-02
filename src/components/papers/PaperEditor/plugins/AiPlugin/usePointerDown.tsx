@@ -1,27 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-export default function usePointerDown() {
-  const [isPointerDown, setIsPointerDown] = useState(false);
-  const [isPointerReleased, setIsPointerReleased] = useState(true);
+export default function usePointerDown(elt: HTMLElement | null) {
+  const ref = useRef(elt);
+  const [{ isPointerDown, isPointerReleased }, setPointerState] = useState({
+    isPointerDown: false,
+    isPointerReleased: true,
+  });
 
   useEffect(() => {
+    const eltRef = ref.current;
     const handlePointerUp = () => {
-      setIsPointerDown(false);
-      setIsPointerReleased(true);
-      document.removeEventListener('pointerup', handlePointerUp);
+      setPointerState({ isPointerDown: false, isPointerReleased: true });
+      eltRef?.removeEventListener('pointerup', handlePointerUp);
     };
 
     const handlePointerDown = () => {
-      setIsPointerDown(true);
-      setIsPointerReleased(false);
-      document.addEventListener('pointerup', handlePointerUp);
+      setPointerState({ isPointerDown: true, isPointerReleased: false });
+      eltRef?.addEventListener('pointerup', handlePointerUp);
     };
 
-    document.addEventListener('pointerdown', handlePointerDown);
+    eltRef?.addEventListener('pointerdown', handlePointerDown);
+
     return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
+      if (eltRef) {
+        eltRef.removeEventListener('pointerdown', handlePointerDown);
+      }
     };
-  }, []);
+  }, [ref]);
 
   return { isPointerDown, isPointerReleased };
 }

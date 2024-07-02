@@ -5,16 +5,16 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { useRouter } from 'next/navigation';
 import delay from 'lodash/delay';
 
-import { INSERT_INLINE_IMAGE_COMMAND } from '../utils';
+import { INSERT_VIDEO_COMMAND } from './utils';
+import { classNames } from '@/util/utils';
+import { Distribution } from '@/types/nexus';
 import {
   Position,
   UploadFileMetadata,
   UploaderGenerator,
   UploaderGeneratorResponse,
 } from '@/components/papers/uploader/types';
-import { getImageDimensions, getRcFileImageUrl } from '@/components/papers/uploader/utils';
-import { Distribution } from '@/types/nexus';
-import { classNames } from '@/util/utils';
+import { generateVideoThumbnail } from '@/components/papers/uploader/utils';
 import { Actions } from '@/components/papers/uploader/Actions';
 
 type Props = {
@@ -22,25 +22,37 @@ type Props = {
   onClose: () => void;
 };
 
-export default function InsertImageDialog({ onClose, onUpload }: Props) {
+export default function InsertVideoDialog({ onClose, onUpload }: Props) {
   const router = useRouter();
   const [editor] = useLexicalComposerContext();
-  const [alt, setAlt] = useState('');
+  const [description, setDescription] = useState('');
   const [name, setName] = useState('');
   const [inline, setInline] = useState<boolean>(false);
   const [position, setPosition] = useState<Position>(undefined);
-  const [image, setImage] = useState<UploadFileMetadata | null>(null);
+  const [video, setVideo] = useState<UploadFileMetadata | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadtatus] = useState<UploaderGeneratorResponse>(null);
 
-  const onAltChange: ChangeEventHandler<HTMLInputElement> = (e) => setAlt(e.target.value);
+  const onDescriptionChange: ChangeEventHandler<HTMLInputElement> = (e) =>
+    setDescription(e.target.value);
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (e) => setName(e.target.value);
   const onPositionChange = (value: Position) => setPosition(value);
   const onInlineChange: CheckboxProps['onChange'] = (e) => setInline(e.target.checked);
 
   const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
-    const preview = await getRcFileImageUrl(file);
-    setImage({ id: crypto.randomUUID(), file, preview, alt });
+    setUploadtatus(null);
+    const id = crypto.randomUUID();
+    try {
+      const { url } = await generateVideoThumbnail(file);
+      setVideo({
+        file,
+        id,
+        alt: description,
+        preview: url,
+      });
+    } catch (error) {
+      setUploadtatus({ source: 'binary', status: 'failed', id });
+    }
     return false;
   };
 
@@ -48,14 +60,12 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
     async (distributions: Array<Distribution>, files: Array<UploadFileMetadata>) => {
       const distribution = distributions[0];
       const file = files[0];
-      const dimensions = await getImageDimensions(distribution.contentUrl);
 
-      editor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, {
-        alt: distribution.name,
+      editor.dispatchCommand(INSERT_VIDEO_COMMAND, {
+        title: distribution.name,
         src: distribution.contentUrl,
+        description: file.alt,
         position: file.position ?? 'full',
-        width: dimensions.width,
-        height: dimensions.height,
       });
     },
     [editor]
@@ -63,14 +73,14 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
 
   const onTriggerUpload = async () => {
     setUploading(true);
-    if (image) {
+    if (video) {
       for await (const value of onUpload(
         [
           {
-            ...image,
+            ...video,
             name,
-            alt,
             position,
+            alt: description,
           },
         ],
         uploadCallback
@@ -87,11 +97,11 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
 
   return (
     <div className="w-full">
-      <h1 className="mb-4 text-2xl font-bold text-primary-9">Insert Image</h1>
+      <h1 className="mb-4 text-2xl font-bold text-primary-9">Insert Video</h1>
       <Upload
         withCredentials
         beforeUpload={beforeUpload}
-        name="single-image"
+        name="single-video"
         listType="picture"
         className={classNames(
           'w-full',
@@ -104,13 +114,13 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
               : '[&_.ant-upload-select]:!border-solid [&_.ant-upload-select]:!border-rose-600')
         )}
         showUploadList={false}
-        accept="image/*"
+        accept="video/*"
       >
         <div className="relative flex h-36 w-full items-center justify-center">
-          {image?.preview && (
+          {video?.preview && (
             <Image
-              key={image.id}
-              src={image.preview}
+              key={video.id}
+              src={video.preview}
               preview={false}
               rootClassName="w-full h-full  absolute inset-0"
               className="-z-10 !h-full w-full rounded-md object-cover object-center opacity-30"
@@ -119,7 +129,7 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
           )}
           <button className="z-10 w-full" type="button">
             <PlusOutlined />
-            <div className="mt-2">Click or drag image to this area to upload</div>
+            <div className="mt-2">Click or drag video to this area to upload</div>
           </button>
         </div>
       </Upload>
@@ -137,8 +147,8 @@ export default function InsertImageDialog({ onClose, onUpload }: Props) {
           <span className="min-w-max font-bold text-primary-8">Description</span>
           <input
             name="alt"
-            value={alt}
-            onChange={onAltChange}
+            value={description}
+            onChange={onDescriptionChange}
             className="w-full rounded-md border border-gray-300 px-4 py-3 text-base"
           />
         </div>

@@ -137,7 +137,7 @@ export default function FloatAiCommandsPlugin() {
   const [editor] = useLexicalComposerContext();
   const ref = useRef<HTMLDivElement>(null);
   const [aiPos, updateAiPos] = useState<FloatingCommandsPosition>(undefined);
-  const { isPointerDown, isPointerReleased } = usePointerDown();
+  const { isPointerDown, isPointerReleased } = usePointerDown(editor.getRootElement());
   const displayFloatMenu = aiPos !== undefined;
 
   const calculateAiCommandsPosition = useCallback(() => {

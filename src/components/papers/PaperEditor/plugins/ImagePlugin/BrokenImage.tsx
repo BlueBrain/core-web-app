@@ -1,9 +1,11 @@
+import { forwardRef } from 'react';
 import { basePath } from '@/config';
 
-export default function BrokenImage(): JSX.Element {
+const BrokenImage = forwardRef<HTMLImageElement>((_, ref) => {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
+      ref={ref}
       alt="broken-placeholder"
       src={`${basePath}/images/broken-image.svg`}
       style={{
@@ -14,4 +16,8 @@ export default function BrokenImage(): JSX.Element {
       draggable="false"
     />
   );
-}
+});
+
+BrokenImage.displayName = 'BrokenImage';
+
+export default BrokenImage;

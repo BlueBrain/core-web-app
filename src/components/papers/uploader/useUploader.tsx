@@ -2,33 +2,33 @@ import { useRef } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import { ConfigProvider, Modal } from 'antd';
 
-import InsertGalleryDialog from '../GalleryPlugin/Dialog';
-import InsertImageDialog from './InlineImage/Dialog';
-import { UploaderGenerator } from './utils';
+import { UploaderGenerator, UseImageUploaderInput } from './types';
 import { classNames } from '@/util/utils';
+import InsertGalleryDialog from '@/components/papers/PaperEditor/plugins/GalleryPlugin/Dialog';
+import InsertImageDialog from '@/components/papers/PaperEditor/plugins/ImagePlugin/InlineImage/Dialog';
+import InsertVideoDialog from '@/components/papers/PaperEditor/plugins/VideoPlugin/Dialog';
 
 type UseImageUploader = ({
   id,
   multiple,
-}: {
-  id: string;
-  multiple: boolean;
-}) => [() => () => void, JSX.Element];
+  type,
+}: UseImageUploaderInput) => [() => () => void, JSX.Element];
 
 type UploaderProps = {
   onUpload: UploaderGenerator;
 };
 
 type ContentProps = {
+  type: 'image' | 'video';
   multiple: boolean;
   onUpload: UploaderGenerator;
   onClose: () => void;
 };
 
-function Content({ multiple, onUpload, onClose }: ContentProps) {
-  return (
-    <div>
-      {multiple ? (
+function Content({ type, multiple, onUpload, onClose }: ContentProps) {
+  switch (type) {
+    case 'image': {
+      return multiple ? (
         <InsertGalleryDialog
           key="paper-insert-gallery-dialog"
           {...{
@@ -44,24 +44,37 @@ function Content({ multiple, onUpload, onClose }: ContentProps) {
             onUpload,
           }}
         />
-      )}
-    </div>
-  );
+      );
+    }
+    case 'video': {
+      return (
+        <InsertVideoDialog
+          key="paper-insert-video-dialog"
+          {...{
+            onClose,
+            onUpload,
+          }}
+        />
+      );
+    }
+    default:
+      return null;
+  }
 }
 
-export default function useImageUploader({ onUpload }: UploaderProps): UseImageUploader {
+export default function useUploader({ onUpload }: UploaderProps): UseImageUploader {
   const destroyRef = useRef<() => void>();
   const [modal, contextHolder] = Modal.useModal();
   const onClose = () => destroyRef?.current?.();
 
-  return ({ id, multiple }: { id: string; multiple: boolean }) => {
+  return ({ id, multiple, type }: UseImageUploaderInput) => {
     return [
       () => {
         const { destroy } = modal.success({
           title: null,
           icon: null,
           closable: true,
-          maskClosable: true,
+          maskClosable: false,
           footer: null,
           width: 680,
           centered: true,
@@ -72,10 +85,11 @@ export default function useImageUploader({ onUpload }: UploaderProps): UseImageU
           styles: {
             body: { padding: '20px' },
           },
-          closeIcon: <CloseOutlined className="text-2xl " />,
+          closeIcon: <CloseOutlined className="text-2xl" />,
           content: (
             <Content
               {...{
+                type,
                 multiple,
                 onClose,
                 onUpload,
