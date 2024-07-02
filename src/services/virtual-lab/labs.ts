@@ -1,13 +1,11 @@
-import { createApiHeaders } from './common';
 import { virtualLabApi } from '@/config';
 import { VirtualLab, VirtualLabResponse } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
-import { fetchWithSession } from '@/util/utils';
+import authFetch from '@/authFetch';
 
-export async function getVirtualLabDetail(id?: string): Promise<VirtualLabResponse | null> {
-  if (!id) return null;
-  const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs/${id}`);
+export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse | null> {
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`);
 
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
@@ -16,9 +14,7 @@ export async function getVirtualLabDetail(id?: string): Promise<VirtualLabRespon
 }
 
 export async function getVirtualLabUsers(virtualLabId: string): Promise<UsersResponse> {
-  const response = await fetchWithSession(
-    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/users`
-  );
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/users`);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
@@ -28,7 +24,7 @@ export async function getVirtualLabUsers(virtualLabId: string): Promise<UsersRes
 export async function getVirtualLabsOfUser(): Promise<
   VlmResponse<VirtualLabAPIListData<VirtualLab>>
 > {
-  const response = await fetchWithSession(`${virtualLabApi.url}/virtual-labs`);
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs`);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
@@ -37,13 +33,13 @@ export async function getVirtualLabsOfUser(): Promise<
 
 export async function patchVirtualLab(
   formData: Partial<VirtualLab>,
-  id?: string
+  id: string
 ): Promise<
   VlmResponse<{
     virtual_lab: VirtualLab;
   }>
 > {
-  return fetchWithSession(`${virtualLabApi.url}/virtual-labs/${id}`, {
+  return authFetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),
@@ -58,17 +54,14 @@ export async function patchVirtualLab(
   });
 }
 
-export async function deleteVirtualLab(
-  id: string,
-  token: string
-): Promise<
+export async function deleteVirtualLab(id: string): Promise<
   VlmResponse<{
     virtual_lab: VirtualLab;
   }>
 > {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'DELETE',
-    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
   });
 
   if (!response.ok) {
@@ -78,7 +71,7 @@ export async function deleteVirtualLab(
   return response.json();
 }
 
-export async function getPlans(token: string): Promise<
+export async function getPlans(): Promise<
   VlmResponse<{
     all_plans: [
       {
@@ -90,9 +83,9 @@ export async function getPlans(token: string): Promise<
     ];
   }>
 > {
-  const response = await fetch(`${virtualLabApi.url}/plans`, {
+  const response = await authFetch(`${virtualLabApi.url}/plans`, {
     method: 'GET',
-    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
   });
 
   if (!response.ok) {
@@ -104,14 +97,12 @@ export async function getPlans(token: string): Promise<
 
 export async function createVirtualLab({
   lab,
-  token,
 }: {
   lab: Partial<VirtualLab>;
-  token: string;
 }): Promise<VlmResponse<{ virtual_lab: VirtualLab }>> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs`, {
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs`, {
     method: 'POST',
-    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(lab),
   });
 

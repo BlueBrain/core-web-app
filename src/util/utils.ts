@@ -2,9 +2,6 @@ import { format } from 'date-fns';
 import capitalize from 'lodash/capitalize';
 import _memoize from 'lodash/memoize';
 import { ZodError } from 'zod';
-import { createApiHeaders } from '@/services/virtual-lab/common';
-import { SessionOrNull, getClientSession } from '@/hooks/session';
-import { isServer } from '@/config';
 
 export function createHeaders(
   token: string,
@@ -229,29 +226,6 @@ export const getZodErrorPath = ({ issues }: ZodError) => {
     return [...acc, ...curr.path];
   }, []);
 };
-
-export async function getSession() {
-  let session: SessionOrNull = null;
-  if (isServer) {
-    /* eslint-disable-next-line global-require */
-    const { auth } = require('src/auth'); // Only import if running on server
-    session = await auth();
-    return session;
-  }
-
-  return await getClientSession();
-}
-
-export async function fetchWithSession(
-  ...args: Parameters<typeof fetch>
-): ReturnType<typeof fetch> {
-  const session = await getSession();
-  if (!session) return fetch(...args); // If no active session fetch, for use in unauthenticated routes
-  const init = args[1] || {};
-  init.headers = { ...init.headers, ...createApiHeaders(session.accessToken) };
-  const newArgs: typeof args = [args[0], init];
-  return fetch(...newArgs); // If there is and active session setHeaders and fetch
-}
 
 /**
  * Checks if the given input is a valid JSON.

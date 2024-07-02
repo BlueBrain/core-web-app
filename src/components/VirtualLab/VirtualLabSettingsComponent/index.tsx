@@ -72,7 +72,7 @@ function CustomCollapse({ className, items, activeKey, onChange }: CollapseProps
   );
 }
 
-export default function VirtualLabSettingsComponent({ id, token }: { id: string; token: string }) {
+export default function VirtualLabSettingsComponent({ id }: { id: string }) {
   const router = useRouter();
   const userIsAdmin = true;
   const [activePanelKey, setActivePanel] = useQueryState('panel', {
@@ -87,14 +87,14 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
   const onChangePanel = (key: string | string[]) => setActivePanel(String(key));
 
   const onDeleteVirtualLab = useCallback(async (): Promise<VirtualLab> => {
-    const { data } = await deleteVirtualLab(id, token);
+    const { data } = await deleteVirtualLab(id);
     const { virtual_lab: virtualLab } = data;
 
     virtualLabDetailAtomFamily.remove(id);
     refreshVirtualLabsOfUser();
 
     return new Promise((resolve) => resolve(virtualLab)); // eslint-disable-line no-promise-executor-return
-  }, [id, refreshVirtualLabsOfUser, token]);
+  }, [id, refreshVirtualLabsOfUser]);
 
   const plans = useAtomValue(unwrap(virtualLabPlansAtom));
 

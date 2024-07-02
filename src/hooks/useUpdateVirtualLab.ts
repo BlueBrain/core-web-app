@@ -10,7 +10,8 @@ export default function useUpdateVirtualLab(id?: string) {
   const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
 
   return useCallback(
-    (formData: Partial<VirtualLab>) =>
+    async (formData: Partial<VirtualLab>) => {
+      if (!id) return;
       patchVirtualLab(formData, id).then((responseJSON) => {
         const { data } = responseJSON;
         const { virtual_lab: virtualLab } = data;
@@ -20,7 +21,8 @@ export default function useUpdateVirtualLab(id?: string) {
             resolve(virtualLab);
           })
         );
-      }),
+      });
+    },
     [id, setVirtualLabDetail]
   );
 }
