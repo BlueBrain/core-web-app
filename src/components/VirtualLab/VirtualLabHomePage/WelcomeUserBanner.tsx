@@ -6,12 +6,11 @@ import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Realistic from 'react-canvas-confetti/dist/presets/realistic';
-import { basePath } from '@/config';
-import styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
 import { useAtomValue } from 'jotai';
 import { getAtom } from '@/state/state';
-
 import { VirtualLab } from '@/types/virtual-lab/lab';
+import { basePath } from '@/config';
+import styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
 
 export default function WelcomeUserBanner() {
   const { data } = useSession();

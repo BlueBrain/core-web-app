@@ -6,7 +6,6 @@ import { loadable, unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { SwapOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { detailAtom } from '../VirtualLabBanner';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
