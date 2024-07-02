@@ -2,10 +2,11 @@
 
 import { useAtomValue } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import { LabDetailBanner, detailAtom } from '../VirtualLabBanner';
+import { LabDetailBanner } from '../VirtualLabBanner';
 import WelcomeUserBanner from './WelcomeUserBanner';
 import BudgetPanel from './BudgetPanel';
 import { VirtualLab } from '@/types/virtual-lab/lab';
+import { getAtom } from '@/state/state';
 
 export function VirtualLabDetailSkeleton() {
   return (
@@ -19,9 +20,11 @@ export function VirtualLabDetailSkeleton() {
 }
 
 export default function VirtualLabDetail({ lab }: { lab: VirtualLab }) {
-  useHydrateAtoms([[detailAtom, lab]]);
+  const vlabAtom = getAtom<VirtualLab>('vlab');
 
-  const virtualLabDetail = useAtomValue(detailAtom);
+  useHydrateAtoms([[vlabAtom, lab]]);
+
+  const virtualLabDetail = useAtomValue(vlabAtom);
 
   return (
     <>
@@ -29,12 +32,7 @@ export default function VirtualLabDetail({ lab }: { lab: VirtualLab }) {
       <div className="mt-10">
         <LabDetailBanner />
       </div>
-      <BudgetPanel
-        total={virtualLabDetail?.budget}
-        totalSpent={300}
-        remaining={350}
-        suspended={!virtualLabDetail}
-      />
+      <BudgetPanel total={virtualLabDetail?.budget} totalSpent={300} remaining={350} />
     </>
   );
 }

@@ -11,13 +11,15 @@ import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { getAtom } from '@/state/state';
+import { VirtualLab } from '@/types/virtual-lab/lab';
 
 type Props = {
   virtualLabId: string;
 };
 
 function VirtualLabTitle() {
-  const virtualLab = useAtomValue(detailAtom);
+  const virtualLab = useAtomValue(getAtom<VirtualLab>('vlab'));
 
   return (
     <div className="text-5xl font-bold uppercase text-primary-5" style={{ minHeight: '84px' }}>

@@ -9,7 +9,9 @@ import Realistic from 'react-canvas-confetti/dist/presets/realistic';
 import { basePath } from '@/config';
 import styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
 import { useAtomValue } from 'jotai';
-import { detailAtom } from '../VirtualLabBanner';
+import { getAtom } from '@/state/state';
+
+import { VirtualLab } from '@/types/virtual-lab/lab';
 
 export default function WelcomeUserBanner() {
   const { data } = useSession();
@@ -17,7 +19,7 @@ export default function WelcomeUserBanner() {
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';
   const [show, setShow] = useState<boolean>(!!params.get('invite_accepted'));
   const [explodeConfetti, setExplodeConfetti] = useState(false);
-  const title = useAtomValue(detailAtom)?.name;
+  const title = useAtomValue(getAtom<VirtualLab>('vlab'))?.name;
 
   useEffect(() => {
     setExplodeConfetti(true);

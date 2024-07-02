@@ -1,13 +1,12 @@
 'use client';
 
 import { ChangeEvent, CSSProperties, ReactNode, useState } from 'react';
-import { atom, useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { Button, ConfigProvider, Input } from 'antd';
 import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
-import { VirtualLab } from '@/types/virtual-lab/lab';
 import { basePath } from '@/config';
 import useUpdateVirtualLab, { useUpdateProject } from '@/hooks/useUpdateVirtualLab';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
@@ -17,9 +16,9 @@ import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 import { classNames } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
+import { getAtom } from '@/state/state';
+import { VirtualLab } from '@/types/virtual-lab/lab';
 import styles from './virtual-lab-banner.module.css';
-
-export const detailAtom = atom<VirtualLab | null>(null);
 
 function BackgroundImg({
   backgroundImage,
@@ -203,7 +202,7 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
 }
 
 export function LabDetailBanner() {
-  const [detail, setDetail] = useAtom(detailAtom);
+  const [detail, setDetail] = useAtom(getAtom<VirtualLab>('vlab'));
   const users = useAtomValue(unwrap(virtualLabMembersAtomFamily(detail?.id)));
 
   const updateVirtualLab = useUpdateVirtualLab(detail?.id);
