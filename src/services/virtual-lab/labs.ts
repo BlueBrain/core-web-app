@@ -3,6 +3,7 @@ import { VirtualLab, VirtualLabResponse } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
 import authFetch from '@/authFetch';
+import { assertVLApiResponse } from '@/util/utils';
 
 export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse | null> {
   const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`);
@@ -106,15 +107,5 @@ export async function createVirtualLab({
     body: JSON.stringify(lab),
   });
 
-  if (response.ok) {
-    return response.json();
-  }
-
-  if (response.status === 400) {
-    const { message } = await response.json();
-
-    throw new Error(message);
-  }
-
-  throw new Error(`Undocumented error, ${response.status}`);
+  return assertVLApiResponse(response);
 }

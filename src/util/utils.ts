@@ -244,3 +244,14 @@ export function isJSON(str: any) {
     return false;
   }
 }
+
+export async function assertVLApiResponse(res: Response) {
+  const data = await res.json();
+
+  if (!res.ok) {
+    const { message } = data;
+    throw new Error(message || 'An error occurred while processing your request...');
+  }
+
+  return data;
+}

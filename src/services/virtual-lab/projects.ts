@@ -4,6 +4,7 @@ import { Project, ProjectResponse } from '@/types/virtual-lab/projects';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
 import authFetch from '@/authFetch';
+import { assertVLApiResponse } from '@/util/utils';
 
 export async function getVirtualLabProjects(
   id: string,
@@ -97,17 +98,7 @@ export async function createProject(
     }),
   });
 
-  if (response.ok) {
-    return response.json();
-  }
-
-  if (response.status === 400) {
-    const { message } = await response.json();
-
-    throw new Error(message);
-  }
-
-  throw new Error(`Undocumented error, ${response.status}`);
+  return assertVLApiResponse(response);
 }
 
 export async function inviteUser({
@@ -135,17 +126,7 @@ export async function inviteUser({
     }
   );
 
-  if (response.ok) {
-    return response.json();
-  }
-
-  if (response.status === 400) {
-    const { message } = await response.json();
-
-    throw new Error(message);
-  }
-
-  throw new Error(`Undocumented error, ${response.status}`);
+  return assertVLApiResponse(response);
 }
 
 export async function patchProject(
