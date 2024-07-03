@@ -21,7 +21,15 @@ export const segNamesAtom = atom<string[]>(['soma[0]', 'axon[1]']);
 
 export const simulationResultsAtom = atom([1]);
 
-export const singleNeuronIdAtom = atom<string | null>(null);
+export const singleNeuronSelfUrlAtom = atom<string | null>(null);
+
+export const singleNeuronIdAtom = atom<string | null>((get) => {
+  const singleNeuronSelfUrl = get(singleNeuronSelfUrlAtom);
+  const encodedId = singleNeuronSelfUrl?.split('/').at(-1);
+  const decodedId = decodeURIComponent(encodedId || '');
+
+  return decodedId || null;
+});
 
 export const simulationStatusAtom = atomWithReset({
   launched: false,
