@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { basePath } from '@/config';
 
 function VirtualLabProjects({ labId }: { labId: string }) {
   const virtualLabProjectsLoadable = useAtomValue(loadable(virtualLabProjectsAtomFamily(labId)));
@@ -39,7 +40,7 @@ function VirtualLabProjects({ labId }: { labId: string }) {
 }
 
 const headerStyle = {
-  backgroundImage: `linear-gradient(rgba(9, 109, 217, 0.5), rgba(9, 109, 217, 0.5)), url(/images/explore/explore_home_bgImg-01.jpg)`,
+  backgroundImage: `linear-gradient(rgba(9, 109, 217, 0.5), rgba(9, 109, 217, 0.5)), url(${basePath}/images/explore/explore_home_bgImg-01.jpg)`,
   backgroundColor: '#096DD9',
   backgroundSize: 'cover',
   padding: '1rem 1.5rem 1rem 0.5rem',

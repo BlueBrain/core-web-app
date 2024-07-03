@@ -20,7 +20,6 @@ export default function SideMenuBottom({ lab }: Props) {
           style={{
             writingMode: 'vertical-rl',
             transform: 'rotate(180deg)',
-            cursor: 'e-resize',
           }}
         >
           {virtualLab?.name}
