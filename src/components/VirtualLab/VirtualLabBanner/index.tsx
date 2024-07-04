@@ -202,36 +202,6 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
   );
 }
 
-function useUpdateOptimistically<T extends {}>(
-  atomKey: string,
-  updater?: (data: Partial<T>) => Promise<void> | undefined
-) {
-  const [data, setData] = useAtom(getAtom<T>(atomKey));
-  const currentDataRef = useRef(data);
-  const originalDataRef = useRef(data);
-
-  return useCallback(
-    async (newData: Partial<T>) => {
-      if (!currentDataRef.current) return;
-      const updated = { ...currentDataRef.current, ...newData };
-      setData(updated);
-      currentDataRef.current = updated;
-      if (!updater) return;
-      try {
-        await updater(newData);
-        originalDataRef.current = currentDataRef.current;
-      } catch (e) {
-        /* TODO fix errothis doesn't work currently, 
-        lodash debounce doesn't propagate errors from async functions 
-        see: https://github.com/lodash/lodash/issues/4815
-        */
-        setData(originalDataRef.current);
-      }
-    },
-    [setData, updater]
-  );
-}
-
 export function LabDetailBanner() {
   const detail = useAtomValue(getAtom<VirtualLab>('vlab'));
   const users = useUnwrappedValue(virtualLabMembersAtomFamily(detail?.id));
@@ -343,5 +313,35 @@ export function ProjectDetailBanner({
         {editBtn}
       </div>
     </BackgroundImg>
+  );
+}
+
+function useUpdateOptimistically<T extends {}>(
+  atomKey: string,
+  updater?: (data: Partial<T>) => Promise<void> | undefined
+) {
+  const [data, setData] = useAtom(getAtom<T>(atomKey));
+  const currentDataRef = useRef(data);
+  const originalDataRef = useRef(data);
+
+  return useCallback(
+    async (newData: Partial<T>) => {
+      if (!currentDataRef.current) return;
+      const updated = { ...currentDataRef.current, ...newData };
+      setData(updated);
+      currentDataRef.current = updated;
+      if (!updater) return;
+      try {
+        await updater(newData);
+        originalDataRef.current = currentDataRef.current;
+      } catch (e) {
+        /* TODO fix errothis doesn't work currently, 
+        lodash debounce doesn't propagate errors from async functions 
+        see: https://github.com/lodash/lodash/issues/4815
+        */
+        setData(originalDataRef.current);
+      }
+    },
+    [setData, updater]
   );
 }

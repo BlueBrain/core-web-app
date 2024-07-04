@@ -6,9 +6,6 @@ import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Realistic from 'react-canvas-confetti/dist/presets/realistic';
-import { useAtomValue } from 'jotai';
-import { getAtom } from '@/state/state';
-import { VirtualLab } from '@/types/virtual-lab/lab';
 import { basePath } from '@/config';
 import styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
 
@@ -18,7 +15,6 @@ export default function WelcomeUserBanner({ title }: { title?: string }) {
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';
   const [show, setShow] = useState<boolean>(!!params.get('invite_accepted'));
   const [explodeConfetti, setExplodeConfetti] = useState(false);
-  const vlabTitle = useAtomValue(getAtom<VirtualLab>('vlab'))?.name;
 
   useEffect(() => {
     setExplodeConfetti(true);
@@ -43,7 +39,7 @@ export default function WelcomeUserBanner({ title }: { title?: string }) {
             }}
           />
           <div>
-            <p>You are now part of the {title ?? vlabTitle}!</p>
+            <p>You are now part of the {title}!</p>
             <h4 className="text-xl font-bold">Welcome {userName}</h4>
           </div>
           <Button

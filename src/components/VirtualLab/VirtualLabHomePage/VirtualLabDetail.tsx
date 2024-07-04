@@ -24,11 +24,12 @@ export default function VirtualLabDetail({ lab }: { lab: VirtualLab }) {
 
   useHydrateAtoms([[vlabAtom, lab]]);
 
+  const title = useAtomValue(vlabAtom)?.name;
   const virtualLabDetail = useAtomValue(vlabAtom);
 
   return (
     <>
-      <WelcomeUserBanner />
+      <WelcomeUserBanner title={title} />
       <div className="mt-10">
         <LabDetailBanner />
       </div>
