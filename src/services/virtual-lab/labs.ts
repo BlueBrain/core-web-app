@@ -44,16 +44,9 @@ export async function patchVirtualLab(
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(partialVlab),
-  }).then(async (response) => {
-    throw new Error('failed to patch');
-    if (!response.ok) {
-      const { details, message } = await response.json();
-
-      throw new Error(message, { cause: details });
-    }
-
-    return response.json();
   });
+
+  return assertVLApiResponse(res);
 }
 
 export async function deleteVirtualLab(id: string): Promise<

@@ -8,7 +8,7 @@ import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
 import { basePath } from '@/config';
-import useUpdateVirtualLab, { useUpdateProject } from '@/hooks/useUpdateVirtualLab';
+import { useUpdateProject } from '@/hooks/useUpdateVirtualLab';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
 import useNotification from '@/hooks/notifications';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
@@ -221,8 +221,11 @@ function useUpdateOptimistically<T extends {}>(
         await updater(newData);
         originalDataRef.current = currentDataRef.current;
       } catch (e) {
+        /* TODO fix errothis doesn't work currently, 
+        lodash debounce doesn't propagate errors from async functions 
+        see: https://github.com/lodash/lodash/issues/4815
+        */
         setData(originalDataRef.current);
-        console.log('error');
       }
     },
     [setData, updater]
@@ -236,7 +239,7 @@ export function LabDetailBanner() {
   const patchVlab = useDebouncedCallback(
     async (partialVlab: Partial<VirtualLab>) => {
       if (!detail?.id) return;
-      patchVirtualLab(partialVlab, detail.id);
+      await patchVirtualLab(partialVlab, detail.id);
     },
     [detail?.id],
     600
