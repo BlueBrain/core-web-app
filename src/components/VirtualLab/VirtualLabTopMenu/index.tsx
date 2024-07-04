@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';

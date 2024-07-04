@@ -14,11 +14,12 @@ import useNotification from '@/hooks/notifications';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
-import { classNames } from '@/util/utils';
+import { assertErrorMessage, classNames } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 import { getAtom } from '@/state/state';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { patchVirtualLab } from '@/services/virtual-lab/labs';
+import { error } from '@/api/notifications';
 import styles from './virtual-lab-banner.module.css';
 
 function BackgroundImg({
@@ -97,7 +98,7 @@ function EditableInputs({
     >
       <Input
         className="text-5xl font-bold"
-        defaultValue={name}
+        value={name}
         maxLength={80}
         name="name"
         onChange={onChange}
@@ -106,7 +107,7 @@ function EditableInputs({
         variant="borderless"
       />
       <Input.TextArea
-        defaultValue={description}
+        value={description}
         maxLength={600}
         name="description"
         onChange={onChange}
@@ -206,16 +207,10 @@ export function LabDetailBanner() {
   const detail = useAtomValue(getAtom<VirtualLab>('vlab'));
   const users = useUnwrappedValue(virtualLabMembersAtomFamily(detail?.id));
 
-  const patchVlab = useDebouncedCallback(
-    async (partialVlab: Partial<VirtualLab>) => {
-      if (!detail?.id) return;
-      await patchVirtualLab(partialVlab, detail.id);
-    },
-    [detail?.id],
-    600
-  );
-
-  const updateVlab = useUpdateOptimistically('vlab', patchVlab);
+  const updateVlab = useUpdateOptimistically('vlab', async (vlab: Partial<VirtualLab>) => {
+    if (!detail?.id) return;
+    return patchVirtualLab(vlab, detail.id);
+  });
 
   const name = detail?.name;
   const description = detail?.description;
@@ -277,7 +272,8 @@ export function ProjectDetailBanner({
         );
     },
     [notify, updateProject],
-    600
+    600,
+    { leading: true }
   );
 
   const { button: editBtn, isEditable } = useEditBtn();
@@ -316,13 +312,15 @@ export function ProjectDetailBanner({
   );
 }
 
-function useUpdateOptimistically<T extends {}>(
+function useUpdateOptimistically<T extends {}, RT>(
   atomKey: string,
-  updater?: (data: Partial<T>) => Promise<void> | undefined
+  updater: (data: Partial<T>) => Promise<RT>
 ) {
   const [data, setData] = useAtom(getAtom<T>(atomKey));
   const currentDataRef = useRef(data);
   const originalDataRef = useRef(data);
+
+  const updaterDebounced = useDebouncedCallback(updater, [updater], 600, { leading: true });
 
   return useCallback(
     async (newData: Partial<T>) => {
@@ -330,18 +328,14 @@ function useUpdateOptimistically<T extends {}>(
       const updated = { ...currentDataRef.current, ...newData };
       setData(updated);
       currentDataRef.current = updated;
-      if (!updater) return;
       try {
-        await updater(newData);
+        await updaterDebounced(newData);
         originalDataRef.current = currentDataRef.current;
       } catch (e) {
-        /* TODO fix errothis doesn't work currently, 
-        lodash debounce doesn't propagate errors from async functions 
-        see: https://github.com/lodash/lodash/issues/4815
-        */
         setData(originalDataRef.current);
+        error(assertErrorMessage(e));
       }
     },
-    [setData, updater]
+    [setData, updaterDebounced]
   );
 }
