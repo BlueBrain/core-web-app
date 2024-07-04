@@ -205,17 +205,21 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
 
 export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
   const vlabAtom = getAtom<VirtualLab>('vlab');
+
   useHydrateAtoms([[vlabAtom, initialVlab]]);
 
   const vlab = useAtomValue(vlabAtom);
-
   const users = useUnwrappedValue(virtualLabMembersAtomFamily(vlab?.id));
 
-  // eslint-disable-next-line
-  const updateVlab = useUpdateOptimistically('vlab', async (vlab: Partial<VirtualLab>) => {
-    if (!vlab?.id) return;
-    return patchVirtualLab(vlab, vlab.id);
-  });
+  const vlabUpdater = useCallback(
+    async (partialVlab: Partial<VirtualLab>) => {
+      if (!vlab?.id) return;
+      return patchVirtualLab(partialVlab, vlab.id);
+    },
+    [vlab?.id]
+  );
+
+  const updateVlab = useUpdateOptimistically('vlab', vlabUpdater);
 
   const name = vlab?.name;
   const description = vlab?.description;
