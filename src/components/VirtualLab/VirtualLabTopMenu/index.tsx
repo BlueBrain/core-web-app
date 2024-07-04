@@ -1,11 +1,10 @@
 import { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
 import { UserOutlined } from '@ant-design/icons';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
-import { classNames } from '@/util/utils';
-import { basePath } from '@/config';
+import { classNames, signOut } from '@/util/utils';
 
 type Props = {
   className?: string;
@@ -105,7 +104,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
                   getMenuButtonClassName(false),
                   'flex flex-row justify-between  border border-t-0 border-primary-7'
                 )}
-                onClick={() => signOut({ callbackUrl: `${basePath}/log-in` })}
+                onClick={signOut}
               >
                 <span className="font-bold">Log out</span>
               </button>
