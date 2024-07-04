@@ -1,8 +1,7 @@
-import VerticalLinks from '@/components/VerticalLinks';
-import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { SwapOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-
+import VerticalLinks from '@/components/VerticalLinks';
+import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
 export function VirtualLabSidebarSkeleton() {
   const linkItems = [

@@ -219,6 +219,7 @@ export function LabDetailBanner() {
     const { target } = e;
     const fieldName = target.getAttribute('name');
     if (!fieldName || !detail) return;
+
     const { value } = target;
     updateVlab({ [fieldName]: value });
   };
