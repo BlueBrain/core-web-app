@@ -82,7 +82,7 @@ export default function BookmarkFooter({
   };
 
   return (
-    <div className="absolute right-12 top-14 z-10 flex justify-end">
+    <div className="absolute right-12 z-10 flex justify-end">
       <Btn
         className="fit-content sticky bottom-0 ml-2  w-fit animate-slide-up bg-primary-6"
         onClick={removeFromLibrary}
