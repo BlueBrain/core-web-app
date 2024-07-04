@@ -32,18 +32,19 @@ export async function getVirtualLabsOfUser(): Promise<
 }
 
 export async function patchVirtualLab(
-  formData: Partial<VirtualLab>,
+  partialVlab: Partial<VirtualLab>,
   id: string
 ): Promise<
   VlmResponse<{
     virtual_lab: VirtualLab;
   }>
 > {
-  return authFetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
+  const res = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(formData),
+    body: JSON.stringify(partialVlab),
   }).then(async (response) => {
+    throw new Error('failed to patch');
     if (!response.ok) {
       const { details, message } = await response.json();
 

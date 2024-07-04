@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, CSSProperties, ReactNode, useState } from 'react';
+import { ChangeEvent, CSSProperties, ReactNode, useCallback, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { Button, ConfigProvider, Input } from 'antd';
@@ -19,6 +19,7 @@ import { generateLabUrl } from '@/util/virtual-lab/urls';
 import { getAtom } from '@/state/state';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import styles from './virtual-lab-banner.module.css';
+import { patchVirtualLab } from '@/services/virtual-lab/labs';
 
 function BackgroundImg({
   backgroundImage,
@@ -201,12 +202,47 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
   );
 }
 
-export function LabDetailBanner() {
-  const [detail, setDetail] = useAtom(getAtom<VirtualLab>('vlab'));
-  const users = useAtomValue(unwrap(virtualLabMembersAtomFamily(detail?.id)));
+function useUpdateOptimistically<T extends {}>(
+  atomKey: string,
+  updater?: (data: Partial<T>) => Promise<void> | undefined
+) {
+  const [data, setData] = useAtom(getAtom<T>(atomKey));
+  const currentDataRef = useRef(data);
+  const originalDataRef = useRef(data);
 
-  const updateVirtualLab = useUpdateVirtualLab(detail?.id);
-  const notify = useNotification();
+  return useCallback(
+    async (newData: Partial<T>) => {
+      if (!currentDataRef.current) return;
+      const updated = { ...currentDataRef.current, ...newData };
+      setData(updated);
+      currentDataRef.current = updated;
+      if (!updater) return;
+      try {
+        await updater(newData);
+        originalDataRef.current = currentDataRef.current;
+      } catch (e) {
+        setData(originalDataRef.current);
+        console.log('error');
+      }
+    },
+    [setData, updater]
+  );
+}
+
+export function LabDetailBanner() {
+  const detail = useAtomValue(getAtom<VirtualLab>('vlab'));
+  const users = useUnwrappedValue(virtualLabMembersAtomFamily(detail?.id));
+
+  const patchVlab = useDebouncedCallback(
+    async (partialVlab: Partial<VirtualLab>) => {
+      if (!detail?.id) return;
+      patchVirtualLab(partialVlab, detail.id);
+    },
+    [detail?.id],
+    600
+  );
+
+  const updateVlab = useUpdateOptimistically('vlab', patchVlab);
 
   const name = detail?.name;
   const description = detail?.description;
@@ -216,27 +252,8 @@ export function LabDetailBanner() {
     const fieldName = target.getAttribute('name');
     if (!fieldName || !detail) return;
     const { value } = target;
-    setDetail({ ...detail, [fieldName]: value });
-    handleUpdate(e);
+    updateVlab({ [fieldName]: value });
   };
-
-  const handleUpdate = useDebouncedCallback(
-    async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { target } = e;
-      const fieldName = target.getAttribute('name');
-      const { value } = target;
-
-      return updateVirtualLab({ [fieldName as string]: value })
-        .then(() => notify.success(`New Virtual lab ${fieldName}: "${value}"`))
-        .catch(() =>
-          notify.error(
-            `Something went wrong when attempting to update the Virtual lab ${fieldName}.`
-          )
-        );
-    },
-    [notify, updateVirtualLab],
-    600
-  );
 
   const { button: editBtn, isEditable } = useEditBtn();
 
