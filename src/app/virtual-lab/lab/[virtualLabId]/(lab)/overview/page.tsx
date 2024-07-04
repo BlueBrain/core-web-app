@@ -1,11 +1,12 @@
 import { Suspense } from 'react';
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 import VirtualLabCTABanner from '@/components/VirtualLab/VirtualLabCTABanner';
-import { VirtualLabDetailSkeleton } from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabDetail';
+
 import VirtualLabHome from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabDetailHome';
 import VirtualLabProjects from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabProjects';
 import VirtualLabUsers from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabUsers';
 import { ServerSideComponentProp } from '@/types/common';
+import { VirtualLabDetailSkeleton } from '@/components/VirtualLab/VirtualLabBanner';
 
 export default function VirtualLab({ params }: ServerSideComponentProp<{ virtualLabId: string }>) {
   const { virtualLabId } = params;

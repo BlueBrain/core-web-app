@@ -2,7 +2,7 @@
 
 import { ChangeEvent, CSSProperties, ReactNode, useCallback, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
+import { unwrap, useHydrateAtoms } from 'jotai/utils';
 import { Button, ConfigProvider, Input } from 'antd';
 import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -137,7 +137,7 @@ function BannerWrapper({
   userCount,
 }: {
   admin?: string;
-  children: ReactNode;
+  children?: ReactNode;
   createdAt?: string;
   label: string;
   sessions?: string;
@@ -203,22 +203,27 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
   );
 }
 
-export function LabDetailBanner() {
-  const detail = useAtomValue(getAtom<VirtualLab>('vlab'));
-  const users = useUnwrappedValue(virtualLabMembersAtomFamily(detail?.id));
+export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
+  const vlabAtom = getAtom<VirtualLab>('vlab');
+  useHydrateAtoms([[vlabAtom, initialVlab]]);
 
+  const vlab = useAtomValue(vlabAtom);
+
+  const users = useUnwrappedValue(virtualLabMembersAtomFamily(vlab?.id));
+
+  // eslint-disable-next-line
   const updateVlab = useUpdateOptimistically('vlab', async (vlab: Partial<VirtualLab>) => {
-    if (!detail?.id) return;
-    return patchVirtualLab(vlab, detail.id);
+    if (!vlab?.id) return;
+    return patchVirtualLab(vlab, vlab.id);
   });
 
-  const name = detail?.name;
-  const description = detail?.description;
+  const name = vlab?.name;
+  const description = vlab?.description;
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { target } = e;
     const fieldName = target.getAttribute('name');
-    if (!fieldName || !detail) return;
+    if (!fieldName || !vlab) return;
 
     const { value } = target;
     updateVlab({ [fieldName]: value });
@@ -231,7 +236,7 @@ export function LabDetailBanner() {
       <div className={linkClassName}>
         <BannerWrapper
           admin={users?.find((user) => user.role === 'admin')?.name || '-'}
-          createdAt={detail?.created_at}
+          createdAt={vlab?.created_at}
           label="Virtual lab Name"
           userCount={users?.length || 0}
         >
@@ -241,8 +246,7 @@ export function LabDetailBanner() {
             <StaticValues description={description} name={name} />
           )}
         </BannerWrapper>
-        {/* Don't show button if no id (Suspense mode) */}
-        {!!detail?.id && editBtn}
+        {editBtn}
       </div>
     </BackgroundImg>
   );
@@ -338,5 +342,20 @@ function useUpdateOptimistically<T extends {}, RT>(
       }
     },
     [setData, updaterDebounced]
+  );
+}
+
+export function VirtualLabDetailSkeleton() {
+  return (
+    <>
+      <div className="mt-10">
+        <BackgroundImg backgroundImage={hippocampusImg}>
+          <div className={linkClassName}>
+            <BannerWrapper label="Virtual lab Name" />
+          </div>
+        </BackgroundImg>
+      </div>
+      <div className="mt-[3px] box-content flex h-[119.5px] flex-col gap-5 bg-primary-8 p-3" />
+    </>
   );
 }
