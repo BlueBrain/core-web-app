@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { atomWithReducer } from 'jotai/utils';
+import { atomWithReducer, atomWithReset } from 'jotai/utils';
 import { MutableRefObject } from 'react';
 
 import { simReducer } from './redurcers';
@@ -15,24 +15,32 @@ export const simulationConfigAtom = atomWithReducer<SimConfig, SimAction>(
   simReducer
 );
 
-export const secNamesAtom = atom<string[]>([]);
+export const secNamesAtom = atomWithReset<string[]>([]);
 
 export const segNamesAtom = atom<string[]>(['soma[0]', 'axon[1]']);
 
 export const simulationResultsAtom = atom([1]);
 
-export const singleNeuronIdAtom = atom<string | null>(null);
+export const singleNeuronSelfUrlAtom = atom<string | null>(null);
 
-export const simulationStatusAtom = atom({
+export const singleNeuronIdAtom = atom<string | null>((get) => {
+  const singleNeuronSelfUrl = get(singleNeuronSelfUrlAtom);
+  const encodedId = singleNeuronSelfUrl?.split('/').at(-1);
+  const decodedId = decodeURIComponent(encodedId || '');
+
+  return decodedId || null;
+});
+
+export const simulationStatusAtom = atomWithReset({
   launched: false,
   finished: false,
 });
 
-export const simulationFormIsFilledAtom = atom(false);
+export const simulationFormIsFilledAtom = atomWithReset(false);
 
 export const blueNaasInstanceRefAtom = atom<MutableRefObject<BlueNaasCls | null> | null>(null);
 
-export const simulationPlotDataAtom = atom<PlotData | null>(null);
+export const simulationPlotDataAtom = atomWithReset<PlotData | null>(null);
 
 export const protocolNameAtom = atom<string | null>((get) => {
   const simulationConfig = get(simulationConfigAtom);

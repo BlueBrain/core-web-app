@@ -22,8 +22,10 @@ import { SerializedEditorState } from 'lexical/LexicalEditorState';
 
 import InlineImageNode from './plugins/ImagePlugin/InlineImage/Node';
 import GalleryNode from './plugins/GalleryPlugin/Node';
+import VideoNode from './plugins/VideoPlugin/Node';
 import InlineImagesPlugin from './plugins/ImagePlugin/InlineImage';
 import GalleryPlugin from './plugins/GalleryPlugin';
+import VideoPlugin from './plugins/VideoPlugin';
 import RemoteSyncPlugin from './plugins/RemoteSyncPlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import FloatAiCommandsPlugin from './plugins/AiPlugin';
@@ -52,6 +54,7 @@ const initialConfig: InitialConfigType = {
     LinkNode,
     InlineImageNode,
     GalleryNode,
+    VideoNode,
   ],
 };
 
@@ -114,6 +117,7 @@ export default function Editor({ config, paper }: Props) {
         <FloatAiCommandsPlugin />
         <InlineImagesPlugin />
         <GalleryPlugin />
+        <VideoPlugin />
         <InsertPlugin {...{ paper }} />
         <ActionPlugin />
       </div>

@@ -141,10 +141,11 @@ deploy-aws-prod:
     NEXT_PUBLIC_NEXUS_URL: https://sbo-nexus-delta.shapes-registry.org/v1
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
     NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_TAG: v1.14.2
+    NEXT_PUBLIC_CELL_COMPOSITION_TAG: v0.6.0
     NEXT_PUBLIC_ATLAS_ES_VIEW_ID: https://bbp.epfl.ch/neurosciencegraph/data/420e53b8-db21-4f70-a534-d799c4b59b5d
-    NEXT_PUBLIC_KG_INFERENCE_BASE_URL: https://openbrainplatform.org/api/kg-inference
-    NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL: https://openbrainplatform.org/api/thumbnail-generation
-    NEXT_PUBLIC_VIRTUAL_LAB_API_URL: https://openbrainplatform.org/api/virtual-lab-manager
+    NEXT_PUBLIC_KG_INFERENCE_BASE_URL: https://openbluebrain.com/api/kg-inference
+    NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL: https://openbluebrain.com/api/thumbnail-generation
+    NEXT_PUBLIC_VIRTUAL_LAB_API_URL: https://openbluebrain.com/api/virtual-lab-manager
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_51P6uAFFE4Bi50cLlatJIc0fUPsP0jQkaCCJ8TTkIYOOLIrLzxX1M9p1kVD11drNqsF9p7yiaumWJ8UHb3ptJJRXB00y3qjYReV
     NEXT_PUBLIC_BBS_ML_PRIVATE_BASE_URL: http://internal-sbo-poc-private-alb-1398645643.us-east-1.elb.amazonaws.com:3000/api/literature
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
@@ -160,6 +161,7 @@ deploy-aws-prod:
       --build-arg=NEXT_PUBLIC_VIRTUAL_LAB_API_URL
       --build-arg=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
       --build-arg=NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_TAG
+      --build-arg=NEXT_PUBLIC_CELL_COMPOSITION_TAG
       --build-arg=NEXT_PUBLIC_BBS_ML_PRIVATE_BASE_URL
       --build-arg=NODE_OPTIONS
   only:
@@ -177,7 +179,7 @@ deploy-bbp-dev:
     REGISTRY_IMAGE_TAG: $CI_COMMIT_SHORT_SHA-$(date +%s)
     NEXT_PUBLIC_ENVIRONMENT: dev
     NEXT_PUBLIC_BASE_PATH: /mmb-beta/dev
-    NEXT_PUBLIC_BBS_ML_URL: https://openbrainplatform.org/api/literature/
+    NEXT_PUBLIC_BBS_ML_URL: https://openbluebrain.com/api/literature/
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
     KANIKO_EXTRA_ARGS: >
@@ -203,7 +205,7 @@ deploy-test:
     REGISTRY_IMAGE_TAG: $CI_COMMIT_SHORT_SHA-$(date +%s)
     NEXT_PUBLIC_ENVIRONMENT: test
     NEXT_PUBLIC_BASE_PATH: /mmb-beta/test
-    NEXT_PUBLIC_BBS_ML_URL: https://openbrainplatform.org/api/literature/
+    NEXT_PUBLIC_BBS_ML_URL: https://openbluebrain.com/api/literature/
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
     KANIKO_EXTRA_ARGS: >

@@ -202,7 +202,7 @@ export function BaseTable({
         rowSelection={rowSelection}
         scroll={{
           x: 'fit-content',
-          y: containerDimension.height - headerHeight,
+          y: containerDimension.height - (headerHeight + 100), // 100 is to make space for load more button,
         }}
       />
     </ConfigProvider>
@@ -265,7 +265,7 @@ export default function ExploreSectionTable({
               showLoadMore={toggleDisplayMore}
               onCellClick={onCellClick}
             />
-            <div className="relative bottom-[4.4rem] flex grow items-center justify-between">
+            <div className="flex grow items-center justify-between">
               <div className="grow" />
               <div className="flex grow items-center">
                 {displayLoadMoreBtn && (

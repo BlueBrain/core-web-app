@@ -1,6 +1,8 @@
 'use client';
 
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
+import { useSetAtom, useAtom } from 'jotai';
+import { RESET } from 'jotai/utils';
 
 import { useSaveSimulationModal } from './modal-hooks';
 import GenericButton from '@/components/Global/GenericButton';
@@ -12,12 +14,21 @@ import {
 import { launchSimulationAtom } from '@/state/simulate/single-neuron-setter';
 
 export default function LaunchButton() {
-  const submittable = useAtomValue(simulationFormIsFilledAtom);
-  const simulationStatus = useAtomValue(simulationStatusAtom);
+  const [submittable, setSubmittable] = useAtom(simulationFormIsFilledAtom);
+  const [simulationStatus, setSimulationStatus] = useAtom(simulationStatusAtom);
   const launchSimulation = useSetAtom(launchSimulationAtom);
   const { createModal: createSaveResultModal, contextHolder: saveResultModalContext } =
     useSaveSimulationModal();
-  const secNames = useAtomValue(secNamesAtom);
+  const [secNames, setSecNames] = useAtom(secNamesAtom);
+
+  useEffect(() => {
+    return () => {
+      // atoms with reset so we can pass this signal
+      setSubmittable(RESET);
+      setSimulationStatus(RESET);
+      setSecNames(RESET);
+    };
+  }, [setSubmittable, setSimulationStatus, setSecNames]);
 
   const { launched, finished } = simulationStatus;
 

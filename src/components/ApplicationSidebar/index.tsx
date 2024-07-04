@@ -9,10 +9,9 @@ import Icon, {
   UserOutlined,
   HomeOutlined,
 } from '@ant-design/icons';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
-import { basePath } from '@/config';
-import { classNames } from '@/util/utils';
+import { classNames, signOut } from '@/util/utils';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 
 type TDefaulNavigation = {
@@ -144,7 +143,7 @@ export function AppNavigation({ expanded }: { expanded: boolean }) {
 export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
   const { data } = useSession();
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';
-  const logout = () => signOut({ callbackUrl: `${basePath}/` });
+
   if (!expanded) {
     return <UserOutlined title={userName} className="cursor-pointer text-base text-primary-4" />;
   }
@@ -167,7 +166,7 @@ export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
           </Link>
           <button
             type="button"
-            onClick={logout}
+            onClick={signOut}
             className="cursor-pointer text-base font-normal text-primary-4 hover:text-white"
           >
             Log out

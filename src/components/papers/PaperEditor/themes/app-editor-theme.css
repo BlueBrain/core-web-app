@@ -478,54 +478,51 @@
   user-select: none;
 }
 
-#paper-editor span.inline-editor-image {
+.app-editor-theme__image-image {
   cursor: default;
   display: inline-block;
   position: relative;
   z-index: 1;
 }
 
-#paper-editor .inline-editor-image img {
+.app-editor-theme__image img {
   max-width: 100%;
   cursor: default;
 }
 
-#paper-editor .inline-editor-image img.focused {
+.app-editor-theme__image div.focused {
   outline: 2px solid rgb(60, 132, 244);
 }
 
-#paper-editor .inline-editor-image img.focused.draggable {
-  cursor: grab;
-}
-
-#paper-editor .inline-editor-image img.focused.draggable:active {
-  cursor: grabbing;
-}
-
-#paper-editor .inline-editor-image .image-caption-container .tree-view-output {
-  margin: 0;
-  border-radius: 0;
-}
-
-#paper-editor .inline-editor-image.position-full {
+.app-editor-theme__image.position-full {
   margin: 0 0 1em 0;
 }
 
-#paper-editor .inline-editor-image.position-left {
+.app-editor-theme__image.position-left div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.app-editor-theme__image.position-left {
   float: left;
   max-width: 50%;
-  width: 100%;
   margin: 0 1em 0 0;
 }
 
-#paper-editor .inline-editor-image.position-right {
+.app-editor-theme__image.position-right div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.app-editor-theme__image.position-right {
   float: right;
   max-width: 50%;
-  width: 100%;
   margin: 0 0 0 1em;
 }
 
-#paper-editor .inline-editor-image .image-edit-button {
+.app-editor-theme__image .image-edit-button {
   display: block;
   position: absolute;
   top: 12px;
@@ -541,11 +538,11 @@
   user-select: none;
 }
 
-#paper-editor .inline-editor-image .image-edit-button:hover {
+.app-editor-theme__image .image-edit-button:hover {
   background-color: rgba(60, 132, 244, 0.5);
 }
 
-#paper-editor .inline-editor-image .image-caption-container {
+.app-editor-theme__image .image-caption-container {
   display: block;
   background-color: #f4f4f4;
   min-width: 100%;
@@ -555,4 +552,48 @@
 
 .editor-gallery {
   padding: 1em 0;
+}
+
+.app-editor-theme__video img {
+  max-width: 100%;
+  cursor: default;
+}
+
+.app-editor-theme__video .focused {
+  outline: 2px solid rgb(60, 132, 244);
+}
+
+.app-editor-theme__video.position-full {
+  margin: 0 0 1em 0;
+}
+
+.app-editor-theme__video.position-full div {
+  margin: 0 0 1em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-editor-theme__video.position-left {
+  float: left;
+  max-width: 50%;
+  margin: 0 1em 0 0;
+}
+
+.app-editor-theme__video.position-left div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.app-editor-theme__video.position-right {
+  float: right;
+  max-width: 50%;
+  margin: 0 0 0 1em;
+}
+
+.app-editor-theme__video.position-right div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }

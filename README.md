@@ -2,7 +2,7 @@
 
 This is the repository for the Blue Brain Open Platform's core web application.
 
-- [https://openbrainplatform.org/mmb-beta](https://openbrainplatform.org/mmb-beta)
+- [https://openbluebrain.com/mmb-beta](https://openbluebrain.com/mmb-beta)
 - [https://github.com/BlueBrain/core-web-app](https://github.com/BlueBrain/core-web-app)
 
 # Table of contents

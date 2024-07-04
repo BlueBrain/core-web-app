@@ -94,6 +94,7 @@ export const authOptions: NextAuthOptions = {
           accessTokenExpires: account.expires_at ? account.expires_at * 1000 : null,
           refreshToken: account.refresh_token,
           user,
+          idToken: account.id_token,
         };
       }
 
@@ -115,7 +116,7 @@ export const authOptions: NextAuthOptions = {
           username: token.sub as string,
         },
         accessToken: token.accessToken as string,
-
+        idToken: token.idToken,
         expires: new Date(token.accessTokenExpires as number).toISOString(),
         error: token.error as string,
       };

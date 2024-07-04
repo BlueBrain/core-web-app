@@ -2,11 +2,11 @@ import { createPortal } from 'react-dom';
 import { useReducer, useRef, useState } from 'react';
 import { DownloadOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
-import useImageUploader from '../ImagePlugin/useImageUploader';
 import EditorButton from '@/components/papers/molecules/Button';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import InsertButton from '@/components/papers/molecules/InsertButton';
 import uploadBinaries from '@/services/paper-ai/uploadBinaries';
+import useUploader from '@/components/papers/uploader/useUploader';
 import { PaperResource } from '@/types/nexus';
 import { composeUrl } from '@/util/nexus';
 import { useAccessToken } from '@/hooks/useAccessToken';
@@ -47,12 +47,12 @@ export default function InsertPlugin({ paper }: Props) {
   const [floatingInsertElem, setFloatingInsertElem] = useState<HTMLDivElement | null>(null);
   const uploadUrl = composeUrl('file', '', { org: paper.virtualLabId, project: paper.projectId });
 
-  const create = useImageUploader({
-    onUpload: (images, callback) =>
+  const newUploader = useUploader({
+    onUpload: (files, callback) =>
       uploadBinaries({
         uploadUrl,
         callback,
-        images,
+        files,
         accessToken: accessToken!,
         location: {
           id: paper['@id'],
@@ -62,14 +62,22 @@ export default function InsertPlugin({ paper }: Props) {
       }),
   });
 
-  const [createImageDialogModal, ImageDialogContext] = create({
+  const [createImageDialogModal, ImageDialogContext] = newUploader({
     id: 'uniq-image-uploader',
     multiple: false,
+    type: 'image',
   });
 
-  const [createGalleryDialogModal, GalleryDialogContext] = create({
+  const [createGalleryDialogModal, GalleryDialogContext] = newUploader({
     id: 'gallery-uploader',
     multiple: true,
+    type: 'image',
+  });
+
+  const [createVideoDialogModal, VideoDialogContext] = newUploader({
+    id: 'video-uploader',
+    multiple: true,
+    type: 'video',
   });
 
   const onRef = (_floatingInsertElem: HTMLDivElement) => {
@@ -92,6 +100,7 @@ export default function InsertPlugin({ paper }: Props) {
     {
       key: 'video',
       label: 'Video',
+      onClick: createVideoDialogModal,
     },
     {
       key: 'analysis',
@@ -178,6 +187,7 @@ export default function InsertPlugin({ paper }: Props) {
       </div>
       {ImageDialogContext}
       {GalleryDialogContext}
+      {VideoDialogContext}
     </div>
   );
 }

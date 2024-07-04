@@ -13,6 +13,7 @@ export interface UpdateGalleryDetails {
   description?: string;
 }
 
+const NODE_TYPE = 'gallery';
 export default class GalleryNode extends DecoratorNode<JSX.Element> {
   __images: Array<string>;
 
@@ -28,7 +29,7 @@ export default class GalleryNode extends DecoratorNode<JSX.Element> {
   }
 
   static getType(): string {
-    return 'gallery';
+    return NODE_TYPE;
   }
 
   static clone(node: GalleryNode): GalleryNode {
@@ -43,8 +44,8 @@ export default class GalleryNode extends DecoratorNode<JSX.Element> {
 
   exportJSON(): SerializedGalleryNode {
     return {
-      type: 'gallery',
       version: 1,
+      type: NODE_TYPE,
       images: this.__images,
       title: this.__title,
       description: this.__description,

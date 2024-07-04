@@ -1,6 +1,3 @@
-/* eslint-disable no-bitwise */
-import { RcFile } from 'antd/lib/upload';
-import { GetProp, UploadFile, UploadProps } from 'antd';
 import {
   $applyNodeReplacement,
   DOMConversionOutput,
@@ -16,8 +13,7 @@ import {
 import GalleryNode from '../GalleryPlugin/Node';
 // eslint-disable-next-line import/no-cycle
 import InlineImageNode from './InlineImage/Node';
-
-import { Distribution } from '@/types/nexus';
+import { Position } from '@/components/papers/uploader/types';
 
 export interface ImagePayload {
   key?: NodeKey;
@@ -27,10 +23,7 @@ export interface ImagePayload {
   height?: number;
   maxWidth?: number;
 }
-export type Position = 'left' | 'right' | 'full' | undefined;
 export type InsertImagePayload = Readonly<ImagePayload>;
-
-export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 export type SerializedInlineImageNode = Spread<
   {
@@ -52,45 +45,6 @@ export type GalleryPayload = {
 export type InsertGalleryPayload = Readonly<GalleryPayload>;
 
 export type SerializedGalleryNode = Spread<GalleryPayload, SerializedLexicalNode>;
-
-export type UploadImage = {
-  id: string;
-  file: UploadFile;
-  preview: string;
-  alt?: string;
-  name?: string;
-  position?: Position;
-};
-
-export type UploaderGeneratorResponse =
-  | {
-      source: 'image';
-      status: 'success' | 'failed';
-      id: string;
-    }
-  | {
-      source: 'resource';
-      status: 'success' | 'failed';
-    }
-  | null;
-
-export type OnUploadCallback = (payload: Array<Distribution>, images: Array<UploadImage>) => void;
-export type OnUploadInput = {
-  accessToken: string;
-  uploadUrl: string;
-  images: Array<UploadImage>;
-  location: {
-    id: string;
-    org: string;
-    project: string;
-  };
-  callback?: OnUploadCallback;
-};
-
-export type UploaderGenerator = (
-  images: Array<UploadImage>,
-  cb?: OnUploadCallback
-) => AsyncGenerator<UploaderGeneratorResponse, void, unknown>;
 
 export interface InlineImagePayload {
   key?: NodeKey;
@@ -152,35 +106,4 @@ export function $createGalleryNode(
   images: Array<string>
 ): GalleryNode {
   return $applyNodeReplacement(new GalleryNode(title, description, images));
-}
-
-export const Direction = {
-  east: 1 << 0,
-  north: 1 << 3,
-  south: 1 << 1,
-  west: 1 << 2,
-};
-
-export const getBase64 = (file: FileType): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
-export const getRcFileImageUrl = async (file: RcFile) => {
-  const buffer = await file.arrayBuffer();
-  const blob = new Blob([buffer]);
-  return URL.createObjectURL(blob);
-};
-
-export function getImageDimensions(url: string): Promise<{ width: number; height: number }> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve({ width: img.width, height: img.height });
-    img.onerror = reject;
-    img.src = url;
-  });
 }

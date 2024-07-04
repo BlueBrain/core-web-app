@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import type { DOMConversionMap, DOMExportOutput, EditorConfig, NodeKey } from 'lexical';
 
 import { DecoratorNode } from 'lexical';
@@ -6,12 +6,14 @@ import { DecoratorNode } from 'lexical';
 import {
   $convertInlineImageElement,
   $createInlineImageNode,
-  Position,
   SerializedInlineImageNode,
   UpdateInlineImagePayload,
 } from '../utils';
+import { Position } from '@/components/papers/uploader/types';
 // eslint-disable-next-line import/no-cycle
 const InlineImage = lazy(() => import('./Image'));
+
+const NODE_TYPE = 'inline-image';
 
 export default class InlineImageNode extends DecoratorNode<JSX.Element> {
   __src: string;
@@ -25,7 +27,7 @@ export default class InlineImageNode extends DecoratorNode<JSX.Element> {
   __position: Position;
 
   static getType(): string {
-    return 'inline-image';
+    return NODE_TYPE;
   }
 
   static clone(node: InlineImageNode): InlineImageNode {
@@ -88,7 +90,7 @@ export default class InlineImageNode extends DecoratorNode<JSX.Element> {
   exportJSON(): SerializedInlineImageNode {
     return {
       version: 1,
-      type: 'inline-image',
+      type: NODE_TYPE,
       alt: this.getAltText(),
       position: this.__position,
       src: this.getSrc(),
@@ -159,14 +161,16 @@ export default class InlineImageNode extends DecoratorNode<JSX.Element> {
 
   decorate(): JSX.Element {
     return (
-      <InlineImage
-        src={this.__src}
-        alt={this.__alt}
-        width={this.__width}
-        height={this.__height}
-        nodeKey={this.getKey()}
-        position={this.__position}
-      />
+      <Suspense fallback={null}>
+        <InlineImage
+          src={this.__src}
+          alt={this.__alt}
+          width={this.__width}
+          height={this.__height}
+          nodeKey={this.getKey()}
+          position={this.__position}
+        />
+      </Suspense>
     );
   }
 }

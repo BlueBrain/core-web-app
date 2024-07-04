@@ -15,9 +15,11 @@ import {
   SingleNeuronSimulationResource,
 } from '@/types/nexus';
 import sessionAtom from '@/state/session';
-import { createJsonFile, createResource } from '@/api/nexus';
+import { createJsonFile, createResource, fetchResourceById } from '@/api/nexus';
 import { createDistribution } from '@/util/nexus';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
+import { EModel } from '@/types/e-model';
+import { MEModel } from '@/types/me-model';
 
 export const createSingleNeuronSimulationAtom = atom<
   null,
@@ -30,6 +32,10 @@ export const createSingleNeuronSimulationAtom = atom<
   const singleNeuronId = get(singleNeuronIdAtom);
 
   if (!session || !simulationConfig || !simulationResults || !singleNeuronId) return null;
+
+  const resource = await fetchResourceById<EModel | MEModel>(singleNeuronId, session);
+
+  if (!resource) return null;
 
   const payload = {
     config: simulationConfig,
@@ -45,9 +51,12 @@ export const createSingleNeuronSimulationAtom = atom<
     name,
     description,
     used: {
-      '@type': 'EModel',
+      '@type': 'MEModel',
       '@id': singleNeuronId,
     },
+    injectionLocation: simulationConfig.injectTo,
+    recordingLocation: simulationConfig.recordFrom,
+    brainLocation: resource.brainLocation,
   };
 
   return createResource<SingleNeuronSimulationResource>(entity, session);

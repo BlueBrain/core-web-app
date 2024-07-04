@@ -33,7 +33,7 @@ function BackgroundImg({
   style?: CSSProperties;
 }) {
   return (
-    <div className={classNames('relative min-h-[250px] overflow-hidden bg-primary-8', className)}>
+    <div className={classNames('relative min-h-[320px] overflow-hidden bg-primary-8', className)}>
       <div
         className={styles.bannerImg}
         style={{
@@ -107,7 +107,7 @@ function EditableInputs({
       />
       <Input.TextArea
         defaultValue={description}
-        maxLength={80}
+        maxLength={600}
         name="description"
         onChange={onChange}
         rows={4}

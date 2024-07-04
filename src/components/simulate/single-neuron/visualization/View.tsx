@@ -18,19 +18,17 @@ import {
   secNamesAtom,
   segNamesAtom,
   simulationConfigAtom,
-  singleNeuronIdAtom,
+  singleNeuronSelfUrlAtom,
 } from '@/state/simulate/single-neuron';
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import { useSessionAtomValue } from '@/hooks/hooks';
-import { getUUIDFromId } from '@/util/nexus';
 
 const baseBannerStyle =
   'flex h-full items-center justify-center text-4xl bg-gray-950 text-gray-100';
 
 type BlueNaasProps = {
-  modelId: string;
-  // blueNaasInstance: unknown;
+  modelSelfUrl: string;
 };
 
 type SelectionCtrlConfig = {
@@ -43,7 +41,7 @@ type SelectionCtrlConfig = {
   };
 };
 
-export function BlueNaas({ modelId }: BlueNaasProps) {
+export function BlueNaas({ modelSelfUrl }: BlueNaasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
   const setBlueNaasInstanceRef = useSetAtom(blueNaasInstanceRefAtom);
@@ -126,7 +124,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 
     blueNaasInstance.current = new BlueNaasCls(
       containerRef.current,
-      modelId,
+      modelSelfUrl,
       DEFAULT_SIM_CONFIG,
       session.accessToken,
       {
@@ -146,7 +144,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       blueNaasInstance.current = null;
     };
   }, [
-    modelId,
+    modelSelfUrl,
     setBlueNaasInstanceRef,
     setSecNames,
     setSegNames,
@@ -182,26 +180,27 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 }
 
 export default function EModelInteractiveView() {
-  const modelId = useAtomValue(singleNeuronIdAtom);
+  const modelSelfUrl = useAtomValue(singleNeuronSelfUrlAtom);
 
-  const modelUUID = getUUIDFromId(modelId);
-
-  const [blueNaasModelId, setBlueNaasModelId] = useState<string | null>(null);
+  const [blueNaasModelSelfUrl, setBlueNaasModelSelfUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!modelUUID) return;
+    if (!modelSelfUrl) return;
 
-    const init = async () => {
-      setBlueNaasModelId(null);
+    const init = () => {
       setLoading(true);
-      setBlueNaasModelId(modelUUID);
+      setBlueNaasModelSelfUrl(modelSelfUrl);
     };
 
     init();
-  }, [modelUUID]);
 
-  if (!blueNaasModelId) {
+    return () => {
+      setBlueNaasModelSelfUrl(null);
+    };
+  }, [modelSelfUrl]);
+
+  if (!blueNaasModelSelfUrl) {
     const msg = loading ? 'Loading...' : 'Select a leaf region and an already built E-Model';
 
     return <div className={baseBannerStyle}>{msg}</div>;
@@ -209,7 +208,7 @@ export default function EModelInteractiveView() {
 
   return (
     <DefaultLoadingSuspense>
-      <BlueNaas modelId={blueNaasModelId} />
+      <BlueNaas modelSelfUrl={blueNaasModelSelfUrl} />
     </DefaultLoadingSuspense>
   );
 }

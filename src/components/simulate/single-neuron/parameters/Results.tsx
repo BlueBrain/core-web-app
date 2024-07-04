@@ -1,5 +1,7 @@
-import { useAtomValue } from 'jotai';
+import { useEffect } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
+import { RESET } from 'jotai/utils';
 
 import { simulationPlotDataAtom, simulationStatusAtom } from '@/state/simulate/single-neuron';
 
@@ -11,8 +13,14 @@ const PlotRenderer = dynamic(
 );
 
 export default function Results() {
-  const plotData = useAtomValue(simulationPlotDataAtom);
+  const [plotData, setPlotData] = useAtom(simulationPlotDataAtom);
   const simulationStatus = useAtomValue(simulationStatusAtom);
+
+  useEffect(() => {
+    return () => {
+      setPlotData(RESET);
+    };
+  }, [setPlotData]);
 
   if (!plotData?.length) {
     return (

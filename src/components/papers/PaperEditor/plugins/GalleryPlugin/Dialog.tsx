@@ -8,16 +8,13 @@ import delay from 'lodash/delay';
 import map from 'lodash/map';
 import reject from 'lodash/reject';
 
-import {
-  INSERT_GALLERY_COMMAND,
-  UploadImage,
-  UploaderGenerator,
-  getRcFileImageUrl,
-} from '../ImagePlugin/utils';
-import { Actions } from '../ImagePlugin/InlineImage/Dialog';
+import { INSERT_GALLERY_COMMAND } from '../ImagePlugin/utils';
 import { classNames } from '@/util/utils';
 import { Distribution } from '@/types/nexus';
 import { Delete } from '@/components/icons/EditorIcons';
+import { Actions } from '@/components/papers/uploader/Actions';
+import { UploadFileMetadata, UploaderGenerator } from '@/components/papers/uploader/types';
+import { getRcFileImageUrl } from '@/components/papers/uploader/utils';
 
 type Props = {
   onUpload: UploaderGenerator;
@@ -27,7 +24,7 @@ type Props = {
 export default function InsertGalleryDialog({ onUpload, onClose }: Props) {
   const router = useRouter();
   const [editor] = useLexicalComposerContext();
-  const [images, setImages] = useState<Array<UploadImage>>([]);
+  const [images, setImages] = useState<Array<UploadFileMetadata>>([]);
   const [uploading, setUploading] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -76,7 +73,7 @@ export default function InsertGalleryDialog({ onUpload, onClose }: Props) {
   const onTriggerUpload = async () => {
     setUploading(true);
     for await (const value of onUpload(images, uploadCallback)) {
-      if (value?.source === 'image') {
+      if (value?.source === 'binary') {
         if (value?.status === 'success') addToSuccess(value.id);
         if (value?.status === 'failed') addToFailed(value.id);
       }
@@ -97,7 +94,7 @@ export default function InsertGalleryDialog({ onUpload, onClose }: Props) {
     return false;
   };
 
-  const onRemove = (file: UploadImage) => () => setImages(reject(images, ['id', file.id]));
+  const onRemove = (file: UploadFileMetadata) => () => setImages(reject(images, ['id', file.id]));
 
   return (
     <div className="w-full">
@@ -139,12 +136,14 @@ export default function InsertGalleryDialog({ onUpload, onClose }: Props) {
                     '!rounded-lg border-2 border-rose-600 opacity-70'
                 )}
               >
-                <NextImage
-                  fill
-                  src={image.preview}
-                  alt={image.file.name}
-                  className="rounded-md object-cover object-center"
-                />
+                {image.preview && (
+                  <NextImage
+                    fill
+                    src={image.preview}
+                    alt={image.file.name}
+                    className="rounded-md object-cover object-center"
+                  />
+                )}
                 {uploads.success.includes(image.id) && (
                   <CheckCircleFilled className="absolute right-2 top-2 text-teal-600" />
                 )}
@@ -179,7 +178,7 @@ export default function InsertGalleryDialog({ onUpload, onClose }: Props) {
               <InboxOutlined />
             </p>
             <p className="text-base after:content-none">
-              Click or drag file to this area to upload
+              Click or drag images to this area to upload
             </p>
           </div>
         </Upload.Dragger>

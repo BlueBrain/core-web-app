@@ -45,7 +45,7 @@ export default class BlueNaas {
 
   constructor(
     container: HTMLDivElement,
-    modelId: string,
+    modelSelfUrl: string,
     simConfig: SimConfig,
     token: string,
     config: BlueNaasConfig = {}
@@ -56,7 +56,7 @@ export default class BlueNaas {
     this.renderer = new Renderer(container, config);
     this.ws = new Ws(blueNaas.wsUrl, token, this.onMessage);
     this.ws.send(BlueNaasCmd.SET_MODEL, {
-      model_id: modelId,
+      model_self_url: modelSelfUrl,
     });
   }
 

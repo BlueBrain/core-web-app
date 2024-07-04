@@ -1,47 +1,53 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
-import { mergeRegister } from '@lexical/utils';
-import { Popover, Select } from 'antd';
-import NextImage from 'next/image';
-
 import {
   $getNodeByKey,
   $getSelection,
   $isNodeSelection,
+  $setSelection,
   CLICK_COMMAND,
   COMMAND_PRIORITY_LOW,
-  DRAGSTART_COMMAND,
   KEY_BACKSPACE_COMMAND,
   KEY_DELETE_COMMAND,
   KEY_ENTER_COMMAND,
   KEY_ESCAPE_COMMAND,
+  LexicalEditor,
+  NodeKey,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
-import type { LexicalEditor, NodeKey } from 'lexical';
+import { Popover, Select } from 'antd';
 
-import BrokenImage from '../BrokenImage';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
+import { mergeRegister } from '@lexical/utils';
+
 // eslint-disable-next-line import/no-cycle
-import { $isInlineImageNode } from '../utils';
-// eslint-disable-next-line import/no-cycle
-import InlineImageNode from './Node';
+import VideoNode from './Node';
+import { $isVideoNode } from './utils';
 import { Position } from '@/components/papers/uploader/types';
-import { EditPenSquare } from '@/components/icons/EditorIcons';
+import { VideoThumbnailMetadata, generateVideoThumbnail } from '@/components/papers/uploader/utils';
 import { classNames } from '@/util/utils';
+import { EditPenSquare } from '@/components/icons/EditorIcons';
 
-import './style.css';
+type Props = {
+  nodeKey: NodeKey;
+  title?: string;
+  description?: string;
+  src: string;
+  position: Position;
+};
 
-function UpdateImagePosition({
+// TODO: refactor position modifier component for different plugins
+function UpdateVideoPosition({
   editor,
   nodeKey,
-  imgPosition,
+  videoPosition,
 }: {
   editor: LexicalEditor;
   nodeKey: NodeKey;
-  imgPosition: Position;
+  videoPosition: Position;
 }) {
   const editorState = editor.getEditorState();
-  const node = editorState.read(() => $getNodeByKey(nodeKey) as InlineImageNode);
+  const node = editorState.read(() => $getNodeByKey(nodeKey) as VideoNode);
 
   const [position, setPosition] = useState<Position>(node.getPosition());
   const [open, setOpen] = useState(false);
@@ -51,7 +57,7 @@ function UpdateImagePosition({
     setPosition(value);
     if (node) {
       editor.update(() => {
-        node.update({ position: value });
+        node.setPosition(value);
       });
     }
     setOpen(false);
@@ -60,12 +66,11 @@ function UpdateImagePosition({
   return (
     <Popover
       title="Inline Position"
-      placement={imgPosition === 'left' ? 'bottomLeft' : 'bottomRight'}
+      placement={videoPosition === 'left' ? 'bottomLeft' : 'bottomRight'}
       trigger="click"
       arrow={false}
       open={open}
       onOpenChange={onOpenChange}
-      // className="hidden group-hover:flex"
       content={
         <Select
           size="large"
@@ -85,7 +90,7 @@ function UpdateImagePosition({
         type="button"
         aria-label="Edit position"
         className={classNames(
-          'hidden group-hover:flex',
+          'z-10 hidden group-hover:flex peer-hover:flex',
           'absolute top-4 rounded-md border border-gray-200 bg-white p-2 shadow-md hover:bg-gray-200',
           position === 'left' ? 'left-4' : 'right-4'
         )}
@@ -96,27 +101,18 @@ function UpdateImagePosition({
   );
 }
 
-export default function InlineImage({
-  src,
-  alt,
-  nodeKey,
-  width,
-  height,
-  position,
-}: {
-  nodeKey: NodeKey;
-  alt: string;
-  src: string;
-  width?: number;
-  height?: number;
-  position: Position;
-}): JSX.Element {
-  const imageRef = useRef<HTMLImageElement | null>(null);
+function Video({ nodeKey, src, title, description, position }: Props) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
   const [editor] = useLexicalComposerContext();
   const activeEditorRef = useRef<LexicalEditor | null>(null);
-  const [isLoadError, setIsLoadError] = useState<boolean>(false);
+
+  const [thumbnail, setThumbnail] = useState<VideoThumbnailMetadata>({
+    url: null,
+    height: 0,
+    width: 0,
+  });
 
   const $onDelete = useCallback(
     (payload: KeyboardEvent) => {
@@ -124,7 +120,7 @@ export default function InlineImage({
         const event: KeyboardEvent = payload;
         event.preventDefault();
         const node = $getNodeByKey(nodeKey);
-        if ($isInlineImageNode(node)) {
+        if ($isVideoNode(node)) {
           node.remove();
           return true;
         }
@@ -157,6 +153,7 @@ export default function InlineImage({
   const $onEscape = useCallback(
     (event: KeyboardEvent) => {
       if (buttonRef.current === event.target) {
+        $setSelection(null);
         editor.update(() => {
           setSelected(true);
           const parentRootElement = editor.getRootElement();
@@ -174,8 +171,7 @@ export default function InlineImage({
   const onClick = useCallback(
     (payload: MouseEvent) => {
       const event = payload;
-
-      if (event.target === imageRef.current) {
+      if (event.target === videoRef.current) {
         if (event.shiftKey) {
           setSelected(!isSelected);
         } else {
@@ -191,6 +187,16 @@ export default function InlineImage({
   );
 
   useEffect(() => {
+    (async () => {
+      if (src) {
+        const { url, width, height } = await generateVideoThumbnail(src);
+        setThumbnail({ url, width, height });
+      }
+    })();
+  }, [src]);
+
+  useEffect(() => {
+    const rootElement = editor.getRootElement();
     const unregister = mergeRegister(
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
@@ -204,7 +210,7 @@ export default function InlineImage({
         CLICK_COMMAND,
         (payload) => {
           const event = payload;
-          if (event.target === imageRef.current) {
+          if (event.target === videoRef.current) {
             if (event.shiftKey) {
               setSelected(!isSelected);
             } else {
@@ -218,27 +224,16 @@ export default function InlineImage({
         },
         COMMAND_PRIORITY_LOW
       ),
-      editor.registerCommand(
-        DRAGSTART_COMMAND,
-        (event) => {
-          if (event.target === imageRef.current) {
-            // TODO This is just a temporary workaround for FF to behave like other browsers.
-            // Ideally, this handles drag & drop too (and all browsers).
-            event.preventDefault();
-            return true;
-          }
-          return false;
-        },
-        COMMAND_PRIORITY_LOW
-      ),
+
       editor.registerCommand(KEY_DELETE_COMMAND, $onDelete, COMMAND_PRIORITY_LOW),
       editor.registerCommand(KEY_BACKSPACE_COMMAND, $onDelete, COMMAND_PRIORITY_LOW),
       editor.registerCommand(KEY_ENTER_COMMAND, $onEnter, COMMAND_PRIORITY_LOW),
-      editor.registerCommand(KEY_ESCAPE_COMMAND, $onEscape, COMMAND_PRIORITY_LOW),
-      editor.registerCommand<MouseEvent>(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW)
+      editor.registerCommand(KEY_ESCAPE_COMMAND, $onEscape, COMMAND_PRIORITY_LOW)
     );
+    rootElement?.addEventListener('click', onClick);
     return () => {
       unregister();
+      rootElement?.removeEventListener('click', onClick);
     };
   }, [
     clearSelection,
@@ -253,24 +248,21 @@ export default function InlineImage({
   ]);
 
   return (
-    <div className={classNames('group relative p-2', isSelected && 'focused')}>
-      {isLoadError ? (
-        <BrokenImage ref={imageRef} />
-      ) : (
-        <>
-          <UpdateImagePosition nodeKey={nodeKey} editor={editor} imgPosition={position} />
-          <NextImage
-            className="h-full w-full object-contain"
-            src={src}
-            alt={alt}
-            width={width ?? undefined}
-            height={height ?? undefined}
-            fill={!width || !height}
-            ref={imageRef}
-            onError={() => setIsLoadError(true)}
-          />
-        </>
-      )}
+    <div className={classNames('group relative h-full w-full p-2', isSelected ? 'focused' : '')}>
+      <UpdateVideoPosition nodeKey={nodeKey} editor={editor} videoPosition={position} />
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <video
+        controls
+        src={src}
+        width={thumbnail.width}
+        height={thumbnail.height}
+        aria-label={title}
+        aria-description={description}
+        className="peer"
+        ref={videoRef}
+      />
     </div>
   );
 }
+
+export default Video;
