@@ -18,8 +18,8 @@ import { classNames } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 import { getAtom } from '@/state/state';
 import { VirtualLab } from '@/types/virtual-lab/lab';
-import styles from './virtual-lab-banner.module.css';
 import { patchVirtualLab } from '@/services/virtual-lab/labs';
+import styles from './virtual-lab-banner.module.css';
 
 function BackgroundImg({
   backgroundImage,
