@@ -24,6 +24,7 @@ export default function VirtualLabPageLayout({
 
         <div className="m-w-9/12 ml-3" style={{ width: '75%' }}>
           <VirtualLabTopMenu />
+
           <Suspense
             fallback={
               <div className="flex h-full items-center justify-center">

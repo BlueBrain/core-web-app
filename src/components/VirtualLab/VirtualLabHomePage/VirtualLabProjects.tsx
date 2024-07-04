@@ -5,7 +5,7 @@ import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 export default async function VirtualLabProjects({ id }: { id?: string }) {
   const virtualLabProjects = id ? (await getVirtualLabProjects(id, 3)).data.results : undefined;
   return (
-    <div className="mt-10">
+    <div className="mt-10 w-full">
       <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
       <div className="flex flex-row gap-5">
         {virtualLabProjects?.map((project) => (
