@@ -4,8 +4,9 @@ import { getVirtualLabUsers } from '@/services/virtual-lab/labs';
 export default async function VirtualLabUsers({ id }: { id?: string }) {
   const virtualLabUsers = id ? (await getVirtualLabUsers(id)).data.users : undefined;
   return (
-    <div>
+    <div className="w-full">
       <div className="my-5 text-lg font-bold uppercase">Members</div>
+
       <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
         {virtualLabUsers?.map((user) => (
           <Member

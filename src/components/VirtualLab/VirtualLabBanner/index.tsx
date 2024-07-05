@@ -1,24 +1,25 @@
 'use client';
 
-import { ChangeEvent, CSSProperties, ReactNode, useState } from 'react';
-import { useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
+import { ChangeEvent, CSSProperties, ReactNode, useCallback, useRef, useState } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
+import { unwrap, useHydrateAtoms } from 'jotai/utils';
 import { Button, ConfigProvider, Input } from 'antd';
 import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-
 import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
-
 import { basePath } from '@/config';
-import useUpdateVirtualLab, { useUpdateProject } from '@/hooks/useUpdateVirtualLab';
+import { useUpdateProject } from '@/hooks/useUpdateVirtualLab';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
 import useNotification from '@/hooks/notifications';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
-import { classNames } from '@/util/utils';
+import { assertErrorMessage, classNames } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
-
+import { getAtom } from '@/state/state';
+import { VirtualLab } from '@/types/virtual-lab/lab';
+import { patchVirtualLab } from '@/services/virtual-lab/labs';
+import { error } from '@/api/notifications';
 import styles from './virtual-lab-banner.module.css';
 
 function BackgroundImg({
@@ -97,7 +98,7 @@ function EditableInputs({
     >
       <Input
         className="text-5xl font-bold"
-        defaultValue={name}
+        value={name}
         maxLength={80}
         name="name"
         onChange={onChange}
@@ -106,7 +107,7 @@ function EditableInputs({
         variant="borderless"
       />
       <Input.TextArea
-        defaultValue={description}
+        value={description}
         maxLength={600}
         name="description"
         onChange={onChange}
@@ -136,7 +137,7 @@ function BannerWrapper({
   userCount,
 }: {
   admin?: string;
-  children: ReactNode;
+  children?: ReactNode;
   createdAt?: string;
   label: string;
   sessions?: string;
@@ -202,29 +203,35 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
   );
 }
 
-export function LabDetailBanner({ createdAt, description, id, name }: Props & { id?: string }) {
-  const users = useAtomValue(unwrap(virtualLabMembersAtomFamily(id)));
+export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
+  const vlabAtom = getAtom<VirtualLab>('vlab');
 
-  const updateVirtualLab = useUpdateVirtualLab(id);
-  const notify = useNotification();
+  useHydrateAtoms([[vlabAtom, initialVlab]]);
 
-  const onChange = useDebouncedCallback(
-    async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { target } = e;
-      const fieldName = target.getAttribute('name');
-      const { value } = target;
+  const vlab = useAtomValue(vlabAtom);
+  const users = useUnwrappedValue(virtualLabMembersAtomFamily(vlab?.id));
 
-      return updateVirtualLab({ [fieldName as string]: value })
-        .then(() => notify.success(`New Virtual lab ${fieldName}: "${value}"`))
-        .catch(() =>
-          notify.error(
-            `Something went wrong when attempting to update the Virtual lab ${fieldName}.`
-          )
-        );
+  const vlabUpdater = useCallback(
+    async (partialVlab: Partial<VirtualLab>) => {
+      if (!vlab?.id) return;
+      return patchVirtualLab(partialVlab, vlab.id);
     },
-    [notify, updateVirtualLab],
-    600
+    [vlab?.id]
   );
+
+  const updateVlab = useUpdateOptimistically('vlab', vlabUpdater);
+
+  const name = vlab?.name;
+  const description = vlab?.description;
+
+  const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { target } = e;
+    const fieldName = target.getAttribute('name');
+    if (!fieldName || !vlab) return;
+
+    const { value } = target;
+    updateVlab({ [fieldName]: value });
+  };
 
   const { button: editBtn, isEditable } = useEditBtn();
 
@@ -233,7 +240,7 @@ export function LabDetailBanner({ createdAt, description, id, name }: Props & { 
       <div className={linkClassName}>
         <BannerWrapper
           admin={users?.find((user) => user.role === 'admin')?.name || '-'}
-          createdAt={createdAt}
+          createdAt={vlab?.created_at}
           label="Virtual lab Name"
           userCount={users?.length || 0}
         >
@@ -274,7 +281,8 @@ export function ProjectDetailBanner({
         );
     },
     [notify, updateProject],
-    600
+    600,
+    { leading: true }
   );
 
   const { button: editBtn, isEditable } = useEditBtn();
@@ -310,5 +318,45 @@ export function ProjectDetailBanner({
         {editBtn}
       </div>
     </BackgroundImg>
+  );
+}
+
+function useUpdateOptimistically<T extends {}, RT>(
+  atomKey: string,
+  updater: (data: Partial<T>) => Promise<RT>
+) {
+  const [data, setData] = useAtom(getAtom<T>(atomKey));
+  const currentDataRef = useRef(data);
+  const originalDataRef = useRef(data);
+
+  const updaterDebounced = useDebouncedCallback(updater, [updater], 600, { leading: true });
+
+  return useCallback(
+    async (newData: Partial<T>) => {
+      if (!currentDataRef.current) return;
+      const updated = { ...currentDataRef.current, ...newData };
+      setData(updated);
+      currentDataRef.current = updated;
+      try {
+        await updaterDebounced(newData);
+        originalDataRef.current = currentDataRef.current;
+      } catch (e) {
+        setData(originalDataRef.current);
+        error(assertErrorMessage(e));
+      }
+    },
+    [setData, updaterDebounced]
+  );
+}
+
+export function VirtualLabDetailSkeleton() {
+  return (
+    <div className="mt-10">
+      <BackgroundImg backgroundImage={hippocampusImg}>
+        <div className={linkClassName}>
+          <BannerWrapper label="Virtual lab Name" />
+        </div>
+      </BackgroundImg>
+    </div>
   );
 }

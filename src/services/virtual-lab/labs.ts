@@ -5,7 +5,7 @@ import { UsersResponse } from '@/types/virtual-lab/members';
 import authFetch from '@/authFetch';
 import { assertVLApiResponse } from '@/util/utils';
 
-export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse | null> {
+export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse> {
   const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`);
 
   if (!response.ok) {
@@ -33,26 +33,20 @@ export async function getVirtualLabsOfUser(): Promise<
 }
 
 export async function patchVirtualLab(
-  formData: Partial<VirtualLab>,
+  partialVlab: Partial<VirtualLab>,
   id: string
 ): Promise<
   VlmResponse<{
     virtual_lab: VirtualLab;
   }>
 > {
-  return authFetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
+  const res = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(formData),
-  }).then(async (response) => {
-    if (!response.ok) {
-      const { details, message } = await response.json();
-
-      throw new Error(message, { cause: details });
-    }
-
-    return response.json();
+    body: JSON.stringify(partialVlab),
   });
+
+  return assertVLApiResponse(res);
 }
 
 export async function deleteVirtualLab(id: string): Promise<

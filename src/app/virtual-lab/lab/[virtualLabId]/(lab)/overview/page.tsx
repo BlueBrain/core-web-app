@@ -1,9 +1,33 @@
-import VirtualLabHomePage from '@/components/VirtualLab/VirtualLabHomePage';
-import { ServerSideComponentProp } from '@/types/common';
+import { Suspense } from 'react';
+import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
+import VirtualLabCTABanner from '@/components/VirtualLab/VirtualLabCTABanner';
 
-export default function VirtualLabSettingsPage({
-  params,
-}: ServerSideComponentProp<{ virtualLabId: string }>) {
+import VirtualLabHome from '@/components/VirtualLab/VirtualLabHomePage';
+import VirtualLabProjects from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabProjects';
+import VirtualLabUsers from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabUsers';
+import { ServerSideComponentProp } from '@/types/common';
+import { VirtualLabDetailSkeleton } from '@/components/VirtualLab/VirtualLabBanner';
+
+export default function VirtualLab({ params }: ServerSideComponentProp<{ virtualLabId: string }>) {
   const { virtualLabId } = params;
-  return <VirtualLabHomePage id={virtualLabId} />;
+  return (
+    <div className="pb-5">
+      <Suspense fallback={<VirtualLabDetailSkeleton />}>
+        <VirtualLabHome id={virtualLabId} />
+      </Suspense>
+
+      <VirtualLabCTABanner
+        id={virtualLabId}
+        title="Create a project"
+        subtitle="In order to start exploring brain regions, building models and simulate neuron, create a project"
+      />
+      <DiscoverObpPanel />
+      <Suspense fallback={null}>
+        <VirtualLabUsers id={virtualLabId} />
+      </Suspense>
+      <Suspense>
+        <VirtualLabProjects id={virtualLabId} />
+      </Suspense>
+    </div>
+  );
 }

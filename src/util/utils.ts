@@ -263,3 +263,8 @@ export async function assertVLApiResponse(res: Response) {
 
   return data;
 }
+
+export function assertErrorMessage(e: any) {
+  if (e instanceof Error) return e.message;
+  return 'Something went wrong...';
+}
