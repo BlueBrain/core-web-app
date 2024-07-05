@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 import VirtualLabCTABanner from '@/components/VirtualLab/VirtualLabCTABanner';
 
-import VirtualLabHome from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabDetailHome';
+import VirtualLabHome from '@/components/VirtualLab/VirtualLabHomePage';
 import VirtualLabProjects from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabProjects';
 import VirtualLabUsers from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabUsers';
 import { ServerSideComponentProp } from '@/types/common';
