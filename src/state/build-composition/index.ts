@@ -2,6 +2,8 @@ import { atom } from 'jotai';
 import cloneDeep from 'lodash/cloneDeep';
 import filter from 'lodash/filter';
 
+import { idAtom } from '../brain-model-config';
+
 import sessionAtom from '@/state/session';
 import calculateCompositions from '@/util/composition/composition-parser';
 import computeModifiedComposition from '@/util/composition/composition-modifier';
@@ -22,6 +24,7 @@ import { OriginalComposition } from '@/types/composition/original';
 import { AnalysedComposition, CalculatedCompositionNode } from '@/types/composition/calculation';
 import { MModelMenuItem } from '@/types/m-model';
 import { EModelMenuItem, MEModelMenuItem } from '@/types/e-model';
+import { defaultModelRelease } from '@/config';
 
 // This holds a weak reference to the updatedComposition by it's initial composition
 // This allows GC to dispose the object once it is no longer used by current components
@@ -31,26 +34,29 @@ const updatedCompositionWeakMapAtom = atom<WeakMap<OriginalComposition, Original
 
 const initialCompositionAtom = atom<Promise<OriginalComposition | null>>(async (get) => {
   const session = get(sessionAtom);
-
+  const releaseId = get(idAtom);
   if (!session) return null;
-  try {
-    const compositionPayload = await get(configPayloadAtom);
-
-    if (compositionPayload) {
-      // TODO: create a focus-/selectAtom under cell-composition state to directly contain configuration
-      const config = Object.values(compositionPayload)[0].configuration;
-      // This is a safeguard to discard and eventually overwrite configurations of older format.
-      if (config.unitCode) {
-        return {
-          version: config.version,
-          unitCode: config.unitCode,
-          hasPart: config.overrides,
-        } as unknown as OriginalComposition;
-        // TODO: add composition converter: internal representation <-> KG format, remove type casting
+  // When using the default model release, the composition data should be fetched instead of using the data of the configuration.
+  // In that way we make sure that the latest version is being used and not the stored in the config
+  if (releaseId !== defaultModelRelease.id) {
+    try {
+      const compositionPayload = await get(configPayloadAtom);
+      if (compositionPayload) {
+        // TODO: create a focus-/selectAtom under cell-composition state to directly contain configuration
+        const config = Object.values(compositionPayload)[0].configuration;
+        // This is a safeguard to discard and eventually overwrite configurations of older format.
+        if (config.unitCode) {
+          return {
+            version: config.version,
+            unitCode: config.unitCode,
+            hasPart: config.overrides,
+          } as unknown as OriginalComposition;
+          // TODO: add composition converter: internal representation <-> KG format, remove type casting
+        }
       }
+    } catch (e) {
+      return getCompositionData(session.accessToken);
     }
-  } catch (e) {
-    return getCompositionData(session.accessToken);
   }
 
   return getCompositionData(session.accessToken);

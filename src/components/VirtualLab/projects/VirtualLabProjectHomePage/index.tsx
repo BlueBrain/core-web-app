@@ -5,7 +5,6 @@ import { Spin } from 'antd';
 import { useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
 
-import BudgetPanel from '@/components/VirtualLab/VirtualLabHomePage/BudgetPanel';
 import Member from '@/components/VirtualLab/VirtualLabHomePage/Member';
 import { ProjectDetailBanner } from '@/components/VirtualLab/VirtualLabBanner';
 import WelcomeUserBanner from '@/components/VirtualLab/VirtualLabHomePage/WelcomeUserBanner';
@@ -68,7 +67,6 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
           projectId={projectId}
           virtualLabId={virtualLabId}
         />
-        <BudgetPanel total={projectDetails.budget} totalSpent={300} remaining={350} />
         <div>
           <div className="my-10 text-lg font-bold uppercase">Members</div>
           <VirtualLabUsersHorizontalList virtualLabId={virtualLabId} projectId={projectId} />
