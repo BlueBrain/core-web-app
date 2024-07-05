@@ -1,3 +1,5 @@
+import { PlotData } from '@/services/bluenaas-single-cell/types';
+
 export type SimulateStep =
   | 'stimulation'
   | 'recording'
@@ -74,3 +76,9 @@ export type SimAction =
   | { type: 'CHANGE_STIM_PARAM'; payload: { key: keyof StimulusParameter; value: number | null } }
   | { type: 'CHANGE_PARAM'; payload: { key: keyof SimConfig; value: unknown } }
   | { type: 'CHANGE_AMPLITUDES'; payload: number[] };
+
+export interface SingleNeuronSimulationPayload {
+  config: SimConfig;
+  simulationResult: PlotData;
+  stimuliPreviewData: PlotData;
+}
