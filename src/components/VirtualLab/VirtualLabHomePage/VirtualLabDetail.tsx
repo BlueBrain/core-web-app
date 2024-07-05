@@ -3,7 +3,6 @@
 import { useAtomValue } from 'jotai';
 import { LabDetailBanner } from '../VirtualLabBanner';
 import WelcomeUserBanner from './WelcomeUserBanner';
-import BudgetPanel from './BudgetPanel';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 
 export default function VirtualLabDetail({ id }: { id?: string }) {
@@ -20,12 +19,6 @@ export default function VirtualLabDetail({ id }: { id?: string }) {
           name={virtualLabDetail?.name}
         />
       </div>
-      <BudgetPanel
-        total={virtualLabDetail?.budget}
-        totalSpent={300}
-        remaining={350}
-        suspended={!virtualLabDetail}
-      />
     </>
   );
 }
