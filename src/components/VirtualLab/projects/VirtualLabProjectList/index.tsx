@@ -1,4 +1,3 @@
-import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Modal, Spin, Form } from 'antd';
 import { useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
@@ -14,6 +13,7 @@ import { Project } from '@/types/virtual-lab/projects';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import { getAtom } from '@/state/state';
+import { assertErrorMessage } from '@/util/utils';
 
 function NewProjectModalFooter({
   close,
@@ -62,35 +62,25 @@ export function NewProjectModal({
 }) {
   const [open, setOpen] = useAtom(getAtom<boolean>('new-project-modal-open'));
   const [loading, setLoading] = useState(false);
-  const session = useSession();
   const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
   const includeMembers = useAtomValue(selectedMembersAtom);
 
   const [form] = Form.useForm<{ name: string; description: string }>();
 
   const onSubmit = async () => {
-    if (!session.data) {
-      return;
+    try {
+      const { name, description } = await form.validateFields();
+      setLoading(true);
+      const res = await createProject({ name, description, includeMembers }, virtualLabId);
+      form.resetFields();
+      setOpen(false);
+      onSuccess(res.data.project);
+    } catch (e: any) {
+      if ('errorFields' in e) return; // Input errors.
+      onFail(assertErrorMessage(e)); // Request errors.
+    } finally {
+      setLoading(false);
     }
-    setLoading(true);
-
-    const { name, description } = form.getFieldsValue();
-
-    return createProject(
-      { name, description, includeMembers, token: session.data.accessToken },
-      virtualLabId
-    )
-      .then((response) => {
-        form.resetFields();
-        setOpen(false);
-        onSuccess(response.data.project);
-      })
-      .catch((error) => {
-        return onFail(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
   };
 
   return (

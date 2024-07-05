@@ -9,6 +9,7 @@ export default function NewProjectModalInputs() {
         name="name"
         label="PROJECT NAME"
         style={{ borderBottom: 'solid 1px #69C0FF', position: 'relative' }}
+        rules={[{ required: true, message: 'Please input the project name!' }]}
         required
       >
         <Input maxLength={80} name="name" placeholder="Type the project name here..." />
