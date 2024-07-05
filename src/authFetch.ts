@@ -1,4 +1,3 @@
-import { Session } from 'next-auth';
 import { isServer } from './config';
 import { getClientSession } from './hooks/session';
 
@@ -7,15 +6,11 @@ import { getClientSession } from './hooks/session';
   Works server and client side. 
 */
 export async function getSession() {
-  let session: Session | null = null;
-  if (isServer) {
-    /* eslint-disable-next-line global-require */
-    const { auth } = require('src/auth'); // Only import if running on server
-    session = await auth();
-    return session;
-  }
+  if (!isServer) return await getClientSession();
 
-  return await getClientSession();
+  /* eslint-disable-next-line global-require */
+  const { auth } = require('src/auth'); // Only import if running on server
+  return await auth();
 }
 
 /**
