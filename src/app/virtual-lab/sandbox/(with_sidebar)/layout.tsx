@@ -11,7 +11,6 @@ import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { OBPLogo } from '@/components/Entrypoint/segments/Splash';
-import CreateVirtualLabButton from '@/components/VirtualLab/CreateVirtualLabButton';
 
 export default function VirtualLabSandboxLayout({ children }: { children: ReactNode }) {
   const currentPage = usePathname().split('/').pop();
@@ -38,9 +37,6 @@ export default function VirtualLabSandboxLayout({ children }: { children: ReactN
           <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
             <VirtualLabTopMenu />
             {children}
-            <div className="fixed bottom-0 right-0 m-5 flex justify-end">
-              <CreateVirtualLabButton />
-            </div>
           </Suspense>
         </div>
       </ErrorBoundary>
