@@ -19,8 +19,6 @@ export const secNamesAtom = atomWithReset<string[]>([]);
 
 export const segNamesAtom = atom<string[]>(['soma[0]', 'axon[1]']);
 
-export const simulationResultsAtom = atom([1]);
-
 export const singleNeuronSelfUrlAtom = atom<string | null>(null);
 
 export const singleNeuronIdAtom = atom<string | null>((get) => {

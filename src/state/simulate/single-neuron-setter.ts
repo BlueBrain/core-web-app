@@ -5,7 +5,6 @@ import {
   simulateStepAtom,
   simulationConfigAtom,
   simulationPlotDataAtom,
-  simulationResultsAtom,
   simulationStatusAtom,
   singleNeuronIdAtom,
 } from './single-neuron';
@@ -20,6 +19,7 @@ import { createDistribution } from '@/util/nexus';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 import { EModel } from '@/types/e-model';
 import { MEModel } from '@/types/me-model';
+import { SingleNeuronSimulationPayload } from '@/types/simulate/single-neuron';
 
 export const createSingleNeuronSimulationAtom = atom<
   null,
@@ -28,7 +28,7 @@ export const createSingleNeuronSimulationAtom = atom<
 >(null, async (get, set, name, description) => {
   const session = get(sessionAtom);
   const simulationConfig = get(simulationConfigAtom);
-  const simulationResults = get(simulationResultsAtom);
+  const simulationResults = get(simulationPlotDataAtom);
   const singleNeuronId = get(singleNeuronIdAtom);
 
   if (!session || !simulationConfig || !simulationResults || !singleNeuronId) return null;
@@ -37,9 +37,10 @@ export const createSingleNeuronSimulationAtom = atom<
 
   if (!resource) return null;
 
-  const payload = {
+  const payload: SingleNeuronSimulationPayload = {
     config: simulationConfig,
-    results: simulationResults,
+    simulationResult: simulationResults,
+    stimuliPreviewData: [], // TODO: make an atom of preview stimuli to add here
   };
 
   const file = await createJsonFile(payload, 'single-neuron-simulation.json', session);

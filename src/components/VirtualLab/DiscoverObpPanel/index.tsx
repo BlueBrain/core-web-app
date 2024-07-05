@@ -1,7 +1,10 @@
 import { ReactNode } from 'react';
-import DiscoverLinks from './DiscoverLinks';
 import DiscoverObpItem from './DiscoverObpItem';
 import { basePath } from '@/config';
+/**
+ * Temporarily hidden for SfN, as per BBPP134-1899
+ */
+// import DiscoverLinks from './DiscoverLinks';
 
 const items: {
   image: string;
@@ -19,14 +22,18 @@ const items: {
       'Investigate literature in related to the selected regions.',
       'Explore the datasets and trigger measurements in natural language.',
     ],
-    bottomElement: (
-      <DiscoverLinks
-        topLink="/virtual-lab/tutorials/explore"
-        topText="How do I explore?"
-        bottomLink="explore"
-        bottomText="Start exploring"
-      />
-    ),
+    /**
+     * Temporarily hidden for SfN, as per BBPP134-1899
+     */
+    bottomElement: null,
+    // bottomElement: (
+    //   <DiscoverLinks
+    //     topLink="/virtual-lab/tutorials/explore"
+    //     topText="How do I explore?"
+    //     bottomLink="explore"
+    //     bottomText="Start exploring"
+    //   />
+    // ),
   },
   {
     image: `${basePath}/images/virtual-lab/obp_vl_build.png`,
@@ -36,14 +43,18 @@ const items: {
       'View and select a reconstructed or synthesized morphology and choose a detailed electrical compartmental model.',
       'Build the model and validate it following a set of standard protocols.',
     ],
-    bottomElement: (
-      <DiscoverLinks
-        topLink="/virtual-lab/tutorials/build"
-        topText="How can I build models?"
-        bottomLink="build"
-        bottomText="View models"
-      />
-    ),
+    /**
+     * Temporarily hidden for SfN, as per BBPP134-1899
+     */
+    bottomElement: null,
+    // bottomElement: (
+    //   <DiscoverLinks
+    //     topLink="/virtual-lab/tutorials/build"
+    //     topText="How can I build models?"
+    //     bottomLink="build"
+    //     bottomText="View models"
+    //   />
+    // ),
   },
   {
     image: `${basePath}/images/virtual-lab/obp_vl_simulate.png`,
@@ -54,14 +65,18 @@ const items: {
       'Define your recording location.',
       'Visualize the membrane potential at the recording location to understand the electrical behavior.',
     ],
-    bottomElement: (
-      <DiscoverLinks
-        topLink="/virtual-lab/tutorials/simulate"
-        topText="How can I launch simulations?"
-        bottomLink="simulate"
-        bottomText="View simulations"
-      />
-    ),
+    /**
+     * Temporarily hidden for SfN, as per BBPP134-1899
+     */
+    bottomElement: null,
+    // bottomElement: (
+    //   <DiscoverLinks
+    //     topLink="/virtual-lab/tutorials/simulate"
+    //     topText="How can I launch simulations?"
+    //     bottomLink="simulate"
+    //     bottomText="View simulations"
+    //   />
+    // ),
   },
 ];
 
