@@ -351,15 +351,12 @@ function useUpdateOptimistically<T extends {}, RT>(
 
 export function VirtualLabDetailSkeleton() {
   return (
-    <>
-      <div className="mt-10">
-        <BackgroundImg backgroundImage={hippocampusImg}>
-          <div className={linkClassName}>
-            <BannerWrapper label="Virtual lab Name" />
-          </div>
-        </BackgroundImg>
-      </div>
-      <div className="mt-[3px] box-content flex h-[119.5px] flex-col gap-5 bg-primary-8 p-3" />
-    </>
+    <div className="mt-10">
+      <BackgroundImg backgroundImage={hippocampusImg}>
+        <div className={linkClassName}>
+          <BannerWrapper label="Virtual lab Name" />
+        </div>
+      </BackgroundImg>
+    </div>
   );
 }
