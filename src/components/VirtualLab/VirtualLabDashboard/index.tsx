@@ -20,7 +20,7 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
   const notification = useNotification();
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
 
-  const setNewProjectModalOpen = useSetAtom(getAtom('new-project-modal-open'));
+  const setNewProjectModalOpen = useSetAtom(getAtom<boolean>('new-project-modal-open'));
   const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
   const [virtualLabId, setVirtualLabId] = useState('');
 

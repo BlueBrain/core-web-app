@@ -1,9 +1,9 @@
-import { WritableAtom, atom } from 'jotai';
-import memoize from 'lodash/memoize';
+import { WritableAtom, Atom, atom } from 'jotai';
 
-// eslint-disable-next-line
-const atoms = memoize((key: string) => atom<unknown>(null));
+const atoms: Map<string, Atom<any>> = new Map();
 
-export function getAtom<T>(key: string) {
-  return atoms(key) as WritableAtom<T | null, [T | null], void>;
+export function getAtom<T>(key: string, defaultValue: T | null = null) {
+  const theAtom = atoms.get(key) ?? atom(defaultValue);
+  atoms.set(key, theAtom);
+  return theAtom as WritableAtom<T | null, [T | null], void>;
 }
