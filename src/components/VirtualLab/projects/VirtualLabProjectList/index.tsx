@@ -11,8 +11,9 @@ import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
-import { virtualLabMembersAtomFamily, newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
+import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
+import { getAtom } from '@/state/state';
 
 function NewProjectModalFooter({
   close,
@@ -59,7 +60,7 @@ export function NewProjectModal({
   onSuccess: (newProject: Project) => void;
   virtualLabId: string;
 }) {
-  const [open, setOpen] = useAtom(newProjectModalOpenAtom);
+  const [open, setOpen] = useAtom(getAtom<boolean>('new-project-modal-open'));
   const [loading, setLoading] = useState(false);
   const session = useSession();
   const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
@@ -99,7 +100,7 @@ export function NewProjectModal({
         <NewProjectModalFooter close={() => setOpen(false)} loading={loading} onSubmit={onSubmit} />
       }
       onCancel={() => setOpen(false)}
-      open={open}
+      open={!!open}
       styles={{ mask: { backgroundColor: '#0050B3D9' } }}
     >
       <NewProjectModalForm form={form} members={members} />
@@ -137,7 +138,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
   const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
   const setVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(id));
   const notification = useNotification();
-  const [, setOpen] = useAtom(newProjectModalOpenAtom);
+  const setNewProjectModalOpen = useSetAtom(getAtom<boolean>('new-project-modal-open'));
 
   if (!virtualLabProjects) {
     return (
@@ -182,7 +183,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
       <div className="fixed bottom-5 right-7">
         <Button
           className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
-          onClick={() => setOpen(true)}
+          onClick={() => setNewProjectModalOpen(true)}
         >
           <span className="relative text-primary-8">
             Create project <PlusOutlined className="relative left-3 top-[0.1rem]" />

@@ -2,7 +2,7 @@
 
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Modal, Select, Switch } from 'antd';
-import { useAtom, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { useState } from 'react';
 
 import CreateVirtualLabButton from '../CreateVirtualLabButton';
@@ -10,21 +10,21 @@ import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import VirtualLabAndProject from './VirtualLabAndProject';
 import DashboardTotals from './DashboardTotals';
 
-import { newProjectModalOpenAtom, virtualLabIdAtom } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { Project } from '@/types/virtual-lab/projects';
 import { VirtualLab } from '@/types/virtual-lab/lab';
+import { getAtom } from '@/state/state';
 
 export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
-  const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
-  const [, setOpen] = useAtom(newProjectModalOpenAtom);
-
-  const [virtualLabId, setVirtualLabId] = useAtom(virtualLabIdAtom);
-  const refreshVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(virtualLabId));
-
-  const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
   const notification = useNotification();
+  const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
+
+  const setNewProjectModalOpen = useSetAtom(getAtom('new-project-modal-open'));
+  const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
+  const [virtualLabId, setVirtualLabId] = useState('');
+
+  const refreshVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(virtualLabId));
 
   return (
     <>
@@ -81,7 +81,7 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
               onClick={() => {
                 setIsProjectModalVisible(false);
                 setVirtualLabId(virtualLabId);
-                setOpen(true);
+                setNewProjectModalOpen(true);
               }}
               disabled={!virtualLabId}
             >
