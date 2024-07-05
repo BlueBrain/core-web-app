@@ -2,6 +2,8 @@ import { Button, ConfigProvider, Form, Input } from 'antd';
 import React, { useState, Dispatch, SetStateAction } from 'react';
 import { Step, VirtualLabWithOptionalId } from './types';
 
+import styles from './InformationForm.module.css';
+
 const { TextArea } = Input;
 
 type InformationFormProps = {
@@ -88,7 +90,7 @@ export default function InformationForm({
             rules={[
               {
                 required: true,
-                message: "Please input the virtual lab's name!",
+                message: "Please enter the virtual lab's name.",
               },
               {
                 max: 80,
@@ -96,7 +98,7 @@ export default function InformationForm({
               },
             ]}
           >
-            <Input placeholder="Enter virtual lab's name" variant="borderless" />
+            <Input placeholder="Enter virtual lab's name" className={styles.input} />
           </Form.Item>
 
           <Form.Item
@@ -110,7 +112,7 @@ export default function InformationForm({
               },
             ]}
           >
-            <TextArea placeholder="Enter description" rows={4} variant="borderless" />
+            <TextArea placeholder="Enter description" rows={4} className={styles.input} />
           </Form.Item>
 
           <Form.Item
@@ -119,7 +121,7 @@ export default function InformationForm({
             rules={[
               {
                 required: true,
-                message: "Please input the administrator's email!",
+                message: "Please enter the administrator's email address.",
               },
               {
                 type: 'email',
@@ -127,7 +129,7 @@ export default function InformationForm({
               },
             ]}
           >
-            <Input placeholder="Enter administrator's email" variant="borderless" />
+            <Input placeholder="Enter administrator's email" className={styles.input} />
           </Form.Item>
 
           <Form.Item
@@ -136,11 +138,11 @@ export default function InformationForm({
             rules={[
               {
                 required: true,
-                message: 'Please input an entity name',
+                message: 'Please enter an entity name.',
               },
             ]}
           >
-            <Input placeholder="Enter entity name" variant="borderless" />
+            <Input placeholder="Enter entity name" className={styles.input} />
           </Form.Item>
         </div>
         <div className="flex flex-row justify-end gap-2">

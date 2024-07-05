@@ -1,0 +1,8 @@
+.input,
+.input:focus {
+  background: none;
+  border: none;
+  border-bottom: 1px solid #003a8c77;
+  border-radius: 0;
+  padding-left: 0;
+}
