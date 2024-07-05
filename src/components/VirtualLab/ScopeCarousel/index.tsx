@@ -226,7 +226,11 @@ export default function ScopeCarousel() {
       <div className="relative">
         <Carousel
           arrows
-          className={classNames('-mx-3', hoverStyles.customSlickSlider)}
+          className={classNames(
+            '-mx-3',
+            hoverStyles.customSlickSlider,
+            hoverStyles.consistentImageSize
+          )}
           dots={false}
           infinite={false}
           ref={carouselRef}
