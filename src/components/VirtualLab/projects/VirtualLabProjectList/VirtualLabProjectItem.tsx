@@ -96,9 +96,11 @@ export default function VirtualLabProjectItem({ project }: { project: Project })
     >
       <div className="flex items-start justify-between">
         <h3 className="text-4xl font-bold">{project.name}</h3>
-        <div className="flex gap-2">
-          <span className="text-primary-3">Latest update</span>
-          <span className="font-bold">{formatDate(project.updated_at)}</span>
+        <div className="flex flex-wrap gap-2">
+          <span className="text-nowrap text-primary-3">Latest update</span>
+          <span className="text-nowrap font-bold">
+            {formatDate(project.updated_at, 'dd/MM/yyyy')}
+          </span>
         </div>
       </div>
       <p>{project.description}</p>
