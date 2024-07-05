@@ -21,7 +21,7 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
 
   const setNewProjectModalOpen = useSetAtom(getAtom<boolean>('new-project-modal-open'));
-  const [isProjectModalVisible, setIsProjectModalVisible] = useState(false);
+  const [projectLocationModalOpen, setProjectLocationModalOpen] = useState(false);
   const [virtualLabId, setVirtualLabId] = useState('');
 
   const refreshVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(virtualLabId));
@@ -56,7 +56,7 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
           <div className="fixed bottom-5 right-5">
             <Button
               className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
-              onClick={() => setIsProjectModalVisible(true)}
+              onClick={() => setProjectLocationModalOpen(true)}
             >
               <span className="relative text-primary-8">
                 Create project <PlusOutlined className="relative left-3 top-[0.1rem]" />
@@ -69,17 +69,17 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
 
       <Modal
         title={null}
-        open={isProjectModalVisible}
+        open={projectLocationModalOpen}
         footer={
           <div>
-            <Button key="back" onClick={() => setIsProjectModalVisible(false)}>
+            <Button key="back" onClick={() => setProjectLocationModalOpen(false)}>
               Cancel
             </Button>
             <Button
               key="submit"
               type="primary"
               onClick={() => {
-                setIsProjectModalVisible(false);
+                setProjectLocationModalOpen(false);
                 setVirtualLabId(virtualLabId);
                 setNewProjectModalOpen(true);
               }}
@@ -90,7 +90,7 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
           </div>
         }
         width={500}
-        onCancel={() => setIsProjectModalVisible(false)}
+        onCancel={() => setProjectLocationModalOpen(false)}
       >
         <span className="my-3 block font-bold text-primary-8">
           Please select a Virtual lab for this project
