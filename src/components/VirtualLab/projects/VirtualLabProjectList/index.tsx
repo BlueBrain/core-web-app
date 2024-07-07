@@ -12,8 +12,8 @@ import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
-import { getAtom } from '@/state/state';
-import { assertErrorMessage } from '@/util/utils';
+import { getAtom, initAtom, useAssertAtomValue } from '@/state/state';
+import { assertErrorMessage, classNames } from '@/util/utils';
 
 function NewProjectModalFooter({
   close,
@@ -24,6 +24,8 @@ function NewProjectModalFooter({
   loading: boolean;
   onSubmit: () => void;
 }) {
+  const submitDisabled = useAssertAtomValue<boolean>('new-project-submit-disabled');
+
   return loading ? (
     <Spin />
   ) : (
@@ -42,7 +44,11 @@ function NewProjectModalFooter({
           title="Save Changes"
           htmlType="submit"
           onClick={onSubmit}
-          className="h-14 w-40 rounded-none bg-primary-8 font-semibold hover:bg-primary-7"
+          className={classNames(
+            'ml-3 h-14 w-40 rounded-none bg-primary-8 font-semibold',
+            submitDisabled ? 'hover:bg-gray-100' : 'hover:bg-primary-7'
+          )}
+          disabled={!!submitDisabled}
         >
           Save
         </Button>
@@ -64,6 +70,8 @@ export function NewProjectModal({
   const [loading, setLoading] = useState(false);
   const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
   const includeMembers = useAtomValue(selectedMembersAtom);
+
+  initAtom('new-project-submit-disabled', true);
 
   const [form] = Form.useForm<{ name: string; description: string }>();
 

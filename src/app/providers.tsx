@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { ConfigProvider } from 'antd';
 import { SessionProvider } from 'next-auth/react';
-import { Provider as JotaiProvider } from 'jotai';
+import { Provider as JotaiProvider, createStore } from 'jotai';
 import { DevTools } from 'jotai-devtools';
 
 import { basePath } from '@/config';
@@ -17,10 +17,12 @@ type ProvidersProps = {
   session: SessionOrNull;
 };
 
+const store = createStore();
+
 export default function Providers({ children, session }: ProvidersProps) {
   return (
     <ConfigProvider theme={commonAntdTheme}>
-      <JotaiProvider>
+      <JotaiProvider store={store}>
         {process.env.NEXT_PUBLIC_JOTAI_DEVTOOLS_ENABLED && (
           <DevTools {...{ isInitialOpen: false }} />
         )}

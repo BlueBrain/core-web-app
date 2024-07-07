@@ -1,7 +1,12 @@
 import { Form, Input } from 'antd';
+import { useSetAtom } from 'jotai';
+import { useAssertAtomInitialized } from '@/state/state';
 import styles from './new-project-modal-inputs.module.scss';
 
 export default function NewProjectModalInputs() {
+  const atom = useAssertAtomInitialized<boolean>('new-project-submit-disabled');
+  const setSubmitButtonDisabled = useSetAtom(atom);
+
   return (
     <>
       <Form.Item
@@ -12,7 +17,12 @@ export default function NewProjectModalInputs() {
         rules={[{ required: true, message: 'Please input the project name!' }]}
         required
       >
-        <Input maxLength={80} name="name" placeholder="Type the project name here..." />
+        <Input
+          maxLength={80}
+          name="name"
+          placeholder="Type the project name here..."
+          onInput={(e) => setSubmitButtonDisabled(!e.currentTarget.value)}
+        />
       </Form.Item>
 
       <Form.Item
