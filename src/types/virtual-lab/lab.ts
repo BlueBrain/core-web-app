@@ -1,5 +1,6 @@
 import { VlmResponse } from './common';
 import { VirtualLabMember } from './members';
+import { DataType } from '@/constants/explore-section/list-views';
 import { DateISOString } from '@/types/nexus';
 
 export type VirtualLab = {
@@ -43,6 +44,19 @@ export enum SimulationType {
   BrainSystems = 'brain-systems',
   WholeBrain = 'whole-brain',
 }
+
+// maps each simulation scope to a data type
+export const SimulationScopeToDataType = {
+  [SimulationType.SingleNeuron]: DataType.SingleNeuronSimulation,
+  [SimulationType.IonChannel]: null,
+  [SimulationType.PairedNeuron]: null,
+  [SimulationType.Synaptome]: null,
+  [SimulationType.Microcircuit]: null,
+  [SimulationType.NeuroGliaVasculature]: null,
+  [SimulationType.BrainRegions]: null,
+  [SimulationType.BrainSystems]: null,
+  [SimulationType.WholeBrain]: null,
+};
 
 export interface VirtualLabPlanDefinition {
   id: number;
