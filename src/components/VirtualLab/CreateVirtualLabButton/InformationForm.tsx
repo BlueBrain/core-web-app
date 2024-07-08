@@ -125,7 +125,7 @@ export default function InformationForm({
               },
               {
                 type: 'email',
-                message: 'The input is not valid E-mail!',
+                message: 'Please check and enter a valid email address.',
               },
             ]}
           >
