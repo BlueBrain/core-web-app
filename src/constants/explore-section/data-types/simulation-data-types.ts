@@ -10,4 +10,20 @@ export const SIMULATION_DATA_TYPES: { [key: string]: DataTypeConfig } = {
     columns: [Field.SimulationCampaignName, Field.BrainConfiguration, Field.CreatedAt],
     curated: false,
   },
+  [DataType.SingleNeuronSimulation]: {
+    title: 'Single Neuron simulation',
+    group: DataTypeGroup.SimulationData,
+    name: 'single-neuron-simulation',
+    columns: [
+      Field.Name,
+      Field.SingleNeuronSimulationUsedModelName,
+      Field.SingleNeuronSimulationStimulus,
+      Field.SingleNeuronSimulationResponse,
+      Field.SingleNeuronSimulationInjectionLocation,
+      Field.SingleNeuronSimulationRecordingLocation,
+      Field.BrainRegion,
+      Field.CreatedAt,
+    ],
+    curated: false,
+  },
 };

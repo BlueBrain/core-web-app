@@ -1,3 +1,4 @@
+import { SINGLE_NEURON_FIELDS_CONFIG } from './single-neuron-simulation';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
 import { EXPERIMENTAL_DATA_FIELDS_CONFIG } from '@/constants/explore-section/fields-config/experimental-data';
 import { LITERATURE_FIELDS_CONFIG } from '@/constants/explore-section/fields-config/literature';
@@ -13,6 +14,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps<any | DeltaResource> = {
   ...EXPERIMENTAL_DATA_FIELDS_CONFIG,
   ...LITERATURE_FIELDS_CONFIG,
   ...SIMULATION_CAMPAIGN_FIELDS_CONFIG,
+  ...SINGLE_NEURON_FIELDS_CONFIG,
   ...MODEL_DATA_FIELDS_CONFIG,
 };
 

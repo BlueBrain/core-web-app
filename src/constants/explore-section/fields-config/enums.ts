@@ -67,4 +67,9 @@ export enum Field {
   EModelResponse = 'eModelResponse',
   MEModelResponse = 'meModelResponse',
   MEModelMorphologyPreview = 'meModelMorphologyPreview',
+  SingleNeuronSimulationUsedModelName = 'singleNeuronSimulationUsedModelName',
+  SingleNeuronSimulationStimulus = 'singleNeuronSimulationStimulus',
+  SingleNeuronSimulationResponse = 'singleNeuronSimulationResponse',
+  SingleNeuronSimulationInjectionLocation = 'singleNeuronSimulationInjectionLocation',
+  SingleNeuronSimulationRecordingLocation = 'singleNeuronSimulationRecordingLocation',
 }

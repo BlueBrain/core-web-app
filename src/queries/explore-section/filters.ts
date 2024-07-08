@@ -132,6 +132,7 @@ export default function buildFilters(
   }
 
   filtersQuery.must(esb.termQuery('deprecated', false));
+
   if (descendantIds && descendantIds.length > 0) {
     filtersQuery.must(esb.termsQuery('brainRegion.@id.keyword', descendantIds));
   }
