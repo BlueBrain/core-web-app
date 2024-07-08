@@ -21,7 +21,7 @@ export default function VirtualLabProjectInteractiveExploreLayout({
   const setConfigId = useSetAtom(brainModelConfigIdAtom);
   useSetBrainRegionFromQuery();
 
-  // set Release 23.01 as the configuration of explore interactive
+  // set Release as the configuration of explore interactive
   useEffect(() => setConfigId(defaultModelRelease.id), [setConfigId]);
 
   const labUrl = generateLabUrl(params.virtualLabId);

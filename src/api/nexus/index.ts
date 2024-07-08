@@ -319,7 +319,7 @@ async function getPayloadByConfig<
   const useRelease = configVersion === undefined;
 
   if (useRelease) {
-    // get payload from fully backend supported Release (Release 23.01)
+    // get payload from fully backend supported Release
     const defaultReleaseUrl = composeUrl('resource', defaultModelRelease.id, {
       org: nexus.org,
       project: nexus.project,

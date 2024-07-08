@@ -17,7 +17,7 @@ export default function ExploreInteractiveLayout({ children }: { children: React
   useSetBrainRegionFromQuery();
   const setSection = useSetAtom(sectionAtom);
 
-  // set Release 23.01 as the configuration of explore interactive
+  // set Release as the configuration of explore interactive
   useEffect(() => {
     setConfigId(defaultModelRelease.id);
     setSection('explore');
