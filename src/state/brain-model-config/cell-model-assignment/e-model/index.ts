@@ -50,6 +50,7 @@ import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions
 import { DEFAULT_BRAIN_REGION_STORAGE_KEY } from '@/constants/brain-hierarchy';
 import { getInitializationValue } from '@/util/utils';
 import { DefaultBrainRegionType } from '@/state/brain-regions/types';
+import { ensureArray } from '@/util/nexus';
 
 const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
   DEFAULT_BRAIN_REGION_STORAGE_KEY
@@ -347,7 +348,7 @@ const eModelExtractionTargetsConfigurationIdAtom = atom<Promise<string | null>>(
 
   if (!eModelWorkflow) return null;
 
-  const extractionTargetsConfiguration = eModelWorkflow.hasPart.find(
+  const extractionTargetsConfiguration = ensureArray(eModelWorkflow.hasPart).find(
     (part) => part['@type'] === 'ExtractionTargetsConfiguration'
   );
 
