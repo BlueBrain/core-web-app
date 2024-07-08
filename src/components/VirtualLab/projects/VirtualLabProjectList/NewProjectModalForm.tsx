@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Form, Input, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form/Form';
 import { useState, useEffect, useReducer } from 'react';
@@ -17,6 +18,7 @@ export default function NewProjectModalForm({
   form: FormInstance;
   members?: VirtualLabMember[];
 }) {
+  const session = useSession();
   const [showInvitation, setShowInvitation] = useState(false);
   const [newInvite, setNewInvite] = useState<InvitedMember>({ email: '', role: 'admin' });
   const [invitedMembers, dispatch] = useReducer(
@@ -85,6 +87,7 @@ export default function NewProjectModalForm({
                 const m = members.find((m_) => m_.id === v);
                 if (m) setSelectedMembers([...selectedMembers, { ...member, role: v }]);
               }}
+              disabled={member.email === session.data?.user?.email}
               className="float-right inline-block"
             >
               <Option value="admin">Admin</Option>
