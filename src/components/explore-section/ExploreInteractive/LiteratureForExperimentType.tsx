@@ -7,6 +7,7 @@ import { WarningFilled } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import find from 'lodash/find';
 import isNil from 'lodash/isNil';
+import { usePathname } from 'next/navigation';
 
 import { ML_MAX_ARTICLES_PER_PAGE } from '../Literature/api';
 import StatItem, { StatError, StatItemSkeleton } from './StatItem';
@@ -19,7 +20,7 @@ export default function LiteratureForExperimentType() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegions = useAtomValue(useMemo(() => unwrap(brainRegionsAtom), []));
   const brainRegion = find(brainRegions, ['id', selectedBrainRegion?.id]);
-
+  const pathName = usePathname();
   const totalByExperimentAndBrainRegionAtom = useMemo(() => {
     // When the brain regions change, cancel the request for previous brain regions
     if (previousFetchController.current) {
@@ -66,7 +67,7 @@ export default function LiteratureForExperimentType() {
 
             return (
               <StatItem
-                href={`/explore/interactive/literature/${config.name}`}
+                href={`${pathName}/literature/${config.name}`}
                 key={config.title}
                 testId={`literature-articles-${id}`}
                 title={config.title}

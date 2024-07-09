@@ -33,7 +33,11 @@ const ARTICLE_LISTING_ERRORS_MAP: { [key: string]: string } = {
 
 export const ARTICLES_PER_PAGE = 50;
 
-export function ArticleListing() {
+type ArticleListingProps = {
+  basePath: string;
+};
+
+export function ArticleListing({ basePath }: ArticleListingProps) {
   const params = useParams<{ 'experiment-data-type': string }>();
   const [articles, setArticles] = useState<ArticleItem[]>([]);
   const [skeletonItems, setSkeletonItems] = useState(0);
@@ -195,7 +199,7 @@ export function ArticleListing() {
         className="article-list-scrollbar mx-auto h-[calc(100vh-3.5rem)] max-w-7xl flex-1 overflow-y-auto"
         ref={refListingContainer}
       >
-        <Header {...{ loading }} />
+        <Header {...{ loading }} basePath={basePath} />
         <If id="error" condition={Boolean(error && experiment && articles.length === 0)}>
           <div
             className="mx-auto self-center whitespace-pre-line border border-gray-400 p-7"

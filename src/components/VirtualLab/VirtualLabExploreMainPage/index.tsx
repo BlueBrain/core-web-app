@@ -31,7 +31,7 @@ export default function VirtualLabExploreMainPage() {
             Start exploring
           </Link>
           <Link
-            href="explore/literature"
+            href="explore/interactive/literature/morphology"
             className="relative w-full flex-1 border border-white px-7 py-2 text-center text-base text-white hover:bg-white hover:font-bold hover:text-primary-8 lg:text-lg xl:py-4 2xl:text-2xl"
           >
             Literature discovery

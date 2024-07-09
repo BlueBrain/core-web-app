@@ -23,7 +23,13 @@ import {
   ExperimentTypeNames,
 } from '@/constants/explore-section/data-types/experiment-data-types';
 
-function ExperimentLiteratureHeader({ loading }: { loading?: boolean }) {
+function ExperimentLiteratureHeader({
+  loading,
+  basePath,
+}: {
+  basePath: string;
+  loading?: boolean;
+}) {
   const router = useRouter();
   const [brainRegion] = useQueryState('brainRegion');
   const params = useParams<{ 'experiment-data-type': ExperimentTypeNames }>();
@@ -41,9 +47,7 @@ function ExperimentLiteratureHeader({ loading }: { loading?: boolean }) {
   const total = getActiveFiltersCount(filters, initialFilters);
   const onSelectType: MenuProps['onClick'] = ({ key }) => {
     if (brainRegion) {
-      router.push(
-        `/explore/interactive/literature/${key}?brainRegion=${encodeURIComponent(brainRegion)}`
-      );
+      router.push(`${basePath}/${key}?brainRegion=${encodeURIComponent(brainRegion)}`);
     }
   };
 
