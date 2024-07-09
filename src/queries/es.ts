@@ -554,3 +554,22 @@ export const getPaperCountQuery = () => ({
     },
   },
 });
+
+export const getSimulationsPerMEModelQuery = (modelId: string) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'SingleNeuronSimulation' } },
+              { term: { 'used.@id.keyword': modelId } },
+            ],
+          },
+        },
+      ],
+    },
+  },
+});
