@@ -5,7 +5,7 @@ import {
   selectedMModelIdAtom,
   selectedEModelAtom,
   selectedMModelAtom,
-  selectedMEModelIdAtom,
+  meModelSelfUrlAtom,
   meModelResourceAtom,
 } from './me-model';
 import sessionAtom from '@/state/session';
@@ -44,7 +44,7 @@ export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>
     };
 
     const meModelResource = await createResource<MEModelResource>(entity, session);
-    set(selectedMEModelIdAtom, meModelResource['@id']);
+    set(meModelSelfUrlAtom, meModelResource._self);
     return meModelResource;
   }
 );
@@ -84,6 +84,6 @@ export const initializeSummaryAtom = atom<null, [string], void>(
 
     set(selectedEModelIdAtom, usedEModel['@id']);
     set(selectedMModelIdAtom, usedMModel['@id']);
-    set(selectedMEModelIdAtom, meModel['@id']);
+    set(meModelSelfUrlAtom, meModel._self);
   }
 );

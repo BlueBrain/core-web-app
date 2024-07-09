@@ -140,3 +140,10 @@ export function getUUIDFromId(id: string | null) {
 
   return id.split('/').at(-1) as string;
 }
+
+export function getIdFromSelfUrl(selfUrl: string | null) {
+  if (!selfUrl) return null;
+  const encodedId = selfUrl.split('/').at(-1);
+  const decodedId = decodeURIComponent(encodedId || '');
+  return decodedId;
+}

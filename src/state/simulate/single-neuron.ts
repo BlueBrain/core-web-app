@@ -7,6 +7,7 @@ import { SimAction, SimConfig, SimulateStep } from '@/types/simulate/single-neur
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
+import { getIdFromSelfUrl } from '@/util/nexus';
 
 export const simulateStepAtom = atom<SimulateStep>('stimulation');
 
@@ -23,10 +24,7 @@ export const singleNeuronSelfUrlAtom = atom<string | null>(null);
 
 export const singleNeuronIdAtom = atom<string | null>((get) => {
   const singleNeuronSelfUrl = get(singleNeuronSelfUrlAtom);
-  const encodedId = singleNeuronSelfUrl?.split('/').at(-1);
-  const decodedId = decodeURIComponent(encodedId || '');
-
-  return decodedId || null;
+  return getIdFromSelfUrl(singleNeuronSelfUrl);
 });
 
 export const simulationStatusAtom = atomWithReset({

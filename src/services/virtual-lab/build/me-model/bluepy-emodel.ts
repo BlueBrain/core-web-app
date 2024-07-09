@@ -12,10 +12,10 @@ export default class BluePyEModelCls {
 
   private ws: Ws;
 
-  constructor(modelId: string, token: string, config: BluePyEModelConfig = {}) {
+  constructor(modelSelfUrl: string, token: string, config: BluePyEModelConfig = {}) {
     this.config = config;
     this.ws = new Ws(meModelAnalysisSvc.wsUrl, token, this.onMessage);
-    this.ws.send(BluePyEModelCmd.SET_MODEL, { model_id: modelId });
+    this.ws.send(BluePyEModelCmd.SET_MODEL, { model_self_url: modelSelfUrl });
   }
 
   runAnalysis() {

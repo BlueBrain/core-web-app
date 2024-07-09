@@ -2,24 +2,24 @@ import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 
 import BluePyEModelCls from '@/services/virtual-lab/build/me-model/bluepy-emodel';
-import { selectedMEModelIdAtom } from '@/state/virtual-lab/build/me-model';
+import { meModelSelfUrlAtom } from '@/state/virtual-lab/build/me-model';
 import { useSessionAtomValue } from '@/hooks/hooks';
 
 export default function BluePyEModelContainer() {
   const bluePyEModelInstance = useRef<BluePyEModelCls | null>(null);
-  const selectedMEModelId = useAtomValue(selectedMEModelIdAtom);
+  const meModelSelfUrl = useAtomValue(meModelSelfUrlAtom);
   const session = useSessionAtomValue();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (bluePyEModelInstance.current || !selectedMEModelId || !session?.accessToken) return;
+    if (bluePyEModelInstance.current || !meModelSelfUrl || !session?.accessToken) return;
 
     const onInit = () => {
       bluePyEModelInstance.current?.runAnalysis();
       setIsLoading(false);
     };
 
-    bluePyEModelInstance.current = new BluePyEModelCls(selectedMEModelId, session.accessToken, {
+    bluePyEModelInstance.current = new BluePyEModelCls(meModelSelfUrl, session.accessToken, {
       onInit,
     });
 
@@ -30,7 +30,7 @@ export default function BluePyEModelContainer() {
       bluePyEModelInstance.current.destroy();
       bluePyEModelInstance.current = null;
     };
-  }, [selectedMEModelId, session]);
+  }, [meModelSelfUrl, session]);
 
   return (
     <div className="my-5 text-center text-2xl font-bold">
