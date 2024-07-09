@@ -1,6 +1,6 @@
 'use client';
 
-import { PropsWithChildren } from 'react';
+import { HTMLAttributeAnchorTarget, PropsWithChildren } from 'react';
 import NextLink from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -11,6 +11,7 @@ type LinkProps = {
   preserveLocationSearchParams?: boolean;
   preservedSearchParamKeys?: string[];
   prefetch?: boolean;
+  target?: HTMLAttributeAnchorTarget;
 };
 
 /**
@@ -24,6 +25,7 @@ export default function Link({
   preserveLocationSearchParams = false,
   preservedSearchParamKeys,
   prefetch = true,
+  target = '_self',
 }: PropsWithChildren<LinkProps>) {
   const locationSearchParams = useSearchParams();
 
@@ -54,6 +56,7 @@ export default function Link({
       href={hrefWLocationSearchParams}
       style={style}
       prefetch={prefetch}
+      target={target}
     >
       {children}
     </NextLink>

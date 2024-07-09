@@ -11,6 +11,7 @@ import { mTypeSelectorFn } from '@/util/explore-section/selector-functions';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 import { detailUrlWithinLab } from '@/util/common';
 import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
+import Link from '@/components/Link';
 
 const subtitleStyle = 'uppercase font-thin text-slate-600';
 
@@ -43,9 +44,9 @@ export default function MorphologyCard() {
     <div className="w-full border p-10">
       <div className="flex justify-between">
         <div className={classNames('text-2xl', subtitleStyle)}>M-Model</div>
-        <a href={generateDetailUrl()} target="_blank" className="font-bold text-primary-8">
+        <Link href={generateDetailUrl()} target="_blank" className="font-bold text-primary-8">
           More details
-        </a>
+        </Link>
       </div>
 
       <div className="mt-2 flex gap-10">
