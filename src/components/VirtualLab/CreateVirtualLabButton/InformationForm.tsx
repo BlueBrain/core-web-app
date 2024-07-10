@@ -94,7 +94,7 @@ export default function InformationForm({
               },
               {
                 max: 80,
-                message: "Virtual lab's name cannot exceed 80 characters!",
+                message: 'Virtual lab name cannot exceed 80 characters!',
               },
             ]}
           >
@@ -108,7 +108,7 @@ export default function InformationForm({
             rules={[
               {
                 max: 600,
-                message: "Virtual lab's name cannot exceed 600 characters!",
+                message: 'Virtual lab description cannot exceed 600 characters!',
               },
             ]}
           >
