@@ -46,14 +46,22 @@ export default class WsCommon<WSResponses> {
     this.init(token);
   }
 
+  public get isServiceUp(){
+    return this.serviceUp
+  }
+
   send(message: Message, data?: Data, cmdId?: CmdId) {
+    console.log('@@send/message', message, this.serviceUp)
     if (this.closing) {
+      console.log('@@closing websocket')
       throw new Error('Can not use a closing websocket');
     }
     // as we need to wait for the service to be up, we queue the messages
     if (!this.serviceUp) {
+      console.log('@@closing !this.serviceUp')
       this.messageQueue.push([message, data, cmdId]);
     } else {
+      console.log('@@sending another socket')
       this._send(message, data, cmdId);
     }
   }
@@ -62,7 +70,13 @@ export default class WsCommon<WSResponses> {
     if (this.socket.readyState !== ReadyState.OPEN || !this.serviceUp) {
       throw new Error('Websocket is not open');
     }
-
+    console.log('@@__send', JSON.stringify({
+      cmd: message,
+      cmdid: cmdId,
+      context: this.messageContext,
+      data,
+      timestamp: Date.now(),
+    }, null, 2))
     this.socket.send(
       JSON.stringify({
         cmd: message,
@@ -90,19 +104,20 @@ export default class WsCommon<WSResponses> {
   }
 
   destroy() {
-    if (this.closing) {
-      throw new Error('Websocket is already being destroyed');
-    }
+    // if (this.closing) {
+    //   throw new Error('Websocket is already being destroyed');
+    // }
 
-    this.closing = true;
+    // this.closing = true;
 
-    this.requestResolvers = new Map();
-    this.messageQueue = [];
+    // this.requestResolvers = new Map();
+    // this.messageQueue = [];
 
-    this.socket.close();
+    // this.socket.close();
   }
 
   sendCheckUpMsg() {
+    console.log('@@ws-open')
     if (this.socket.readyState !== ReadyState.OPEN) return;
     if (this.serviceUp) return;
 
@@ -111,15 +126,19 @@ export default class WsCommon<WSResponses> {
 
   private init = (token: string) => {
     if (this.closing) return;
-
+    console.log('@@token', token)
     const socket = new WebSocket(this.webSocketUrl, `Bearer-${token}`);
+    console.log('@@socket', socket)
     this.socket = socket;
 
     // send message to check until the service is up
     socket.addEventListener('open', () => this.sendCheckUpMsg());
     socket.addEventListener('close', this.reconnect);
-
+    socket.addEventListener('error', (ev) => {
+      console.log('@@error', ev)
+    })
     socket.addEventListener('message', (e) => {
+      console.log('@@ws-message', e)
       const message = JSON.parse(e.data);
 
       // coming as status messages from single-cell api gateway
@@ -129,10 +148,13 @@ export default class WsCommon<WSResponses> {
           setTimeout(() => this.sendCheckUpMsg(), POLLING_INTERVAL);
           return;
         case APIGatewayResponse.PROCESSING:
+          console.log('@@processing ...')
           if (!this.serviceUp) {
+            console.log('@@processing/setting_service_up')
             // process all messages sent while the service was warming up
             this.serviceUp = true;
             this.processQueue();
+            console.log('@@processing/is_service_up', this.serviceUp)
           }
           return;
         default:
