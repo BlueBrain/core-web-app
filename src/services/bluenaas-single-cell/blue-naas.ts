@@ -159,6 +159,7 @@ export default class BlueNaas {
   }
 
   private onMessage = (cmd: WSResponses, data: any) => {
+    console.log('@@onMessage', cmd, data)
     switch (cmd) {
       case 'set_model_done':
         this.ws.send(BlueNaasCmd.GET_UI_DATA, {});

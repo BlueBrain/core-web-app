@@ -111,7 +111,6 @@ export default class WsCommon<WSResponses> {
 
   private init = (token: string) => {
     if (this.closing) return;
-
     const socket = new WebSocket(this.webSocketUrl, `Bearer-${token}`);
     this.socket = socket;
 
@@ -121,6 +120,8 @@ export default class WsCommon<WSResponses> {
 
     socket.addEventListener('message', (e) => {
       const message = JSON.parse(e.data);
+      const jsonMessage = JSON.parse(message)
+      console.log('@@ws-message/jsonMessage', jsonMessage)
 
       // coming as status messages from single-cell api gateway
       const apiGatewayMsg = message?.message;
@@ -140,6 +141,7 @@ export default class WsCommon<WSResponses> {
       }
 
       const cmdId = message.data?.cmdid;
+
       if (cmdId) {
         const requestResolver = this.requestResolvers.get(cmdId);
         requestResolver?.(message.data);
@@ -147,7 +149,8 @@ export default class WsCommon<WSResponses> {
         return;
       }
 
-      setTimeout(() => this.onMessage(message.cmd, message.data), 0);
+
+      setTimeout(() => this.onMessage(jsonMessage.cmd, jsonMessage.data), 0);
     });
   };
 
