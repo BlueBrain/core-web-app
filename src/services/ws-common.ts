@@ -1,3 +1,5 @@
+import { isJSON } from "@/util/utils";
+
 const ReadyState = {
   CONNECTING: 0,
   OPEN: 1,
@@ -120,8 +122,6 @@ export default class WsCommon<WSResponses> {
 
     socket.addEventListener('message', (e) => {
       const message = JSON.parse(e.data);
-      const jsonMessage = JSON.parse(message)
-      console.log('@@ws-message/jsonMessage', jsonMessage)
 
       // coming as status messages from single-cell api gateway
       const apiGatewayMsg = message?.message;
@@ -149,8 +149,11 @@ export default class WsCommon<WSResponses> {
         return;
       }
 
-
-      setTimeout(() => this.onMessage(jsonMessage.cmd, jsonMessage.data), 0);
+      const jsonMessage = isJSON(message) ? JSON.parse(message) : null
+      console.log('@@ws-message/jsonMessage', jsonMessage)
+      if(jsonMessage){
+        setTimeout(() => this.onMessage(jsonMessage.cmd, jsonMessage.data), 0);
+      }
     });
   };
 
