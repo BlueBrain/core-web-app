@@ -251,9 +251,10 @@ const eModelConfigurationIdAtom = atom<Promise<string | null>>(async (get) => {
 
   if (!eModelWorkflow) return null;
 
-  const modelConfiguration = eModelWorkflow.hasPart.find(
+  const modelConfiguration = ensureArray(eModelWorkflow.hasPart).find(
     (part) => part['@type'] === 'EModelConfiguration'
   );
+
   if (!modelConfiguration) throw new Error('No EModelConfiguration found on EModelWorkflow');
 
   return modelConfiguration['@id'];
