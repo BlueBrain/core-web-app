@@ -6,7 +6,6 @@ import WithExploreExperiment from '@/components/explore-section/WithExploreExper
 export default function NeuronDensityListingPage() {
   return (
     <WithExploreExperiment
-      enableDownload
       dataType={DataType.ExperimentalNeuronDensity}
       brainRegionSource="selected"
     />

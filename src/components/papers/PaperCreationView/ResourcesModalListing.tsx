@@ -5,7 +5,7 @@ import { SourceDataActiveTab, SourceDataCategory } from './data';
 import { DataType } from '@/constants/explore-section/list-views';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { Btn } from '@/components/Btn';
-import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/useRowSelection';
 
 type HeaderProps = {
   title?: string;
@@ -46,7 +46,6 @@ function Body({ type, category, onRowClick }: BodyProps) {
   return (
     <div className="h-full" id="explore-table-container-for-observable">
       <ExploreSectionListingView
-        enableDownload
         dataType={type as DataType}
         brainRegionSource="root"
         selectionType="checkbox"

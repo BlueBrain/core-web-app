@@ -6,7 +6,6 @@ import WithExploreExperiment from '@/components/explore-section/WithExploreExper
 export default function MorphologyListingPage() {
   return (
     <WithExploreExperiment
-      enableDownload
       dataType={DataType.ExperimentalNeuronMorphology}
       brainRegionSource="selected"
     />

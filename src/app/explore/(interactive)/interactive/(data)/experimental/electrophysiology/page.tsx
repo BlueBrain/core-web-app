@@ -6,7 +6,6 @@ import WithExploreExperiment from '@/components/explore-section/WithExploreExper
 export default function EphysPage() {
   return (
     <WithExploreExperiment
-      enableDownload
       dataType={DataType.ExperimentalElectroPhysiology}
       brainRegionSource="selected"
     />

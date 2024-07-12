@@ -13,7 +13,7 @@ import {
   SourceDataItem,
 } from '../data';
 import SourceDataListing from './Listing';
-import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/useRowSelection';
 import MenuTabs from '@/components/MenuTabs';
 import { classNames } from '@/util/utils';
 

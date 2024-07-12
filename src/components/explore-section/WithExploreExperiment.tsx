@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { RenderButtonProps } from './ExploreSectionListingView/WithRowSelection';
+import { RenderButtonProps } from './ExploreSectionListingView/useRowSelection';
 import { OnCellClick } from './ExploreSectionListingView/ExploreSectionTable';
 import { detailUrlBuilder } from '@/util/common';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
@@ -9,12 +9,10 @@ import { ExploreDataBrainRegionSource } from '@/types/explore-section/applicatio
 import { DataType } from '@/constants/explore-section/list-views';
 
 export default function WithExploreExperiment({
-  enableDownload,
   dataType,
   brainRegionSource,
   renderButton,
 }: {
-  enableDownload?: boolean;
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
@@ -27,7 +25,6 @@ export default function WithExploreExperiment({
   return (
     <ExploreSectionListingView
       {...{
-        enableDownload,
         dataType,
         brainRegionSource,
         onCellClick,

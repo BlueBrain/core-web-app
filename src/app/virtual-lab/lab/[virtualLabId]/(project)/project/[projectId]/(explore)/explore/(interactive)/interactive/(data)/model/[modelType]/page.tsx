@@ -23,19 +23,11 @@ export default function VirtualLabModelListingView() {
   switch (currentModel as DataType) {
     case 'CircuitEModel':
       return (
-        <ExploreEModelTable
-          enableDownload
-          dataType={currentModel as DataType}
-          brainRegionSource="selected"
-        />
+        <ExploreEModelTable dataType={currentModel as DataType} brainRegionSource="selected" />
       );
     case 'CircuitMEModel':
       return (
-        <ExploreMEModelTable
-          enableDownload
-          dataType={currentModel as DataType}
-          brainRegionSource="selected"
-        />
+        <ExploreMEModelTable dataType={currentModel as DataType} brainRegionSource="selected" />
       );
     default:
       notFound();

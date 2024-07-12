@@ -75,42 +75,39 @@ export default function BookmarkedResourcesTable({
                 className="sticky top-0 !max-h-24 px-4 py-5"
               />
 
-              <div>
-                <ExploreSectionTable
-                  columns={columns.filter(({ key }) =>
-                    (activeColumns || []).includes(key as string)
-                  )}
-                  dataSource={dataSource}
-                  enableDownload
-                  dataType={dataType}
-                  brainRegionSource="root"
-                  loading={data.state === 'loading'}
-                  bookmarkScope={{ virtualLabId: labId, projectId }}
-                  renderButton={({ selectedRows, clearSelectedRows }) => (
-                    <BookmarkFooter
-                      clearSelectedRows={clearSelectedRows}
-                      selectedRows={selectedRows}
-                      virtualLabId={labId}
-                      projectId={projectId}
-                      category={dataType}
-                    />
-                  )}
-                  onCellClick={(_, record) => {
-                    router.push(
-                      detailUrlWithinLab(
-                        labId,
-                        projectId,
-                        record._source.project.label,
-                        record._id,
-                        bookmarkTabName,
-                        bookmarkTabName === BookmarkTabsName.EXPERIMENTS
-                          ? (EXPERIMENT_DATA_TYPES[dataType].name as ExperimentTypeNames)
-                          : (MODEL_DATA_TYPES[dataType].name as ModelTypeNames)
-                      )
-                    );
-                  }}
-                />
-              </div>
+              <ExploreSectionTable
+                columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
+                dataContext={{
+                  brainRegionSource: 'root',
+                  bookmarkScope: { virtualLabId: labId, projectId },
+                  dataType,
+                }}
+                dataSource={dataSource}
+                loading={data.state === 'loading'}
+                renderButton={({ selectedRows, clearSelectedRows }) => (
+                  <BookmarkFooter
+                    clearSelectedRows={clearSelectedRows}
+                    selectedRows={selectedRows}
+                    virtualLabId={labId}
+                    projectId={projectId}
+                    category={dataType}
+                  />
+                )}
+                onCellClick={(_, record) => {
+                  router.push(
+                    detailUrlWithinLab(
+                      labId,
+                      projectId,
+                      record._source.project.label,
+                      record._id,
+                      bookmarkTabName,
+                      bookmarkTabName === BookmarkTabsName.EXPERIMENTS
+                        ? (EXPERIMENT_DATA_TYPES[dataType].name as ExperimentTypeNames)
+                        : (MODEL_DATA_TYPES[dataType].name as ModelTypeNames)
+                    )
+                  );
+                }}
+              />
             </>
           )}
         </WithControlPanel>

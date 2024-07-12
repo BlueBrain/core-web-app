@@ -4,7 +4,7 @@ import { useSetAtom } from 'jotai';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { eModelUIConfigAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { convertTraceForUI } from '@/services/e-model';
-import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/useRowSelection';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ExperimentalTrace } from '@/types/explore-section/es-experiment';
 import { DataType } from '@/constants/explore-section/list-views';
@@ -62,7 +62,6 @@ export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
       >
         <ExploreSectionListingView
           dataType={DataType.ExperimentalElectroPhysiology}
-          enableDownload
           renderButton={pickTraceButtonFn}
           brainRegionSource="root"
         />

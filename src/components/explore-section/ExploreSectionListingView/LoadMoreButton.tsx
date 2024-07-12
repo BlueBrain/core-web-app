@@ -22,17 +22,17 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
 }
 
 export default function LoadMoreButton({
-  dataType,
-  brainRegionSource,
-  bookmarkScope,
+  dataContext,
   hide,
 }: HTMLProps<HTMLButtonElement> & {
-  dataType: DataType;
-  brainRegionSource: ExploreDataBrainRegionSource;
-  bookmarkScope?: BookmarkScope;
+  dataContext: {
+    bookmarkScope?: BookmarkScope;
+    brainRegionSource: ExploreDataBrainRegionSource;
+    dataType: DataType;
+  };
   hide: () => void;
 }) {
-  const total = useLoadableValue(totalAtom({ dataType, brainRegionSource, bookmarkScope }));
+  const total = useLoadableValue(totalAtom(dataContext));
   const [contentSize, setContentSize] = useAtom(pageSizeAtom);
 
   const onLoadMore = () => {

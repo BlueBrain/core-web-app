@@ -40,7 +40,6 @@ export default function ReconstrucedMorphologyPage() {
         dataType={DataType.ExperimentalNeuronMorphology}
         brainRegionSource="selected"
         selectionType="radio"
-        enableDownload
         renderButton={({ selectedRows }) => (
           <Btn
             className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2"

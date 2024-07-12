@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAtom } from 'jotai/react';
 
 import { OnCellClick } from '../ExploreSectionListingView/ExploreSectionTable';
-import { RenderButtonProps } from '../ExploreSectionListingView/WithRowSelection';
+import { RenderButtonProps } from '../ExploreSectionListingView/useRowSelection';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { detailUrlBuilder } from '@/util/common';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
@@ -30,12 +30,10 @@ function buildEModelEntry(source: ESeModel): EModelMenuItem {
 }
 
 export default function ExploreEModelTable({
-  enableDownload,
   dataType,
   brainRegionSource,
   renderButton,
 }: {
-  enableDownload?: boolean;
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
@@ -68,7 +66,6 @@ export default function ExploreEModelTable({
   return (
     <ExploreSectionListingView
       {...{
-        enableDownload,
         dataType,
         brainRegionSource,
         onCellClick,

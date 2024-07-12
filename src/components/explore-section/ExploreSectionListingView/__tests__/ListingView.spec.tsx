@@ -74,36 +74,6 @@ describe('Test main functionalities of interface', () => {
 });
 
 describe('Download button tests', () => {
-  test('disabling download does not render checkboxes', async () => {
-    await act(() =>
-      render(
-        <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
-          <ExploreSectionListingView
-            brainRegionSource="root"
-            dataType={DataType.ExperimentalNeuronMorphology}
-          />
-        </TestProvider>
-      )
-    );
-    expect(screen.queryByLabelText('Select all')).toBeNull();
-  });
-
-  test('enabling download renders checkboxes', async () => {
-    await act(() =>
-      render(
-        <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
-          <ExploreSectionListingView
-            brainRegionSource="root"
-            dataType={DataType.ExperimentalNeuronMorphology}
-            enableDownload
-          />
-        </TestProvider>
-      )
-    );
-    // if not visible the test will fail
-    screen.getByLabelText('Select all');
-  });
-
   test('By default download button is not visible', async () => {
     await act(() =>
       render(
@@ -111,7 +81,6 @@ describe('Download button tests', () => {
           <ExploreSectionListingView
             brainRegionSource="root"
             dataType={DataType.ExperimentalNeuronMorphology}
-            enableDownload
           />
         </TestProvider>
       )
@@ -128,7 +97,6 @@ describe('Download button tests', () => {
           <ExploreSectionListingView
             brainRegionSource="root"
             dataType={DataType.ExperimentalNeuronMorphology}
-            enableDownload
           />
         </TestProvider>
       )
@@ -271,7 +239,7 @@ describe('Listing view table tests', () => {
     );
     const tableHeaders = screen.getAllByTestId('column-header');
     expect(tableHeaders.length).toEqual(
-      DATA_TYPES_TO_CONFIGS[DataType.ExperimentalNeuronMorphology].columns.length // Preview column has no header.
+      DATA_TYPES_TO_CONFIGS[DataType.ExperimentalNeuronMorphology].columns.length + 1 // Preview column has no header.
     );
   });
 });

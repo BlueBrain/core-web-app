@@ -22,12 +22,12 @@ export default function useScrollComplete({
   callback,
 }: {
   element: HTMLElement | null | undefined;
-  callback: (value: boolean) => void;
+  callback?: (value: boolean) => void;
 }) {
   useEffect(() => {
     const onScroll = ({ currentTarget }: Event) => {
       const { scrollHeight, clientHeight, scrollTop } = currentTarget as HTMLDivElement;
-      callback(Math.abs(scrollHeight - clientHeight - scrollTop) < 1);
+      callback?.(Math.abs(scrollHeight - clientHeight - scrollTop) < 1);
     };
 
     if (element) {

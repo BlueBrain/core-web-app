@@ -50,7 +50,6 @@ export default function ElectrophysiologyPage({ params }: Params) {
         <ExploreSectionListingView
           dataType={DataType.CircuitEModel}
           brainRegionSource="selected"
-          enableDownload
           selectionType="radio"
           renderButton={({ selectedRows }) => (
             <Btn

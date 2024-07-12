@@ -2,7 +2,7 @@ import { ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
-import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/useRowSelection';
 import { Btn } from '@/components/Btn';
 
 export function ExploreDownloadButton({
@@ -16,7 +16,7 @@ export function ExploreDownloadButton({
 
   return session ? (
     <Btn
-      className="fit-content sticky bottom-0 ml-auto w-fit bg-primary-8"
+      className="fit-content w-fit bg-primary-8"
       loading={fetching}
       ariaLabel="download-resources-button"
       onClick={() => {

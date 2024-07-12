@@ -36,7 +36,6 @@ export default function VirtualLabProjectSimulatePage() {
               dataType={dataType}
               brainRegionSource="selected"
               selectionType="radio"
-              enableDownload
               renderButton={() => (
                 <div className="mr-5 flex items-center justify-end gap-2">
                   <GenericButton disabled className="bg-slate-400" text="View simulation" />

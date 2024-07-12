@@ -45,7 +45,6 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
             dataType={DataType.CircuitMEModel}
             brainRegionSource="selected"
             selectionType="radio"
-            enableDownload
             renderButton={({ selectedRows }) => (
               <div className="mr-5 flex items-center justify-end gap-2">
                 <GenericButton

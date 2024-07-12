@@ -14,10 +14,6 @@ export default function VirtualLabExperimentListingView() {
 
   if (!currentExperiment) notFound();
   return (
-    <WithExploreExperiment
-      enableDownload
-      dataType={currentExperiment as DataType}
-      brainRegionSource="selected"
-    />
+    <WithExploreExperiment dataType={currentExperiment as DataType} brainRegionSource="selected" />
   );
 }

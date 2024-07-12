@@ -4,8 +4,7 @@ import { loadable } from 'jotai/utils';
 import { RowSelectionType } from 'antd/es/table/interface';
 
 import FilterControls from './FilterControls';
-import { RenderButtonProps } from './WithRowSelection';
-import ListingScrollNavControl from './ListingScrollNavControl';
+import { RenderButtonProps } from './useRowSelection';
 import { ExploreESHit } from '@/types/explore-section/es';
 import ExploreSectionTable, {
   OnCellClick,
@@ -18,15 +17,17 @@ import { ExploreDataBrainRegionSource } from '@/types/explore-section/applicatio
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { DataType } from '@/constants/explore-section/list-views';
 
+import { BookmarkScope } from '@/state/virtual-lab/bookmark';
+
 export default function DefaultListView({
-  enableDownload,
+  bookmarkScope,
   dataType,
   brainRegionSource,
   renderButton,
   onCellClick,
   selectionType,
 }: {
-  enableDownload?: boolean;
+  bookmarkScope?: BookmarkScope;
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
@@ -78,24 +79,12 @@ export default function DefaultListView({
               </FilterControls>
               <ExploreSectionTable
                 columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
+                dataContext={{ brainRegionSource, bookmarkScope, dataType }}
                 dataSource={dataSource}
-                enableDownload={enableDownload}
-                dataType={dataType}
-                brainRegionSource={brainRegionSource}
                 loading={data.state === 'loading'}
-                renderButton={renderButton}
                 onCellClick={onCellClick}
+                renderButton={renderButton}
                 selectionType={selectionType}
-              />
-              <ListingScrollNavControl<HTMLDivElement>
-                extraRightSpace={displayControlPanel ? 480 : 0}
-                extraLeftSpace={12}
-                show={data.state !== 'loading' && Boolean(dataSource?.length)}
-                element={
-                  typeof document !== 'undefined'
-                    ? (document.querySelector('.ant-table-body') as HTMLDivElement)
-                    : undefined
-                }
               />
             </>
           )}

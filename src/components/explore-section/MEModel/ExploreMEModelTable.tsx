@@ -2,19 +2,17 @@ import { ReactNode } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { OnCellClick } from '../ExploreSectionListingView/ExploreSectionTable';
-import { RenderButtonProps } from '../ExploreSectionListingView/WithRowSelection';
+import { RenderButtonProps } from '../ExploreSectionListingView/useRowSelection';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { detailUrlBuilder } from '@/util/common';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { DataType } from '@/constants/explore-section/list-views';
 
 export default function ExploreMEModelTable({
-  enableDownload,
   dataType,
   brainRegionSource,
   renderButton,
 }: {
-  enableDownload?: boolean;
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
@@ -32,7 +30,6 @@ export default function ExploreMEModelTable({
   return (
     <ExploreSectionListingView
       {...{
-        enableDownload,
         dataType,
         brainRegionSource,
         onCellClick,
