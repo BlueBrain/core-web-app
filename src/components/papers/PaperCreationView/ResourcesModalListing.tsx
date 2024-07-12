@@ -6,6 +6,7 @@ import { DataType } from '@/constants/explore-section/list-views';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { Btn } from '@/components/Btn';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/useRowSelection';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 type HeaderProps = {
   title?: string;
@@ -47,7 +48,7 @@ function Body({ type, category, onRowClick }: BodyProps) {
     <div className="h-full" id="explore-table-container-for-observable">
       <ExploreSectionListingView
         dataType={type as DataType}
-        brainRegionSource="root"
+        dataScope={ExploreDataScope.NoScope}
         selectionType="checkbox"
         renderButton={(props) => (
           <Btn

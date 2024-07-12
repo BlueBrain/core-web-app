@@ -13,6 +13,7 @@ import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import BookmarkButton from '@/components/explore-section/BookmarkButton';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 type Params = {
   params: {
@@ -43,7 +44,8 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
         <div id="explore-table-container-for-observable" className="h-screen">
           <ExploreSectionListingView
             dataType={DataType.CircuitMEModel}
-            brainRegionSource="selected"
+            dataScope={ExploreDataScope.SelectedBrainRegion}
+            virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
             selectionType="radio"
             renderButton={({ selectedRows }) => (
               <div className="mr-5 flex items-center justify-end gap-2">

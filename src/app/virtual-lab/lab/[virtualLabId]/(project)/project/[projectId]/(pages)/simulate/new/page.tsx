@@ -12,6 +12,7 @@ import { singleNeuronSelfUrlAtom } from '@/state/simulate/single-neuron';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
@@ -36,7 +37,8 @@ export default function VirtualLabProjectSimulateNewPage({
       <div className="h-[70vh]" id="explore-table-container-for-observable">
         <ExploreSectionListingView
           dataType={DataType.CircuitMEModel}
-          brainRegionSource="selected"
+          dataScope={ExploreDataScope.SelectedBrainRegion}
+          virtualLabInfo={{ virtualLabId, projectId }}
           selectionType="radio"
           renderButton={({ selectedRows }) => (
             <Btn

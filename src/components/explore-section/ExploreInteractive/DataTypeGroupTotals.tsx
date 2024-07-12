@@ -10,12 +10,22 @@ import { DataTypeGroup } from '@/types/explore-section/data-types';
 import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
 import { totalByExperimentAndRegionsAtom } from '@/state/explore-section/list-view-atoms';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
+import { ExploreDataScope } from '@/types/explore-section/application';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
-function DataTypeGroupTotal({ dataType, basePath }: { dataType: DataType; basePath: string }) {
-  const brainRegionSource = 'selected';
+function DataTypeGroupTotal({
+  dataType,
+  basePath,
+  virtualLabInfo,
+}: {
+  dataType: DataType;
+  basePath: string;
+  virtualLabInfo?: VirtualLabInfo;
+}) {
+  const dataScope = ExploreDataScope.SelectedBrainRegion;
 
   const total = useAtomValue(
-    loadable(totalByExperimentAndRegionsAtom({ dataType, brainRegionSource }))
+    loadable(totalByExperimentAndRegionsAtom({ dataType, dataScope, virtualLabInfo }))
   );
 
   const statValue = total.state === 'hasData' ? total?.data || 0 : 0;
@@ -42,7 +52,13 @@ function DataTypeGroupTotal({ dataType, basePath }: { dataType: DataType; basePa
   );
 }
 
-export default function DataTypeGroupTotals({ dataTypeGroup }: { dataTypeGroup: DataTypeGroup }) {
+export default function DataTypeGroupTotals({
+  dataTypeGroup,
+  virtualLabInfo,
+}: {
+  dataTypeGroup: DataTypeGroup;
+  virtualLabInfo?: VirtualLabInfo;
+}) {
   const { config, extensionPath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
   const pathName = usePathname();
   return (
@@ -52,6 +68,7 @@ export default function DataTypeGroupTotals({ dataTypeGroup }: { dataTypeGroup: 
           key={dataType}
           dataType={dataType as DataType}
           basePath={`${pathName}/${extensionPath}`}
+          virtualLabInfo={virtualLabInfo}
         />
       ))}
     </>

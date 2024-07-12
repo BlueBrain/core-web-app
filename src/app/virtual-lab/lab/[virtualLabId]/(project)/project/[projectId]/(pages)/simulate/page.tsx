@@ -5,8 +5,13 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import GenericButton from '@/components/Global/GenericButton';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToDataType } from '@/types/virtual-lab/lab';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
-export default function VirtualLabProjectSimulatePage() {
+export default function VirtualLabProjectSimulatePage({
+  params,
+}: {
+  params: { virtualLabId: string; projectId: string };
+}) {
   const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
 
   const dataType =
@@ -34,7 +39,8 @@ export default function VirtualLabProjectSimulatePage() {
           <div id="explore-table-container-for-observable" className="h-screen">
             <ExploreSectionListingView
               dataType={dataType}
-              brainRegionSource="selected"
+              dataScope={ExploreDataScope.SelectedBrainRegion}
+              virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
               selectionType="radio"
               renderButton={() => (
                 <div className="mr-5 flex items-center justify-end gap-2">

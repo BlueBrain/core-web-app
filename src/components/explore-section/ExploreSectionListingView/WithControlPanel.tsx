@@ -8,17 +8,17 @@ import {
   aggregationsAtom,
   filtersAtom,
 } from '@/state/explore-section/list-view-atoms';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { ExploreDataScope } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
-import { BookmarkScope } from '@/state/virtual-lab/bookmark';
 import { classNames } from '@/util/utils';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
 export default function WithControlPanel({
   children,
   dataType,
-  brainRegionSource,
-  bookmarkScope,
+  virtualLabInfo,
+  dataScope,
   className,
 }: {
   children: (props: {
@@ -28,8 +28,8 @@ export default function WithControlPanel({
     filters?: Filter[];
   }) => ReactNode;
   dataType: DataType;
-  brainRegionSource: ExploreDataBrainRegionSource;
-  bookmarkScope?: BookmarkScope;
+  dataScope: ExploreDataScope;
+  virtualLabInfo?: VirtualLabInfo;
   className?: string;
 }) {
   const activeColumns = useAtomValue(
@@ -44,8 +44,8 @@ export default function WithControlPanel({
 
   const aggregations = useAtomValue(
     useMemo(
-      () => unwrap(aggregationsAtom({ dataType, brainRegionSource, bookmarkScope })),
-      [dataType, brainRegionSource, bookmarkScope]
+      () => unwrap(aggregationsAtom({ dataType, dataScope, virtualLabInfo })),
+      [dataType, dataScope, virtualLabInfo]
     )
   );
 

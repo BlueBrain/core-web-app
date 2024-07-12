@@ -2,8 +2,13 @@ import DataTypeTabs from './DataTypeTabs';
 import SelectedBrainRegionMETypes from './SelectedBrainRegionMETypes';
 import DataTypeStatPanel from './DataTypeStatPanel';
 import ThreeDeeBrain from '@/components/ThreeDeeBrain';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
-export default function ExploreInteractivePanel() {
+type ExploreInteractivePanelProps = {
+  virtualLabInfo?: VirtualLabInfo;
+};
+
+export default function ExploreInteractivePanel({ virtualLabInfo }: ExploreInteractivePanelProps) {
   return (
     <div className="relative h-full min-w-0 overflow-hidden">
       <div
@@ -28,7 +33,7 @@ export default function ExploreInteractivePanel() {
           <ThreeDeeBrain />
         </div>
         <div id="statistic-panel" style={{ gridArea: '6 / 1 / 7 / 5' }}>
-          <DataTypeStatPanel />
+          <DataTypeStatPanel virtualLabInfo={virtualLabInfo} />
         </div>
       </div>
     </div>

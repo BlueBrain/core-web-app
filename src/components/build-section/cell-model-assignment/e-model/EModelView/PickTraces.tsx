@@ -8,6 +8,7 @@ import { RenderButtonProps } from '@/components/explore-section/ExploreSectionLi
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ExperimentalTrace } from '@/types/explore-section/es-experiment';
 import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 type Props = {
   isOpen: boolean;
@@ -63,7 +64,7 @@ export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
         <ExploreSectionListingView
           dataType={DataType.ExperimentalElectroPhysiology}
           renderButton={pickTraceButtonFn}
-          brainRegionSource="root"
+          dataScope={ExploreDataScope.NoScope}
         />
       </Modal>
     </div>

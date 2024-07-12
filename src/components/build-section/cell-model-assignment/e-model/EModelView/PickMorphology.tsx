@@ -8,6 +8,7 @@ import { eModelUIConfigAtom } from '@/state/brain-model-config/cell-model-assign
 import { convertMorphologyForUI } from '@/services/e-model';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 type Props = {
   isOpen: boolean;
@@ -61,7 +62,7 @@ export default function PickMorphology({ isOpen, onCancel, onOk }: Props) {
         <ExploreSectionListingView
           dataType={DataType.ExperimentalNeuronMorphology}
           renderButton={pickMorphButtonFn}
-          brainRegionSource="root"
+          dataScope={ExploreDataScope.NoScope}
         />
       </Modal>
     </div>

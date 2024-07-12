@@ -11,6 +11,7 @@ import { Btn } from '@/components/Btn';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 export default function ReconstrucedMorphologyPage() {
   const setMorphologyType = useSetAtom(morphologyTypeAtom);
@@ -38,7 +39,7 @@ export default function ReconstrucedMorphologyPage() {
     <div className="h-full" id="explore-table-container-for-observable">
       <ExploreSectionListingView
         dataType={DataType.ExperimentalNeuronMorphology}
-        brainRegionSource="selected"
+        dataScope={ExploreDataScope.SelectedBrainRegion}
         selectionType="radio"
         renderButton={({ selectedRows }) => (
           <Btn

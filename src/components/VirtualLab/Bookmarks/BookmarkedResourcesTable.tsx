@@ -20,6 +20,7 @@ import {
   MODEL_DATA_TYPES,
   ModelTypeNames,
 } from '@/constants/explore-section/data-types/model-data-types';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 type Props = {
   dataType: DataType;
@@ -41,8 +42,8 @@ export default function BookmarkedResourcesTable({
     loadable(
       dataAtom({
         dataType,
-        brainRegionSource: 'root',
-        bookmarkScope: { virtualLabId: labId, projectId },
+        dataScope: ExploreDataScope.BookmarkedResources,
+        virtualLabInfo: { virtualLabId: labId, projectId },
       })
     )
   );
@@ -62,8 +63,8 @@ export default function BookmarkedResourcesTable({
       <div className="grid h-full w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto">
         <WithControlPanel
           dataType={dataType}
-          brainRegionSource="root"
-          bookmarkScope={{ virtualLabId: labId, projectId }}
+          dataScope={ExploreDataScope.BookmarkedResources}
+          virtualLabInfo={{ virtualLabId: labId, projectId }}
         >
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
             <>
@@ -78,8 +79,8 @@ export default function BookmarkedResourcesTable({
               <ExploreSectionTable
                 columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
                 dataContext={{
-                  brainRegionSource: 'root',
-                  bookmarkScope: { virtualLabId: labId, projectId },
+                  dataScope: ExploreDataScope.BookmarkedResources,
+                  virtualLabInfo: { virtualLabId: labId, projectId },
                   dataType,
                 }}
                 dataSource={dataSource}

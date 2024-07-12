@@ -13,21 +13,37 @@ import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/ex
 import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
 import { useLoadableValue } from '@/hooks/hooks';
 import { totalByExperimentAndRegionsAtom } from '@/state/explore-section/list-view-atoms';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length) - 0.01}%`;
 
-const brainRegionSource = 'selected';
+const dataScope = ExploreDataScope.SelectedBrainRegion;
 
-function MenuItemLabel({ label, dataType }: { label: string; dataType: DataType }) {
+function MenuItemLabel({
+  label,
+  dataType,
+  virtualLabInfo,
+}: {
+  label: string;
+  dataType: DataType;
+  virtualLabInfo?: VirtualLabInfo;
+}) {
   const totalByExperimentAndRegions = useLoadableValue(
-    totalByExperimentAndRegionsAtom({ dataType, brainRegionSource })
+    totalByExperimentAndRegionsAtom({ dataType, dataScope, virtualLabInfo })
   );
   return `${label} ${
     totalByExperimentAndRegions.state === 'hasData' ? `(${totalByExperimentAndRegions.data})` : ''
   }`;
 }
 
-export default function ExploreListingLayout({ children }: { children: ReactNode }) {
+export default function ExploreListingLayout({
+  children,
+  virtualLabInfo,
+}: {
+  children: ReactNode;
+  virtualLabInfo?: VirtualLabInfo;
+}) {
   const pathname = usePathname();
   const splittedPathname = pathname.split('/');
   const interactivePageHref = splittedPathname.slice(0, splittedPathname.length - 2).join('/');
@@ -54,7 +70,13 @@ export default function ExploreListingLayout({ children }: { children: ReactNode
         return {
           key,
           title: label,
-          label: <MenuItemLabel dataType={dataType as DataType} label={label} />,
+          label: (
+            <MenuItemLabel
+              dataType={dataType as DataType}
+              label={label}
+              virtualLabInfo={virtualLabInfo}
+            />
+          ),
           className: 'text-center font-semibold',
           style: {
             backgroundColor: active ? 'white' : '#002766',
@@ -63,7 +85,7 @@ export default function ExploreListingLayout({ children }: { children: ReactNode
           },
         };
       }),
-    [activePath, config]
+    [activePath, config, virtualLabInfo]
   );
 
   if (params?.id)

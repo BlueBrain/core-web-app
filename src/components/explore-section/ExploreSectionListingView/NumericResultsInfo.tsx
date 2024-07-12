@@ -1,18 +1,21 @@
 import { Skeleton } from 'antd';
 
 import { totalAtom } from '@/state/explore-section/list-view-atoms';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { ExploreDataScope } from '@/types/explore-section/application';
 import { useLoadableValue } from '@/hooks/hooks';
 import { DataType } from '@/constants/explore-section/list-views';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
 function NumericResultsInfo({
   dataType,
-  brainRegionSource,
+  dataScope,
+  virtualLabInfo,
 }: {
   dataType: DataType;
-  brainRegionSource: ExploreDataBrainRegionSource;
+  dataScope: ExploreDataScope;
+  virtualLabInfo?: VirtualLabInfo;
 }) {
-  const total = useLoadableValue(totalAtom({ dataType, brainRegionSource }));
+  const total = useLoadableValue(totalAtom({ dataType, dataScope, virtualLabInfo }));
 
   return (
     <div className="flex w-full justify-start">

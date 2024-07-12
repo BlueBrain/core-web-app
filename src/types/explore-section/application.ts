@@ -8,10 +8,14 @@ import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DataType } from '@/constants/explore-section/list-views';
 
 // defines the source from where the explore data will be retrieved
-// root: all brain regions are applied
-// selected: only the selected brain region is applied
-
-export type ExploreDataBrainRegionSource = 'selected' | 'root';
+// SelectedBrainRegion: The data will be filtered based on the selected brain region
+// BookmarkedResources: The data will be retrieved by the bookmarked resources
+// NoScope: No scope is applied as a result all available resources will be returned
+export enum ExploreDataScope {
+  NoScope = 'NoScope',
+  SelectedBrainRegion = 'SelectedBrainRegion',
+  BookmarkedResources = 'BookmarkedResources',
+}
 
 export interface SortState {
   field: string;

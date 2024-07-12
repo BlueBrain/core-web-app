@@ -2,10 +2,10 @@ import { HTMLProps } from 'react';
 import { useAtom } from 'jotai';
 import { totalAtom, pageSizeAtom } from '@/state/explore-section/list-view-atoms';
 import { classNames } from '@/util/utils';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { ExploreDataScope } from '@/types/explore-section/application';
 import { DataType, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import { useLoadableValue } from '@/hooks/hooks';
-import { BookmarkScope } from '@/state/virtual-lab/bookmark';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
 function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
@@ -26,13 +26,14 @@ export default function LoadMoreButton({
   hide,
 }: HTMLProps<HTMLButtonElement> & {
   dataContext: {
-    bookmarkScope?: BookmarkScope;
-    brainRegionSource: ExploreDataBrainRegionSource;
+    virtualLabInfo?: VirtualLabInfo;
+    dataScope: ExploreDataScope;
     dataType: DataType;
   };
   hide: () => void;
 }) {
   const total = useLoadableValue(totalAtom(dataContext));
+
   const [contentSize, setContentSize] = useAtom(pageSizeAtom);
 
   const onLoadMore = () => {

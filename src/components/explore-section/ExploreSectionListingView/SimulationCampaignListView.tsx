@@ -14,6 +14,7 @@ import {
   dimensionColumnsAtom,
 } from '@/state/explore-section/list-view-atoms';
 import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 export default function SimulationCampaignListView({ dataType }: { dataType: DataType }) {
   const activeColumns = useAtomValue(
@@ -42,11 +43,15 @@ export default function SimulationCampaignListView({ dataType }: { dataType: Dat
   return (
     <div className="flex h-full max-h-screen min-h-screen w-full bg-[#d1d1d1]">
       <div className="relative grid h-full w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden">
-        <WithControlPanel dataType={dataType} brainRegionSource="root" className="relative">
+        <WithControlPanel
+          dataType={dataType}
+          dataScope={ExploreDataScope.NoScope}
+          className="relative"
+        >
           {({ displayControlPanel, setDisplayControlPanel }) => (
             <>
               <div className="sticky top-0 grid w-full grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5 px-5">
-                <NumericResultsInfo dataType={dataType} brainRegionSource="root" />
+                <NumericResultsInfo dataType={dataType} dataScope={ExploreDataScope.NoScope} />
                 <FilterControls
                   displayControlPanel={displayControlPanel}
                   setDisplayControlPanel={setDisplayControlPanel}

@@ -12,6 +12,7 @@ import { ESeModel, ExploreESHit, ExploreResource } from '@/types/explore-section
 import { createMEModelAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { usePendingValidationModal } from '@/components/build-section/virtual-lab/me-model/pending-validation-modal-hook';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 type Params = {
   params: {
@@ -49,8 +50,9 @@ export default function ElectrophysiologyPage({ params }: Params) {
       <div className="h-full px-10" id="explore-table-container-for-observable">
         <ExploreSectionListingView
           dataType={DataType.CircuitEModel}
-          brainRegionSource="selected"
+          dataScope={ExploreDataScope.SelectedBrainRegion}
           selectionType="radio"
+          virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
           renderButton={({ selectedRows }) => (
             <Btn
               className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2"

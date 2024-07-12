@@ -3,17 +3,13 @@ import { atomFamily, atomWithRefresh } from 'jotai/utils';
 import sessionAtom from '../session';
 import { BookmarksByCategory } from '@/types/virtual-lab/bookmark';
 import { getBookmarksByCategory } from '@/services/virtual-lab/bookmark';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
-export type BookmarkScope = {
-  virtualLabId: string;
-  projectId: string;
-};
-
-const isBookmarkAtomEqual = (a: BookmarkScope, b: BookmarkScope): boolean =>
+const isVirtualLabInfoAtomEqual = (a: VirtualLabInfo, b: VirtualLabInfo): boolean =>
   a.virtualLabId === b.virtualLabId && a.projectId === b.projectId;
 
 export const bookmarksForProjectAtomFamily = atomFamily(
-  ({ virtualLabId, projectId }: BookmarkScope) =>
+  ({ virtualLabId, projectId }: VirtualLabInfo) =>
     atomWithRefresh<Promise<BookmarksByCategory>>(async (get) => {
       const session = get(sessionAtom);
       if (!session) {
@@ -22,5 +18,5 @@ export const bookmarksForProjectAtomFamily = atomFamily(
 
       return await getBookmarksByCategory(virtualLabId, projectId, session.accessToken);
     }),
-  isBookmarkAtomEqual
+  isVirtualLabInfoAtomEqual
 );

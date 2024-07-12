@@ -2,9 +2,12 @@ import { Atom, atom } from 'jotai';
 import { atomFamily, atomWithDefault } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import isEqual from 'lodash/isEqual';
-import { BookmarkScope, bookmarksForProjectAtomFamily } from '../virtual-lab/bookmark';
+
+import { bookmarksForProjectAtomFamily } from '../virtual-lab/bookmark';
 import columnKeyToFilter from './column-key-to-filter';
-import { ExploreDataBrainRegionSource, SortState } from '@/types/explore-section/application';
+
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
+import { ExploreDataScope, SortState } from '@/types/explore-section/application';
 import fetchDataQuery from '@/queries/explore-section/data';
 import {
   DataQuery,
@@ -23,17 +26,17 @@ import { ExploreSectionResource } from '@/types/explore-section/resources';
 
 type DataAtomFamilyScopeType = {
   dataType: DataType;
-  brainRegionSource?: ExploreDataBrainRegionSource;
+  dataScope?: ExploreDataScope;
   resourceId?: string;
-  bookmarkScope?: BookmarkScope;
+  virtualLabInfo?: VirtualLabInfo;
 };
 
 const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType): boolean =>
   // eslint-disable-next-line lodash/prefer-matches
   a.dataType === b.dataType &&
-  a.brainRegionSource === b.brainRegionSource &&
+  a.dataScope === b.dataScope &&
   a.resourceId === b.resourceId &&
-  isEqual(a.bookmarkScope, b.bookmarkScope);
+  isEqual(a.virtualLabInfo, b.virtualLabInfo);
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
@@ -59,24 +62,25 @@ export const activeColumnsAtom = atomFamily(
   isListAtomEqual
 );
 
-export const dimensionColumnsAtom = atomFamily(({ dataType }: DataAtomFamilyScopeType) =>
-  atom<Promise<string[] | null>>(async (get) => {
-    const session = get(sessionAtom);
+export const dimensionColumnsAtom = atomFamily(
+  ({ dataType, virtualLabInfo }: DataAtomFamilyScopeType) =>
+    atom<Promise<string[] | null>>(async (get) => {
+      const session = get(sessionAtom);
 
-    // if the type is not simulation campaign, we dont fetch dimension columns
-    if (!session || dataType !== DataType.SimulationCampaigns) {
-      return null;
-    }
-    const dimensionsResponse = await fetchDimensionAggs(session?.accessToken);
-    const dimensions: string[] = [];
-    dimensionsResponse.hits.forEach((response: any) => {
-      if (response._source.parameter?.coords) {
-        dimensions.push(...Object.keys(response._source.parameter?.coords));
+      // if the type is not simulation campaign, we dont fetch dimension columns
+      if (!session || dataType !== DataType.SimulationCampaigns) {
+        return null;
       }
-    });
+      const dimensionsResponse = await fetchDimensionAggs(session?.accessToken, virtualLabInfo);
+      const dimensions: string[] = [];
+      dimensionsResponse.hits.forEach((response: any) => {
+        if (response._source.parameter?.coords) {
+          dimensions.push(...Object.keys(response._source.parameter?.coords));
+        }
+      });
 
-    return uniq(dimensions);
-  })
+      return uniq(dimensions);
+    })
 );
 
 export const filtersAtom = atomFamily(
@@ -101,7 +105,7 @@ export const filtersAtom = atomFamily(
 );
 
 export const totalByExperimentAndRegionsAtom = atomFamily(
-  ({ dataType, brainRegionSource }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atom<Promise<number | undefined | null>>(async (get) => {
       const session = get(sessionAtom);
 
@@ -110,12 +114,18 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
       const sortState = get(sortStateAtom);
       let descendantIds: string[] = [];
 
-      if (brainRegionSource === 'selected')
+      if (dataScope === ExploreDataScope.SelectedBrainRegion)
         descendantIds = (await get(selectedBrainRegionWithChildrenAtom)) || [];
 
       const query = fetchDataQuery(0, 1, [], dataType, sortState, '', descendantIds);
-
-      const result = query && (await fetchTotalByExperimentAndRegions(session.accessToken, query));
+      const result =
+        query &&
+        (await fetchTotalByExperimentAndRegions(
+          session.accessToken,
+          query,
+          undefined,
+          virtualLabInfo
+        ));
 
       return result;
     }),
@@ -123,7 +133,7 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
 );
 
 export const queryAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarkScope }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atom<Promise<DataQuery | null>>(async (get) => {
       const searchString = get(searchStringAtom({ dataType }));
       const pageNumber = get(pageNumberAtom({ dataType }));
@@ -131,11 +141,13 @@ export const queryAtom = atomFamily(
       const sortState = get(sortStateAtom);
 
       const bookmarkResourceIds = (
-        bookmarkScope ? (await get(bookmarksForProjectAtomFamily(bookmarkScope)))[dataType] : []
+        dataScope === ExploreDataScope.BookmarkedResources && virtualLabInfo
+          ? (await get(bookmarksForProjectAtomFamily(virtualLabInfo)))[dataType]
+          : []
       ).map((b) => b.resourceId);
 
       const descendantIds: string[] =
-        brainRegionSource === 'selected'
+        dataScope === ExploreDataScope.SelectedBrainRegion
           ? (await get(selectedBrainRegionWithChildrenAtom)) || []
           : [];
 
@@ -160,14 +172,16 @@ export const queryAtom = atomFamily(
 );
 
 export const queryResponseAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarkScope }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource> | null>>(async (get) => {
       const session = get(sessionAtom);
 
       if (!session) return null;
 
-      const query = await get(queryAtom({ dataType, brainRegionSource, bookmarkScope }));
-      const result = query && (await fetchEsResourcesByType(session.accessToken, query));
+      const query = await get(queryAtom({ dataType, dataScope, virtualLabInfo }));
+      const result =
+        query &&
+        (await fetchEsResourcesByType(session.accessToken, query, undefined, virtualLabInfo));
 
       return result;
     }),
@@ -178,9 +192,9 @@ export const dataAtom = atomFamily<
   DataAtomFamilyScopeType,
   Atom<Promise<ExploreESHit<ExploreSectionResource>[]>>
 >(
-  ({ dataType, brainRegionSource, bookmarkScope }) =>
+  ({ dataType, dataScope, virtualLabInfo }) =>
     atom(async (get) => {
-      const response = await get(queryResponseAtom({ dataType, brainRegionSource, bookmarkScope }));
+      const response = await get(queryResponseAtom({ dataType, dataScope, virtualLabInfo }));
 
       if (response?.hits) {
         return response.hits;
@@ -192,9 +206,9 @@ export const dataAtom = atomFamily<
 );
 
 export const totalAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarkScope }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atom(async (get) => {
-      const response = await get(queryResponseAtom({ dataType, brainRegionSource, bookmarkScope }));
+      const response = await get(queryResponseAtom({ dataType, dataScope, virtualLabInfo }));
       const { total } = response ?? {
         total: { value: 0 },
       };
@@ -204,12 +218,10 @@ export const totalAtom = atomFamily(
 );
 
 export const aggregationsAtom = atomFamily(
-  ({ dataType, brainRegionSource, bookmarkScope }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['aggs'] | undefined>>(
       async (get) => {
-        const response = await get(
-          queryResponseAtom({ dataType, brainRegionSource, bookmarkScope })
-        );
+        const response = await get(queryResponseAtom({ dataType, dataScope, virtualLabInfo }));
         return response?.aggs;
       }
     ),

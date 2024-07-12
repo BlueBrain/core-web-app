@@ -6,7 +6,7 @@ import { OnCellClick } from '../ExploreSectionListingView/ExploreSectionTable';
 import { RenderButtonProps } from '../ExploreSectionListingView/useRowSelection';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { detailUrlBuilder } from '@/util/common';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { ExploreDataScope } from '@/types/explore-section/application';
 import { DataType } from '@/constants/explore-section/list-views';
 import {
   eModelEditModeAtom,
@@ -17,6 +17,7 @@ import { ESeModel } from '@/types/explore-section/es';
 import { setInitializationValue } from '@/util/utils';
 import { DEFAULT_E_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/e-model';
 import { EModelMenuItem } from '@/types/e-model';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
 function buildEModelEntry(source: ESeModel): EModelMenuItem {
   return {
@@ -31,11 +32,13 @@ function buildEModelEntry(source: ESeModel): EModelMenuItem {
 
 export default function ExploreEModelTable({
   dataType,
-  brainRegionSource,
+  dataScope,
   renderButton,
+  virtualLabInfo,
 }: {
   dataType: DataType;
-  brainRegionSource: ExploreDataBrainRegionSource;
+  dataScope: ExploreDataScope;
+  virtualLabInfo?: VirtualLabInfo;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const { push: navigate } = useRouter();
@@ -67,9 +70,10 @@ export default function ExploreEModelTable({
     <ExploreSectionListingView
       {...{
         dataType,
-        brainRegionSource,
+        dataScope,
         onCellClick,
         renderButton,
+        virtualLabInfo,
       }}
     />
   );

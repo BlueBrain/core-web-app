@@ -13,42 +13,41 @@ import WithControlPanel from '@/components/explore-section/ExploreSectionListing
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom, dataAtom } from '@/state/explore-section/list-view-atoms';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { ExploreDataScope } from '@/types/explore-section/application';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { DataType } from '@/constants/explore-section/list-views';
-
-import { BookmarkScope } from '@/state/virtual-lab/bookmark';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
 export default function DefaultListView({
-  bookmarkScope,
   dataType,
-  brainRegionSource,
+  dataScope,
   renderButton,
   onCellClick,
   selectionType,
+  virtualLabInfo,
 }: {
-  bookmarkScope?: BookmarkScope;
   dataType: DataType;
-  brainRegionSource: ExploreDataBrainRegionSource;
+  dataScope: ExploreDataScope;
   renderButton?: (props: RenderButtonProps) => ReactNode;
   onCellClick?: OnCellClick;
   selectionType?: RowSelectionType;
+  virtualLabInfo?: VirtualLabInfo;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
   const [dataSource, setDataSource] = useState<ExploreESHit<ExploreSectionResource>[]>();
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
-
   const data = useAtomValue(
     useMemo(
       () =>
         loadable(
           dataAtom({
             dataType,
-            brainRegionSource,
+            dataScope,
+            virtualLabInfo,
           })
         ),
-      [brainRegionSource, dataType]
+      [dataScope, dataType, virtualLabInfo]
     )
   );
 
@@ -63,7 +62,8 @@ export default function DefaultListView({
       <div className="relative grid h-full max-h-[calc(100vh-3.3rem)] w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden">
         <WithControlPanel
           dataType={dataType}
-          brainRegionSource={brainRegionSource}
+          dataScope={dataScope}
+          virtualLabInfo={virtualLabInfo}
           className="relative"
         >
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
@@ -75,11 +75,15 @@ export default function DefaultListView({
                 setDisplayControlPanel={setDisplayControlPanel}
                 className="sticky top-0 !max-h-24 px-4 py-5"
               >
-                <NumericResultsInfo dataType={dataType} brainRegionSource={brainRegionSource} />
+                <NumericResultsInfo
+                  dataType={dataType}
+                  dataScope={dataScope}
+                  virtualLabInfo={virtualLabInfo}
+                />
               </FilterControls>
               <ExploreSectionTable
                 columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
-                dataContext={{ brainRegionSource, bookmarkScope, dataType }}
+                dataContext={{ virtualLabInfo, dataScope, dataType }}
                 dataSource={dataSource}
                 loading={data.state === 'loading'}
                 onCellClick={onCellClick}

@@ -4,6 +4,7 @@ import { notFound, useParams } from 'next/navigation';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 import WithExploreExperiment from '@/components/explore-section/WithExploreExperiment';
 import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 export default function VirtualLabExperimentListingView() {
   const params = useParams<{ experimentType: string }>();
@@ -13,6 +14,9 @@ export default function VirtualLabExperimentListingView() {
   );
   if (!currentExperiment) notFound();
   return (
-    <WithExploreExperiment dataType={currentExperiment as DataType} brainRegionSource="selected" />
+    <WithExploreExperiment
+      dataType={currentExperiment as DataType}
+      dataScope={ExploreDataScope.SelectedBrainRegion}
+    />
   );
 }

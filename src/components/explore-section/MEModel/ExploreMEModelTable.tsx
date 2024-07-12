@@ -5,16 +5,19 @@ import { OnCellClick } from '../ExploreSectionListingView/ExploreSectionTable';
 import { RenderButtonProps } from '../ExploreSectionListingView/useRowSelection';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { detailUrlBuilder } from '@/util/common';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { ExploreDataScope } from '@/types/explore-section/application';
 import { DataType } from '@/constants/explore-section/list-views';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
 export default function ExploreMEModelTable({
   dataType,
-  brainRegionSource,
+  dataScope,
+  virtualLabInfo,
   renderButton,
 }: {
   dataType: DataType;
-  brainRegionSource: ExploreDataBrainRegionSource;
+  dataScope: ExploreDataScope;
+  virtualLabInfo?: VirtualLabInfo;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const { push: navigate } = useRouter();
@@ -31,8 +34,9 @@ export default function ExploreMEModelTable({
     <ExploreSectionListingView
       {...{
         dataType,
-        brainRegionSource,
+        dataScope,
         onCellClick,
+        virtualLabInfo,
         renderButton,
       }}
     />

@@ -11,6 +11,7 @@ import { DataType } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 jest.mock('next/navigation');
 
@@ -59,7 +60,7 @@ describe('Test main functionalities of interface', () => {
       render(
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
-            brainRegionSource="root"
+            dataScope={ExploreDataScope.NoScope}
             dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
@@ -79,7 +80,7 @@ describe('Download button tests', () => {
       render(
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
-            brainRegionSource="root"
+            dataScope={ExploreDataScope.NoScope}
             dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
@@ -95,7 +96,7 @@ describe('Download button tests', () => {
       render(
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
-            brainRegionSource="root"
+            dataScope={ExploreDataScope.NoScope}
             dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
@@ -116,7 +117,7 @@ describe('Filters panel tests', () => {
       render(
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
-            brainRegionSource="root"
+            dataScope={ExploreDataScope.NoScope}
             dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
@@ -164,7 +165,7 @@ describe('Header panel unit tests', () => {
       <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
         <NumericResultsInfo
           dataType={DataType.ExperimentalNeuronMorphology}
-          brainRegionSource="root"
+          dataScope={ExploreDataScope.NoScope}
         />
       </TestProvider>
     );
@@ -181,7 +182,7 @@ describe('Load more resources button unit tests', () => {
       render(
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
-            brainRegionSource="root"
+            dataScope={ExploreDataScope.NoScope}
             dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
@@ -200,7 +201,7 @@ describe('Listing view table tests', () => {
       render(
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
-            brainRegionSource="root"
+            dataScope={ExploreDataScope.NoScope}
             dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
@@ -216,7 +217,7 @@ describe('Listing view table tests', () => {
       render(
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
-            brainRegionSource="root"
+            dataScope={ExploreDataScope.NoScope}
             dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
@@ -231,7 +232,7 @@ describe('Listing view table tests', () => {
       render(
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
-            brainRegionSource="root"
+            dataScope={ExploreDataScope.NoScope}
             dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>

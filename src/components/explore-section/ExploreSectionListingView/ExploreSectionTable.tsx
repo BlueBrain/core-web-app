@@ -9,17 +9,14 @@ import useRowSelection, { RenderButtonProps } from './useRowSelection';
 import { useOnCellRouteHandler, useShowMore, useScrollNav } from './hooks';
 
 import { ExploreDownloadButton } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
-
 import { DataType } from '@/constants/explore-section/list-views';
-
 import useResizeObserver from '@/hooks/useResizeObserver';
 import useScrollComplete from '@/hooks/useScrollComplete';
-import { BookmarkScope } from '@/state/virtual-lab/bookmark';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
+import { ExploreDataScope } from '@/types/explore-section/application';
 import type { ExploreESHit } from '@/types/explore-section/es';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { classNames } from '@/util/utils';
-
 import styles from '@/app/explore/explore.module.scss';
 
 export type OnCellClick = (
@@ -96,8 +93,8 @@ function CustomCell({ children, style, ...props }: { children: ReactNode; style:
 
 type AdditionalTableProps = {
   dataContext: {
-    bookmarkScope?: BookmarkScope;
-    brainRegionSource: ExploreDataBrainRegionSource;
+    virtualLabInfo?: VirtualLabInfo;
+    dataScope: ExploreDataScope;
     dataType: DataType;
   };
   hasError?: boolean;

@@ -20,3 +20,7 @@ export interface VirtualLabAPIListData<ReponseType> {
 export function isVlmError(response: any): response is VlmError {
   return response?.error_code && response?.message;
 }
+export type VirtualLabInfo = {
+  virtualLabId: string;
+  projectId: string;
+};

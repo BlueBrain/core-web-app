@@ -2,21 +2,21 @@
 
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { totalAtom } from '@/state/explore-section/list-view-atoms';
 import { formatNumber } from '@/util/common';
 import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 type Props = ({
   dataType,
-  brainRegionSource,
+  dataScope,
 }: {
   dataType: DataType;
-  brainRegionSource: ExploreDataBrainRegionSource;
+  dataScope: ExploreDataScope;
 }) => string;
 
-const useTotalResults: Props = ({ dataType, brainRegionSource }) => {
-  const total = useAtomValue(unwrap(totalAtom({ dataType, brainRegionSource })));
+const useTotalResults: Props = ({ dataType, dataScope }) => {
+  const total = useAtomValue(unwrap(totalAtom({ dataType, dataScope })));
 
   return total ? `(${formatNumber(total)})` : '';
 };
