@@ -52,7 +52,7 @@ function GeneralizationControls({ dataType }: { dataType: DataType }) {
 
   return (
     <ConfigProvider theme={theme}>
-      <div className="mt-16 flex items-center">
+      <div className="mt-14 flex items-center">
         <div className={styles.label}>
           Here are the {resourceBasedResponseHitsCount || <Spin />} most similar morphologies based
           on:

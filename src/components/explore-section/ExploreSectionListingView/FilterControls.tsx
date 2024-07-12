@@ -22,7 +22,7 @@ export function FilterBtn({ disabled, children, onClick }: HTMLProps<HTMLButtonE
   return (
     <button
       className={classNames(
-        'flex max-h-[3rem] items-center justify-between gap-10 rounded-md border border-neutral-2 px-2 py-2',
+        'flex items-center justify-between gap-10 rounded-md border border-neutral-2 px-2 py-2',
         disabled ? 'cursor-not-allowed bg-neutral-100' : 'bg-white'
       )}
       onClick={onClick}
@@ -74,7 +74,7 @@ export default function FilterControls({
   return (
     <div
       className={classNames(
-        'grid max-h-14 w-full flex-1 grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5 py-5',
+        'grid w-full flex-1 grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5 py-5',
         className
       )}
     >

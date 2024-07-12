@@ -73,7 +73,7 @@ export default function BookmarkedResourcesTable({
                 displayControlPanel={displayControlPanel}
                 dataType={dataType}
                 setDisplayControlPanel={setDisplayControlPanel}
-                className="sticky top-0 !max-h-24 px-4 py-5"
+                className="sticky top-0 px-4 py-5"
               />
 
               <ExploreSectionTable
