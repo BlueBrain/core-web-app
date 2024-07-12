@@ -1,7 +1,6 @@
 import { ReactNode, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import Error from 'next/error';
 import { resourceBasedResponseHitsAtom } from '@/state/explore-section/generalization';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import CardView from '@/components/explore-section/CardView';
@@ -11,6 +10,9 @@ import {
   ReconstructedNeuronMorphology,
   ExperimentalTrace,
 } from '@/types/explore-section/es-experiment';
+
+export const notFound = <h1>No similar resources were found.</h1>;
+export const genarilizationError = <h1>Something went wrong while fetching the data</h1>;
 
 export default function WithGeneralization({
   children,
@@ -30,13 +32,11 @@ export default function WithGeneralization({
 
   let render: ReactNode;
 
-  const notFound = <h1>No similar resources were found.</h1>;
-
   switch (resourceBasedResponseHits.state) {
     case 'loading':
       break;
     case 'hasError':
-      render = <Error statusCode={400} title="Something went wrong while fetching the data" />;
+      render = genarilizationError;
       break;
     case 'hasData':
       render = resourceBasedResponseHits.data?.length ? (

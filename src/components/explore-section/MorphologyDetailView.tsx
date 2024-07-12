@@ -5,9 +5,14 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
+import { useSwcContentUrl } from '@/util/content-url';
+import { classNames } from '@/util/utils';
 import createMorphologyDataAtom from '@/state/morpho-viewer';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
-import WithGeneralization from '@/components/explore-section/WithGeneralization';
+import WithGeneralization, {
+  notFound,
+  genarilizationError,
+} from '@/components/explore-section/WithGeneralization';
 import { DataType } from '@/constants/explore-section/list-views';
 import { NEURON_MORPHOLOGY_FIELDS } from '@/constants/explore-section/detail-views-fields';
 import GeneralizationControls from '@/components/explore-section/WithGeneralization/GeneralizationControls';
@@ -28,7 +33,16 @@ export default function MorphologyDetailView() {
               <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                 <GeneralizationControls dataType={DataType.ExperimentalNeuronMorphology} />
               </ErrorBoundary>
-              <div className="min-h-[1500px]">{renderSimilar}</div>
+              <div
+                className={classNames(
+                  'text-primary-9',
+                  renderSimilar === notFound || renderSimilar === genarilizationError
+                    ? 'min-h-auto'
+                    : 'min-h-[1500px]'
+                )}
+              >
+                {renderSimilar}
+              </div>
             </>
           )}
         </Detail>
@@ -42,14 +56,18 @@ function MorphoViewerLoader({ resource }: { resource: ReconstructedNeuronMorphol
     () => loadable(createMorphologyDataAtom(resource)),
     [resource]
   );
-
+  const swcContentUrl = useSwcContentUrl(resource.distribution);
   const morphologyData = useAtomValue(morphologyDataAtom);
 
   const { state } = morphologyData;
   switch (state) {
     case 'hasData':
       return morphologyData.data ? (
-        <MorphoViewer className="min-h-[75%]" swc={morphologyData.data} />
+        <MorphoViewer
+          className="min-h-[75%]"
+          swc={morphologyData.data}
+          contentUrl={swcContentUrl}
+        />
       ) : (
         <div>No data...</div>
       );
