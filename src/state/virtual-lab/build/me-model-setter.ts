@@ -12,10 +12,12 @@ import sessionAtom from '@/state/session';
 import { EntityCreation } from '@/types/nexus';
 import { MEModel, MEModelResource } from '@/types/me-model';
 import { createResource, fetchResourceById, updateResource } from '@/api/nexus';
+import { composeUrl } from '@/util/nexus';
+import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
-export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>(
+export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelResource | null>>(
   null,
-  async (get, set) => {
+  async (get, set, virtualLabInfo) => {
     const session = get(sessionAtom);
     const selectedMModel = await get(selectedMModelAtom);
     const selectedEModel = await get(selectedEModelAtom);
@@ -42,8 +44,14 @@ export const createMEModelAtom = atom<null, [], Promise<MEModelResource | null>>
       validated: false,
       status: 'initalized',
     };
+    const url = composeUrl('resource', '', {
+      sync: true,
+      schema: null,
+      org: virtualLabInfo.virtualLabId,
+      project: virtualLabInfo.projectId,
+    });
 
-    const meModelResource = await createResource<MEModelResource>(entity, session);
+    const meModelResource = await createResource<MEModelResource>(entity, session, url);
     set(meModelSelfUrlAtom, meModelResource._self);
     return meModelResource;
   }

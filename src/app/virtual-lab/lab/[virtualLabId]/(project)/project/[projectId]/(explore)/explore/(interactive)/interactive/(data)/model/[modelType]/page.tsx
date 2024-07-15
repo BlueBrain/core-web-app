@@ -38,6 +38,7 @@ export default function VirtualLabModelListingView() {
     case 'CircuitMEModel':
       return (
         <ExploreMEModelTable
+          virtualLabInfo={virtualLabInfo}
           dataType={currentModel as DataType}
           dataScope={ExploreDataScope.SelectedBrainRegion}
         />
