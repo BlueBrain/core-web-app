@@ -1,3 +1,5 @@
+import { isJSON } from '@/util/utils';
+
 const ReadyState = {
   CONNECTING: 0,
   OPEN: 1,
@@ -147,7 +149,11 @@ export default class WsCommon<WSResponses> {
         return;
       }
 
-      setTimeout(() => this.onMessage(message.cmd, message.data), 0);
+      const jsonMessage = isJSON(message) ? JSON.parse(message) : null;
+
+      if (jsonMessage) {
+        setTimeout(() => this.onMessage(jsonMessage.cmd, jsonMessage.data), 0);
+      }
     });
   };
 

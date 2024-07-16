@@ -29,6 +29,12 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
     return `${detailUrlBuilder(baseBuildUrl, model)}`;
   };
 
+  const generateSynaptomeUrl = (model: ExploreESHit<ExploreSectionResource>) => {
+    const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+    const baseBuildUrl = `${vlProjectUrl}/build/synaptome`;
+    return `${detailUrlBuilder(baseBuildUrl, model)}`;
+  };
+
   return (
     <div className="flex h-full flex-col gap-10 pt-14">
       <ScopeCarousel />
@@ -50,6 +56,11 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
             renderButton={({ selectedRows }) => (
               <div className="mr-5 flex items-center justify-end gap-2">
                 <GenericButton
+                  text="Generate synaptome"
+                  className="bg-primary-9  text-white hover:!bg-primary-7"
+                  href={generateSynaptomeUrl(selectedRows[0])}
+                />
+                <GenericButton
                   text="View model"
                   className="bg-primary-9  text-white hover:!bg-primary-7"
                   href={generateDetailUrl(selectedRows[0])}
@@ -60,7 +71,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
                   // `selectedRows` will be an array with only one element because `selectionType` is a radio button not a checkbox.
                   resourceId={selectedRows[0]._source['@id']}
                   type={ModelTypeNames.ME_MODEL}
-                  customButtom={customBookmarkButton}
+                  customButton={customBookmarkButton}
                 />
               </div>
             )}

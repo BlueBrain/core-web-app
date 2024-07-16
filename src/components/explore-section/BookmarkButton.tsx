@@ -26,7 +26,7 @@ type Props = {
   projectId: string;
   resourceId: string;
   type: BookmarksSupportedTypes;
-  customButtom?: (props: HTMLProps<HTMLButtonElement>) => ReactNode;
+  customButton?: (props: HTMLProps<HTMLButtonElement>) => ReactNode;
 };
 
 export default function BookmarkButton({
@@ -34,7 +34,7 @@ export default function BookmarkButton({
   projectId,
   resourceId,
   type,
-  customButtom,
+  customButton,
 }: Props) {
   const token = useAccessToken()!;
   const [saving, setSaving] = useState(false);
@@ -159,8 +159,8 @@ export default function BookmarkButton({
     );
   }
 
-  const addButton = customButtom ? (
-    customButtom({ onClick: saveToLibrary, children: 'Add to Library' })
+  const addButton = customButton ? (
+    customButton({ onClick: saveToLibrary, children: 'Add to Library' })
   ) : (
     <Button
       type="text"
@@ -172,8 +172,8 @@ export default function BookmarkButton({
     </Button>
   );
 
-  const removeButton = customButtom ? (
-    customButtom({ onClick: removeFromLibrary, children: 'Remove from library' })
+  const removeButton = customButton ? (
+    customButton({ onClick: removeFromLibrary, children: 'Remove from library' })
   ) : (
     <Button
       type="text"
