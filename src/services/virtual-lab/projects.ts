@@ -78,19 +78,17 @@ export async function createProject(
   {
     name,
     description,
-    token,
     includeMembers,
   }: {
     name: string;
     description: string;
     includeMembers: { email: string; role: 'admin' | 'member' }[];
-    token: string;
   },
   virtualLabId: string
 ): Promise<VlmResponse<{ project: Project }>> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects`, {
+  const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects`, {
     method: 'POST',
-    headers: { ...createApiHeaders(token), 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name,
       description,

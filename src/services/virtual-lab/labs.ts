@@ -26,6 +26,7 @@ export async function getVirtualLabsOfUser(): Promise<
   VlmResponse<VirtualLabAPIListData<VirtualLab>>
 > {
   const response = await authFetch(`${virtualLabApi.url}/virtual-labs`);
+
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }

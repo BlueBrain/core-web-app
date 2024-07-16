@@ -1,11 +1,10 @@
 import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Form, Input, Select } from 'antd';
-import { FormInstance } from 'antd/lib/form/Form';
 import { useState, useEffect, useReducer } from 'react';
 import { useAtom } from 'jotai';
 import { MailOutlined } from '@ant-design/icons';
 import VirtualLabMemberIcon from '../../VirtualLabMemberIcon';
-import { InvitedMember, selectedMembersAtom } from './shared';
+import { InvitedMember, selectedMembersAtom, Form as FormT } from './shared';
 import NewProjectModalInputs from './NewProjectModalInputs';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
@@ -15,12 +14,13 @@ export default function NewProjectModalForm({
   form,
   members,
 }: {
-  form: FormInstance;
+  form: FormT;
   members?: VirtualLabMember[];
 }) {
   const session = useSession();
   const [showInvitation, setShowInvitation] = useState(false);
   const [newInvite, setNewInvite] = useState<InvitedMember>({ email: '', role: 'admin' });
+
   const [invitedMembers, dispatch] = useReducer(
     (
       prevMembers: InvitedMember[],

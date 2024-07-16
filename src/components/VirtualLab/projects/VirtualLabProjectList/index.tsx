@@ -1,7 +1,6 @@
-import { useSession } from 'next-auth/react';
 import { Button, ConfigProvider, Modal, Spin, Form } from 'antd';
 import { useState } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
@@ -11,8 +10,10 @@ import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
-import { virtualLabMembersAtomFamily, newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
+import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
+import { useInitAtom, useAtom } from '@/state/state';
+import { assertErrorMessage, classNames } from '@/util/utils';
 
 function NewProjectModalFooter({
   close,
@@ -23,6 +24,8 @@ function NewProjectModalFooter({
   loading: boolean;
   onSubmit: () => void;
 }) {
+  const [submitDisabled] = useAtom<boolean>('new-project-submit-disabled');
+
   return loading ? (
     <Spin />
   ) : (
@@ -41,7 +44,11 @@ function NewProjectModalFooter({
           title="Save Changes"
           htmlType="submit"
           onClick={onSubmit}
-          className="h-14 w-40 rounded-none bg-primary-8 font-semibold hover:bg-primary-7"
+          className={classNames(
+            'ml-3 h-14 w-40 rounded-none bg-primary-8 font-semibold',
+            submitDisabled ? 'hover:bg-gray-100' : 'hover:bg-primary-7'
+          )}
+          disabled={!!submitDisabled}
         >
           Save
         </Button>
@@ -59,47 +66,45 @@ export function NewProjectModal({
   onSuccess: (newProject: Project) => void;
   virtualLabId: string;
 }) {
-  const [open, setOpen] = useAtom(newProjectModalOpenAtom);
+  const [open, setOpen] = useAtom<boolean>('new-project-modal-open');
   const [loading, setLoading] = useState(false);
-  const session = useSession();
   const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
   const includeMembers = useAtomValue(selectedMembersAtom);
+
+  useInitAtom('new-project-submit-disabled', true);
 
   const [form] = Form.useForm<{ name: string; description: string }>();
 
   const onSubmit = async () => {
-    if (!session.data) {
-      return;
+    try {
+      const { name, description } = await form.validateFields();
+      setLoading(true);
+      const res = await createProject({ name, description, includeMembers }, virtualLabId);
+      form.resetFields();
+      setOpen(false);
+      onSuccess(res.data.project);
+    } catch (e: any) {
+      if ('errorFields' in e) return; // Input errors.
+      onFail(assertErrorMessage(e)); // Request errors.
+    } finally {
+      setLoading(false);
     }
-    setLoading(true);
-
-    const { name, description } = form.getFieldsValue();
-
-    return createProject(
-      { name, description, includeMembers, token: session.data.accessToken },
-      virtualLabId
-    )
-      .then((response) => {
-        form.resetFields();
-        setOpen(false);
-        onSuccess(response.data.project);
-      })
-      .catch((error) => {
-        return onFail(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
   };
 
   return (
     <Modal
-      style={{ minWidth: 600 }}
+      className="m-w-[600px]"
       footer={
-        <NewProjectModalFooter close={() => setOpen(false)} loading={loading} onSubmit={onSubmit} />
+        <NewProjectModalFooter
+          close={() => {
+            form.resetFields();
+            setOpen(false);
+          }}
+          loading={loading}
+          onSubmit={onSubmit}
+        />
       }
-      onCancel={() => setOpen(false)}
-      open={open}
+      open={!!open}
       styles={{ mask: { backgroundColor: '#0050B3D9' } }}
     >
       <NewProjectModalForm form={form} members={members} />
@@ -137,7 +142,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
   const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
   const setVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(id));
   const notification = useNotification();
-  const [, setOpen] = useAtom(newProjectModalOpenAtom);
+  const [, setNewProjectModalOpen] = useAtom<boolean>('new-project-modal-open');
 
   if (!virtualLabProjects) {
     return (
@@ -182,7 +187,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
       <div className="fixed bottom-5 right-7">
         <Button
           className="mr-5 h-12 w-52 rounded-none border-none text-sm font-bold"
-          onClick={() => setOpen(true)}
+          onClick={() => setNewProjectModalOpen(true)}
         >
           <span className="relative text-primary-8">
             Create project <PlusOutlined className="relative left-3 top-[0.1rem]" />

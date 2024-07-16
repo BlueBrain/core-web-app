@@ -1,5 +1,4 @@
 import { ReactNode, useCallback, useReducer, useState } from 'react';
-import debounce from 'lodash/debounce';
 import { Button, ConfigProvider, Form, Input } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { ConfigProviderProps } from 'antd/lib/config-provider';
@@ -11,6 +10,7 @@ import type { TextAreaProps } from 'antd/lib/input/TextArea';
 import useNotification from '@/hooks/notifications';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
+import { useDebouncedCallback } from '@/hooks/hooks';
 
 type RenderInputProps = Omit<FormItemProps, 'children'> & {
   children: (props: InputProps & TextAreaProps) => ReactNode;
@@ -215,9 +215,8 @@ export default function FormPanel({
     />
   ));
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedOnValuesChange = useCallback(
-    debounce(async (values: Partial<VirtualLab>) => {
+  const debouncedOnValuesChange = useDebouncedCallback(
+    async (values: Partial<VirtualLab>) => {
       const validating = getValidateStatusFromValues(values, 'validating');
 
       setValidateStatus(validating);
@@ -240,8 +239,9 @@ export default function FormPanel({
 
           setValidateStatus(newValidateStatus);
         });
-    }, 600),
-    [onValuesChange]
+    },
+    [onValuesChange, notification],
+    600
   );
 
   return (

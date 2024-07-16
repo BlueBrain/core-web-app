@@ -3,7 +3,7 @@
 import { useEffect, useRef, ReactNode, useState, useLayoutEffect } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
+import Link from 'next/link'; // eslint-disable-line
 import { useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
 import { classNames, signOut } from '@/util/utils';
@@ -35,35 +35,29 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
     ghost: boolean // eslint-disable-line
   ) =>
     classNames(
-      'w-52 p-4 font-bold flex items-center',
-      ghost ? 'bg-transparent' : 'bg-primary-8 border border-primary-7'
+      'w-52 p-4 font-bold flex items-center border border-primary-7',
+      ghost ? 'bg-transparent' : 'bg-primary-8'
     );
+
+  const menuButtonStyle = { height: menuElementsHeight ?? undefined }; // eslint-disable-line
 
   return (
     <div className={classNames('flex h-14 w-full justify-between overflow-y-visible', className)}>
       <div className="flex gap-4" ref={localRef} />
       <div className={classNames('flex w-fit justify-end')}>
-        {[
-          {
-            children: 'Getting Started',
-            href: '/getting-started',
-            key: 'getting-started',
-          },
-          {
-            children: 'About',
-            href: '/about',
-            key: 'about',
-          },
-        ].map(({ children, href, key }) => (
-          <Link
-            className={classNames(getMenuButtonClassName(ghost), 'border border-primary-7')}
-            href={href}
-            key={key}
-            style={{ height: menuElementsHeight ?? undefined }}
-          >
-            {children}
-          </Link>
-        ))}
+        {/* TODO: Re-enable buttons after SfN */}
+
+        {/* <Link
+          href="/getting-started"
+          className={getMenuButtonClassName(ghost)}
+          style={menuButtonStyle}
+        >
+          Getting Started
+        </Link>
+        <Link href="/about" className={getMenuButtonClassName(ghost)} style={menuButtonStyle}>
+          About
+        </Link> */}
+
         {!!session && (
           <div
             className="hover:z-20"
@@ -106,7 +100,7 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
                   getMenuButtonClassName(false),
                   'flex flex-row justify-between  border border-t-0 border-primary-7'
                 )}
-                onClick={signOut}
+                onClick={expanded ? signOut : undefined}
               >
                 <span className="font-bold">Log out</span>
               </button>

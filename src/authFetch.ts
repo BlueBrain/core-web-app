@@ -25,7 +25,7 @@ export default async function authFetch(
 
   const init = args[1] || {};
   init.headers = {
-    ...{ Authorization: `Bearer ${session.accessToken}`, accept: 'application/json' },
+    ...{ Authorization: `Bearer ${session.accessToken}` },
     ...init.headers,
   };
   const newArgs: typeof args = [args[0], init];

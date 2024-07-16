@@ -1,8 +1,8 @@
 'use client';
 
 import { ChangeEvent, CSSProperties, ReactNode, useCallback, useRef, useState } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
-import { unwrap, useHydrateAtoms } from 'jotai/utils';
+import { useAtomValue } from 'jotai';
+import { unwrap } from 'jotai/utils';
 import { Button, ConfigProvider, Input } from 'antd';
 import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -16,10 +16,10 @@ import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 import { assertErrorMessage, classNames } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
-import { getAtom } from '@/state/state';
+import { useInitAtom, useAtom } from '@/state/state';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { patchVirtualLab } from '@/services/virtual-lab/labs';
-import { error } from '@/api/notifications';
+import openNotification from '@/api/notifications';
 import styles from './virtual-lab-banner.module.css';
 
 function BackgroundImg({
@@ -204,9 +204,7 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
 }
 
 export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
-  const vlabAtom = getAtom<VirtualLab>('vlab');
-
-  useHydrateAtoms([[vlabAtom, initialVlab]]);
+  const vlabAtom = useInitAtom<VirtualLab>(initialVlab.id, initialVlab);
 
   const vlab = useAtomValue(vlabAtom);
   const users = useUnwrappedValue(virtualLabMembersAtomFamily(vlab?.id));
@@ -219,7 +217,7 @@ export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
     [vlab?.id]
   );
 
-  const updateVlab = useUpdateOptimistically('vlab', vlabUpdater);
+  const updateVlab = useUpdateOptimistically(initialVlab.id, vlabUpdater);
 
   const name = vlab?.name;
   const description = vlab?.description;
@@ -321,11 +319,12 @@ export function ProjectDetailBanner({
   );
 }
 
+// TODO: Improve implementaion and make it generalizable
 function useUpdateOptimistically<T extends {}, RT>(
   atomKey: string,
   updater: (data: Partial<T>) => Promise<RT>
 ) {
-  const [data, setData] = useAtom(getAtom<T>(atomKey));
+  const [data, setData] = useAtom<T>(atomKey);
   const currentDataRef = useRef(data);
   const originalDataRef = useRef(data);
 
@@ -341,8 +340,14 @@ function useUpdateOptimistically<T extends {}, RT>(
         await updaterDebounced(newData);
         originalDataRef.current = currentDataRef.current;
       } catch (e) {
-        setData(originalDataRef.current);
-        error(assertErrorMessage(e));
+        openNotification(
+          'error',
+          assertErrorMessage(e),
+          5,
+          'bottomRight',
+          true,
+          'error-notification'
+        );
       }
     },
     [setData, updaterDebounced]

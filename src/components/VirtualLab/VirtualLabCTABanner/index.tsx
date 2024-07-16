@@ -1,9 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useSetAtom } from 'jotai';
-import { newProjectModalOpenAtom } from '@/state/virtual-lab/lab';
 import { basePath } from '@/config';
+import { useAtom } from '@/state/state';
 import styles from './virtual-lab-cta-banner.module.css';
 
 type Props = {
@@ -13,7 +12,7 @@ type Props = {
 };
 
 export default function VirtualLabCTABanner({ title, subtitle, id }: Props) {
-  const setNewProjectModalOpenAtom = useSetAtom(newProjectModalOpenAtom);
+  const [, setNewProjectModalOpenAtom] = useAtom<boolean>('new-project-modal-open');
 
   return (
     <Link

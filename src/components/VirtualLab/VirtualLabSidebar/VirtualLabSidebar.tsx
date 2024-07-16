@@ -3,25 +3,23 @@
 import { usePathname } from 'next/navigation';
 import { SwapOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { useHydrateAtoms } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
-import { getAtom } from '@/state/state';
+import { useInitAtom } from '@/state/state';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
 export default function VirtualLabSidebar({ initialVlab }: { initialVlab: VirtualLab }) {
   const currentPage = usePathname().split('/').pop();
-  const vlabAtom = getAtom<VirtualLab>('vlab');
+  const vlabAtom = useInitAtom<VirtualLab>(initialVlab.id, initialVlab);
 
-  useHydrateAtoms([[vlabAtom, initialVlab]]);
   const vlab = useAtomValue(vlabAtom) as VirtualLab;
 
-  const projects = useUnwrappedValue(virtualLabProjectsAtomFamily(vlab.id));
-  const users = useUnwrappedValue(virtualLabMembersAtomFamily(vlab.id))?.length;
+  const projects = useUnwrappedValue(virtualLabProjectsAtomFamily(vlab?.id));
+  const users = useUnwrappedValue(virtualLabMembersAtomFamily(vlab?.id))?.length;
 
   const linkItems: LinkItem[] = [
     { key: LinkItemKey.Lab, content: 'Overview', href: 'overview' },

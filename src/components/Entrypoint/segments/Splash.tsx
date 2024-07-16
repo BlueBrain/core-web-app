@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { Button } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
@@ -24,14 +23,13 @@ function HeroText() {
       <div className="select-none whitespace-pre-line text-left text-2xl font-bold text-white xl:text-7xl 2xl:text-9xl">
         {'Virtual labs for\nexploring, building and\nsimulating the brain'}
       </div>
-      <Button
-        className="mt-10 flex h-auto w-[500px] justify-between rounded-none border-solid border-primary-7 bg-transparent py-8 text-sm font-bold"
-        type="link"
-        href="/explore/interactive"
+      <Link
+        className="mt-10 flex h-auto w-[500px] justify-between rounded-none border border-primary-7 bg-transparent py-8 text-sm font-bold"
+        href="/log-in"
       >
-        <span className="pl-4 text-4xl text-white">Start exploring</span>
+        <span className="pl-4 text-4xl text-white">Log in</span>
         <ArrowRightOutlined className="pr-4 text-4xl text-white" />
-      </Button>
+      </Link>
     </div>
   );
 }
@@ -46,7 +44,11 @@ export function OBPLogo({
   return (
     <Link
       href="/"
-      className={classNames('z-10 flex h-auto flex-col justify-center pr-4', color, className)}
+      className={classNames(
+        'z-10 flex h-auto flex-col justify-center pr-4 outline-none',
+        color,
+        className
+      )}
     >
       <div className="flex flex-col text-4xl font-bold">
         <span>Blue</span>
