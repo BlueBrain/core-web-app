@@ -300,7 +300,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
       },
     },
     title: 'Mean ± std',
-    unit: '1/μm',
+    unit: '\u00B5m-\u00B9',
     filter: FilterTypeEnum.ValueRange,
     render: {
       esResourceViewFn: selectorFnMeanStd,
