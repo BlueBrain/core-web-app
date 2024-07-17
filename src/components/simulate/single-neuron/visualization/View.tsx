@@ -9,7 +9,7 @@ import throttle from 'lodash/throttle';
 import { PositionedPopover } from './PositionedPopover';
 import TraceLoader from './TraceLoader';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
-import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
+import { DEFAULT_DIRECT_STIM_CONFIG, DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import { SimAction } from '@/types/simulate/single-neuron';
 import { PlotData, TraceData } from '@/services/bluenaas-single-cell/types';
 import {
@@ -18,7 +18,7 @@ import {
   secNamesAtom,
   segNamesAtom,
   simulationConfigAtom,
-  singleNeuronSelfUrlAtom,
+  singleNeuronAtom,
 } from '@/state/simulate/single-neuron';
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
@@ -66,7 +66,10 @@ export function BlueNaas({ modelSelfUrl }: BlueNaasProps) {
     }
 
     const secName = selectionCtrlConfig.data.segName.replace(/_.*/, '');
-    onChange({ type: 'CHANGE_PARAM', payload: { key: 'injectTo', value: secName } });
+    onChange({
+      type: 'CHANGE_DIRECT_STIM_PROPERTY',
+      payload: { key: 'injectTo', value: secName, stimulationId: '0' },
+    });
   };
 
   const addRecording = () => {
@@ -75,7 +78,10 @@ export function BlueNaas({ modelSelfUrl }: BlueNaasProps) {
     }
 
     const recordFrom = [...simConfig.recordFrom, selectionCtrlConfig.data.segName];
-    onChange({ type: 'CHANGE_PARAM', payload: { key: 'recordFrom', value: recordFrom } });
+    onChange({
+      type: 'CHANGE_RECORD_FROM',
+      payload: recordFrom,
+    });
   };
 
   useEffect(() => {
@@ -102,7 +108,7 @@ export function BlueNaas({ modelSelfUrl }: BlueNaasProps) {
       setSecNames(initData.secNames);
       setSegNames(initData.segNames);
 
-      if (!initData.secNames.includes(DEFAULT_SIM_CONFIG.injectTo)) {
+      if (!initData.secNames.includes(DEFAULT_DIRECT_STIM_CONFIG.injectTo)) {
         throw new Error('No soma section present');
       }
       if (!initData.segNames.includes(DEFAULT_SIM_CONFIG.recordFrom[0])) {
@@ -163,7 +169,10 @@ export function BlueNaas({ modelSelfUrl }: BlueNaasProps) {
         <PositionedPopover config={selectionCtrlConfig.position}>
           <Button
             onClick={setInjection}
-            disabled={simConfig.injectTo === selectionCtrlConfig.data.segName.replace(/_.*/, '')}
+            disabled={
+              simConfig.directStimulation?.[0].injectTo ===
+              selectionCtrlConfig.data.segName.replace(/_.*/, '')
+            }
           >
             Set Injection
           </Button>
@@ -180,7 +189,7 @@ export function BlueNaas({ modelSelfUrl }: BlueNaasProps) {
 }
 
 export default function EModelInteractiveView() {
-  const modelSelfUrl = useAtomValue(singleNeuronSelfUrlAtom);
+  const modelSelfUrl = useAtomValue(singleNeuronAtom);
 
   const [blueNaasModelSelfUrl, setBlueNaasModelSelfUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -190,7 +199,7 @@ export default function EModelInteractiveView() {
 
     const init = () => {
       setLoading(true);
-      setBlueNaasModelSelfUrl(modelSelfUrl);
+      setBlueNaasModelSelfUrl(modelSelfUrl?.self ?? null);
     };
 
     init();

@@ -62,7 +62,7 @@ export default class BlueNaas {
 
   private ensureSecMarkers() {
     this.renderer.ensureSecMarkers([
-      { type: 'stimulus', secName: this.simConfig.injectTo },
+      { type: 'stimulus', secName: this.simConfig.directStimulation![0].injectTo },
       ...this.simConfig.recordFrom.map<SecMarkerConfig>((segName) => ({
         type: 'recording',
         secName: segName.replace(/_.*/, ''),
@@ -78,7 +78,10 @@ export default class BlueNaas {
   runSim() {
     this.traceData = null;
 
-    this.ws.send(BlueNaasCmd.SET_INJECTION_LOCATION, this.simConfig?.injectTo);
+    this.ws.send(
+      BlueNaasCmd.SET_INJECTION_LOCATION,
+      this.simConfig?.directStimulation![0].injectTo
+    );
   }
 
   private onMorphologyLoaded(morphology: Morphology) {

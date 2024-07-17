@@ -19,7 +19,10 @@ import { createDistribution } from '@/util/nexus';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 import { EModel } from '@/types/e-model';
 import { MEModel } from '@/types/me-model';
-import { SingleNeuronSimulationPayload } from '@/types/simulate/single-neuron';
+import {
+  SingleModelSimulationConfig,
+  SingleNeuronSimulationPayload,
+} from '@/types/simulate/single-neuron';
 
 export const createSingleNeuronSimulationAtom = atom<
   null,
@@ -33,12 +36,22 @@ export const createSingleNeuronSimulationAtom = atom<
 
   if (!session || !simulationConfig || !simulationResults || !singleNeuronId) return null;
 
+  // TODO: Remove `singleNeuronSimulationConfig` and use `simulationConfig` directly once backend is updated to accept this type
+  const singleNeuronSimulationConfig: SingleModelSimulationConfig = {
+    recordFrom: [...simulationConfig.recordFrom],
+    celsius: simulationConfig.directStimulation![0].celsius,
+    hypamp: simulationConfig.directStimulation![0].hypamp,
+    vinit: simulationConfig.directStimulation![0].vinit,
+    injectTo: simulationConfig.directStimulation![0].injectTo,
+    stimulus: simulationConfig.directStimulation![0].stimulus,
+  };
+
   const resource = await fetchResourceById<EModel | MEModel>(singleNeuronId, session);
 
   if (!resource) return null;
 
   const payload: SingleNeuronSimulationPayload = {
-    config: simulationConfig,
+    config: singleNeuronSimulationConfig,
     simulationResult: simulationResults,
     stimuliPreviewData: [], // TODO: make an atom of preview stimuli to add here
   };
@@ -55,8 +68,8 @@ export const createSingleNeuronSimulationAtom = atom<
       '@type': 'MEModel',
       '@id': singleNeuronId,
     },
-    injectionLocation: simulationConfig.injectTo,
-    recordingLocation: simulationConfig.recordFrom,
+    injectionLocation: singleNeuronSimulationConfig.injectTo,
+    recordingLocation: singleNeuronSimulationConfig.recordFrom,
     brainLocation: resource.brainLocation,
   };
 

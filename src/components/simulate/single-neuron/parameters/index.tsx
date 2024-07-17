@@ -2,7 +2,7 @@
 
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Form } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import Stimulation from './Stimulation';
 import Recording from './Recording';
@@ -10,12 +10,21 @@ import Conditions from './Conditions';
 import Analysis from './Analysis';
 import Visualization from './Visualization';
 import Results from './Results';
+import ModelWithSynapseConfig from './ModelWithSynapseConfig';
 import {
   simulateStepAtom,
   simulationConfigAtom,
   simulationFormIsFilledAtom,
+  singleNeuronAtom,
 } from '@/state/simulate/single-neuron';
-import { SimAction, SimConfig } from '@/types/simulate/single-neuron';
+import {
+  SimAction,
+  SimConfig,
+  SingleNeuronModelType,
+  isSingleModelSimConfig,
+  isSynaptomModel,
+} from '@/types/simulate/single-neuron';
+import { getDefaultSynapsesConfig } from '@/constants/simulate/single-neuron';
 
 export default function ParameterView() {
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
@@ -23,6 +32,7 @@ export default function ParameterView() {
   const formSimConfig = Form.useWatch([], form);
   const simulateStep = useAtomValue(simulateStepAtom);
   const setSubmittable = useSetAtom(simulationFormIsFilledAtom);
+  const selectedModel = useAtomValue(singleNeuronAtom);
 
   const onChange = (action: SimAction) => {
     dispatch(action);
@@ -36,13 +46,29 @@ export default function ParameterView() {
   }, [formSimConfig, form, setSubmittable]);
 
   useEffect(() => {
-    form.setFieldsValue(simConfig);
+    form.setFieldsValue({
+      ...simConfig,
+      directStimulation: simConfig.directStimulation ?? undefined,
+      synapses: simConfig.synapses ?? undefined,
+    });
   }, [form, simConfig]);
 
-  const onFinish = () => {};
+  const defaultSynapsesConfig = useMemo(() => {
+    if (selectedModel?.type === SingleNeuronModelType.SingleNeuronSynaptome) {
+      return getDefaultSynapsesConfig(selectedModel)!;
+    }
+    return null;
+  }, [selectedModel]);
 
+  useEffect(() => {
+    if (defaultSynapsesConfig) {
+      dispatch({ type: 'SET_STIMULUS_AND_SYNAPSES', payload: defaultSynapsesConfig });
+    }
+  }, [defaultSynapsesConfig, dispatch]);
+
+  const onFinish = () => {};
   return (
-    <div className="w-full px-8 py-6">
+    <div className="h-full w-full overflow-y-scroll px-8 py-6">
       <div className="text-3xl font-bold capitalize text-primary-8">{simulateStep}</div>
       <Form
         form={form}
@@ -54,13 +80,24 @@ export default function ParameterView() {
       >
         <div className="mt-10 text-center text-2xl">
           <div className={simulateStep === 'stimulation' ? '' : 'hidden'}>
-            <Stimulation onChange={onChange} simConfig={simConfig} />
+            {isSynaptomModel(selectedModel) ? (
+              <ModelWithSynapseConfig
+                onChange={onChange}
+                simConfig={simConfig}
+                defaultSynapsesConfig={defaultSynapsesConfig!}
+                synapses={selectedModel.source.synapses.map((s) => s.id)}
+              />
+            ) : (
+              isSingleModelSimConfig(simConfig) && (
+                <Stimulation onChange={onChange} simConfig={simConfig} />
+              )
+            )}
           </div>
           <div className={simulateStep === 'recording' ? '' : 'hidden'}>
             <Recording onChange={onChange} />
           </div>
           <div className={simulateStep === 'conditions' ? '' : 'hidden'}>
-            <Conditions onChange={onChange} />
+            <Conditions onChange={onChange} stimulationId={0} />
           </div>
           <div className={simulateStep === 'analysis' ? '' : 'hidden'}>
             <Analysis />

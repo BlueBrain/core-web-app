@@ -35,7 +35,17 @@ export type ESmeModel = ESeModel & {
   };
 };
 
-export type ExploreResource = Experiment | Simulation | SimulationCampaign | ESeModel;
+// TODO: Use the same type here that @Bilal adds in his PR
+export type MEModelSynaptome = ESHitSource & {
+  synapses: { id: string }[];
+};
+
+export type ExploreResource =
+  | Experiment
+  | Simulation
+  | SimulationCampaign
+  | ESeModel
+  | MEModelSynaptome;
 
 export type ExploreESHit<H extends ExploreResource> = {
   sort: number[];

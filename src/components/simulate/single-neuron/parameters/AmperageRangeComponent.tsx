@@ -28,6 +28,7 @@ type AmperageActionType = {
 type AmperageStateType = typeof amperageInitialState;
 
 type Props = {
+  stimulationId: number;
   onChange: (action: SimAction) => void;
   amplitudes: number[];
 };
@@ -81,15 +82,18 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   return newState;
 }
 
-export default function AmperageRangeComponent({ onChange, amplitudes }: Props) {
+export default function AmperageRangeComponent({ onChange, amplitudes, stimulationId }: Props) {
   const [amperageState, dispatch] = useReducer(rangeReducer, { ...amperageInitialState });
 
   useEffect(() => {
     if (!amperageState.isConsistent) return;
     if (isEqual(amperageState.computed, amplitudes)) return;
 
-    onChange({ type: 'CHANGE_AMPLITUDES', payload: amperageState.computed });
-  }, [onChange, amperageState.computed, amperageState.isConsistent, amplitudes]);
+    onChange({
+      type: 'CHANGE_AMPLITUDES',
+      payload: { stimulationId: `${stimulationId}`, value: amperageState.computed },
+    });
+  }, [onChange, amperageState.computed, amperageState.isConsistent, amplitudes, stimulationId]);
 
   return (
     <>

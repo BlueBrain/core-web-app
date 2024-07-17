@@ -7,5 +7,5 @@ type Props = {
 };
 
 export default function SimulateSingleNeuronEditLayout({ children }: Props) {
-  return <div>{children}</div>;
+  return <div className="bg-white">{children}</div>;
 }

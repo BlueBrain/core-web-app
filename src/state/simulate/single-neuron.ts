@@ -3,7 +3,12 @@ import { atomWithReducer, atomWithReset } from 'jotai/utils';
 import { MutableRefObject } from 'react';
 
 import { simReducer } from './redurcers';
-import { SimAction, SimConfig, SimulateStep } from '@/types/simulate/single-neuron';
+import {
+  SelectedSingleNeuronModel,
+  SimAction,
+  SimConfig,
+  SimulateStep,
+} from '@/types/simulate/single-neuron';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
@@ -20,11 +25,11 @@ export const secNamesAtom = atomWithReset<string[]>([]);
 
 export const segNamesAtom = atom<string[]>(['soma[0]', 'axon[1]']);
 
-export const singleNeuronSelfUrlAtom = atom<string | null>(null);
+export const singleNeuronAtom = atom<SelectedSingleNeuronModel | null>(null);
 
 export const singleNeuronIdAtom = atom<string | null>((get) => {
-  const singleNeuronSelfUrl = get(singleNeuronSelfUrlAtom);
-  return getIdFromSelfUrl(singleNeuronSelfUrl);
+  const singleNeuronSelfUrl = get(singleNeuronAtom);
+  return getIdFromSelfUrl(singleNeuronSelfUrl?.self ?? null);
 });
 
 export const simulationStatusAtom = atomWithReset({
@@ -40,5 +45,5 @@ export const simulationPlotDataAtom = atomWithReset<PlotData | null>(null);
 
 export const protocolNameAtom = atom<string | null>((get) => {
   const simulationConfig = get(simulationConfigAtom);
-  return simulationConfig.stimulus.stimulusProtocol;
+  return simulationConfig.directStimulation?.[0].stimulus.stimulusProtocol ?? null; // TODO: The index here should not be hardcoded when synaptome rendering is done.
 });

@@ -8,21 +8,26 @@ import { ServerSideComponentProp } from '@/types/common';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
-import { singleNeuronSelfUrlAtom } from '@/state/simulate/single-neuron';
+import { singleNeuronAtom } from '@/state/simulate/single-neuron';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { ExploreDataScope } from '@/types/explore-section/application';
+import { SingleNeuronModelType } from '@/types/simulate/single-neuron';
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
-  const setSingleNeuronSelfUrl = useSetAtom(singleNeuronSelfUrlAtom);
+  const setSingleNeuron = useSetAtom(singleNeuronAtom);
   const router = useRouter();
 
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
-    setSingleNeuronSelfUrl(model._source._self);
-    router.push('/simulate/single-neuron/edit');
+    setSingleNeuron({
+      self: model._source._self,
+      type: SingleNeuronModelType.MeModel,
+      source: { ...model._source },
+    });
+    router.push(`${generateVlProjectUrl(virtualLabId, projectId)}/simulate/single-neuron/edit`);
   };
 
   const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;

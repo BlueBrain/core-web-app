@@ -6,6 +6,10 @@ import {
   StimulusModuleDropdownOptionType,
   SimConfig,
   StimulusConfig,
+  SelectedSingleNeuronModel,
+  SingleNeuronModelType,
+  SynapsesConfig,
+  DirectSimulationConfig,
 } from '@/types/simulate/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
 
@@ -99,11 +103,40 @@ export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   amplitudes: [40, 80, 120],
 };
 
-export const DEFAULT_SIM_CONFIG: SimConfig = {
+export const DEFAULT_DIRECT_STIM_CONFIG: DirectSimulationConfig = {
+  id: '0',
   celsius: 34,
   hypamp: 0,
   vinit: -73,
   injectTo: 'soma[0]',
-  recordFrom: ['soma[0]_0'],
   stimulus: DEFAULT_STIM_CONFIG,
+};
+
+export const DEFAULT_SIM_CONFIG: SimConfig = {
+  recordFrom: ['soma[0]_0'],
+  directStimulation: [DEFAULT_DIRECT_STIM_CONFIG],
+  synapses: null,
+};
+
+export const getDefaultSynapsesConfig = (
+  model: SelectedSingleNeuronModel
+): SynapsesConfig | null => {
+  if (
+    model.type === SingleNeuronModelType.SingleNeuronSynaptome &&
+    'synapses' in model.source &&
+    model.source.synapses.length > 0
+  ) {
+    return [
+      {
+        id: '0',
+        synapseId: model.source.synapses[0].id,
+        delay: 100,
+        duration: 2000,
+        frequency: 20,
+        weightScalar: 2,
+      },
+    ];
+  }
+
+  return null;
 };

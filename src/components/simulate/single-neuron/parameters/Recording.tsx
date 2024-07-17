@@ -23,7 +23,10 @@ export default function Recording({ onChange }: Props) {
         showSearch
         placeholder="Select recording locations"
         onChange={(newVal) =>
-          onChange({ type: 'CHANGE_PARAM', payload: { key: 'recordFrom', value: newVal } })
+          onChange({
+            type: 'CHANGE_RECORD_FROM',
+            payload: newVal,
+          })
         }
         mode="multiple"
         options={segNames.map((secName) => ({ value: secName, label: secName }))}
