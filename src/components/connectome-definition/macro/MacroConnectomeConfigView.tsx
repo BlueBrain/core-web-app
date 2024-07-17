@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ConfigProvider, theme, InputNumber, Input, Button } from 'antd';
 import Plotly, { Layout, Shape } from 'plotly.js-dist-min';
-import debounce from 'lodash/debounce';
 import uniq from 'lodash/uniq';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
@@ -33,7 +32,7 @@ import {
   currentEditIdxAtom,
 } from '@/components/connectome-definition/macro/state';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
-import { useLoadable } from '@/hooks/hooks';
+import { useDebouncedCallback, useLoadable } from '@/hooks/hooks';
 import { getFlatArrayValueIdx } from '@/util/connectome';
 import styles from '../connectome-definition-view.module.scss';
 
@@ -196,22 +195,22 @@ export default function ConnectomeConfigurationView() {
     selectionShapes.current = [];
   };
 
-  const handleOffsetChange = useMemo(
-    () =>
-      debounce((value) => {
-        if (value === null) return;
-        setOffset(value);
-      }, 300),
-    [setOffset]
+  const handleOffsetChange = useDebouncedCallback(
+    (value) => {
+      if (value === null) return;
+      setOffset(value);
+    },
+    [setOffset],
+    300
   );
 
-  const handleMultiplierChange = useMemo(
-    () =>
-      debounce((value) => {
-        if (value === null) return;
-        setMultiplier(value);
-      }, 300),
-    [setMultiplier]
+  const handleMultiplierChange = useDebouncedCallback(
+    (value) => {
+      if (value === null) return;
+      setMultiplier(value);
+    },
+    [setMultiplier],
+    300
   );
 
   return (
