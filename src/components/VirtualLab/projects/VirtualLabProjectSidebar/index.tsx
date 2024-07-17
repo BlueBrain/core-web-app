@@ -1,7 +1,5 @@
 import { usePathname } from 'next/navigation';
 import { Spin } from 'antd';
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
 import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
@@ -16,6 +14,7 @@ import {
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 import { getBookmarksCount } from '@/services/virtual-lab/bookmark';
+import { useLoadableValue } from '@/hooks/hooks';
 
 type Props = {
   virtualLabId: string;
@@ -23,18 +22,15 @@ type Props = {
 };
 
 export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Props) {
-  const projectDetails = useAtomValue(
-    loadable(virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId }))
+  const projectDetails = useLoadableValue(
+    virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId })
   );
-  const projectUsers = useAtomValue(
-    loadable(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
+  const projectUsers = useLoadableValue(
+    virtualLabProjectUsersAtomFamily({ virtualLabId, projectId })
   );
-  const bookmarks = useAtomValue(
-    loadable(bookmarksForProjectAtomFamily({ virtualLabId, projectId }))
-  );
-
-  const projectPapers = useAtomValue(
-    loadable(virtualLabProjectPapersCountAtomFamily({ virtualLabId, projectId }))
+  const bookmarks = useLoadableValue(bookmarksForProjectAtomFamily({ virtualLabId, projectId }));
+  const projectPapers = useLoadableValue(
+    virtualLabProjectPapersCountAtomFamily({ virtualLabId, projectId })
   );
 
   const renderProjectTitle = () => {

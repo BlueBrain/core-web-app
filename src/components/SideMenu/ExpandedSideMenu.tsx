@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
-import { loadable, unwrap } from 'jotai/utils';
+import { unwrap } from 'jotai/utils';
 import { Button, Divider, Spin } from 'antd';
 import Link from 'next/link';
 
@@ -11,6 +11,7 @@ import LabsAndProjectsCollapse from './LabsAndProjectsCollapse';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectDetailsAtomFamily } from '@/state/virtual-lab/projects';
 import { Role } from '@/constants/virtual-labs/sidemenu';
+import { useLoadableValue } from '@/hooks/hooks';
 
 type ExpandedSideMenuProps = {
   lab: LabItem;
@@ -42,13 +43,11 @@ function BoxLink({ label, text, href, id }: BoxLinkProps) {
 }
 
 function ProjectLink({ project }: { project: ProjectItem }) {
-  const virtualLabProjectLoadable = useAtomValue(
-    loadable(
-      virtualLabProjectDetailsAtomFamily({
-        virtualLabId: project.virtualLabId,
-        projectId: project.id,
-      })
-    )
+  const virtualLabProjectLoadable = useLoadableValue(
+    virtualLabProjectDetailsAtomFamily({
+      virtualLabId: project.virtualLabId,
+      projectId: project.id,
+    })
   );
 
   if (virtualLabProjectLoadable.state === 'loading') {
@@ -105,7 +104,7 @@ export default function ExpandedSideMenu({
       <Button
         type="text"
         onClick={toggleExpand}
-        className="absolute right-1 top-1 top-5 z-20 order-2"
+        className="absolute right-1 top-5 z-20 order-2"
         icon={<MinusOutlined className="text-sm text-white" />}
       />
     </div>
