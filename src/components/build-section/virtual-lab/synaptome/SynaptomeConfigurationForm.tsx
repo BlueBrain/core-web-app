@@ -1,21 +1,27 @@
 'use client';
 
+import { useState } from 'react';
 import { Form, Input, Select, Button, ConfigProvider, Space, Tag, InputNumber } from 'antd';
 import { DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { classNames, createHeaders } from '@/util/utils';
-import { composeUrl, removeMetadata } from '@/util/nexus';
+import { composeUrl, createDistribution, removeMetadata } from '@/util/nexus';
 import {
   NEXUS_SYNAPTOME_TYPE,
   SingleSynaptomeConfig,
+  SYNAPTOME_OBJECT_OF_STUDY,
   SynaptomeConfiguration,
 } from '@/types/synaptome';
 import { EntityResource } from '@/types/nexus';
 import useNotification from '@/hooks/notifications';
 import { getSession } from '@/authFetch';
 
+const CONFIG_FILE_NAME = 'synaptome_config.json';
+const CONFIG_FILE_FORMAT = 'application/json';
 const CREATE_SYNAPTOME_SUCCESS = 'The synapse has been successfully added to the neuron.';
 const CREATE_SYNAPTOME_FAIL =
   'Failed to process your synapse addition request. Please review the form and try again or contact support.';
+const CREATE_SYNAPTOME_CONFIG_FAIL =
+  'Failed to create the synaptome configuration file. Please review the form and try again or contact support.';
 
 const label = (text: string) => (
   <span className="text-base font-semibold text-primary-8">{text}</span>
@@ -38,6 +44,7 @@ type Props = {
 
 export default function SynaptomeMConfigurationForm({ org, project, resource }: Props) {
   const [form] = Form.useForm<SynaptomeConfiguration>();
+  const [loading, setLoading] = useState(false);
   const { error: notifyError, success: notifySuccess } = useNotification();
   const synapses = Form.useWatch<Array<SingleSynaptomeConfig>>('synapses', form);
 
@@ -51,42 +58,69 @@ export default function SynaptomeMConfigurationForm({ org, project, resource }: 
     ]);
   };
 
-  const onFinish = async (values: SynaptomeConfiguration) => {
+  const onConfigurationSubmission = async () => {
     try {
-      const ready = false; // TODO: waiting for the schema to be ready to change the payload format
-      if (ready) {
-        const session = await getSession();
-        const resourceUrl = composeUrl('resource', '', {
-          org,
-          project,
-          sync: true,
-          schema: null,
-        });
+      await form.validateFields({ recursive: true });
+    } catch (error) {
+      return false;
+    }
+    const values = form.getFieldsValue();
+    try {
+      setLoading(true);
+      const session = await getSession();
+      const configFileUrl = composeUrl('file', '', { org, project });
+      const SYNAPTOME_CONFIG = { synapses: values.synapses };
 
-        const sanitizedResource = removeMetadata({
-          ...resource,
-          '@type': NEXUS_SYNAPTOME_TYPE,
-          name: values.name,
-          description: values.description,
-          configuration: {
-            seed: values.seed,
-            synapses: values.synapses,
-          },
-        });
+      const formData = new FormData();
+      const dataBlob = new Blob([JSON.stringify(SYNAPTOME_CONFIG)], { type: CONFIG_FILE_FORMAT });
 
-        const resp = await fetch(resourceUrl, {
-          method: 'POST',
-          headers: createHeaders(session.accessToken),
-          body: JSON.stringify(sanitizedResource),
-        });
+      formData.append('file', dataBlob, CONFIG_FILE_NAME);
 
-        if (!resp.ok) {
-          return notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight');
-        }
-        notifySuccess(CREATE_SYNAPTOME_SUCCESS, undefined, 'topRight');
+      const configResponse = await fetch(configFileUrl, {
+        method: 'POST',
+        headers: createHeaders(session.accessToken, {
+          'x-nxs-file-content-length': dataBlob.size.toString(),
+        }),
+        body: formData,
+      });
+
+      if (!configResponse.ok) {
+        return notifyError(CREATE_SYNAPTOME_CONFIG_FAIL, undefined, 'topRight');
       }
+
+      const fileMetadata = await configResponse.json();
+      const resourceUrl = composeUrl('resource', '', {
+        org,
+        project,
+        sync: true,
+        schema: null,
+      });
+
+      const sanitizedResource = removeMetadata({
+        ...resource,
+        '@type': NEXUS_SYNAPTOME_TYPE,
+        objectOfStudy: SYNAPTOME_OBJECT_OF_STUDY,
+        name: values.name,
+        description: values.description,
+        seed: values.seed,
+        distribution: [createDistribution(fileMetadata)],
+      });
+
+      const resp = await fetch(resourceUrl, {
+        method: 'POST',
+        headers: createHeaders(session.accessToken),
+        body: JSON.stringify(sanitizedResource),
+      });
+
+      if (!resp.ok) {
+        return notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight');
+      }
+      form.resetFields();
+      notifySuccess(CREATE_SYNAPTOME_SUCCESS, undefined, 'topRight');
     } catch (error) {
       notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,7 +129,7 @@ export default function SynaptomeMConfigurationForm({ org, project, resource }: 
       <Form
         form={form}
         name="neuron-form"
-        onFinish={onFinish}
+        onFinish={onConfigurationSubmission}
         layout="vertical"
         initialValues={{
           name: '',
@@ -103,12 +137,8 @@ export default function SynaptomeMConfigurationForm({ org, project, resource }: 
           seed: 100,
           synapses: [
             {
+              ...defaultSynapseValue,
               id: crypto.randomUUID(),
-              name: '',
-              target: undefined,
-              type: undefined,
-              distribution: undefined,
-              formula: '',
             },
           ],
         }}
@@ -221,7 +251,18 @@ export default function SynaptomeMConfigurationForm({ org, project, resource }: 
                     </Form.Item>
                     <Form.Item
                       name={[field.name, 'formula']}
-                      rules={[{ required: true, message: 'Please provide a valid formula!' }]}
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Please provide a valid formula!',
+                          async validator(_, value) {
+                            if (synapses?.[index].distribution !== 'formula') {
+                              return Promise.resolve();
+                            }
+                            if (!value) return Promise.reject();
+                          },
+                        },
+                      ]}
                       validateTrigger="onBlur"
                       className={classNames(
                         '[&_.ant-form-item-row]:mb-0 [&_.ant-form-item-row]:inline-block [&_.ant-form-item-row]:w-full',
@@ -262,7 +303,7 @@ export default function SynaptomeMConfigurationForm({ org, project, resource }: 
             <Button type="default" htmlType="reset">
               Reset
             </Button>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
               Save Changes
             </Button>
           </Space>

@@ -2,7 +2,7 @@ import { IdWithLabel, IdWithType } from './common';
 import { Annotation, BrainLocation, Contribution, FileDistribution } from './delta-properties';
 import { EntityResource } from '@/types/nexus/common';
 
-type ModelResource = EntityResource & {
+export type ModelResource = EntityResource & {
   brainLocation: BrainLocation;
   contribution: Contribution;
   name: string;

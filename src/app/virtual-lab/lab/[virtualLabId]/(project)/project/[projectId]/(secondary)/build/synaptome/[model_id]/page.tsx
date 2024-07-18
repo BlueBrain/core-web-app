@@ -32,7 +32,7 @@ function useMeModel({ modelId }: { modelId: string }) {
 }
 
 function Synaptome({ params }: Props) {
-  const { org, project, id } = useResourceInfoFromPath();
+  const { id } = useResourceInfoFromPath();
   const { resource } = useMeModel({ modelId: id });
 
   if (!resource) {
@@ -55,7 +55,13 @@ function Synaptome({ params }: Props) {
           </DefaultLoadingSuspense>
         </div>
         <div className="secondary-scrollbar h-screen w-full overflow-y-auto p-8">
-          <SynaptomeConfigurationForm {...{ org, project, resource }} />
+          <SynaptomeConfigurationForm
+            {...{
+              resource,
+              org: params.virtualLabId,
+              project: params.projectId,
+            }}
+          />
         </div>
       </div>
     </div>
