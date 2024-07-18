@@ -20,11 +20,11 @@ import {
 import {
   SimAction,
   SimConfig,
-  SingleNeuronModelType,
   isSingleModelSimConfig,
   isSynaptomModel,
 } from '@/types/simulate/single-neuron';
 import { getDefaultSynapsesConfig } from '@/constants/simulate/single-neuron';
+import { DataType } from '@/constants/explore-section/list-views';
 
 export default function ParameterView() {
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
@@ -54,7 +54,7 @@ export default function ParameterView() {
   }, [form, simConfig]);
 
   const defaultSynapsesConfig = useMemo(() => {
-    if (selectedModel?.type === SingleNeuronModelType.SingleNeuronSynaptome) {
+    if (selectedModel?.type === DataType.SingleNeuronSynaptome) {
       return getDefaultSynapsesConfig(selectedModel)!;
     }
     return null;

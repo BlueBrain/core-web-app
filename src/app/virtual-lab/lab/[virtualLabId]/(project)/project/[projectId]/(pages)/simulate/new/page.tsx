@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useSetAtom } from 'jotai';
+import { useSetAtom, useAtomValue } from 'jotai';
 
 import GenericButton from '@/components/Global/GenericButton';
 import { ServerSideComponentProp } from '@/types/common';
@@ -13,24 +13,36 @@ import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { ExploreDataScope } from '@/types/explore-section/application';
-import { SingleNeuronModelType } from '@/types/simulate/single-neuron';
+import { selectedSimulationScopeAtom } from '@/state/simulate';
+import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
+  const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
   const setSingleNeuron = useSetAtom(singleNeuronAtom);
   const router = useRouter();
+
+  const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;
+
+  const modelType =
+    selectedSimulationScope && selectedSimulationScope in SimulationScopeToModelType
+      ? SimulationScopeToModelType[selectedSimulationScope]
+      : null;
 
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
     setSingleNeuron({
       self: model._source._self,
-      type: SingleNeuronModelType.MeModel,
-      source: { ...model._source },
+      type: modelType ?? DataType.CircuitMEModel,
+      source: {
+        ...model._source,
+        ...(modelType === DataType.SingleNeuronSynaptome && {
+          synapses: [{ id: '1' }, { id: '2' }], // TODO: When synaptome model is ready synapses should be correctly populated.
+        }),
+      },
     });
     router.push(`${generateVlProjectUrl(virtualLabId, projectId)}/simulate/single-neuron/edit`);
   };
-
-  const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;
 
   return (
     <div className="flex flex-col pt-14">
@@ -41,7 +53,7 @@ export default function VirtualLabProjectSimulateNewPage({
       {/* TODO: replace this list with items saved in Model Library */}
       <div className="h-[70vh]" id="explore-table-container-for-observable">
         <ExploreSectionListingView
-          dataType={DataType.CircuitMEModel}
+          dataType={modelType ?? DataType.CircuitMEModel}
           dataScope={ExploreDataScope.SelectedBrainRegion}
           virtualLabInfo={{ virtualLabId, projectId }}
           selectionType="radio"

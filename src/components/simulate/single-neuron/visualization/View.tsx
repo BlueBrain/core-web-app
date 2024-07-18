@@ -189,17 +189,17 @@ export function BlueNaas({ modelSelfUrl }: BlueNaasProps) {
 }
 
 export default function EModelInteractiveView() {
-  const modelSelfUrl = useAtomValue(singleNeuronAtom);
+  const selectedModel = useAtomValue(singleNeuronAtom);
 
   const [blueNaasModelSelfUrl, setBlueNaasModelSelfUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!modelSelfUrl) return;
+    if (!selectedModel) return;
 
     const init = () => {
       setLoading(true);
-      setBlueNaasModelSelfUrl(modelSelfUrl?.self ?? null);
+      setBlueNaasModelSelfUrl(selectedModel?.self ?? null);
     };
 
     init();
@@ -207,7 +207,7 @@ export default function EModelInteractiveView() {
     return () => {
       setBlueNaasModelSelfUrl(null);
     };
-  }, [modelSelfUrl]);
+  }, [selectedModel]);
 
   if (!blueNaasModelSelfUrl) {
     const msg = loading ? 'Loading...' : 'Select a leaf region and an already built E-Model';

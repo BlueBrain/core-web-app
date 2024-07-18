@@ -58,7 +58,7 @@ export default function ModelWithSynapseConfig({
         {(simulationType === SimulationType.Both ||
           simulationType === SimulationType.OnlyDirectInjection) &&
           isSingleModelSimConfig(simConfig) && (
-            <div className="borger-primary-8 border">
+            <div className="borger-primary-8 border" data-testid="direct-current-configuration">
               <div className="flex h-[36px] w-full items-center bg-primary-8 px-2 text-lg text-white">
                 Direct Current Injection
               </div>
@@ -82,7 +82,7 @@ export default function ModelWithSynapseConfig({
           )}
         {(simulationType === SimulationType.Both ||
           simulationType === SimulationType.OnlySynapse) && (
-          <div className="borger-primary-8 mt-4 border">
+          <div className="borger-primary-8 mt-4 border" data-testid="synapses-configuration">
             <div className="flex h-[36px] w-full items-center bg-primary-8 px-2 text-lg text-white">
               Synapses
             </div>

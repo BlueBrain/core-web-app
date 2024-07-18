@@ -1,3 +1,4 @@
+import { DataType } from '../explore-section/list-views';
 import {
   ConditionalStimulusParamsTypes,
   FunctionParameterNumber,
@@ -7,7 +8,6 @@ import {
   SimConfig,
   StimulusConfig,
   SelectedSingleNeuronModel,
-  SingleNeuronModelType,
   SynapsesConfig,
   DirectSimulationConfig,
 } from '@/types/simulate/single-neuron';
@@ -122,7 +122,7 @@ export const getDefaultSynapsesConfig = (
   model: SelectedSingleNeuronModel
 ): SynapsesConfig | null => {
   if (
-    model.type === SingleNeuronModelType.SingleNeuronSynaptome &&
+    model.type === DataType.SingleNeuronSynaptome &&
     'synapses' in model.source &&
     model.source.synapses.length > 0
   ) {

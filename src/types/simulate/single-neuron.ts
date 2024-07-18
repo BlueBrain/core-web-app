@@ -1,4 +1,5 @@
 import { ExploreResource, MEModelSynaptome } from '../explore-section/es';
+import { DataType } from '@/constants/explore-section/list-views';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 
 export type SimulateStep =
@@ -147,14 +148,8 @@ export interface SingleNeuronSimulationPayload {
   stimuliPreviewData: PlotData;
 }
 
-export enum SingleNeuronModelType {
-  MeModel = 'https://neuroshapes.org/MEModel',
-  EModel = 'https://neuroshapes.org/EModel',
-  SingleNeuronSynaptome = 'https://bbp.epfl.ch/ontologies/core/bmo/SingleNeuronSynaptome',
-}
-
 export type SelectedSingleNeuronModel = {
-  type: SingleNeuronModelType;
+  type: DataType;
   self: string;
   source: ExploreResource;
 };
@@ -166,5 +161,5 @@ export type SelectedSynaptomModel = SelectedSingleNeuronModel & {
 export const isSynaptomModel = (
   model: SelectedSingleNeuronModel | null
 ): model is SelectedSynaptomModel => {
-  return model?.type === SingleNeuronModelType.SingleNeuronSynaptome && 'synapses' in model.source;
+  return model?.type === DataType.SingleNeuronSynaptome && 'synapses' in model.source;
 };

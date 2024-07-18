@@ -5,6 +5,7 @@ import { DataTypeConfig, DataTypeGroup } from '@/types/explore-section/data-type
 export enum ModelTypeNames {
   E_MODEL = 'e-model',
   ME_MODEL = 'me-model',
+  SINGLE_NEURON_SYNAPTOME = 'single-neuron-synaptome',
 }
 
 export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
@@ -42,4 +43,11 @@ export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
 
     curated: false,
   },
-};
+  [DataType.SingleNeuronSynaptome]: {
+    title: 'Single Neuron Synaptome',
+    group: DataTypeGroup.ModelData,
+    name: ModelTypeNames.SINGLE_NEURON_SYNAPTOME,
+    columns: [Field.Name, Field.Description],
+    curated: false,
+  },
+} as const;
