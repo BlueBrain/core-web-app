@@ -12,7 +12,15 @@ import { useInitAtom } from '@/state/state';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
-export default function VirtualLabSidebar({ initialVlab }: { initialVlab: VirtualLab }) {
+export function VirtualLabSidebarTitle({ name }: { name: string }) {
+  return (
+    <div className="text-5xl font-bold uppercase text-primary-5" style={{ minHeight: '84px' }}>
+      {name}
+    </div>
+  );
+}
+
+export default function VirtualLabSidebarContent({ initialVlab }: { initialVlab: VirtualLab }) {
   const currentPage = usePathname().split('/').pop();
   const vlabAtom = useInitAtom<VirtualLab>(initialVlab.id, initialVlab);
 
@@ -48,10 +56,7 @@ export default function VirtualLabSidebar({ initialVlab }: { initialVlab: Virtua
     { key: LinkItemKey.Admin, content: 'Admin', href: 'admin' },
   ];
   return (
-    <div className="mr-5 flex w-full flex-col gap-5">
-      <div className="text-5xl font-bold uppercase text-primary-5" style={{ minHeight: '84px' }}>
-        {vlab.name}
-      </div>
+    <>
       <Link
         href="/virtual-lab"
         className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
@@ -59,6 +64,6 @@ export default function VirtualLabSidebar({ initialVlab }: { initialVlab: Virtua
         <span>Switch virtual lab</span> <SwapOutlined />
       </Link>
       <VerticalLinks links={linkItems} currentPage={currentPage} />
-    </div>
+    </>
   );
 }

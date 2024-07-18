@@ -1,7 +1,25 @@
-import VirtualLabSidebarPage from './VirtualLabSidebar';
+import VirtualLabSidebarContent, { VirtualLabSidebarTitle } from './VirtualLabSidebar';
 import { getVirtualLabDetail } from '@/services/virtual-lab/labs';
 
-export default async function VirtualLabSidebar({ virtualLabId }: { virtualLabId: string }) {
+export async function VirtualLabSidebar({ virtualLabId }: { virtualLabId: string }) {
   const vlab = (await getVirtualLabDetail(virtualLabId)).data.virtual_lab;
-  return <VirtualLabSidebarPage initialVlab={vlab} />;
+  return (
+    <div className="mr-5 flex w-full flex-col gap-5">
+      <VirtualLabSidebarContent initialVlab={vlab} />
+    </div>
+  );
+}
+
+export default async function VirtualLabSidebarWithTitle({
+  virtualLabId,
+}: {
+  virtualLabId: string;
+}) {
+  const vlab = (await getVirtualLabDetail(virtualLabId)).data.virtual_lab;
+  return (
+    <div className="mr-5 flex w-full flex-col gap-5">
+      <VirtualLabSidebarTitle name={vlab.name} />
+      <VirtualLabSidebarContent initialVlab={vlab} />
+    </div>
+  );
 }
