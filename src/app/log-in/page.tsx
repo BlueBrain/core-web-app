@@ -9,5 +9,5 @@ export default function Page() {
   const redirectURL = searchParams.get('callbackUrl');
   if (!isServer) signIn('keycloak', { callbackUrl: redirectURL || basePath });
 
-  return null;
+  return 'Logging in...';
 }
