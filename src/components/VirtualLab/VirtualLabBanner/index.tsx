@@ -8,7 +8,7 @@ import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
 import { basePath } from '@/config';
-import { useUpdateProject } from '@/hooks/useUpdateVirtualLab';
+import useUpdateProject from '@/hooks/useUpdateVirtualLabProject';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
 import useNotification from '@/hooks/notifications';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
@@ -47,7 +47,7 @@ function BackgroundImg({
   );
 }
 
-function useEditBtn() {
+function useEditBtn({ dataTestid }: Partial<{ dataTestid: string }> = {}) {
   const [isEditable, setIsEditable] = useState<boolean>(false);
 
   const onClick = () => setIsEditable(!isEditable);
@@ -67,6 +67,7 @@ function useEditBtn() {
       <Button
         ghost
         className="shrink-0 self-start"
+        data-testid={dataTestid}
         icon={isEditable ? <UnlockOutlined /> : <EditOutlined />}
         onClick={onClick}
       />
@@ -80,10 +81,12 @@ function useEditBtn() {
 }
 
 function EditableInputs({
+  dataTestid,
   description,
   name,
   onChange,
 }: {
+  dataTestid?: string;
   description?: string;
   name?: string;
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -98,6 +101,7 @@ function EditableInputs({
     >
       <Input
         className="text-5xl font-bold"
+        data-testid={`${dataTestid}-name-input`}
         value={name}
         maxLength={80}
         name="name"
@@ -107,6 +111,7 @@ function EditableInputs({
         variant="borderless"
       />
       <Input.TextArea
+        data-testid={`${dataTestid}-description-input`}
         value={description}
         maxLength={600}
         name="description"
@@ -119,11 +124,23 @@ function EditableInputs({
   );
 }
 
-function StaticValues({ description, name }: { description?: string; name?: string }) {
+function StaticValues({
+  dataTestid,
+  description,
+  name,
+}: {
+  dataTestid?: string;
+  description?: string;
+  name?: string;
+}) {
   return (
     <>
-      <span className="text-5xl font-bold">{name}</span>
-      <p className="max-w-[768px]">{description}</p>
+      <span className="text-5xl font-bold" data-testid={`${dataTestid}-name-element`}>
+        {name}
+      </span>
+      <p className="max-w-[768px]" data-testid={`${dataTestid}-description-element`}>
+        {description}
+      </p>
     </>
   );
 }
@@ -254,6 +271,16 @@ export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
   );
 }
 
+function getErrorMsg(fieldName: string) {
+  return `Something went wrong when attempting to update the project ${fieldName}.`;
+}
+
+export function getSuccessMsg(fieldName: string, value: string) {
+  return `New project ${fieldName}: "${value}"`;
+}
+
+export const dataTestid = 'edit-project-info';
+
 export function ProjectDetailBanner({
   createdAt,
   description,
@@ -272,18 +299,21 @@ export function ProjectDetailBanner({
       const fieldName = target.getAttribute('name');
       const { value } = target;
 
-      return updateProject({ [fieldName as string]: value })
-        .then(() => notify.success(`New project ${fieldName}: "${value}"`))
-        .catch(() =>
-          notify.error(`Something went wrong when attempting to update the project ${fieldName}.`)
-        );
+      return (
+        !!fieldName &&
+        updateProject({ [fieldName as string]: value })
+          .then(() => notify.success(getSuccessMsg(fieldName, value)))
+          .catch(() => notify.error(getErrorMsg(fieldName)))
+      );
     },
     [notify, updateProject],
     600,
     { leading: true }
   );
 
-  const { button: editBtn, isEditable } = useEditBtn();
+  const { button: editBtn, isEditable } = useEditBtn({
+    dataTestid,
+  });
 
   return (
     <BackgroundImg
@@ -308,9 +338,14 @@ export function ProjectDetailBanner({
           userCount={users?.length || 0}
         >
           {isEditable ? (
-            <EditableInputs description={description} name={name} onChange={onChange} />
+            <EditableInputs
+              dataTestid={dataTestid}
+              description={description}
+              name={name}
+              onChange={onChange}
+            />
           ) : (
-            <StaticValues description={description} name={name} />
+            <StaticValues dataTestid={dataTestid} description={description} name={name} />
           )}
         </BannerWrapper>
         {editBtn}
