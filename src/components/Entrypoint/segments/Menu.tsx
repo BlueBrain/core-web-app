@@ -1,29 +1,24 @@
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react'; //eslint-disable-line
 
 import { OBPLogo } from './Splash';
 import { classNames } from '@/util/utils';
-import { basePath } from '@/config';
 
 interface MenuItemProps {
   title: string;
   bgcolor?: string;
 }
 interface MenuButtonProps extends MenuItemProps {
-  action?: <T, RT>(input: T) => RT;
+  onClick?: () => void;
 }
 interface MenuLinkProps extends MenuItemProps {
   href: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function MenuButton({ bgcolor, title, action }: MenuButtonProps) {
-  const params = useSearchParams();
-  const origin = params?.get('origin');
-  const callbackUrl = origin ? `${basePath}${decodeURIComponent(origin)}` : `${basePath}/main`;
-
+function MenuButton({ bgcolor, title, onClick }: MenuButtonProps) {
   return (
-    <button type="button" aria-label={title} onClick={() => action?.(callbackUrl)}>
+    <button type="button" aria-label={title} onClick={onClick}>
       <MenuItem {...{ bgcolor, title }} />
     </button>
   );
@@ -60,7 +55,7 @@ export default function EntrypointMenu() {
         {/* TODO: Re-enable hidden buttons after SfN */}
         {/* <MenuLink title="Getting Started" href="#" /> */}
         <MenuLink title="About" href="/about" />
-        {/* <MenuLink title="Log in" href="/log-in" /> */}
+        {/* <MenuButton title="Log in" onClick={() => signIn('keycloak')} /> */}
       </div>
     </div>
   );

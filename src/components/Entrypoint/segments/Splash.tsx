@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { signIn } from 'next-auth/react';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
@@ -23,13 +24,14 @@ function HeroText() {
       <div className="select-none whitespace-pre-line text-left text-2xl font-bold text-white xl:text-7xl 2xl:text-9xl">
         {'Virtual labs for\nexploring, building and\nsimulating the brain'}
       </div>
-      <Link
+      <button
+        type="button"
         className="mt-10 flex h-auto w-[500px] justify-between rounded-none border border-primary-7 bg-transparent py-8 text-sm font-bold"
-        href="/log-in"
+        onClick={() => signIn('keycloak')}
       >
         <span className="pl-4 text-4xl text-white">Log in</span>
         <ArrowRightOutlined className="pr-4 text-4xl text-white" />
-      </Link>
+      </button>
     </div>
   );
 }
