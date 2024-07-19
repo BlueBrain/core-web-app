@@ -3,11 +3,10 @@
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
-import { Button, Collapse, ConfigProvider, Spin } from 'antd';
+import { Collapse, ConfigProvider, Spin } from 'antd';
 import { CollapseProps } from 'antd/lib/collapse/Collapse';
 import { CollapsibleType } from 'antd/lib/collapse/CollapsePanel';
-import { useRouter } from 'next/navigation';
-import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQueryState } from 'nuqs';
 
 import Billing from '../Billing';
@@ -73,7 +72,6 @@ function CustomCollapse({ className, items, activeKey, onChange }: CollapseProps
 }
 
 export default function VirtualLabSettingsComponent({ id }: { id: string }) {
-  const router = useRouter();
   const userIsAdmin = true;
   const [activePanelKey, setActivePanel] = useQueryState('panel', {
     clearOnDefault: true,
@@ -341,20 +339,11 @@ export default function VirtualLabSettingsComponent({ id }: { id: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-1">
-      <Button
-        onClick={() => router.push('/')}
-        type="text"
-        className="my-6 flex items-center !text-white"
-      >
-        <ArrowLeftOutlined /> Back to
-      </Button>
-      <CustomCollapse
-        className="flex flex-col gap-1 text-primary-8"
-        items={collapseItems}
-        activeKey={activePanelKey}
-        onChange={onChangePanel}
-      />
-    </div>
+    <CustomCollapse
+      className="flex flex-col gap-1 text-primary-8"
+      items={collapseItems}
+      activeKey={activePanelKey}
+      onChange={onChangePanel}
+    />
   );
 }
