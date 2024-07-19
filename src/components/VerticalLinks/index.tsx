@@ -16,6 +16,7 @@ export type GenericLinkItem = {
 
 export type LinkItem = GenericLinkItem & {
   content: string | ReactNode;
+  disabled?: boolean;
 };
 
 export type LabItem = GenericLinkItem & { id: string };
@@ -42,6 +43,7 @@ export default function VerticalLinks({ virtualLabId, projectId, links, currentP
         return virtualLabId && projectId ? (
           <button
             key={link.key}
+            disabled={link.disabled}
             onClick={onClick(link.href)}
             type="button"
             className={`border-primary-7 py-4 text-left font-bold ${(selectedLayout === link.key || currentPage === link.key) && 'bg-neutral-1 text-primary-8'} ${idx !== links.length - 1 && 'border-b'}`}

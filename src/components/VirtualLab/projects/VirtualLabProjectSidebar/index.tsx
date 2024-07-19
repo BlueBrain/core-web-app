@@ -58,6 +58,8 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
     return null;
   };
 
+  // Use this function once Project Papers is implemented
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const renderPapersAmount = () => {
     if (projectPapers.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
@@ -108,19 +110,20 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       content: 'Activity',
       href: 'activity',
     },
+    { key: LinkItemKey.Explore, content: 'Explore', href: 'explore' },
+    { key: LinkItemKey.Build, content: 'Build', href: 'build' },
+    { key: LinkItemKey.Simulate, content: 'Simulate', href: 'simulate' },
     {
       key: LinkItemKey.Papers,
+      disabled: true,
       content: (
         <div className="flex justify-between">
-          <span>Project papers</span>
-          <span className="font-normal text-primary-3">{renderPapersAmount()}</span>
+          <span className="opacity-50">Project papers</span>
+          <span className="font-normal text-primary-3">Coming soon</span>
         </div>
       ),
       href: 'papers',
     },
-    { key: LinkItemKey.Explore, content: 'Explore', href: 'explore' },
-    { key: LinkItemKey.Build, content: 'Build', href: 'build' },
-    { key: LinkItemKey.Simulate, content: 'Simulate', href: 'simulate' },
   ];
   return (
     <div className="my-8 mr-6 flex w-full flex-col gap-5">
