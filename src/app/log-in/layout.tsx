@@ -1,19 +1,14 @@
-'use client';
-
-import { ReactNode } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-
-import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
+import { Suspense, ReactNode } from 'react';
 import WrapperBanner from '@/components/WrapperBanner';
+import { OBPLogo } from '@/components/Entrypoint/segments/Splash';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <WrapperBanner>
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <VirtualLabTopMenu className="absolute right-10 top-10 text-white" ghost={false} />
-        {children}
-      </ErrorBoundary>
+      <OBPLogo className="absolute left-10 top-10" color="text-white" />
+      <div className="text-2xl font-bold text-white">
+        <Suspense fallback="Logging in...">{children}</Suspense>
+      </div>
     </WrapperBanner>
   );
 }
