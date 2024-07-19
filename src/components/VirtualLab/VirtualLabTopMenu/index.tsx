@@ -86,14 +86,16 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
               className="relative transition-all ease-in-out"
               style={{ opacity: Number(expanded), transitionDuration: '1000ms' }}
             >
-              <div
+              {/* TODO: Re-enable buttons after SfN */}
+
+              {/* <div
                 className={classNames(
                   getMenuButtonClassName(false),
                   'flex flex-row justify-between  border border-t-0 border-primary-7'
                 )}
               >
                 <span className="font-bold">Account</span>
-              </div>
+              </div> */}
               <button
                 type="button"
                 className={classNames(
