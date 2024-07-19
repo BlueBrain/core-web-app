@@ -49,19 +49,19 @@ const items = [
   },
   {
     description:
-      'Retrieve interconnected Hodgkin-Huxley cell models from a circuit and conduct a simulated experiment by establishing a stimulation and reporting protocol.',
-    key: SimulationType.PairedNeuron,
-    scope: 'cellular',
-    src: `${imgBasePath}/${SimulationType.PairedNeuron}.png`,
-    title: 'Paired Neurons',
-  },
-  {
-    description:
       'Introduce spikes into the synapses of Hodgkin-Huxley cell models and carry out a virtual experiment by setting up a stimulation and reporting protocol.',
     key: SimulationType.Synaptome,
     scope: 'circuit',
     src: `${imgBasePath}/${SimulationType.Synaptome}.png`,
     title: 'Synaptome',
+  },
+  {
+    description:
+      'Retrieve interconnected Hodgkin-Huxley cell models from a circuit and conduct a simulated experiment by establishing a stimulation and reporting protocol.',
+    key: SimulationType.PairedNeuron,
+    scope: 'cellular',
+    src: `${imgBasePath}/${SimulationType.PairedNeuron}.png`,
+    title: 'Paired Neurons',
   },
   {
     description: 'Coming soon.',
