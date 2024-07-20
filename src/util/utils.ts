@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { signIn as nextSignIn } from 'next-auth/react';
 import capitalize from 'lodash/capitalize';
 import _memoize from 'lodash/memoize';
 import { ZodError } from 'zod';
@@ -251,6 +252,10 @@ export function isJSON(str: any) {
 */
 export function signOut() {
   window.location.href = `${basePath}/log-out`;
+}
+
+export function signIn(callbackUrl?: string) {
+  return nextSignIn('keycloak', { callbackUrl });
 }
 
 export async function assertVLApiResponse(res: Response) {
