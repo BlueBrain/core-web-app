@@ -32,11 +32,11 @@ type TabDetails = {
 
 const SupportedTypeToTabDetails: Record<string, TabDetails> = {
   [DataType.CircuitMEModel]: {
-    title: 'ME-Model',
+    title: 'Single neuron model',
     buildModelLink: 'build/me-model/new/morphology/reconstructed',
   },
   [DataType.SingleNeuronSynaptome]: {
-    title: 'Single Neuron Synaptome',
+    title: 'Single neuron synaptome',
     buildModelLink: 'build/single-neuron-synaptome', // TODO: This should be the link to page that @bilal creates
   },
 };
