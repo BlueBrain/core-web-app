@@ -27,7 +27,7 @@ const customJestConfig = {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
-  testTimeout: 10_000, // Default is 5000 ms which is a bit low for our ci (MemoryRequest - 4Gi, MemoryLimit - 8Gi),
+  testTimeout: 20_000, // Default is 5000 ms which is a bit low for our ci (MemoryRequest - 4Gi, MemoryLimit - 8Gi),
   showSeed: true,
 };
 

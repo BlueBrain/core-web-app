@@ -1,8 +1,10 @@
 'use client';
 
-import { HTMLProps } from 'react';
+import { HTMLProps, useEffect, useState } from 'react';
 
 import { useAtomValue } from 'jotai';
+import { Button } from 'antd';
+import { useRouter } from 'next/navigation';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import ScopeCarousel from '@/components/VirtualLab/ScopeCarousel';
 import { DataType } from '@/constants/explore-section/list-views';
@@ -16,7 +18,7 @@ import { ModelTypeNames } from '@/constants/explore-section/data-types/model-dat
 import BookmarkButton from '@/components/explore-section/BookmarkButton';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
-import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
+import { SimulationScopeToModelType, SimulationType } from '@/types/virtual-lab/lab';
 
 type Params = {
   params: {
@@ -27,38 +29,46 @@ type Params = {
 
 type TabDetails = {
   title: string;
-  buildModelLink: string;
+  buildModelLabel: string;
 };
+
+const buildMEModelLink = 'build/me-model/new/morphology/reconstructed';
 
 const SupportedTypeToTabDetails: Record<string, TabDetails> = {
   [DataType.CircuitMEModel]: {
     title: 'Single neuron model',
-    buildModelLink: 'build/me-model/new/morphology/reconstructed',
+    buildModelLabel: 'New model +',
   },
   [DataType.SingleNeuronSynaptome]: {
     title: 'Single neuron synaptome',
-    buildModelLink: 'build/single-neuron-synaptome', // TODO: This should be the link to page that @bilal creates
+    buildModelLabel: 'New synaptome model +',
   },
 };
 
 export default function VirtualLabProjectBuildPage({ params }: Params) {
+  const router = useRouter();
+  const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
+  const [selectedModelType, setSelectedModelType] = useState<DataType | null>();
+
+  useEffect(() => {
+    if (selectedSimulationScope && selectedSimulationScope in SimulationScopeToModelType) {
+      setSelectedModelType(SimulationScopeToModelType[selectedSimulationScope]);
+    } else {
+      setSelectedModelType(null);
+    }
+  }, [selectedSimulationScope]);
+
   const generateDetailUrl = (model: ExploreESHit<ExploreSectionResource>) => {
     const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
     const baseBuildUrl = `${vlProjectUrl}/build/me-model/view`;
     return `${detailUrlBuilder(baseBuildUrl, model)}`;
   };
-  const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
 
   const generateSynaptomeUrl = (model: ExploreESHit<ExploreSectionResource>) => {
     const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
     const baseBuildUrl = `${vlProjectUrl}/build/synaptome`;
     return `${detailUrlBuilder(baseBuildUrl, model)}`;
   };
-
-  const selectedModelType =
-    selectedSimulationScope && selectedSimulationScope in SimulationScopeToModelType
-      ? SimulationScopeToModelType[selectedSimulationScope]
-      : null;
 
   const tabDetails = selectedModelType && SupportedTypeToTabDetails[selectedModelType];
   return (
@@ -71,11 +81,18 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               text={tabDetails.title}
               className="bg-white text-2xl font-bold text-primary-8"
             />
-            <GenericButton
-              text="New model ＋"
-              className="bg-primary-6 text-white"
-              href={tabDetails.buildModelLink}
-            />
+            <Button
+              className="h-12 rounded-none border-none bg-primary-6 px-8 text-white shadow-none"
+              onClick={() => {
+                if (selectedSimulationScope === SimulationType.SingleNeuron) {
+                  router.push(buildMEModelLink);
+                } else if (selectedSimulationScope === SimulationType.Synaptome) {
+                  setSelectedModelType(DataType.CircuitMEModel);
+                }
+              }}
+            >
+              {tabDetails.buildModelLabel}
+            </Button>
           </div>
           <div id="explore-table-container-for-observable" className="h-screen">
             <ExploreSectionListingView

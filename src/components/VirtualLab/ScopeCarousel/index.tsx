@@ -31,7 +31,7 @@ type SlideProps = {
 
 const imgBasePath = `${basePath}/images/virtual-lab/simulate`;
 
-const items = [
+export const items = [
   {
     description: 'Coming soon.',
     key: SimulationType.IonChannel,
@@ -168,6 +168,7 @@ function CustomSlide(props: SlideProps) {
       )}
       onClick={() => setSelectedSimulationScope(selectedSimulationScope !== key ? key : null)}
       type="button"
+      data-testid={currentScopeIsSelected ? 'active-carousel-item' : 'inactive-carousel-item'}
       {...otherProps} // eslint-disable-line react/jsx-props-no-spreading
     >
       <h2 className="text-3xl">{title}</h2>
