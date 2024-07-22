@@ -14,9 +14,7 @@ export const kgInferenceBaseUrl = env.NEXT_PUBLIC_KG_INFERENCE_BASE_URL;
 export const thumbnailGenerationBaseUrl = env.NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL;
 export const synthesisUrl = env.NEXT_PUBLIC_SYNTHESIS_URL;
 
-export const blueNaas = {
-  wsUrl: env.NEXT_PUBLIC_BLUE_NAAS_WS_URL,
-};
+export const blueNaasUrl = env.NEXT_PUBLIC_BLUE_NAAS_URL;
 
 export const meModelAnalysisSvc = {
   wsUrl: env.NEXT_PUBLIC_ME_MODEL_ANALYSIS_WS_URL,
