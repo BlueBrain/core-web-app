@@ -40,9 +40,10 @@ type Props = {
   resource: EntityResource;
   org: string;
   project: string;
+  resourceLoading: boolean;
 };
 
-export default function SynaptomeMConfigurationForm({ org, project, resource }: Props) {
+export default function SynaptomeMConfigurationForm({ org, project, resource, resourceLoading }: Props) {
   const [form] = Form.useForm<SynaptomeConfiguration>();
   const [loading, setLoading] = useState(false);
   const { error: notifyError, success: notifySuccess } = useNotification();
@@ -142,6 +143,7 @@ export default function SynaptomeMConfigurationForm({ org, project, resource }: 
             },
           ],
         }}
+        disabled={resourceLoading}
       >
         <h1 className="mb-6 text-3xl font-bold text-primary-8">
           Single Neuron Synaptome Model Configuration
