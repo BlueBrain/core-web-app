@@ -1,14 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BlueNaas } from '@/components/simulate/single-neuron/visualization/View';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+
 import { fetchResourceById } from '@/api/nexus';
 import { getSession } from '@/authFetch';
 import { EntityResource } from '@/types/nexus';
 import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
-import SynaptomeConfigurationForm from '@/components/build-section/virtual-lab/synaptome/SynaptomeConfigurationForm';
+import useNotification from '@/hooks/notifications';
+import { NeuronModelView, SynaptomeConfigurationForm } from '@/components/build-section/virtual-lab/synaptome';
 
 type Props = {
   params: {
@@ -19,30 +22,42 @@ type Props = {
 
 function useMeModel({ modelId }: { modelId: string }) {
   const [resource, setResource] = useState<EntityResource | null>(null);
-  useEffect(() => {
-    (async () => {
-      const session = await getSession();
-      if (!session) throw new Error('no session');
-      const resourceObject = await fetchResourceById<EntityResource>(modelId, session);
-      setResource(resourceObject);
-    })();
-  }, [modelId]);
+  const [loading, setLoading] = useState(false);
+  const { error: notifyError } = useNotification();
 
-  return { resource };
+  useEffect(() => {
+    let isAborted = false;
+    (async () => {
+      try {
+        setLoading(true);
+        const session = await getSession();
+        if (!session) throw new Error('no session');
+        const resourceObject = await fetchResourceById<EntityResource>(modelId, session);
+        if (!isAborted) {
+          setResource(resourceObject);
+        }
+      } catch (error) {
+        notifyError("Error while loading the resource details", undefined, "topRight");
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => {
+      isAborted = true;
+    }
+  }, [modelId, notifyError]);
+
+  return { resource, loading };
 }
 
 function Synaptome({ params }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { resource } = useMeModel({ modelId: id });
+  const { resource, loading } = useMeModel({ modelId: id });
 
-  if (!resource) {
-    const msg = 'Loading...';
-
+  if (loading || !resource) {
     return (
-      <div className="flex h-full items-center justify-center bg-gray-950 text-4xl text-gray-100">
-        {msg}
-      </div>
-    );
+      <Spin indicator={<LoadingOutlined />} />
+    )
   }
 
   return (
@@ -51,7 +66,7 @@ function Synaptome({ params }: Props) {
       <div className="grid w-full grid-cols-2">
         <div className="flex items-center justify-center bg-black">
           <DefaultLoadingSuspense>
-            <BlueNaas modelSelfUrl={resource._self} />
+            <NeuronModelView modelSelfUrl={resource._self} />
           </DefaultLoadingSuspense>
         </div>
         <div className="secondary-scrollbar h-screen w-full overflow-y-auto p-8">
@@ -60,6 +75,7 @@ function Synaptome({ params }: Props) {
               resource,
               org: params.virtualLabId,
               project: params.projectId,
+              resourceLoading: loading,
             }}
           />
         </div>
