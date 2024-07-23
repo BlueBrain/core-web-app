@@ -10,7 +10,6 @@ import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
 import { basePath } from '@/config';
 import useUpdateProject from '@/hooks/useUpdateVirtualLabProject';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
-import useNotification from '@/hooks/notifications';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
@@ -19,7 +18,7 @@ import { generateLabUrl } from '@/util/virtual-lab/urls';
 import { useInitAtom, useAtom } from '@/state/state';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { patchVirtualLab } from '@/services/virtual-lab/labs';
-import openNotification from '@/api/notifications';
+import openNotification, { notification as notify } from '@/api/notifications';
 import styles from './virtual-lab-banner.module.css';
 
 function BackgroundImg({
@@ -291,7 +290,6 @@ export function ProjectDetailBanner({
   const users = useAtomValue(unwrap(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId })));
 
   const updateProject = useUpdateProject(virtualLabId, projectId);
-  const notify = useNotification();
 
   const onChange = useDebouncedCallback(
     async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -306,7 +304,7 @@ export function ProjectDetailBanner({
           .catch(() => notify.error(getErrorMsg(fieldName)))
       );
     },
-    [notify, updateProject],
+    [updateProject],
     600,
     { leading: true }
   );

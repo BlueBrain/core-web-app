@@ -7,9 +7,8 @@ import VirtualLabProjectItem from './VirtualLabProjectItem';
 import NewProjectModalForm from './NewProjectModalForm';
 import { selectedMembersAtom } from './shared';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
-import useNotification from '@/hooks/notifications';
+import { notification } from '@/api/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
-import { Project } from '@/types/virtual-lab/projects';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import { useInitAtom, useAtom } from '@/state/state';
@@ -58,12 +57,10 @@ function NewProjectModalFooter({
 }
 
 export function NewProjectModal({
-  onFail,
   onSuccess,
   virtualLabId,
 }: {
-  onFail: (error: string) => void;
-  onSuccess: (newProject: Project) => void;
+  onSuccess?: () => void;
   virtualLabId: string;
 }) {
   const [open, setOpen] = useAtom<boolean>('new-project-modal-open');
@@ -82,10 +79,11 @@ export function NewProjectModal({
       const res = await createProject({ name, description, includeMembers }, virtualLabId);
       form.resetFields();
       setOpen(false);
-      onSuccess(res.data.project);
+      if (onSuccess) onSuccess();
+      notification.success(`${res.data.project.name} has been created.`);
     } catch (e: any) {
       if ('errorFields' in e) return; // Input errors.
-      onFail(assertErrorMessage(e)); // Request errors.
+      notification.error(`Project creation failed: ${assertErrorMessage(e)}`); // Request Errors
     } finally {
       setLoading(false);
     }
@@ -141,7 +139,6 @@ function SearchProjects() {
 export default function VirtualLabProjectList({ id }: { id: string }) {
   const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
   const setVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(id));
-  const notification = useNotification();
   const [, setNewProjectModalOpen] = useAtom<boolean>('new-project-modal-open');
 
   if (!virtualLabProjects) {
@@ -164,18 +161,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
               </div>
               <SearchProjects />
             </div>
-            <NewProjectModal
-              onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
-              onSuccess={
-                virtualLabProjects
-                  ? (newProject: Project) => {
-                      setVirtualLabProjects();
-                      notification.success(`${newProject.name} has been created.`);
-                    }
-                  : () => {}
-              }
-              virtualLabId={id}
-            />
+            <NewProjectModal onSuccess={setVirtualLabProjects} virtualLabId={id} />
           </div>
           <div className="flex flex-col gap-4">
             {virtualLabProjects.results.map((project) => (

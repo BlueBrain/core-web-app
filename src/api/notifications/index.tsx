@@ -4,7 +4,7 @@ import {
   InfoCircleOutlined,
   WarningFilled,
 } from '@ant-design/icons';
-import { notification } from 'antd';
+import { notification as antd_notification } from 'antd';
 import { Key } from 'react';
 import { NotificationType, Placement } from '@/types/notifications';
 
@@ -48,7 +48,7 @@ export default function openNotification(
       backgroundColor = '#237804';
   }
 
-  notification[type]({
+  antd_notification[type]({
     message: <div className="text-neutral-1">{message}</div>,
     style: { backgroundColor },
     closeIcon: closeIcon && <CloseOutlined style={{ fontSize: '1.5em', color: 'white' }} />,
@@ -123,4 +123,4 @@ const info = (
   openNotification('info', message, duration, placement, closeIcon, key);
 };
 
-export { error, warning, success, info };
+export const notification = { error, warning, success, info };

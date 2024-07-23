@@ -17,7 +17,7 @@ export default function VirtualLabPageLayout({
     <div className="flex h-screen w-full overflow-y-scroll bg-primary-9 p-8 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="m-w-3/12 flex flex-row gap-4" style={{ width: '25%' }}>
-          <Suspense fallback={<VirtualLabSidebarSkeleton />}>
+          <Suspense fallback={<VirtualLabSidebarSkeleton titleGap />}>
             <VirtualLabSidebarWithTitle virtualLabId={params.virtualLabId} />
           </Suspense>
         </div>

@@ -26,19 +26,16 @@ export async function getVirtualLabProjects(
 
 export async function getVirtualLabProjectDetails(
   virtualLabId: string,
-  projectId: string,
-  token: string
+  projectId: string
 ): Promise<ProjectResponse> {
-  const response = await fetch(
-    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}`,
-    {
-      method: 'GET',
-      headers: createApiHeaders(token),
-    }
+  const response = await authFetch(
+    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}`
   );
+
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
+
   return response.json();
 }
 

@@ -2,8 +2,6 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import { useAtomValue } from 'jotai';
-import { loadable, unwrap } from 'jotai/utils';
 
 import Member from '@/components/VirtualLab/VirtualLabHomePage/Member';
 import { ProjectDetailBanner } from '@/components/VirtualLab/VirtualLabBanner';
@@ -13,6 +11,7 @@ import {
   virtualLabProjectUsersAtomFamily,
 } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
+import { useLoadableValue, useUnwrappedValue } from '@/hooks/hooks';
 
 type Props = {
   virtualLabId: string;
@@ -22,12 +21,14 @@ type Props = {
 function VirtualLabUsersHorizontalList({ virtualLabId, projectId }: Props) {
   const notification = useNotification();
 
-  const projectUsers = useAtomValue(
-    loadable(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
+  const projectUsers = useLoadableValue(
+    virtualLabProjectUsersAtomFamily({ virtualLabId, projectId })
   );
+
   if (projectUsers.state === 'loading') {
     return <Spin indicator={<LoadingOutlined />} />;
   }
+
   if (projectUsers.state === 'hasData') {
     return (
       <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
@@ -52,8 +53,8 @@ function VirtualLabUsersHorizontalList({ virtualLabId, projectId }: Props) {
 }
 
 export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: Props) {
-  const projectDetails = useAtomValue(
-    unwrap(virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId }))
+  const projectDetails = useUnwrappedValue(
+    virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId })
   );
 
   if (projectDetails) {

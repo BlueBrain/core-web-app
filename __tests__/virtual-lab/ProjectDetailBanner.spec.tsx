@@ -1,6 +1,6 @@
 import { RenderResult, act, cleanup, fireEvent, render } from '@testing-library/react';
 
-import { success } from '@/api/notifications';
+import { notification } from '@/api/notifications';
 import authFetch from '@/authFetch';
 import {
   dataTestid,
@@ -59,8 +59,10 @@ jest.mock('@/api/notifications', () => {
   return {
     __esModule: true,
     ...originalModule,
-    error: jest.fn((_message: string) => {}),
-    success: jest.fn((_message: string) => {}),
+    notification: {
+      error: jest.fn((_message: string) => {}),
+      success: jest.fn((_message: string) => {}),
+    },
   };
 });
 
@@ -153,8 +155,8 @@ describe('the VL Banner component', () => {
     const successMsgName = getSuccessMsg('name', formData.name);
     const successMsgDescription = getSuccessMsg('description', formData.description);
 
-    expect(success).toHaveBeenCalledTimes(2);
-    expect(success).toHaveBeenCalledWith(successMsgName);
-    expect(success).toHaveBeenCalledWith(successMsgDescription);
+    expect(notification.success).toHaveBeenCalledTimes(2);
+    expect(notification.success).toHaveBeenCalledWith(successMsgName);
+    expect(notification.success).toHaveBeenCalledWith(successMsgDescription);
   });
 });

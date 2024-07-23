@@ -1,10 +1,10 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Modal } from 'antd';
-import { useState } from 'react';
+import { Button } from 'antd';
 import CreateVirtualLabModal from './CreateVirtualLabModal';
+import { useAtom } from '@/state/state';
 
 export default function CreateVirtualLabButton() {
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [, setIsModalVisible] = useAtom<boolean>('new-vlab-modal-open');
   return (
     <>
       <Button
@@ -15,16 +15,8 @@ export default function CreateVirtualLabButton() {
           Create virtual lab <PlusOutlined className="relative left-3 top-[0.1rem]" />
         </span>
       </Button>
-      <Modal
-        title={null}
-        open={isModalVisible}
-        width={800}
-        onOk={() => {}}
-        onCancel={() => setIsModalVisible(false)}
-        footer={null}
-      >
-        <CreateVirtualLabModal closeModalFn={() => setIsModalVisible(false)} />
-      </Modal>
+
+      <CreateVirtualLabModal />
     </>
   );
 }

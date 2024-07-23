@@ -24,11 +24,12 @@ export default async function authFetch(
   if (!session) return fetch(...args); // If no active session fetch, for use in unauthenticated routes
 
   const init = args[1] || {};
-  init.headers = {
-    ...{ Authorization: `Bearer ${session.accessToken}` },
-    ...init.headers,
-  };
-  const newArgs: typeof args = [args[0], init];
+  const headers = new Headers(init.headers ?? {});
+  if (!headers.has('Authorization'))
+    headers.append('Authorization', `Bearer ${session.accessToken}`);
 
+  init.headers = headers;
+
+  const newArgs: typeof args = [args[0], init];
   return fetch(...newArgs); // If there is an active session set Authorization and fetch
 }

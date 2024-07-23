@@ -3,7 +3,7 @@ import Link from 'next/link';
 import VerticalLinks from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
-export function VirtualLabSidebarSkeleton() {
+export function VirtualLabSidebarSkeleton({ titleGap = false }: { titleGap?: boolean }) {
   const linkItems = [
     { key: LinkItemKey.Lab, content: 'Overview', href: 'overview' },
     {
@@ -28,7 +28,12 @@ export function VirtualLabSidebarSkeleton() {
   ];
   return (
     <div className="mr-5 flex w-full flex-col gap-5">
-      <div className="text-5xl font-bold uppercase text-primary-5" style={{ minHeight: '84px' }} />
+      {titleGap && (
+        <div
+          className="text-5xl font-bold uppercase text-primary-5"
+          style={{ minHeight: '84px' }}
+        />
+      )}
 
       <Link
         href="/virtual-lab"

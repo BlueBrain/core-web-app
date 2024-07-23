@@ -11,13 +11,10 @@ import VirtualLabAndProject from './VirtualLabAndProject';
 import DashboardTotals from './DashboardTotals';
 
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
-import useNotification from '@/hooks/notifications';
-import { Project } from '@/types/virtual-lab/projects';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { useAtom } from '@/state/state';
 
 export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
-  const notification = useNotification();
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
 
   const [, setNewProjectModalOpen] = useAtom<boolean>('new-project-modal-open');
@@ -102,14 +99,7 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
         />
       </Modal>
       {!!virtualLabId && (
-        <NewProjectModal
-          onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
-          onSuccess={(newProject: Project) => {
-            refreshVirtualLabProjects(); // Refresh projects list.
-            notification.success(`${newProject.name} has been created.`);
-          }}
-          virtualLabId={virtualLabId}
-        />
+        <NewProjectModal onSuccess={refreshVirtualLabProjects} virtualLabId={virtualLabId} />
       )}
     </>
   );

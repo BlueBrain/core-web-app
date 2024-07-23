@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSetAtom } from 'jotai';
+import { Modal } from 'antd';
 
 import PlanForm from './PlanForm';
 import { Step, VirtualLabWithOptionalId } from './types';
@@ -13,13 +14,19 @@ import { createVirtualLab } from '@/services/virtual-lab/labs';
 import useNotification from '@/hooks/notifications';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
+import { useAtom } from '@/state/state';
 
-function ModalHeader({ step }: { step: Step }) {
+function ModalHeader({ step, setStep }: { step: Step; setStep: (step: Step) => void }) {
   return (
     <div className="flex items-center space-x-2 font-light text-primary-8 ">
-      <span className={classNames('text-lg text-primary-8', step === 'Information' && 'font-bold')}>
+      <button
+        type="button"
+        onClick={() => setStep('Information')}
+        className={classNames('text-lg text-primary-8', step === 'Information' && 'font-bold')}
+      >
         Information
-      </span>
+      </button>
+
       {/* TODO: Add it back after Sfn */}
       {/* <span className="text-lg text-neutral-4">•</span>
       <span className={classNames('text-lg text-primary-8', step === 'Plans' && 'font-bold')}>
@@ -33,13 +40,16 @@ function ModalHeader({ step }: { step: Step }) {
   );
 }
 
-export default function CreateVirtualLabModal({ closeModalFn }: { closeModalFn: () => void }) {
+export default function CreateVirtualLabModal() {
+  const [isModalVisible, setIsModalVisible] = useAtom<boolean>('new-vlab-modal-open');
   const [step, setStep] = useState<Step>('Information');
   const [virtualLab, setVirtualLab] = useState<VirtualLabWithOptionalId>(EMPTY_VIRTUAL_LAB);
   const [loading, setLoading] = useState(false);
   const refreshVirtualLabs = useSetAtom(virtualLabsOfUserAtom);
   const notification = useNotification();
   const router = useRouter();
+
+  const closeModalFn = useCallback(() => setIsModalVisible(false), [setIsModalVisible]);
 
   const onVirtualLabCreate = async () => {
     setLoading(true);
@@ -62,33 +72,35 @@ export default function CreateVirtualLabModal({ closeModalFn }: { closeModalFn: 
   };
 
   return (
-    <div className="m-10">
-      <ModalHeader step={step} />
-      {step === 'Information' && (
-        <InformationForm
-          currentVirtualLab={virtualLab}
-          setStepFn={setStep}
-          closeModalFn={closeModalFn}
-          setVirtualLabFn={setVirtualLab}
-        />
-      )}
-      {step === 'Plans' && (
-        <PlanForm
-          currentVirtualLab={virtualLab}
-          setVirtualLabFn={setVirtualLab}
-          closeModalFn={closeModalFn}
-          setStepFn={setStep}
-        />
-      )}
-      {step === 'Members' && (
-        <MembersForm
-          loading={loading}
-          currentVirtualLab={virtualLab}
-          setVirtualLabFn={setVirtualLab}
-          closeModalFn={closeModalFn}
-          createVirtualLabFn={onVirtualLabCreate}
-        />
-      )}
-    </div>
+    <Modal title={null} open={!!isModalVisible} width={800} footer={null}>
+      <div className="m-10">
+        <ModalHeader step={step} setStep={setStep} />
+        {step === 'Information' && (
+          <InformationForm
+            currentVirtualLab={virtualLab}
+            setStepFn={setStep}
+            closeModalFn={closeModalFn}
+            setVirtualLabFn={setVirtualLab}
+          />
+        )}
+        {step === 'Plans' && (
+          <PlanForm
+            currentVirtualLab={virtualLab}
+            setVirtualLabFn={setVirtualLab}
+            closeModalFn={closeModalFn}
+            setStepFn={setStep}
+          />
+        )}
+        {step === 'Members' && (
+          <MembersForm
+            loading={loading}
+            currentVirtualLab={virtualLab}
+            setVirtualLabFn={setVirtualLab}
+            closeModalFn={closeModalFn}
+            createVirtualLabFn={onVirtualLabCreate}
+          />
+        )}
+      </div>
+    </Modal>
   );
 }
