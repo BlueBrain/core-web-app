@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from 'react';
 import Renderer from '@/services/bluenaas-single-cell/renderer';
-import { Morphology } from "@/services/bluenaas-single-cell/types";
-import { getSession } from "@/authFetch";
+import { Morphology } from '@/services/bluenaas-single-cell/types';
+import { getSession } from '@/authFetch';
 import { blueNaasUrl } from '@/config';
 
 type Props = {
   modelSelfUrl: string;
 };
-
 
 export default function NeuronModelView({ modelSelfUrl }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -18,21 +17,23 @@ export default function NeuronModelView({ modelSelfUrl }: Props) {
       const prunedMorph = rendererRef.current.removeNoDiameterSection(morphology);
       rendererRef.current.addMorphology(prunedMorph);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     async function readMorphology(): Promise<Morphology> {
       const session = await getSession();
-      const response = await fetch(`${blueNaasUrl}/morphology?model_id=${encodeURIComponent(modelSelfUrl)}`, {
-        method: "get",
-        headers: {
-          accept: 'application/x-ndjson',
-          authorization: `bearer ${session.accessToken}`,
-        },
-
-      },);
+      const response = await fetch(
+        `${blueNaasUrl}/morphology?model_id=${encodeURIComponent(modelSelfUrl)}`,
+        {
+          method: 'get',
+          headers: {
+            accept: 'application/x-ndjson',
+            authorization: `bearer ${session.accessToken}`,
+          },
+        }
+      );
       const reader = response.body?.getReader();
-      let data: string = "";
+      let data: string = '';
       let value: Uint8Array | undefined;
       let done: boolean = false;
       const decoder = new TextDecoder();
@@ -51,9 +52,9 @@ export default function NeuronModelView({ modelSelfUrl }: Props) {
       (async () => {
         const morphology = await readMorphology();
         onLoad(morphology);
-      })()
+      })();
     }
-  }, [modelSelfUrl, onLoad])
+  }, [modelSelfUrl, onLoad]);
 
   return (
     <div className="relative h-full w-full">

@@ -4,7 +4,7 @@ import Renderer, { ClickData, HoverData } from './renderer';
 import Ws, { BlueNaasCmd, WSResponses } from './websocket';
 import type { Morphology, PlotData, SecMarkerConfig, TraceData } from './types';
 import { SimConfig } from '@/types/simulate/single-neuron';
-import { blueNaas } from '@/config';
+import { blueNaasUrl } from '@/config';
 
 type BlueNaasInitData = {
   secNames: string[];
@@ -54,7 +54,7 @@ export default class BlueNaas {
     this.config = config;
 
     this.renderer = new Renderer(container, config);
-    this.ws = new Ws(blueNaas.wsUrl, token, this.onMessage);
+    this.ws = new Ws(blueNaasUrl, token, this.onMessage);
     this.ws.send(BlueNaasCmd.SET_MODEL, {
       model_self_url: modelSelfUrl,
     });

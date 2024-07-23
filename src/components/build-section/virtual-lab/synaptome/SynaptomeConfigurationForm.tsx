@@ -43,7 +43,12 @@ type Props = {
   resourceLoading: boolean;
 };
 
-export default function SynaptomeMConfigurationForm({ org, project, resource, resourceLoading }: Props) {
+export default function SynaptomeMConfigurationForm({
+  org,
+  project,
+  resource,
+  resourceLoading,
+}: Props) {
   const [form] = Form.useForm<SynaptomeConfiguration>();
   const [loading, setLoading] = useState(false);
   const { error: notifyError, success: notifySuccess } = useNotification();
