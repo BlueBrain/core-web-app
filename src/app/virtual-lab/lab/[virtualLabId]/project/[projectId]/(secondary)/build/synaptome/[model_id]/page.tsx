@@ -11,7 +11,10 @@ import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import useNotification from '@/hooks/notifications';
-import { NeuronModelView, SynaptomeConfigurationForm } from '@/components/build-section/virtual-lab/synaptome';
+import {
+  NeuronModelView,
+  SynaptomeConfigurationForm,
+} from '@/components/build-section/virtual-lab/synaptome';
 
 type Props = {
   params: {
@@ -37,14 +40,14 @@ function useMeModel({ modelId }: { modelId: string }) {
           setResource(resourceObject);
         }
       } catch (error) {
-        notifyError("Error while loading the resource details", undefined, "topRight");
+        notifyError('Error while loading the resource details', undefined, 'topRight');
       } finally {
         setLoading(false);
       }
     })();
     return () => {
       isAborted = true;
-    }
+    };
   }, [modelId, notifyError]);
 
   return { resource, loading };
@@ -55,9 +58,7 @@ function Synaptome({ params }: Props) {
   const { resource, loading } = useMeModel({ modelId: id });
 
   if (loading || !resource) {
-    return (
-      <Spin indicator={<LoadingOutlined />} />
-    )
+    return <Spin indicator={<LoadingOutlined />} />;
   }
 
   return (
