@@ -4,12 +4,12 @@ import colorDictionary from './availableColors';
 import { Role } from '@/types/virtual-lab/members';
 
 type Props = {
-  role: Role;
+  memberRole: Role;
   firstName: string;
   lastName: string;
 };
 
-export default function VirtualLabMemberIcon({ role, firstName, lastName }: Props) {
+export default function VirtualLabMemberIcon({ memberRole: role, firstName, lastName }: Props) {
   const initials = useMemo(() => {
     return `${firstName[0]}${lastName[0]}`;
   }, [firstName, lastName]);

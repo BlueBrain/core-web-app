@@ -4,6 +4,7 @@ import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
 import authFetch from '@/authFetch';
 import { assertVLApiResponse } from '@/util/utils';
+import { VirtualLabWithOptionalId } from '@/components/VirtualLab/CreateVirtualLabButton/types';
 
 export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse> {
   const response = await authFetch(`${virtualLabApi.url}/virtual-labs/${id}`);
@@ -94,7 +95,7 @@ export async function getPlans(): Promise<
 export async function createVirtualLab({
   lab,
 }: {
-  lab: Partial<VirtualLab>;
+  lab: VirtualLabWithOptionalId;
 }): Promise<VlmResponse<{ virtual_lab: VirtualLab }>> {
   const response = await authFetch(`${virtualLabApi.url}/virtual-labs`, {
     method: 'POST',

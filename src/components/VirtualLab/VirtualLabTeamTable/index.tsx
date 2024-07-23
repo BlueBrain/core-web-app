@@ -27,7 +27,7 @@ export default function VirtualLabTeamTable({ users }: Props) {
             <VirtualLabMemberIcon
               firstName={record.first_name}
               lastName={record.last_name}
-              role={record.role}
+              memberRole={record.role}
             />
           </span>
           <span className="ml-4 inline-block font-bold">{`${record.first_name} ${record.last_name}`}</span>

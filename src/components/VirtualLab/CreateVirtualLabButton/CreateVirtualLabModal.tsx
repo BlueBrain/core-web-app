@@ -6,6 +6,7 @@ import PlanForm from './PlanForm';
 import { Step, VirtualLabWithOptionalId } from './types';
 import { EMPTY_VIRTUAL_LAB } from './constants';
 import InformationForm from './InformationForm';
+import MembersForm from './MembersForm';
 
 import { classNames } from '@/util/utils';
 import { createVirtualLab } from '@/services/virtual-lab/labs';
@@ -19,9 +20,14 @@ function ModalHeader({ step }: { step: Step }) {
       <span className={classNames('text-lg text-primary-8', step === 'Information' && 'font-bold')}>
         Information
       </span>
-      <span className="text-lg text-neutral-4">•</span>
+      {/* TODO: Add it back after Sfn */}
+      {/* <span className="text-lg text-neutral-4">•</span>
       <span className={classNames('text-lg text-primary-8', step === 'Plans' && 'font-bold')}>
         Plans
+      </span> */}
+      <span className="text-lg text-neutral-4">•</span>
+      <span className={classNames('text-lg text-primary-8', step === 'Members' && 'font-bold')}>
+        Member
       </span>
     </div>
   );
@@ -68,6 +74,14 @@ export default function CreateVirtualLabModal({ closeModalFn }: { closeModalFn: 
       )}
       {step === 'Plans' && (
         <PlanForm
+          currentVirtualLab={virtualLab}
+          setVirtualLabFn={setVirtualLab}
+          closeModalFn={closeModalFn}
+          setStepFn={setStep}
+        />
+      )}
+      {step === 'Members' && (
+        <MembersForm
           loading={loading}
           currentVirtualLab={virtualLab}
           setVirtualLabFn={setVirtualLab}

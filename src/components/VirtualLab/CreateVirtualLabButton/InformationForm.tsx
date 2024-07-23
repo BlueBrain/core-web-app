@@ -52,7 +52,7 @@ export default function InformationForm({
       reference_email: values.email,
       entity: values.entity,
     }));
-    setStepFn('Plans');
+    setStepFn('Members');
   };
 
   return (
@@ -112,7 +112,7 @@ export default function InformationForm({
               },
             ]}
           >
-            <TextArea placeholder="Enter description" rows={4} className={styles.input} />
+            <TextArea placeholder="Enter description" rows={4} className={styles.textArea} />
           </Form.Item>
 
           <Form.Item

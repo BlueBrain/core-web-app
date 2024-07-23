@@ -4,17 +4,16 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { VirtualLabWithOptionalId } from './types';
+import { Step, VirtualLabWithOptionalId } from './types';
 import { virtualLabPlansAtom } from '@/state/virtual-lab/lab';
 import { VirtualLabPlanDefinition } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
 
 type PlanFormProps = {
-  loading: boolean;
   currentVirtualLab: VirtualLabWithOptionalId;
   setVirtualLabFn: Dispatch<SetStateAction<VirtualLabWithOptionalId>>;
   closeModalFn: () => void;
-  createVirtualLabFn: () => void;
+  setStepFn: Dispatch<SetStateAction<Step>>;
 };
 
 export type PlanPanelProps = {
@@ -74,11 +73,10 @@ export function PlanPanel({ plan, selected, onSelect }: PlanPanelProps) {
 }
 
 export default function PlanForm({
-  loading,
   currentVirtualLab,
   setVirtualLabFn,
   closeModalFn,
-  createVirtualLabFn,
+  setStepFn,
 }: PlanFormProps) {
   const virtualLabPlansLoadable = useAtomValue(loadable(virtualLabPlansAtom));
 
@@ -109,12 +107,10 @@ export default function PlanForm({
           Cancel
         </Button>
         <Button
-          htmlType="submit"
-          className="min-w-36 rounded-none border-primary-8 bg-primary-8 text-white"
-          disabled={currentVirtualLab.plan_id === 0 || loading}
-          onClick={createVirtualLabFn}
+          className="min-w-36 rounded-none border-primary-8 text-primary-8"
+          onClick={() => setStepFn('Members')}
         >
-          {loading ? 'Creating...' : 'Create'}
+          Next
         </Button>
       </div>
     </div>

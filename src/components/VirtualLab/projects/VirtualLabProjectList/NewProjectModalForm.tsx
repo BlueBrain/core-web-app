@@ -73,7 +73,7 @@ export default function NewProjectModalForm({
         {members?.map((member) => (
           <div key={member.id} className="text-primary-8">
             <VirtualLabMemberIcon
-              role={member.role}
+              memberRole={member.role}
               firstName={member.first_name}
               lastName={member.last_name}
             />
