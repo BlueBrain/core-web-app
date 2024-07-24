@@ -106,7 +106,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       content: 'Activity',
       href: 'activity',
     },
-    { key: LinkItemKey.Explore, content: 'Explore', href: 'explore' },
+    { key: LinkItemKey.Explore, content: 'Explore', href: 'explore/interactive' },
     { key: LinkItemKey.Build, content: 'Build', href: 'build' },
     { key: LinkItemKey.Simulate, content: 'Simulate', href: 'simulate' },
     {
