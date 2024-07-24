@@ -46,11 +46,6 @@ const defaultColumns: ColumnsType<ExperimentalTracesDataType> = [
     key: 'eType',
   },
   {
-    title: 'DESCRIPTION',
-    dataIndex: 'description',
-    key: 'description',
-  },
-  {
     title: 'E-CODE',
     key: 'eCode',
     render: (trace: ExperimentalTracesDataType) => {

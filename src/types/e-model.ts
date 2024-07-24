@@ -311,7 +311,7 @@ export type TraceType = 'Trace';
 export interface Trace extends Entity {
   '@type': ['Entity', TraceType, 'Dataset'];
   annotation: {
-    '@type': ['QualityAnnotation', 'Annotation'];
+    '@type': ['QualityAnnotation', 'Annotation', 'ETypeAnnotation'];
     hasBody: {
       '@id': 'https://neuroshapes.org/Curated';
       '@type': ['AnnotationBody', 'DataMaturity'];

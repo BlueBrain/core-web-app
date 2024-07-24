@@ -140,6 +140,7 @@ export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] 
     const traceIds = eModelExtractionTargetsConfiguration.uses.map((trace) => trace['@id']);
 
     const tracesQuery = getEntityListByIdsQuery('Trace', traceIds);
+
     const traces = await queryES<Trace>(tracesQuery, session, eModelTracesProjConfig);
 
     return traces.map((trace) => convertTraceForUI(trace));

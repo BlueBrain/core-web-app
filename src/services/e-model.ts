@@ -1,5 +1,6 @@
 import lodashFind from 'lodash/find';
 import mergeWith from 'lodash/mergeWith';
+import { ensureArray } from '@/util/nexus';
 
 import {
   AllFeatureKeys,
@@ -105,7 +106,9 @@ export function convertTraceForUI(trace: Trace | ExperimentalTrace): Experimenta
     return {
       ...commonProps,
       mType: NO_DATA_STRING,
-      eType: NO_DATA_STRING,
+      eType:
+        ensureArray(trace.annotation).find((anno) => anno['@type'].includes('ETypeAnnotation'))
+          ?.hasBody?.label || NO_DATA_STRING,
       description: NO_DATA_STRING,
       eCodes: trace.stimulus.map((s) => s.stimulusType.label as ECode),
       subjectSpecies: trace.subject?.species?.label || NO_DATA_STRING,
