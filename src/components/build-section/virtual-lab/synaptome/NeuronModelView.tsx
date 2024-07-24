@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { useAtomValue } from 'jotai';
+
 import Renderer from '@/services/bluenaas-single-cell/renderer';
 import { Morphology } from '@/services/bluenaas-single-cell/types';
 import { getSession } from '@/authFetch';
 import { blueNaasUrl } from '@/config';
+import { synapsesPlacementAtom } from '@/state/synaptome';
 
 type Props = {
   modelSelfUrl: string;
@@ -11,6 +14,7 @@ type Props = {
 export default function NeuronModelView({ modelSelfUrl }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
+  const synapsesPlacement = useAtomValue(synapsesPlacementAtom);
 
   const onLoad = useCallback((morphology: Morphology) => {
     if (rendererRef.current) {
@@ -55,6 +59,13 @@ export default function NeuronModelView({ modelSelfUrl }: Props) {
       })();
     }
   }, [modelSelfUrl, onLoad]);
+
+  useEffect(() => {
+    if (rendererRef.current && !!synapsesPlacement.length) {
+      const coordinates = synapsesPlacement.map(p => p.synapses).map(o => o.map(i => i.coordinates)).flat();
+      rendererRef.current.addSynapses(coordinates);
+    }
+  }, [synapsesPlacement]);
 
   return (
     <div className="relative h-full w-full">

@@ -27,9 +27,10 @@ import {
 
 import RendererCtrl from './renderer-ctrl';
 import type { Morphology, SecMarkerConfig } from './types';
-import { createSegMarkerMesh, createSegmentMesh } from './renderer-utils';
+import { createSegMarkerMesh, createSegmentMesh, createBubble } from './renderer-utils';
 
 import { basePath } from '@/config';
+import { Coordinates3D } from '@/state/synaptome';
 
 const FOG_COLOR = 0xffffff;
 const FOG_NEAR = 1;
@@ -114,7 +115,6 @@ function getElementOffset(element: HTMLElement): { x: number; y: number } {
 
 type MorphMesh = Mesh<CylinderGeometry, MeshLambertMaterial>;
 type HoverBox = LineSegments<EdgesGeometry, LineBasicMaterial>;
-
 export default class BlueNaasRenderer {
   private container: HTMLDivElement;
 
@@ -211,7 +211,7 @@ export default class BlueNaasRenderer {
     this.scene.add(this.camera);
     this.camera.add(new PointLight(CAMERA_LIGHT_COLOR, 0.9));
 
-    this.camera.position.setZ(-500);
+    this.camera.position.setZ(-200);
     this.camera.lookAt(new Vector3());
 
     this.controls = new TrackballControls(this.camera, this.renderer.domElement);
@@ -259,7 +259,6 @@ export default class BlueNaasRenderer {
 
     const clickedMesh = this.getMeshByNativeCoordinates(e.clientX, e.clientY);
     if (!clickedMesh) return;
-
     this.config.onClick({
       type: clickedMesh.name,
       data: clickedMesh.userData,
@@ -301,6 +300,7 @@ export default class BlueNaasRenderer {
     mesh.getWorldPosition(this.hoverBox.position);
     mesh.getWorldQuaternion(this.hoverBox.quaternion);
     this.hoverBox.name = mesh.name;
+
     this.hoverBox.userData = { ...mesh.userData, skipHoverDetection: true };
     this.scene.add(this.hoverBox);
 
@@ -308,7 +308,6 @@ export default class BlueNaasRenderer {
       type: 'morphSection',
       data: mesh.userData,
     });
-
     this.ctrl.renderOnce();
   }
 
@@ -397,6 +396,15 @@ export default class BlueNaasRenderer {
 
     this.ctrl.renderOnce();
   };
+
+  addSynapses = (coordinates: Array<Coordinates3D>) => {
+    coordinates.map(coord => {
+      return createBubble(
+        new Vector3(coord[0], coord[1], coord[2])
+      )
+    }).forEach(vector => this.scene.add(vector));
+    this.ctrl.renderOnce();
+  }
 
   private addSecMarker = (config: SecMarkerConfig) => {
     if (!this.morphology) {

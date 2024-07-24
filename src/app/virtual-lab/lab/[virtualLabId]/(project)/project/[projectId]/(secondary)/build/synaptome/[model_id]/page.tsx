@@ -53,6 +53,8 @@ function useMeModel({ modelId }: { modelId: string }) {
   return { resource, loading };
 }
 
+
+
 function Synaptome({ params }: Props) {
   const { id } = useResourceInfoFromPath();
   const { resource, loading } = useMeModel({ modelId: id });
