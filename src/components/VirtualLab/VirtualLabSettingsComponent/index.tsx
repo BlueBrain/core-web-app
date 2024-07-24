@@ -340,7 +340,7 @@ export default function VirtualLabSettingsComponent({ id }: { id: string }) {
 
   return (
     <CustomCollapse
-      className="flex flex-col gap-1 text-primary-8"
+      className="my-10 flex flex-col gap-1 text-primary-8"
       items={collapseItems}
       activeKey={activePanelKey}
       onChange={onChangePanel}
