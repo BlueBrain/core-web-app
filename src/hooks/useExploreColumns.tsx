@@ -1,6 +1,14 @@
 'use client';
 
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
 import { ExploreESHit } from '@/types/explore-section/es';
@@ -32,7 +40,7 @@ const COL_SIZING = {
  * @param unit string
  * @returns number
  */
-function getProvisionedWidth(title: string, unit?: string) {
+function getProvisionedWidth(title: string, unit?: ReactNode) {
   const titleSpan = document.createElement('span');
   titleSpan.textContent = `${title} ${unit ?? ''}`;
   // font-{size/weight} must be the same as the column style

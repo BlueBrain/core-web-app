@@ -21,7 +21,7 @@ export type ExploreFieldConfig<T> = {
   title: string;
   description?: string;
   filter: FilterType;
-  unit?: string;
+  unit?: ReactNode;
   group?: MorphoMetricCompartment;
   render?: {
     esResourceViewFn?: (value: any, record: any, index?: number) => ReactNode | any;
