@@ -1,5 +1,5 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
-import { Provider } from 'jotai';
+import { render, screen, waitFor } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
 import { sectionAtom } from '@/state/application';
@@ -19,15 +19,17 @@ const HydrateAtoms = ({ initialValues, children }: any) => {
 
 function TestProvider({ initialValues, children }: any) {
   return (
-    <Provider>
+    <JotaiProvider>
       <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-    </Provider>
+    </JotaiProvider>
   );
 }
 
 global.ResizeObserver = class MockedResizeObserver {
   observe = jest.fn();
+
   unobserve = jest.fn();
+
   disconnect = jest.fn();
 };
 

@@ -15,7 +15,6 @@ import {
   fetchEsResourcesByType,
   fetchTotalByExperimentAndRegions,
 } from '@/api/explore-section/resources';
-import sessionAtom from '@/state/session';
 import { DataType, PAGE_NUMBER, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import { ExploreESHit, FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
@@ -64,14 +63,12 @@ export const activeColumnsAtom = atomFamily(
 
 export const dimensionColumnsAtom = atomFamily(
   ({ dataType, virtualLabInfo }: DataAtomFamilyScopeType) =>
-    atom<Promise<string[] | null>>(async (get) => {
-      const session = get(sessionAtom);
-
+    atom<Promise<string[] | null>>(async () => {
       // if the type is not simulation campaign, we dont fetch dimension columns
-      if (!session || dataType !== DataType.SimulationCampaigns) {
+      if (dataType !== DataType.SimulationCampaigns) {
         return null;
       }
-      const dimensionsResponse = await fetchDimensionAggs(session?.accessToken, virtualLabInfo);
+      const dimensionsResponse = await fetchDimensionAggs(virtualLabInfo);
       const dimensions: string[] = [];
       dimensionsResponse.hits.forEach((response: any) => {
         if (response._source.parameter?.coords) {
@@ -107,10 +104,6 @@ export const filtersAtom = atomFamily(
 export const totalByExperimentAndRegionsAtom = atomFamily(
   ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atom<Promise<number | undefined | null>>(async (get) => {
-      const session = get(sessionAtom);
-
-      if (!session) return null;
-
       const sortState = get(sortStateAtom);
       let descendantIds: string[] = [];
 
@@ -119,13 +112,7 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
 
       const query = fetchDataQuery(0, 1, [], dataType, sortState, '', descendantIds);
       const result =
-        query &&
-        (await fetchTotalByExperimentAndRegions(
-          session.accessToken,
-          query,
-          undefined,
-          virtualLabInfo
-        ));
+        query && (await fetchTotalByExperimentAndRegions(query, undefined, virtualLabInfo));
 
       return result;
     }),
@@ -174,14 +161,8 @@ export const queryAtom = atomFamily(
 export const queryResponseAtom = atomFamily(
   ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource> | null>>(async (get) => {
-      const session = get(sessionAtom);
-
-      if (!session) return null;
-
       const query = await get(queryAtom({ dataType, dataScope, virtualLabInfo }));
-      const result =
-        query &&
-        (await fetchEsResourcesByType(session.accessToken, query, undefined, virtualLabInfo));
+      const result = query && (await fetchEsResourcesByType(query, undefined, virtualLabInfo));
 
       return result;
     }),

@@ -1,9 +1,10 @@
 import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useParams, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import isUndefined from 'lodash/isUndefined';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactive/literature/[experiment-data-type]/page';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
@@ -19,7 +20,6 @@ import sessionAtom from '@/state/session';
 import { articleListingFilterPanelOpenAtom } from '@/state/explore-section/literature-filters';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
-import userEvent, { UserEvent } from '@testing-library/user-event';
 
 const ML_DATE_FORMAT = 'yyyy-MM-dd';
 const UI_DATE_FORMAT = 'dd-MM-yyyy';

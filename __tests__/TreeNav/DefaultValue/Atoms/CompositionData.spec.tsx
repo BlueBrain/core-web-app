@@ -3,6 +3,7 @@ import { Provider, useAtomValue } from 'jotai';
 import { unwrap, useHydrateAtoms } from 'jotai/utils';
 
 import { useMemo } from 'react';
+import { useQueryState } from 'nuqs';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { sectionAtom } from '@/state/application';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
@@ -11,7 +12,6 @@ import sessionAtom from '@/state/session';
 import { IDPrefix, mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 import { defaultExploreRegion } from '@/constants/explore-section/default-brain-region';
 import { useSetBrainRegionFromQuery, useSetBrainRegionToQuery } from '@/hooks/brain-region-panel';
-import { useQueryState } from 'nuqs';
 
 jest.mock('src/api/nexus', () => {
   const actual = jest.requireActual('src/api/nexus');
@@ -29,7 +29,9 @@ jest.mock('nuqs', () => {
   return {
     useQueryState: () => [
       decodeURIComponent(mockQueryParam),
-      (id: string) => (mockQueryParam = id),
+      (id: string) => {
+        mockQueryParam = id;
+      },
     ],
   };
 });

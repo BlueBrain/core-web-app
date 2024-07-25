@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { Provider, useAtomValue } from 'jotai';
+import { Provider as JotaiProvider, useAtomValue } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
 import { selectedBrainRegionAtom, brainRegionHierarchyStateAtom } from '@/state/brain-regions';
@@ -23,9 +23,9 @@ const HydrateAtoms = ({ initialValues, children }: any) => {
 
 function TestProvider({ initialValues, children }: any) {
   return (
-    <Provider>
+    <JotaiProvider>
       <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-    </Provider>
+    </JotaiProvider>
   );
 }
 

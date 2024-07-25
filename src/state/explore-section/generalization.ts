@@ -170,24 +170,15 @@ export const resourceBasedResponseRawAtom = atomFamily<
 >(
   ({ resourceId, dataType }) =>
     atom(async (get) => {
-      const session = get(sessionAtom);
-
-      if (!session) return null;
-
       const resourceBasedResponseResults = await get(resourceBasedResponseResultsAtom(resourceId));
-
       if (!resourceBasedResponseResults || resourceBasedResponseResults.length === 0) return null;
 
       const ids = map(resourceBasedResponseResults, 'id');
-
       if (!ids) return null;
 
       const filters = await get(filtersAtom({ dataType, resourceId }));
-
       const query = fetchDataQueryUsingIds(DEFAULT_CARDS_NUMBER, PAGE_NUMBER, filters, ids);
-
-      const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
-
+      const esResponse = query && (await fetchEsResourcesByType(query));
       if (!esResponse) return null; // Error
 
       // Use sortBy to order the results based on the order of IDs in resourceBasedResponseResults
@@ -239,26 +230,18 @@ export const resourceBasedResponseMorphoMetricsAtom = atomFamily<
 >(
   ({ resourceId, dataType }) =>
     atom(async (get) => {
-      const session = get(sessionAtom);
-
-      if (!session) return null;
-
       const resourceBasedResponseHits = await get(
         resourceBasedResponseHitsAtom({ resourceId, dataType })
       );
-
       if (!resourceBasedResponseHits || resourceBasedResponseHits.length === 0) return null;
 
       const ids = map(resourceBasedResponseHits, '_id');
-
       if (!ids) return null;
 
       const filters = await get(filtersAtom({ dataType, resourceId }));
-
       const query = fetchMorphoMetricsUsingIds(DEFAULT_CARDS_NUMBER * 5, PAGE_NUMBER, filters, ids);
 
-      const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
-
+      const esResponse = query && (await fetchEsResourcesByType(query));
       if (!esResponse) return null; // Error
 
       // Use sortBy to order the results based on the order of IDs in resourceBasedResponseResults
@@ -278,18 +261,12 @@ export const resourceBasedResponseMorphoMetricsAtom = atomFamily<
 
 export const sourceMorphoMetricsAtom = atomFamily(
   (resourceId: string) =>
-    atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['hits'] | null>>(
-      async (get) => {
-        const session = get(sessionAtom);
+    atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['hits'] | null>>(async () => {
+      const query = fetchMorphoMetricsUsingIds(5, PAGE_NUMBER, [], [resourceId]);
 
-        if (!session) return null;
+      const esResponse = query && (await fetchEsResourcesByType(query));
 
-        const query = fetchMorphoMetricsUsingIds(5, PAGE_NUMBER, [], [resourceId]);
-
-        const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
-
-        return esResponse.hits || null;
-      }
-    ),
+      return esResponse.hits || null;
+    }),
   isEqual
 );

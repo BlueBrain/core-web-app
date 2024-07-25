@@ -1,9 +1,9 @@
 import esb, { Sort } from 'elastic-builder';
-import { createHeaders } from '@/util/utils';
 import { API_SEARCH } from '@/constants/explore-section/queries';
 import { ExploreESResponse, FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { Experiment } from '@/types/explore-section/es-experiment';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
+import authFetch from '@/authFetch';
 
 export type DataQuery = {
   size: number;
@@ -19,15 +19,21 @@ function buildSearchUrl(virtualLabInfo?: VirtualLabInfo) {
     : API_SEARCH;
 }
 
+function createHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    Accept: '*/*',
+  };
+}
+
 export async function fetchTotalByExperimentAndRegions(
-  accessToken: string,
   dataQuery: DataQuery,
   signal?: AbortSignal,
   virtualLabInfo?: VirtualLabInfo
 ): Promise<number | undefined> {
-  return fetch(buildSearchUrl(virtualLabInfo), {
+  return authFetch(buildSearchUrl(virtualLabInfo), {
     method: 'POST',
-    headers: createHeaders(accessToken),
+    headers: createHeaders(),
     body: JSON.stringify(dataQuery),
     signal,
   })
@@ -36,14 +42,13 @@ export async function fetchTotalByExperimentAndRegions(
 }
 
 export async function fetchEsResourcesByType(
-  accessToken: string,
   dataQuery: DataQuery,
   signal?: AbortSignal,
   virtualLabInfo?: VirtualLabInfo
 ): Promise<FlattenedExploreESResponse<Experiment>> {
-  return fetch(buildSearchUrl(virtualLabInfo), {
+  return authFetch(buildSearchUrl(virtualLabInfo), {
     method: 'POST',
-    headers: createHeaders(accessToken),
+    headers: createHeaders(),
     body: JSON.stringify(dataQuery),
     signal,
   })
@@ -88,9 +93,7 @@ export type ArticleItem = {
 };
 
 // TODO: this function should be changed to use ES /_mappings
-export async function fetchDimensionAggs(accessToken: string, virtualLabInfo?: VirtualLabInfo) {
-  if (!accessToken) throw new Error('Access token should be defined');
-
+export async function fetchDimensionAggs(virtualLabInfo?: VirtualLabInfo) {
   const query = esb
     .requestBodySearch()
     .query(
@@ -100,9 +103,9 @@ export async function fetchDimensionAggs(accessToken: string, virtualLabInfo?: V
     )
     .size(1000);
 
-  return fetch(buildSearchUrl(virtualLabInfo), {
+  return authFetch(buildSearchUrl(virtualLabInfo), {
     method: 'POST',
-    headers: createHeaders(accessToken),
+    headers: createHeaders(),
     body: JSON.stringify(query),
   })
     .then<ExploreESResponse<Experiment>>((response) => response.json())

@@ -68,6 +68,8 @@ export default function SynaptomeMConfigurationForm({ org, project, resource }: 
     try {
       setLoading(true);
       const session = await getSession();
+      if (!session) return;
+
       const configFileUrl = composeUrl('file', '', { org, project });
       const SYNAPTOME_CONFIG = { synapses: values.synapses };
 

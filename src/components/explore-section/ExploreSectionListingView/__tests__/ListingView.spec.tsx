@@ -14,6 +14,17 @@ import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { ExploreDataScope } from '@/types/explore-section/application';
 
 jest.mock('next/navigation');
+jest.mock('src/authFetch', () => {
+  return {
+    __esModule: true,
+    getSession: jest.fn(() => {
+      return Promise<{ accessToken: '123' }>;
+    }),
+    default: jest.fn((...args: Parameters<typeof fetch>) => {
+      return fetch(...args);
+    }),
+  };
+});
 
 const testServer = setupServer(...[mockMorphologyResponse]);
 
@@ -103,11 +114,11 @@ describe('Download button tests', () => {
       )
     );
     // if not visible the test will fail
+
     const checkbox = screen.queryAllByRole('checkbox')[1];
     fireEvent.click(checkbox);
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'download-resources-button' })).toBeVisible()
-    );
+
+    expect(await screen.findByRole('button', { name: 'download-resources-button' })).toBeVisible();
   });
 });
 
@@ -130,29 +141,34 @@ describe('Filters panel tests', () => {
     expect(view).toBeNull();
   });
 
-  test('pressing filter button opens the filter panel', () => {
+  test('pressing filter button opens the filter panel', async () => {
     const filterButton = screen.getByRole('button', { name: 'listing-view-filter-button' });
     fireEvent.click(filterButton);
-    screen.getByTestId('listing-view-filter-panel');
+
+    expect(await screen.findByTestId('listing-view-filter-panel')).toBeVisible();
   });
 
   test('pressing hide button hides a column', async () => {
     const filterButton = screen.getByRole('button', { name: 'listing-view-filter-button' });
     fireEvent.click(filterButton);
-    const tableHeaderLengthBeforeHide = screen.getAllByTestId('column-header').length;
-    pressHideColumnButton();
-    const tableHeaderLengthAfterHide = screen.getAllByTestId('column-header').length;
 
+    const tableHeaderLengthBeforeHide = (await screen.findAllByTestId('column-header')).length;
+
+    pressHideColumnButton();
+
+    const tableHeaderLengthAfterHide = (await screen.findAllByTestId('column-header')).length;
     expect(tableHeaderLengthAfterHide).toEqual(tableHeaderLengthBeforeHide - 1);
   });
 
   test('pressing show button shows back the column', async () => {
     const filterButton = screen.getByRole('button', { name: 'listing-view-filter-button' });
     fireEvent.click(filterButton);
+
     const tableHeaderLengthBeforeHide = screen.getAllByTestId('column-header').length;
     pressHideColumnButton();
     pressShowColumnButton();
-    const tableHeaderLengthAfterHide = screen.getAllByTestId('column-header').length;
+
+    const tableHeaderLengthAfterHide = (await screen.findAllByTestId('column-header')).length;
     expect(tableHeaderLengthAfterHide).toEqual(tableHeaderLengthBeforeHide);
   });
 });

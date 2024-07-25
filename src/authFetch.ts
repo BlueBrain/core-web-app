@@ -8,8 +8,8 @@ import { getClientSession } from './hooks/session';
 export async function getSession() {
   if (!isServer) return await getClientSession();
 
-  /* eslint-disable-next-line global-require */
-  const { auth } = require('src/auth'); // Only import if running on server
+  const { auth } = await import('src/auth'); // Only import if running on server
+
   return await auth();
 }
 

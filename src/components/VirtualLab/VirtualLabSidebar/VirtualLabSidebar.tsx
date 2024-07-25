@@ -1,8 +1,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { SwapOutlined } from '@ant-design/icons';
-import Link from 'next/link';
 import { useAtomValue } from 'jotai';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
@@ -30,7 +28,7 @@ export default function VirtualLabSidebarContent({ initialVlab }: { initialVlab:
   const users = useUnwrappedValue(virtualLabMembersAtomFamily(vlab?.id))?.length;
 
   const linkItems: LinkItem[] = [
-    { key: LinkItemKey.Lab, content: 'Overview', href: 'overview' },
+    { key: LinkItemKey.Lab, content: 'Virtual lab overview', href: 'overview' },
     {
       key: LinkItemKey.Projects,
       content: (
@@ -55,15 +53,5 @@ export default function VirtualLabSidebarContent({ initialVlab }: { initialVlab:
     },
     { key: LinkItemKey.Admin, content: 'Admin', href: 'admin' },
   ];
-  return (
-    <>
-      <Link
-        href="/virtual-lab"
-        className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
-      >
-        <span>Switch virtual lab</span> <SwapOutlined />
-      </Link>
-      <VerticalLinks links={linkItems} currentPage={currentPage} />
-    </>
-  );
+  return <VerticalLinks links={linkItems} currentPage={currentPage} />;
 }

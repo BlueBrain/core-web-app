@@ -1,11 +1,9 @@
-import { SwapOutlined } from '@ant-design/icons';
-import Link from 'next/link';
 import VerticalLinks from '@/components/VerticalLinks';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
 export function VirtualLabSidebarSkeleton({ titleGap = false }: { titleGap?: boolean }) {
   const linkItems = [
-    { key: LinkItemKey.Lab, content: 'Overview', href: 'overview' },
+    { key: LinkItemKey.Lab, content: 'Virtual lab overview', href: 'overview' },
     {
       key: LinkItemKey.Projects,
       content: (
@@ -35,12 +33,6 @@ export function VirtualLabSidebarSkeleton({ titleGap = false }: { titleGap?: boo
         />
       )}
 
-      <Link
-        href="/virtual-lab"
-        className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
-      >
-        <span>Switch virtual lab</span> <SwapOutlined />
-      </Link>
       <VerticalLinks links={linkItems} />
     </div>
   );
