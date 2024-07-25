@@ -10,19 +10,22 @@ export const NEURON_MORPHOLOGY_FIELDS = [
     field: Field.MType,
   },
   {
+    field: Field.SubjectAge,
+  },
+  {
     field: Field.SubjectSpecies,
   },
   {
     field: Field.BrainRegion,
   },
   {
-    field: Field.Contributors,
-  },
-  {
     field: Field.CreatedAt,
   },
   {
     field: Field.License,
+  },
+  {
+    field: Field.Contributors,
   },
 ] as DetailProps[];
 

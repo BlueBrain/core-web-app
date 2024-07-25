@@ -143,7 +143,7 @@ export const subjectAgeDataFamily = atomFamily<ResourceInfo, Atom<Promise<string
 
       if (!detail || !detail.subject) return null;
 
-      if (detail.subject?.age) return subjectAgeSelectorFn(detail);
+      if (detail.subject) return subjectAgeSelectorFn(detail);
 
       if (detail.subject['@id']) {
         const subject = await fetchResourceById<Subject>(
