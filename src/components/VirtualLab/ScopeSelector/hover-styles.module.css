@@ -1,7 +1,10 @@
 .customSlickSlider:hover .customSlide:not(.isSelected),
 .isNotSelected {
-  opacity: 55%;
-  --tw-text-opacity: 0.55;
+  --tw-text-opacity: 0.65;
+}
+
+.isNotSelected:hover {
+  --tw-text-opacity: 1;
 }
 
 .customSlickSlider:hover .customSlide:hover,

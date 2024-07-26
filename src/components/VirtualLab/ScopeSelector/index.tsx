@@ -1,10 +1,6 @@
-import Image from 'next/image';
-import { Dispatch, ReactNode, useRef, useState, SetStateAction } from 'react';
+import { Dispatch, useState, SetStateAction } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtom, useAtomValue } from 'jotai';
-import { Carousel } from 'antd';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { CarouselRef } from 'antd/lib/carousel';
 
 import { basePath } from '@/config';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
@@ -100,44 +96,34 @@ export const items = [
   },
 ];
 
-function ScopeSelector({
-  children,
+function ScopeFilter({
   selectedScope,
   setSelectedScope,
 }: {
-  children: ReactNode;
   selectedScope: SimulationScope | null;
   setSelectedScope: Dispatch<SetStateAction<SimulationScope | null>>;
 }) {
   const projectTopMenuRef = useAtomValue(projectTopMenuRefAtom);
 
   const controls = (
-    <div className="flex items-center justify-between gap-24">
-      <div className="flex gap-2">
+    <div className="flex flex-row !divide-x !divide-[#69C0FF] border border-[#69C0FF]">
+      {(Object.values(SimulationScope) as Array<SimulationScope>).map((scope) => (
         <button
-          className={classNames('text-lg', !selectedScope && 'font-bold underline')}
-          onClick={() => setSelectedScope(null)}
+          className={classNames(
+            'px-5 text-lg capitalize hover:bg-primary-8 hover:text-white',
+            selectedScope === scope && 'bg-white font-bold text-primary-9'
+          )}
+          data-testid={`scope-filter-${scope}`}
+          key={scope}
+          onClick={() => setSelectedScope(scope)}
           type="button"
         >
-          All
+          {scope}
         </button>
-        {(Object.values(SimulationScope) as Array<SimulationScope>).map((scope) => (
-          <button
-            key={scope}
-            className={classNames(
-              'text-lg capitalize',
-              selectedScope === scope && 'font-bold underline'
-            )}
-            onClick={() => setSelectedScope(scope)}
-            type="button"
-          >
-            {scope}
-          </button>
-        ))}
-      </div>
-      <div className="flex items-center gap-4">{children}</div>
+      ))}
     </div>
   );
+
   return projectTopMenuRef?.current && createPortal(controls, projectTopMenuRef.current);
 }
 
@@ -161,46 +147,33 @@ function CustomSlide(props: SlideProps) {
   return (
     <button
       className={classNames(
-        '!flex h-[290px] w-full flex-col gap-2 overflow-hidden px-3 text-left text-white',
+        'flex w-96 flex-col text-left text-white',
         currentScopeIsSelected && hoverStyles.isSelected,
         anotherScopeIsSelected && hoverStyles.isNotSelected,
         className
       )}
+      disabled={currentScopeIsSelected}
       onClick={() => setSelectedSimulationScope(selectedSimulationScope !== key ? key : null)}
       type="button"
-      data-testid={currentScopeIsSelected ? 'active-carousel-item' : 'inactive-carousel-item'}
+      data-testid={`scope-item-${key}`}
       {...otherProps} // eslint-disable-line react/jsx-props-no-spreading
     >
       <h2 className="text-3xl">{title}</h2>
       <span className="font-light">{description}</span>
-      <div className="relative mt-auto h-[168px] w-full">
-        <Image
-          fill
-          alt={`${title} Banner Image`}
-          style={{
-            objectFit: 'cover',
-          }}
-          src={src}
-        />
-      </div>
     </button>
   );
 }
 
-export default function ScopeCarousel() {
-  const [selectedScope, setSelectedScope] = useState<SimulationScope | null>(null);
+export default function ScopeSelector() {
+  const [selectedScope, setSelectedScope] = useState<SimulationScope | null>(
+    SimulationScope.Cellular
+  );
 
   const [selectedSimulationScope, setSelectedSimulationScope] = useAtom(
     selectedSimulationScopeAtom
   );
 
-  const carouselRef = useRef<CarouselRef>(null);
-  const progressRef = useRef(null);
-
-  const slidesToShow = 4;
-  const slidesToScroll = 4;
-
-  const carouselItems = items
+  const availableScopes = items
     .filter(({ scope }) => !selectedScope || scope === selectedScope)
     .map(({ description, key, src, title }) => (
       <CustomSlide
@@ -217,47 +190,8 @@ export default function ScopeCarousel() {
 
   return (
     <>
-      <ScopeSelector selectedScope={selectedScope} setSelectedScope={setSelectedScope}>
-        <LeftOutlined onClick={() => carouselRef.current?.prev()}>Navigate scope left</LeftOutlined>
-        <div ref={progressRef} />
-        <RightOutlined onClick={() => carouselRef.current?.next()}>
-          Navigate scope right
-        </RightOutlined>
-      </ScopeSelector>
-      <div className="relative">
-        <Carousel
-          arrows
-          className={classNames(
-            '-mx-3',
-            hoverStyles.customSlickSlider,
-            hoverStyles.consistentImageSize
-          )}
-          dots={false}
-          infinite={false}
-          ref={carouselRef}
-          responsive={[
-            {
-              breakpoint: 1280,
-              settings: {
-                slidesToShow: 3,
-                slidesToScroll: 3,
-              },
-            },
-            {
-              breakpoint: 1024,
-              settings: {
-                slidesToShow: 2,
-                slidesToScroll: 2,
-              },
-            },
-          ]}
-          slidesToScroll={slidesToScroll}
-          slidesToShow={slidesToShow}
-        >
-          {carouselItems}
-        </Carousel>
-        <div className="absolute right-0 top-0 h-full w-[134px] bg-gradient-to-r from-transparent to-[#002766]" />
-      </div>
+      <ScopeFilter selectedScope={selectedScope} setSelectedScope={setSelectedScope} />
+      <div className="flex gap-8">{availableScopes}</div>
     </>
   );
 }

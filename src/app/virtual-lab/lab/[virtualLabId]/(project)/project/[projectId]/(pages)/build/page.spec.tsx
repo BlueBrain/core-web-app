@@ -1,14 +1,16 @@
-import { Provider } from 'jotai';
+import { Provider, useAtomValue } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { SessionProvider } from 'next-auth/react';
 import VirtualLabProjectBuildPage from './page';
 import sessionAtom from '@/state/session';
 import { DataType } from '@/constants/explore-section/list-views';
-import { items as carouselItems } from '@/components/VirtualLab/ScopeCarousel';
+import { items as carouselItems } from '@/components/VirtualLab/ScopeSelector';
 import { SimulationType } from '@/types/virtual-lab/lab';
 import * as dataQuery from '@/queries/explore-section/data';
 import { ExploreESHit } from '@/types/explore-section/es';
+import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 
 const buildMEModelLink = 'build/me-model/new/morphology/reconstructed';
 
@@ -16,6 +18,31 @@ const spy = jest.spyOn(dataQuery, 'default');
 
 const meModelName = 'ME-MODEL-ID-1';
 const synaptomeName = 'SYNAPTOME-MODEL-ID-1';
+
+function HydrateAtoms({ initialValues, children }: any) {
+  useHydrateAtoms(initialValues);
+  return children;
+}
+
+function TestProvider({ initialValues, children }: any) {
+  return (
+    <Provider>
+      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </Provider>
+  );
+}
+
+function VirtualLabProjectBuildPageProvider() {
+  const session = useAtomValue(sessionAtom);
+  return (
+    <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
+      <SessionProvider session={session}>
+        <VirtualLabTopMenu />
+      </SessionProvider>
+      <VirtualLabProjectBuildPage params={{ virtualLabId: '123', projectId: '456' }} />
+    </TestProvider>
+  );
+}
 
 describe('VirtualLabProjectBuildPage', () => {
   beforeEach(() => {
@@ -25,17 +52,16 @@ describe('VirtualLabProjectBuildPage', () => {
   test('shows me-models by default', async () => {
     renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
-    await screen.findByText(meModelName);
+    await screen.findByText(meModelName); // This isn't being used for any expect(?)
   });
 
   test('shows synaptome models when user clicks synaptome from carousel', async () => {
     const { user } = renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
 
-    const synaptomCarouselItem = carouselItems.find((i) => i.key === SimulationType.Synaptome)!;
-
-    await user.click(screen.getByText(synaptomCarouselItem.description));
-    await screen.findByText(synaptomeName);
+    await user.click(screen.getByTestId('scope-filter-circuit'));
+    await user.click(screen.getByTestId('scope-item-synaptome'));
+    await screen.findByText(synaptomeName); // This isn't being used for any expect(?)
   });
 
   test('takes user to memodel build page when user clicks on ME-Model -> New model', async () => {
@@ -52,18 +78,19 @@ describe('VirtualLabProjectBuildPage', () => {
 
     const synaptomCarouselItem = carouselItems.find((i) => i.key === SimulationType.Synaptome)!;
 
-    await user.click(screen.getByText(synaptomCarouselItem.description));
+    await user.click(screen.getByTestId('scope-filter-circuit'));
+    await user.click(screen.getByTestId('scope-item-synaptome'));
     expect(activeCarouselTabTitle()).toEqual(synaptomCarouselItem.title);
-    await screen.findByText(synaptomeName);
+    await screen.findByText(synaptomeName); // This isn't being used for any expect(?)
 
     await user.click(buildSynaptomeButton());
 
     expect(activeCarouselTabTitle()).toEqual(synaptomCarouselItem.title);
-    await screen.findByText(meModelName);
+    await screen.findByText(meModelName); // This isn't being used for any expect(?)
   });
 
   const activeCarouselTabTitle = () => {
-    return screen.getByTestId('active-carousel-item').querySelector('h2')?.textContent;
+    return screen.getByTestId('scope-item-synaptome').querySelector('h2')?.textContent;
   };
 
   const buildSynaptomeButton = () => screen.getByText('New synaptome model +');
@@ -71,31 +98,10 @@ describe('VirtualLabProjectBuildPage', () => {
   const renderComponent = () => {
     const user = userEvent.setup();
 
-    render(VirtualLabProjectBuildPageProvider());
+    render(<VirtualLabProjectBuildPageProvider />);
 
     return { user };
   };
-
-  const HydrateAtoms = ({ initialValues, children }: any) => {
-    useHydrateAtoms(initialValues);
-    return children;
-  };
-
-  function TestProvider({ initialValues, children }: any) {
-    return (
-      <Provider>
-        <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-      </Provider>
-    );
-  }
-
-  function VirtualLabProjectBuildPageProvider() {
-    return (
-      <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
-        <VirtualLabProjectBuildPage params={{ virtualLabId: '123', projectId: '456' }} />
-      </TestProvider>
-    );
-  }
 });
 
 jest.mock('next/navigation', () => {
@@ -109,14 +115,6 @@ jest.mock('next/navigation', () => {
   };
 });
 const navigateTo = jest.fn();
-
-jest.mock('next/image', () => ({
-  __esModule: true,
-  default: () => {
-    // eslint-disable-next-line @next/next/no-img-element, react/jsx-props-no-spreading
-    return <img alt="mock" />;
-  },
-}));
 
 jest.mock('src/queries/explore-section/data.ts', () => {
   const actual = jest.requireActual('src/queries/explore-section/data.ts');

@@ -6,7 +6,7 @@ import { useAtomValue } from 'jotai';
 import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import ScopeCarousel from '@/components/VirtualLab/ScopeCarousel';
+import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
 import GenericButton from '@/components/Global/GenericButton';
@@ -72,14 +72,14 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
 
   const tabDetails = selectedModelType && SupportedTypeToTabDetails[selectedModelType];
   return (
-    <div className="flex h-full flex-col gap-10 pt-14">
-      <ScopeCarousel />
+    <div className="flex h-full flex-col gap-6">
+      <ScopeSelector />
       {selectedModelType && tabDetails ? (
         <div className="flex h-full flex-col">
           <div className="flex justify-between">
             <GenericButton
               text={tabDetails.title}
-              className="bg-white text-2xl font-bold text-primary-8"
+              className="w-96 bg-white text-2xl font-bold text-primary-8"
             />
             <Button
               className="h-12 rounded-none border-none bg-primary-6 px-8 text-white shadow-none"

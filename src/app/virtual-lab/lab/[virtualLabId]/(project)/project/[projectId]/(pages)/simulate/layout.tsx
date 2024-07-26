@@ -2,12 +2,12 @@
 
 import { ReactNode } from 'react';
 
-import ScopeCarousel from '@/components/VirtualLab/ScopeCarousel';
+import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 
 export default function VirtualLabProjectSimulateLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <ScopeCarousel />
+      <ScopeSelector />
       {children}
     </>
   );
