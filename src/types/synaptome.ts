@@ -15,6 +15,7 @@ export type SingleSynaptomeConfig = {
   type: number | undefined;
   distribution: string | undefined;
   formula: string | undefined;
+  seed: number | undefined;
 };
 
 export type SynaptomeConfiguration = {

@@ -6,6 +6,9 @@ import {
   MeshLambertMaterial,
   Quaternion,
   Vector3,
+  SphereGeometry,
+  MeshPhongMaterial,
+  ColorRepresentation,
 } from 'three';
 
 export function createSegmentMesh(sec: any, segIdx: number, openEnded: boolean, color: number) {
@@ -68,4 +71,21 @@ export function createSegMarkerMesh(sec: any, segIdx: number, material: Material
   mesh.matrixAutoUpdate = false;
 
   return mesh;
+}
+
+export function createBubble(position: Vector3, color: ColorRepresentation = 0xffffff) {
+  // Create a sphere geometry
+  const geometry = new SphereGeometry(1, 8, 8); // Radius, widthSegments, heightSegments
+
+  // Create a material with transparent and reflective properties
+  const material = new MeshPhongMaterial({
+    color,
+    transparent: true,
+    opacity: 1,
+    shininess: 100,
+  });
+
+  const bubble = new Mesh(geometry, material);
+  bubble.position.copy(position);
+  return bubble;
 }

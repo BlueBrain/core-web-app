@@ -2,7 +2,6 @@ import throttle from 'lodash/throttle';
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
-
 import {
   AmbientLight,
   Color,
@@ -10,15 +9,18 @@ import {
   DoubleSide,
   EdgesGeometry,
   Fog,
+  InstancedBufferGeometry,
   LineBasicMaterial,
   LineSegments,
   Mesh,
   MeshLambertMaterial,
+  MeshPhongMaterial,
   Object3D,
   PerspectiveCamera,
   PointLight,
   Raycaster,
   Scene,
+  SphereGeometry,
   TextureLoader,
   Vector2,
   Vector3,
@@ -43,6 +45,8 @@ const CLICK_DELAY_TOLERANCE = 500; // ms
 const CLICK_POS_TOLERANCE = 5; // px
 
 const TEXTURE_BASE_URL = `${basePath}/images/e-model-interactive`;
+export type SynapseBubble = Mesh<SphereGeometry, MeshPhongMaterial>;
+export type SynapseBubblesMesh = Mesh<InstancedBufferGeometry, MeshPhongMaterial>;
 
 export type ClickData = {
   type: string;
@@ -114,7 +118,6 @@ function getElementOffset(element: HTMLElement): { x: number; y: number } {
 
 type MorphMesh = Mesh<CylinderGeometry, MeshLambertMaterial>;
 type HoverBox = LineSegments<EdgesGeometry, LineBasicMaterial>;
-
 export default class BlueNaasRenderer {
   private container: HTMLDivElement;
 
@@ -211,7 +214,7 @@ export default class BlueNaasRenderer {
     this.scene.add(this.camera);
     this.camera.add(new PointLight(CAMERA_LIGHT_COLOR, 0.9));
 
-    this.camera.position.setZ(-500);
+    this.camera.position.setZ(-200);
     this.camera.lookAt(new Vector3());
 
     this.controls = new TrackballControls(this.camera, this.renderer.domElement);
@@ -259,7 +262,6 @@ export default class BlueNaasRenderer {
 
     const clickedMesh = this.getMeshByNativeCoordinates(e.clientX, e.clientY);
     if (!clickedMesh) return;
-
     this.config.onClick({
       type: clickedMesh.name,
       data: clickedMesh.userData,
@@ -301,6 +303,7 @@ export default class BlueNaasRenderer {
     mesh.getWorldPosition(this.hoverBox.position);
     mesh.getWorldQuaternion(this.hoverBox.quaternion);
     this.hoverBox.name = mesh.name;
+
     this.hoverBox.userData = { ...mesh.userData, skipHoverDetection: true };
     this.scene.add(this.hoverBox);
 
@@ -308,7 +311,6 @@ export default class BlueNaasRenderer {
       type: 'morphSection',
       data: mesh.userData,
     });
-
     this.ctrl.renderOnce();
   }
 
@@ -395,6 +397,16 @@ export default class BlueNaasRenderer {
       }
     });
 
+    this.ctrl.renderOnce();
+  };
+
+  addSynapses = (objects: Array<SynapseBubble>) => {
+    objects.forEach((obj) => this.scene.add(obj));
+    this.ctrl.renderOnce();
+  };
+
+  removeSynapses = (objects: Array<SynapseBubble>) => {
+    objects.forEach((obj) => this.scene.remove(obj));
     this.ctrl.renderOnce();
   };
 
