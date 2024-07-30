@@ -1,9 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Form, Input, Select, Button, ConfigProvider, Space, Tag, InputNumber } from 'antd';
-import { DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
-import { classNames, createHeaders } from '@/util/utils';
+import { Form, Input, Button, ConfigProvider, Space, InputNumber } from 'antd';
+import { useAtom } from 'jotai';
+import { PlusOutlined } from '@ant-design/icons';
+
+import SynapseGroup from './SynapseGroup';
+import {
+  CREATE_SYNAPTOME_CONFIG_FAIL,
+  CREATE_SYNAPTOME_FAIL,
+  CREATE_SYNAPTOME_SUCCESS,
+} from './messages';
+import { createHeaders, getRandomIntInclusive } from '@/util/utils';
 import { composeUrl, createDistribution, removeMetadata } from '@/util/nexus';
 import {
   NEXUS_SYNAPTOME_TYPE,
@@ -12,16 +20,12 @@ import {
   SynaptomeConfiguration,
 } from '@/types/synaptome';
 import { EntityResource } from '@/types/nexus';
-import useNotification from '@/hooks/notifications';
 import { getSession } from '@/authFetch';
+import { synapsesPlacementAtom } from '@/state/synaptome';
+import useNotification from '@/hooks/notifications';
 
 const CONFIG_FILE_NAME = 'synaptome_config.json';
 const CONFIG_FILE_FORMAT = 'application/json';
-const CREATE_SYNAPTOME_SUCCESS = 'The synapse has been successfully added to the neuron.';
-const CREATE_SYNAPTOME_FAIL =
-  'Failed to process your synapse addition request. Please review the form and try again or contact support.';
-const CREATE_SYNAPTOME_CONFIG_FAIL =
-  'Failed to create the synaptome configuration file. Please review the form and try again or contact support.';
 
 const label = (text: string) => (
   <span className="text-base font-semibold text-primary-8">{text}</span>
@@ -34,6 +38,7 @@ const defaultSynapseValue: SingleSynaptomeConfig = {
   type: undefined,
   distribution: undefined,
   formula: undefined,
+  seed: undefined,
 };
 
 type Props = {
@@ -49,17 +54,27 @@ export default function SynaptomeMConfigurationForm({
   resource,
   resourceLoading,
 }: Props) {
-  const [form] = Form.useForm<SynaptomeConfiguration>();
   const [loading, setLoading] = useState(false);
   const { error: notifyError, success: notifySuccess } = useNotification();
+
+  const [form] = Form.useForm<SynaptomeConfiguration>();
   const synapses = Form.useWatch<Array<SingleSynaptomeConfig>>('synapses', form);
+  const seed = Form.useWatch<number>('seed', form);
+  const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
 
   const addNewSynapse = () => {
+    const id = crypto.randomUUID();
+    setSynapsesPlacementAtom({
+      ...synapsesPlacement,
+      [id]: null,
+    });
+
     form.setFieldValue('synapses', [
       ...synapses,
       {
         ...defaultSynapseValue,
-        id: crypto.randomUUID(),
+        id,
+        seed: seed + getRandomIntInclusive(0, seed),
       },
     ]);
   };
@@ -145,6 +160,7 @@ export default function SynaptomeMConfigurationForm({
             {
               ...defaultSynapseValue,
               id: crypto.randomUUID(),
+              seed: 100,
             },
           ],
         }}
@@ -189,117 +205,18 @@ export default function SynaptomeMConfigurationForm({
           </Button>
         </div>
         <Form.List name="synapses">
-          {(fields, op) => {
+          {(fields, { remove: removeGroup }) => {
             return fields.map((field, index) => {
               return (
-                <div key={field.key} className="mb-4 rounded-md border border-zinc-300 p-6">
-                  <h3 className="mb-3 text-lg font-bold text-primary-7">
-                    Synapse <Tag color="geekblue"> {index + 1}</Tag>
-                  </h3>
-                  <Form.Item
-                    name={[field.name, 'name']}
-                    rules={[{ required: true, message: 'Please provide a name!' }]}
-                    validateTrigger="onBlur"
-                  >
-                    <Input placeholder="Enter a name" size="large" className="text-base" />
-                  </Form.Item>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Form.Item
-                      name={[field.name, 'target']}
-                      rules={[{ required: true, message: 'Please select a target!' }]}
-                      validateTrigger="onBlur"
-                      className="[&_.ant-form-item-row]:mb-0 [&_.ant-form-item-row]:inline-block [&_.ant-form-item-row]:w-full"
-                    >
-                      <Select
-                        allowClear
-                        placeholder="Select a target"
-                        size="large"
-                        options={[
-                          { value: 'apical', label: 'Apical' },
-                          { value: 'basal', label: 'Basal' },
-                          { value: 'soma', label: 'Soma' },
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name={[field.name, 'type']}
-                      rules={[{ required: true, message: 'Please select at least one type!' }]}
-                      validateTrigger="onBlur"
-                      className="[&_.ant-form-item-row]:mb-0 [&_.ant-form-item-row]:inline-block [&_.ant-form-item-row]:w-full"
-                    >
-                      <Select
-                        allowClear
-                        placeholder="Select a type"
-                        size="large"
-                        options={[
-                          { value: 'excitatory', label: 'Excitatory Synapses' },
-                          { value: 'inhibitory', label: 'Inhibitory Synapses' },
-                        ]}
-                      />
-                    </Form.Item>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Form.Item
-                      name={[field.name, 'distribution']}
-                      rules={[{ required: true, message: 'Please select a distribution!' }]}
-                      validateTrigger="onBlur"
-                      className="[&_.ant-form-item-row]:mb-0 [&_.ant-form-item-row]:inline-block [&_.ant-form-item-row]:w-full"
-                    >
-                      <Select
-                        allowClear
-                        placeholder="Select a distribution type"
-                        size="large"
-                        options={[
-                          { value: 'linear', label: 'Linear' },
-                          { value: 'exponential', label: 'Exponential' },
-                          { value: 'formula', label: 'Formula' },
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name={[field.name, 'formula']}
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Please provide a valid formula!',
-                          async validator(_, value) {
-                            if (synapses?.[index].distribution !== 'formula') {
-                              return Promise.resolve();
-                            }
-                            if (!value) return Promise.reject();
-                          },
-                        },
-                      ]}
-                      validateTrigger="onBlur"
-                      className={classNames(
-                        '[&_.ant-form-item-row]:mb-0 [&_.ant-form-item-row]:inline-block [&_.ant-form-item-row]:w-full',
-                        synapses?.[index].distribution !== 'formula' && 'hidden'
-                      )}
-                    >
-                      <Input
-                        placeholder="Enter a valid formula"
-                        size="large"
-                        className="text-base"
-                      />
-                    </Form.Item>
-                  </div>
-                  <Form.Item className="mb-0">
-                    <Space className="w-full justify-end">
-                      <Button type="default" htmlType="button" icon={<EyeOutlined />}>
-                        Visualize Synaptome
-                      </Button>
-                      {synapses?.length > 1 && (
-                        <Button
-                          type="default"
-                          htmlType="button"
-                          aria-label="Delete Synapse"
-                          onClick={() => op.remove(index)}
-                          icon={<DeleteOutlined />}
-                        />
-                      )}
-                    </Space>
-                  </Form.Item>
-                </div>
+                <SynapseGroup
+                  key={field.key}
+                  {...{
+                    field,
+                    index,
+                    removeGroup,
+                    modelId: resource._self,
+                  }}
+                />
               );
             });
           }}
