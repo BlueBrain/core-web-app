@@ -15,24 +15,26 @@ import {
   simulateStepAtom,
   simulationConfigAtom,
   simulationFormIsFilledAtom,
-  singleNeuronAtom,
 } from '@/state/simulate/single-neuron';
 import {
   SimAction,
   SimConfig,
+  ModelResource,
   isSingleModelSimConfig,
   isSynaptomModel,
 } from '@/types/simulate/single-neuron';
 import { getDefaultSynapsesConfig } from '@/constants/simulate/single-neuron';
-import { DataType } from '@/constants/explore-section/list-views';
 
-export default function ParameterView() {
+type Props = {
+  resource: ModelResource;
+};
+
+export default function ParameterView({ resource }: Props) {
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
   const [form] = Form.useForm<SimConfig>();
   const formSimConfig = Form.useWatch([], form);
   const simulateStep = useAtomValue(simulateStepAtom);
   const setSubmittable = useSetAtom(simulationFormIsFilledAtom);
-  const selectedModel = useAtomValue(singleNeuronAtom);
 
   const onChange = (action: SimAction) => {
     dispatch(action);
@@ -54,11 +56,11 @@ export default function ParameterView() {
   }, [form, simConfig]);
 
   const defaultSynapsesConfig = useMemo(() => {
-    if (selectedModel?.type === DataType.SingleNeuronSynaptome) {
-      return getDefaultSynapsesConfig(selectedModel)!;
+    if (isSynaptomModel(resource)) {
+      return getDefaultSynapsesConfig(resource)!;
     }
     return null;
-  }, [selectedModel]);
+  }, [resource]);
 
   useEffect(() => {
     if (defaultSynapsesConfig) {
@@ -80,16 +82,21 @@ export default function ParameterView() {
       >
         <div className="mt-10 text-center text-2xl">
           <div className={simulateStep === 'stimulation' ? '' : 'hidden'}>
-            {isSynaptomModel(selectedModel) ? (
+            {isSynaptomModel(resource) ? (
               <ModelWithSynapseConfig
                 onChange={onChange}
                 simConfig={simConfig}
                 defaultSynapsesConfig={defaultSynapsesConfig!}
-                synapses={selectedModel.source.synapses.map((s) => s.id)}
+                synapses={resource.synapses.map((s) => s.id)}
+                modelSelfUrl={resource._self}
               />
             ) : (
               isSingleModelSimConfig(simConfig) && (
-                <Stimulation onChange={onChange} simConfig={simConfig} />
+                <Stimulation
+                  onChange={onChange}
+                  simConfig={simConfig}
+                  modelSelfUrl={resource._self}
+                />
               )
             )}
           </div>

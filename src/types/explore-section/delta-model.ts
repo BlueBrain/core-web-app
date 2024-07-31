@@ -37,4 +37,9 @@ export type EModelResource = ModelResource & {
   score?: number;
 };
 
+export type SynaptomeModelResource = EntityResource & {
+  // TODO: Use the same type here that @Bilal adds in his PR
+  synapses: { id: string }[];
+};
+
 export type Model = EModelResource;

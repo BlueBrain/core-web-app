@@ -31,6 +31,7 @@ type Props = {
   stimulationId: number;
   onChange: (action: SimAction) => void;
   amplitudes: number[];
+  modelSelfUrl: string;
 };
 
 type StepType = 'stepSize' | 'stepNumber';
@@ -82,7 +83,12 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   return newState;
 }
 
-export default function AmperageRangeComponent({ onChange, amplitudes, stimulationId }: Props) {
+export default function AmperageRangeComponent({
+  onChange,
+  amplitudes,
+  stimulationId,
+  modelSelfUrl,
+}: Props) {
   const [amperageState, dispatch] = useReducer(rangeReducer, { ...amperageInitialState });
 
   useEffect(() => {
@@ -164,7 +170,7 @@ export default function AmperageRangeComponent({ onChange, amplitudes, stimulati
           </span>
         ))}
       </div>
-      <StimuliPreviewPlot amplitudes={amperageState.computed} />
+      <StimuliPreviewPlot amplitudes={amperageState.computed} modelSelfUrl={modelSelfUrl} />
     </>
   );
 }

@@ -14,7 +14,7 @@ type Props = {
   modelSelfUrl: string;
 };
 
-function useMorphology({
+export function useMorphology({
   modelSelfUrl,
   callback,
 }: {
