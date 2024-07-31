@@ -12,7 +12,8 @@ import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
 import { atlasVisualizationAtom } from '@/state/atlas/atlas';
 import { loadNodeSetsAsPoints, loadNodeSetsAsSpheres } from '@/components/MeshGenerators/utils';
 import { CameraType } from '@/types/experiment-designer-visualization';
-import { cellSvcBaseUrl } from '@/config';
+import { cellSvcBaseUrl, nexus } from '@/config';
+import sessionAtom from '@/state/session';
 
 type NodeSetMeshProps = {
   nodeSetName: string;
@@ -35,6 +36,7 @@ function NodeSetMesh({
   const atlas = useAtlasVisualizationManager();
   const addNotification = useNotification();
   const detailedCircuit = useAtomValue(detailedCircuitLoadableAtom);
+  const session = useAtomValue(sessionAtom);
 
   const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer | null>(null);
 
@@ -42,33 +44,30 @@ function NodeSetMesh({
    * Fetches point cloud data from cells API. Returns the data in an array buffer format
    */
   const fetchData = useCallback(async () => {
-    const detailedCircuitHasData =
-      detailedCircuit.state === 'hasData' && detailedCircuit.data?.circuitConfigPath.url;
+    const detailedCircuitId = detailedCircuit.state === 'hasData' && detailedCircuit.data?.['@id'];
+    const detailedCircuitProject =
+      detailedCircuit.state === 'hasData' && detailedCircuit.data?._project;
 
-    if (!circuitConfigPathOverride && !detailedCircuitHasData) {
+    if (!circuitConfigPathOverride && !detailedCircuitId) {
       throw new Error('The Circuit config path could not be found in the configuration.');
     }
+    if (!session || !detailedCircuitProject) {
+      return null;
+    }
 
-    const detailedCircuitConfigPath = detailedCircuitHasData
-      ? detailedCircuit.data?.circuitConfigPath.url.replace('file://', '') || ''
-      : '';
-
-    const circuitConfigPath =
-      typeof circuitConfigPathOverride !== 'undefined'
-        ? circuitConfigPathOverride
-        : detailedCircuitConfigPath;
-
-    const url = `${cellSvcBaseUrl}/circuit?input_path=${encodeURIComponent(
-      circuitConfigPath
-    )}&node_set=${nodeSetName}&how=arrow&use_cache=True&sampling_ratio=0.01`;
+    const bucket = detailedCircuitProject.split('/').slice(-2).join('/');
+    const url = `${cellSvcBaseUrl}/circuit?circuit_id=${detailedCircuitId}&node_set=${nodeSetName}&how=arrow&use_cache=True&sampling_ratio=0.01`;
 
     return fetch(url, {
       method: 'get',
       headers: new Headers({
         Accept: '*/*',
+        'nexus-token': session.accessToken,
+        'nexus-endpoint': nexus.url,
+        'nexus-bucket': bucket,
       }),
     }).then((response) => response.arrayBuffer());
-  }, [circuitConfigPathOverride, detailedCircuit, nodeSetName]);
+  }, [session, circuitConfigPathOverride, detailedCircuit, nodeSetName]);
 
   const fetchAndShowNodeSets = useCallback(() => {
     // Prevent double loading.

@@ -10,12 +10,13 @@ import { tableFromIPC } from '@apache-arrow/es2015-esm';
 import { loadable } from 'jotai/utils';
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
-import { basePath, cellSvcBaseUrl } from '@/config';
+import { basePath, cellSvcBaseUrl, nexus } from '@/config';
 import useNotification from '@/hooks/notifications';
 import detailedCircuitAtom from '@/state/circuit';
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
 import { atlasVisualizationAtom, PointCloudType } from '@/state/atlas/atlas';
 import { buildGeometry } from '@/components/MeshGenerators/utils';
+import sessionAtom from '@/state/session';
 
 type PointCloudMeshProps = {
   regionID: string;
@@ -36,37 +37,36 @@ function PointCloudMesh({
   const atlas = useAtlasVisualizationManager();
   const { warning, error } = useNotification();
   const detailedCircuit = useAtomValue(detailedCircuitLoadableAtom);
+  const session = useAtomValue(sessionAtom);
 
   /**
    * Fetches point cloud data from cells API. Returns the data in an array buffer format
    */
   const fetchData = useCallback(async () => {
-    const detailedCircuitHasData =
-      detailedCircuit.state === 'hasData' && detailedCircuit.data?.circuitConfigPath.url;
+    const detailedCircuitId = detailedCircuit.state === 'hasData' && detailedCircuit.data?.['@id'];
+    const detailedCircuitProject =
+      detailedCircuit.state === 'hasData' && detailedCircuit.data?._project;
 
-    if (!circuitConfigPathOverride && !detailedCircuitHasData) {
+    if (!circuitConfigPathOverride && !detailedCircuitId) {
       throw new Error('The Circuit config path could not be found in the configuration.');
     }
+    if (!session || !detailedCircuitProject) {
+      return null;
+    }
 
-    const detailedCircuitConfigPath = detailedCircuitHasData
-      ? detailedCircuit.data?.circuitConfigPath.url.replace('file://', '') || ''
-      : '';
+    const bucket = detailedCircuitProject.split('/').slice(-2).join('/');
+    const url = `${cellSvcBaseUrl}/circuit?circuit_id=${detailedCircuitId}&region=${regionID}&how=arrow`;
 
-    const circuitConfigPath =
-      typeof circuitConfigPathOverride !== 'undefined'
-        ? circuitConfigPathOverride
-        : detailedCircuitConfigPath;
-
-    const url = `${cellSvcBaseUrl}/circuit?input_path=${encodeURIComponent(
-      circuitConfigPath
-    )}&region=${regionID}&how=arrow`;
     return fetch(url, {
       method: 'get',
       headers: new Headers({
         Accept: '*/*',
+        'nexus-token': session.accessToken,
+        'nexus-endpoint': nexus.url,
+        'nexus-bucket': bucket,
       }),
     }).then((response) => response.arrayBuffer());
-  }, [circuitConfigPathOverride, detailedCircuit, regionID]);
+  }, [circuitConfigPathOverride, detailedCircuit, regionID, session]);
 
   const fetchAndShowPointCloud = useCallback(() => {
     // Prevent double loading.

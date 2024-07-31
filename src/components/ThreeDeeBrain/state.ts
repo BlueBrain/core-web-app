@@ -47,24 +47,23 @@ export const addMeshVisibilityAtom = atom(
  * @param brainRegionId
  * @param circuitConfigPathOverride
  */
-export const getPointCloudAtom = (brainRegionId: string, circuitConfigPathOverride?: string) =>
+export const getPointCloudAtom = (brainRegionId: string) =>
   atom(async (get) => {
     const partialCircuit = await get(partialCircuitAtom);
+
+    const session = await get(sessionAtom);
+    if (!session) {
+      return null;
+    }
     if (!partialCircuit) {
       throw new Error(CIRCUIT_NOT_BUILT_ERROR);
     }
-    const partialCircuitConfigPath =
-      partialCircuit.circuitConfigPath.url.replace('file://', '') || '';
-
-    const circuitConfigPath =
-      typeof circuitConfigPathOverride !== 'undefined'
-        ? circuitConfigPathOverride
-        : partialCircuitConfigPath;
-
-    const url = `${cellSvcBaseUrl}/circuit?input_path=${encodeURIComponent(
-      circuitConfigPath
+    // bucket is the last 2 elements of the project URL
+    const bucket = partialCircuit._project.split('/').slice(-2).join('/');
+    const url = `${cellSvcBaseUrl}/circuit?circuit_id=${encodeURIComponent(
+      partialCircuit['@id']
     )}&region=${brainRegionId.replace(BRAIN_REGION_PREFIX, '')}&how=arrow`;
-    return await fetchPointCloud(url);
+    return await fetchPointCloud(url, session.accessToken, bucket);
   });
 
 export const loadingAtom = atom<Record<ApplicationSection, LoadingState[]>>({

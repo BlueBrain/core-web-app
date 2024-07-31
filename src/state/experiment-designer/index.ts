@@ -26,7 +26,7 @@ import {
   updateResource,
 } from '@/api/nexus';
 import { createDistribution } from '@/util/nexus';
-import { autoSaveDebounceInterval, cellSvcBaseUrl } from '@/config';
+import { autoSaveDebounceInterval, cellSvcBaseUrl, nexus } from '@/config';
 import {
   getBuiltBrainModelConfigsQuery,
   getGeneratorTaskActivityByCircuitIdQuery,
@@ -35,8 +35,6 @@ import {
   processStimuliAllowedModules,
   processStimulationConditionalParams,
 } from '@/util/experiment-designer';
-
-const nodeSetsAPIUrl = `${cellSvcBaseUrl}/circuit/node_sets?input_path=`;
 
 export const expDesignerConfigAtomBase = atom<ExpDesignerConfig>(expDesParamsDefaults);
 
@@ -177,11 +175,15 @@ async function fetchTargetsByCircuit(
   detailedCircuit: DetailedCircuitResource,
   session: Session
 ): Promise<string[]> {
-  const circuitConfigPath = detailedCircuit.circuitConfigPath.url.replace('file://', '');
-  const url = `${nodeSetsAPIUrl}${circuitConfigPath}`;
+  const url = `${cellSvcBaseUrl}/circuit/node_sets/circuit_id=${detailedCircuit['@id']}`;
+  const bucket = detailedCircuit._project.split('/').slice(-2).join('/');
 
   const resp: NodeSetsResponseType = await fetch(url, {
-    headers: createHeaders(session.accessToken),
+    headers: createHeaders(session.accessToken, {
+      'nexus-token': session.accessToken,
+      'nexus-endpoint': nexus.url,
+      'nexus-bucket': bucket,
+    }),
   }).then<NodeSetsResponseType>((res) => res.json());
   return resp.node_sets;
 }

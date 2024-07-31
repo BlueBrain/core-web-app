@@ -17,15 +17,9 @@ type PointCloudMeshProps = {
   brainRegionId: string;
   section: ApplicationSection;
   color?: string;
-  circuitConfigPathOverride?: string;
 };
 
-export function PointCloudMesh({
-  brainRegionId,
-  section,
-  color,
-  circuitConfigPathOverride,
-}: PointCloudMeshProps) {
+export function PointCloudMesh({ brainRegionId, section, color }: PointCloudMeshProps) {
   const { info } = useNotification();
   const { scene } = useThree();
   const addLoading = useSetAtom(addLoadingAtom);
@@ -33,10 +27,7 @@ export function PointCloudMesh({
   const addMeshVisibility = useSetAtom(addMeshVisibilityAtom);
 
   const pointCloudData = useAtomValue(
-    useMemo(
-      () => loadable(getPointCloudAtom(brainRegionId, circuitConfigPathOverride)),
-      [circuitConfigPathOverride, brainRegionId]
-    )
+    useMemo(() => loadable(getPointCloudAtom(brainRegionId)), [brainRegionId])
   );
   useEffect(() => {
     if (pointCloudData.state === 'loading') {
