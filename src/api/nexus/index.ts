@@ -118,6 +118,19 @@ export function createFile(
   }).then<FileMetadata>((res) => res.json());
 }
 
+export function createJsonFileOnVlabProject(
+  rawData: any,
+  filename: string,
+  session: Session,
+  vLabId: string,
+  projectId: string
+): Promise<FileMetadata> {
+  const data = JSON.stringify(rawData);
+  const contentType = 'application/json';
+  const projectFileUrl = composeUrl('file', '', { project: projectId, org: vLabId });
+  return createFile(data, filename, contentType, session, projectFileUrl);
+}
+
 export function createJsonFile(rawData: any, filename: string, session: Session) {
   const data = JSON.stringify(rawData);
   const contentType = 'application/json';

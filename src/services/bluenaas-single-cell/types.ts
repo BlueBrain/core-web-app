@@ -46,7 +46,7 @@ type SegTrace = {
 
 export type TraceData = SegTrace[];
 
-type PlotDataEntry = {
+export type PlotDataEntry = {
   x: number[];
   y: number[];
   type: 'scatter';

@@ -9,7 +9,14 @@ import CloneIcon from '@/components/icons/Clone';
 import { createSingleNeuronSimulationAtom } from '@/state/simulate/single-neuron-setter';
 import useNotification from '@/hooks/notifications';
 
-function ModalContent({ onClose }: { onClose: () => void }) {
+type Props = {
+  onClose: () => void;
+  modelSelfUrl: string;
+  vLabId: string;
+  projectId: string;
+};
+
+function ModalContent({ onClose, modelSelfUrl, projectId, vLabId }: Props) {
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
   const [formValid, setFormValid] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -19,7 +26,7 @@ function ModalContent({ onClose }: { onClose: () => void }) {
     setIsSaving(true);
     const title = form.getFieldValue('name');
     const description = form.getFieldValue('description');
-    await createSingleNeuronSimulation(title, description);
+    await createSingleNeuronSimulation(title, description, modelSelfUrl, vLabId, projectId);
     successNotify('Simulation saved!');
     setIsSaving(false);
   };
@@ -100,7 +107,7 @@ function ModalContent({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function useSaveSimulationModal() {
+export function useSaveSimulationModal(modelSelfUrl: string, vLabId: string, projectId: string) {
   const [modal, contextHolder] = Modal.useModal();
   const destroyRef = useRef<() => void>();
   const onClose = () => destroyRef?.current?.();
@@ -121,7 +128,14 @@ export function useSaveSimulationModal() {
       },
       closeIcon: <CloseOutlined className="text-2xl text-primary-8" />,
       className: '![&>.ant-modal-content]:bg-red-500',
-      content: <ModalContent onClose={onClose} />,
+      content: (
+        <ModalContent
+          onClose={onClose}
+          modelSelfUrl={modelSelfUrl}
+          vLabId={vLabId}
+          projectId={projectId}
+        />
+      ),
     });
     destroyRef.current = destroy;
     return destroy;
