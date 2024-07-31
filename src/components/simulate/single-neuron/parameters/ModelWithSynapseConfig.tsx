@@ -20,6 +20,7 @@ type Props = {
   onChange: (action: SimAction) => void;
   defaultSynapsesConfig: SynapsesConfig;
   synapses: string[];
+  modelSelfUrl: string;
 };
 
 export default function ModelWithSynapseConfig({
@@ -27,6 +28,7 @@ export default function ModelWithSynapseConfig({
   onChange,
   defaultSynapsesConfig,
   synapses,
+  modelSelfUrl,
 }: Props) {
   const [simulationType, setSimulationType] = useState<SimulationType>(SimulationType.Both);
   const onSimulationTypeChange = (newType: SimulationType) => {
@@ -63,6 +65,7 @@ export default function ModelWithSynapseConfig({
                 Direct Current Injection
               </div>
               <Stimulation
+                modelSelfUrl={modelSelfUrl}
                 onChange={onChange}
                 simConfig={simConfig}
                 onAddDirectStimConfig={() => {

@@ -1,20 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { fetchResourceById } from '@/api/nexus';
-import { getSession } from '@/authFetch';
-import { EntityResource } from '@/types/nexus';
 import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
-import useNotification from '@/hooks/notifications';
 import {
   NeuronModelView,
   SynaptomeConfigurationForm,
 } from '@/components/build-section/virtual-lab/synaptome';
+import { useMeModel } from '@/hooks/useMeModel';
 
 type Props = {
   params: {
@@ -22,36 +18,6 @@ type Props = {
     virtualLabId: string;
   };
 };
-
-function useMeModel({ modelId }: { modelId: string }) {
-  const [resource, setResource] = useState<EntityResource | null>(null);
-  const [loading, setLoading] = useState(false);
-  const { error: notifyError } = useNotification();
-
-  useEffect(() => {
-    let isAborted = false;
-    (async () => {
-      try {
-        setLoading(true);
-        const session = await getSession();
-        if (!session) throw new Error('no session');
-        const resourceObject = await fetchResourceById<EntityResource>(modelId, session);
-        if (!isAborted) {
-          setResource(resourceObject);
-        }
-      } catch (error) {
-        notifyError('Error while loading the resource details', undefined, 'topRight');
-      } finally {
-        setLoading(false);
-      }
-    })();
-    return () => {
-      isAborted = true;
-    };
-  }, [modelId, notifyError]);
-
-  return { resource, loading };
-}
 
 function Synaptome({ params }: Props) {
   const { id } = useResourceInfoFromPath();

@@ -1,18 +1,18 @@
 import { Select, Form, InputNumber, Card, Button } from 'antd';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import AmperageRangeComponent from './AmperageRangeComponent';
 import { SimAction, SingleModelSimConfig } from '@/types/simulate/single-neuron';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { stimulusTypeParams } from '@/constants/simulate/single-neuron';
-import { setStimulusProtcolsAtom } from '@/state/simulate/single-neuron-setter';
 
 type Props = {
   onChange: (action: SimAction) => void;
   simConfig: SingleModelSimConfig;
   onAddDirectStimConfig?: () => void;
   onRemoveDirectStimConfig?: (index: number) => void;
+  modelSelfUrl: string;
 };
 
 type FormItemProps = {
@@ -31,6 +31,7 @@ export default function Stimulation({
   simConfig,
   onAddDirectStimConfig,
   onRemoveDirectStimConfig,
+  modelSelfUrl,
 }: Props) {
   return (
     <Form.List name="directStimulation">
@@ -67,6 +68,7 @@ export default function Stimulation({
                 stimulationId={field.name}
                 onChange={onChange}
                 amplitudes={simConfig.directStimulation[field.name].stimulus.amplitudes}
+                modelSelfUrl={modelSelfUrl}
               />
             </Card>
           ))}
@@ -141,8 +143,6 @@ function StimulationMode({ onChange, stimulationId }: FormItemProps) {
 }
 
 function StimulationProtocol({ onChange, simConfig, stimulationId }: FormItemPropsWithConfig) {
-  const setStimulusProtcols = useSetAtom(setStimulusProtcolsAtom);
-
   return (
     <Form.Item
       name={[stimulationId, 'stimulus', 'stimulusProtocol']}
@@ -159,7 +159,6 @@ function StimulationProtocol({ onChange, simConfig, stimulationId }: FormItemPro
             type: 'CHANGE_PROTOCOL',
             payload: { stimulationId: `${stimulationId}`, value: newVal },
           });
-          setStimulusProtcols(newVal);
         }}
         className="text-left"
       />

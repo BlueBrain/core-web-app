@@ -13,12 +13,18 @@ import {
 } from '@/state/simulate/single-neuron';
 import { launchSimulationAtom } from '@/state/simulate/single-neuron-setter';
 
-export default function LaunchButton() {
+type Props = {
+  modelSelfUrl: string;
+  vLabId: string;
+  projectId: string;
+};
+
+export default function LaunchButton({ modelSelfUrl, vLabId, projectId }: Props) {
   const [submittable, setSubmittable] = useAtom(simulationFormIsFilledAtom);
   const [simulationStatus, setSimulationStatus] = useAtom(simulationStatusAtom);
   const launchSimulation = useSetAtom(launchSimulationAtom);
   const { createModal: createSaveResultModal, contextHolder: saveResultModalContext } =
-    useSaveSimulationModal();
+    useSaveSimulationModal(modelSelfUrl, vLabId, projectId);
   const [secNames, setSecNames] = useAtom(secNamesAtom);
 
   useEffect(() => {
@@ -40,7 +46,7 @@ export default function LaunchButton() {
         text="Simulate"
         className="w-15 absolute bottom-5 right-5 mt-8 bg-primary-8 text-white"
         disabled={!submittable || secNames.length === 0}
-        onClick={launchSimulation}
+        onClick={() => launchSimulation(modelSelfUrl)}
       />
     );
   }

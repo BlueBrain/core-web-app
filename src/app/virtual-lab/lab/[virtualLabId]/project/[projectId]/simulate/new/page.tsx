@@ -1,26 +1,25 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useSetAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 
 import GenericButton from '@/components/Global/GenericButton';
 import { ServerSideComponentProp } from '@/types/common';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
-import { singleNeuronAtom } from '@/state/simulate/single-neuron';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
+import { detailUrlBuilder } from '@/util/common';
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
   const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
-  const setSingleNeuron = useSetAtom(singleNeuronAtom);
   const router = useRouter();
 
   const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;
@@ -31,17 +30,9 @@ export default function VirtualLabProjectSimulateNewPage({
       : null;
 
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
-    setSingleNeuron({
-      self: model._source._self,
-      type: modelType ?? DataType.CircuitMEModel,
-      source: {
-        ...model._source,
-        ...(modelType === DataType.SingleNeuronSynaptome && {
-          synapses: [{ id: '1' }, { id: '2' }], // TODO: When synaptome model is ready synapses should be correctly populated.
-        }),
-      },
-    });
-    router.push(`${generateVlProjectUrl(virtualLabId, projectId)}/simulate/single-neuron/edit`);
+    const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
+    const baseBuildUrl = `${vlProjectUrl}/simulate/single-neuron/edit`;
+    router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
   };
 
   return (

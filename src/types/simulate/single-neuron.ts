@@ -1,4 +1,6 @@
 import { ExploreResource, MEModelSynaptome } from '../explore-section/es';
+import { SynaptomeModelResource } from '../explore-section/delta-model';
+import { MEModelResource } from '../me-model';
 import { DataType } from '@/constants/explore-section/list-views';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 
@@ -158,8 +160,31 @@ export type SelectedSynaptomModel = SelectedSingleNeuronModel & {
   source: MEModelSynaptome;
 };
 
-export const isSynaptomModel = (
-  model: SelectedSingleNeuronModel | null
-): model is SelectedSynaptomModel => {
-  return model?.type === DataType.SingleNeuronSynaptome && 'synapses' in model.source;
+export type ModelResource = MEModelResource | SynaptomeModelResource;
+
+export const isSynaptomModel = (model: ModelResource | null): model is SynaptomeModelResource => {
+  if (!model) {
+    return false;
+  }
+  const type = Array.isArray(model['@type']) ? model['@type'] : [model['@type']];
+  return type.includes(DataType.SingleNeuronSynaptome) && 'synapses' in model;
+};
+
+export type RunSimulationRequestBody = DirectSimulationConfig & { recordFrom: string[] };
+
+export type ResponsePlotData = {
+  t: number[];
+  v: number[];
+  name: string;
+};
+
+export type StimuliPlotRequest = {
+  stimulusProtocol: StimulusModule;
+  amplitudes: number[];
+};
+
+export type StimuliPlotResponse = {
+  x: number[];
+  y: number[];
+  name: string;
 };

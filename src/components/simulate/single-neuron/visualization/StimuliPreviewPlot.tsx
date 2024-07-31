@@ -1,68 +1,77 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import debounce from 'lodash/debounce';
+import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import isEqual from 'lodash/isEqual';
+import { captureException } from '@sentry/nextjs';
 
 import PlotRenderer from './PlotRenderer';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
-import { blueNaasInstanceRefAtom, protocolNameAtom } from '@/state/simulate/single-neuron';
+import { protocolNameAtom } from '@/state/simulate/single-neuron';
+import { getStimuliPlot } from '@/api/simulation/single-neuron';
+import { useAccessToken } from '@/hooks/useAccessToken';
+import { useDebouncedCallback } from '@/hooks/hooks';
 
 type Props = {
   amplitudes: number[];
+  modelSelfUrl: string;
 };
 
-export default function StimuliPreviewPlot({ amplitudes }: Props) {
+export default function StimuliPreviewPlot({ amplitudes, modelSelfUrl }: Props) {
   const [stimuliPreviewPlotData, setStimuliPreviewPlotData] = useState<PlotData | null>(null);
-  const blueNaasInstanceRef = useAtomValue(blueNaasInstanceRefAtom);
+  const token = useAccessToken();
   const [renderedAmplitudes, setRenderedAmplitudes] = useState<number[]>([]);
   const [renderedProtocolName, setRenderedProtocolName] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const protocolName = useAtomValue(protocolNameAtom);
 
-  const onStimuliPreviewData = (data: PlotData) => {
-    setStimuliPreviewPlotData(data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    // initialize callbacks on ws
-    if (!blueNaasInstanceRef?.current) return;
-
-    blueNaasInstanceRef?.current.setCallbackStimuliPreview(onStimuliPreviewData);
-  }, [blueNaasInstanceRef]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateStimuliPreview = useCallback(
-    debounce((amplitudesToRender, protocolToRender) => {
+  const updateStimuliPreview = useDebouncedCallback(
+    async (amplitudesToRender, protocolToRender, accessToken) => {
       if (
         isEqual(renderedAmplitudes, amplitudesToRender) &&
         isEqual(renderedProtocolName, protocolToRender)
       )
         return;
 
-      blueNaasInstanceRef?.current?.updateStimuliPreview(amplitudesToRender);
       setRenderedAmplitudes(amplitudesToRender);
       setRenderedProtocolName(protocolToRender);
-    }, 1500),
-    [blueNaasInstanceRef, renderedAmplitudes, renderedProtocolName]
+
+      try {
+        const rawPlotData = await getStimuliPlot(modelSelfUrl, accessToken, {
+          amplitudes: amplitudesToRender,
+          stimulusProtocol: protocolToRender,
+        });
+
+        const plotData: PlotData = rawPlotData.map((d) => ({
+          type: 'scatter',
+          ...d,
+        }));
+
+        setStimuliPreviewPlotData(plotData);
+      } catch {
+        // TODO: Show error state to user
+        captureException(new Error('Preview plot could not be retrived for model'));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [renderedAmplitudes, renderedProtocolName, modelSelfUrl],
+    1500
   );
 
   useEffect(() => {
-    if (!blueNaasInstanceRef?.current) return;
-
+    if (!token) {
+      return;
+    }
     setLoading(true);
-    updateStimuliPreview(amplitudes, protocolName);
-  }, [amplitudes, updateStimuliPreview, blueNaasInstanceRef, protocolName]);
-
-  if (!stimuliPreviewPlotData) return null;
+    updateStimuliPreview(amplitudes, protocolName, token);
+  }, [amplitudes, protocolName, token, updateStimuliPreview]);
 
   return (
     <PlotRenderer
       className="min-h-[320px]"
       isLoading={loading}
-      data={stimuliPreviewPlotData}
+      data={stimuliPreviewPlotData ?? []}
       plotConfig={{
         yAxisTitle: 'Current, nA',
       }}

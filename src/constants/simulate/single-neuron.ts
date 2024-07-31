@@ -1,4 +1,3 @@
-import { DataType } from '../explore-section/list-views';
 import {
   ConditionalStimulusParamsTypes,
   FunctionParameterNumber,
@@ -7,11 +6,11 @@ import {
   StimulusModuleDropdownOptionType,
   SimConfig,
   StimulusConfig,
-  SelectedSingleNeuronModel,
   SynapsesConfig,
   DirectSimulationConfig,
 } from '@/types/simulate/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
+import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
 
 export const stimulusTypeParams: StimulusDropdownInfo & {
   options: StimulusTypeDropdownOptionType[];
@@ -118,25 +117,15 @@ export const DEFAULT_SIM_CONFIG: SimConfig = {
   synapses: null,
 };
 
-export const getDefaultSynapsesConfig = (
-  model: SelectedSingleNeuronModel
-): SynapsesConfig | null => {
-  if (
-    model.type === DataType.SingleNeuronSynaptome &&
-    'synapses' in model.source &&
-    model.source.synapses.length > 0
-  ) {
-    return [
-      {
-        id: '0',
-        synapseId: model.source.synapses[0].id,
-        delay: 100,
-        duration: 2000,
-        frequency: 20,
-        weightScalar: 2,
-      },
-    ];
-  }
-
-  return null;
+export const getDefaultSynapsesConfig = (model: SynaptomeModelResource): SynapsesConfig | null => {
+  return [
+    {
+      id: '0',
+      synapseId: model.synapses[0].id,
+      delay: 100,
+      duration: 2000,
+      frequency: 20,
+      weightScalar: 2,
+    },
+  ];
 };
