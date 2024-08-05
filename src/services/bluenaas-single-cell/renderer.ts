@@ -1,5 +1,4 @@
 import throttle from 'lodash/throttle';
-import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
 import {
@@ -26,12 +25,15 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import RendererCtrl from './renderer-ctrl';
 import type { Morphology, SecMarkerConfig } from './types';
 import { createSegMarkerMesh, createSegmentMesh } from './renderer-utils';
+import { sendSegmentDetailsEvent } from './events';
 
 import { basePath } from '@/config';
+import { SynapsesMesh } from '@/components/build-section/virtual-lab/synaptome/events';
 
 const FOG_COLOR = 0xffffff;
 const FOG_NEAR = 1;
@@ -133,7 +135,7 @@ export default class BlueNaasRenderer {
 
   private camera: PerspectiveCamera;
 
-  private controls: TrackballControls;
+  private controls: OrbitControls;
 
   private config: BlueNaasRendererConfig;
 
@@ -161,6 +163,8 @@ export default class BlueNaasRenderer {
 
   private animationFrameHandle: number | null = null;
 
+  private synapses: Array<SynapsesMesh> = [];
+
   constructor(container: HTMLDivElement, config: BlueNaasRendererConfig) {
     this.config = config;
 
@@ -179,7 +183,6 @@ export default class BlueNaasRenderer {
 
     this.renderer.setSize(clientWidth, clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio || 1);
-
     this.scene = new Scene();
     this.scene.background = new Color(BACKGROUND_COLOR);
     this.scene.fog = new Fog(FOG_COLOR, FOG_NEAR, FOG_FAR);
@@ -210,17 +213,14 @@ export default class BlueNaasRenderer {
       depthWrite: false,
     });
 
-    this.camera = new PerspectiveCamera(45, clientWidth / clientHeight, 1, 100000);
+    this.camera = new PerspectiveCamera(45, clientWidth / clientHeight, 0.01, 100000);
     this.scene.add(this.camera);
     this.camera.add(new PointLight(CAMERA_LIGHT_COLOR, 0.9));
 
-    this.camera.position.setZ(-200);
+    this.camera.position.setZ(-400);
     this.camera.lookAt(new Vector3());
-
-    this.controls = new TrackballControls(this.camera, this.renderer.domElement);
-    this.controls.zoomSpeed = 0.4;
-    this.controls.rotateSpeed = 0.8;
-
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.screenSpacePanning = true;
     this.initEventHandlers();
     this.startRenderLoop();
   }
@@ -311,10 +311,12 @@ export default class BlueNaasRenderer {
       type: 'morphSection',
       data: mesh.userData,
     });
+    sendSegmentDetailsEvent({ show: true, data: mesh.userData });
     this.ctrl.renderOnce();
   }
 
   private onHoverEnd(mesh: MorphMesh) {
+    sendSegmentDetailsEvent({ show: false });
     this.scene.remove(this.hoverBox as HoverBox);
     disposeMesh(this.hoverBox as HoverBox);
     this.hoverBox = null;
@@ -400,14 +402,19 @@ export default class BlueNaasRenderer {
     this.ctrl.renderOnce();
   };
 
-  addSynapses = (objects: Array<SynapseBubble>) => {
-    objects.forEach((obj) => this.scene.add(obj));
+  addSynapses = (mesh: SynapsesMesh) => {
+    this.scene.add(mesh);
+    this.synapses.push(mesh);
     this.ctrl.renderOnce();
   };
 
-  removeSynapses = (objects: Array<SynapseBubble>) => {
-    objects.forEach((obj) => this.scene.remove(obj));
-    this.ctrl.renderOnce();
+  removeSynapses = (meshId: string) => {
+    const object = this.scene.getObjectByProperty('uuid', meshId);
+    if (object) {
+      this.scene.remove(object);
+      this.synapses = this.synapses.filter((s) => s.uuid !== meshId);
+      this.ctrl.renderOnce();
+    }
   };
 
   private addSecMarker = (config: SecMarkerConfig) => {

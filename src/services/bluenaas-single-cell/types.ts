@@ -13,9 +13,12 @@ interface StimulusSecMarkerConfig extends SecMarkerConfigCommon {
 
 export type SecMarkerConfig = RecordingSecMarkerConfig | StimulusSecMarkerConfig;
 
-type MorphSection = {
+export type MorphSection = {
   index: number;
+  name: string;
   nseg: number;
+  distance_from_soma: number;
+  sec_length: number;
   xstart: number[];
   xend: number[];
   xcenter: number[];
