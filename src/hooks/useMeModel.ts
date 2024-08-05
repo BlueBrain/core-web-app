@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { fetchResourceById } from '@/api/nexus';
 import { getSession } from '@/authFetch';
+import { MEModelResource } from '@/types/me-model';
 import useNotification from '@/hooks/notifications';
-import { ModelResource } from '@/types/simulate/single-neuron';
 
 export function useMeModel({ modelId }: { modelId: string }) {
-  const [resource, setResource] = useState<ModelResource | null>(null);
+  const [resource, setResource] = useState<MEModelResource | null>(null);
   const [loading, setLoading] = useState(false);
   const { error: notifyError } = useNotification();
 
@@ -16,7 +16,7 @@ export function useMeModel({ modelId }: { modelId: string }) {
         setLoading(true);
         const session = await getSession();
         if (!session) throw new Error('no session');
-        const resourceObject = await fetchResourceById<ModelResource>(modelId, session);
+        const resourceObject = await fetchResourceById<MEModelResource>(modelId, session);
         if (!isAborted) {
           setResource(resourceObject);
         }

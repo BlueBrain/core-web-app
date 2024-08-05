@@ -1,12 +1,10 @@
 import { atom } from 'jotai';
 
-import { SynapseBubble } from '@/services/bluenaas-single-cell/renderer';
-
 export type Coordinates3D = [number, number, number];
 
 export const SynapseTypeColorMap = {
-  110: 0xf43f5e,
-  10: 0x3b82f6,
+  110: 0xf43f5e, // Excitatory Synapses
+  10: 0x3b82f6, // Inhibitory Synapses
 };
 
 export type SynapseTypeColorMapKey = keyof typeof SynapseTypeColorMap;
@@ -24,7 +22,7 @@ export type SectionSynapses = {
 
 type SectionSynapsesWith3D = {
   sectionSynapses: Array<SectionSynapses>;
-  threeDObjects?: Array<SynapseBubble>;
+  meshId?: string;
 };
 
 export const synapsesPlacementAtom = atom<Record<string, SectionSynapsesWith3D | null> | null>(

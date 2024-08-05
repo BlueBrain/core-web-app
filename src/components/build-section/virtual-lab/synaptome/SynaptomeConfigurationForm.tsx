@@ -19,10 +19,10 @@ import {
   SYNAPTOME_OBJECT_OF_STUDY,
   SynaptomeConfiguration,
 } from '@/types/synaptome';
-import { EntityResource } from '@/types/nexus';
 import { getSession } from '@/authFetch';
 import { synapsesPlacementAtom } from '@/state/synaptome';
 import useNotification from '@/hooks/notifications';
+import { MEModelResource } from '@/types/me-model';
 
 const CONFIG_FILE_NAME = 'synaptome_config.json';
 const CONFIG_FILE_FORMAT = 'application/json';
@@ -42,13 +42,13 @@ const defaultSynapseValue: SingleSynaptomeConfig = {
 };
 
 type Props = {
-  resource: EntityResource;
+  resource: MEModelResource;
   org: string;
   project: string;
   resourceLoading: boolean;
 };
 
-export default function SynaptomeMConfigurationForm({
+export default function SynaptomeConfigurationForm({
   org,
   project,
   resource,

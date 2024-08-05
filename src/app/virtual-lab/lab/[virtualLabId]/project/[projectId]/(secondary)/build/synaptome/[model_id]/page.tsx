@@ -21,8 +21,7 @@ type Props = {
 
 function Synaptome({ params }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { resource, loading } = useMeModel({ modelId: id });
-
+  const { loading, resource } = useMeModel({ modelId: id });
   if (loading || !resource) {
     return <Spin indicator={<LoadingOutlined />} />;
   }

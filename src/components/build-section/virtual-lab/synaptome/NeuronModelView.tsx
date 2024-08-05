@@ -6,9 +6,13 @@ import {
   DisplaySynapses3DEvent,
   RemoveSynapses3DEvent,
 } from './events';
-import Renderer from '@/services/bluenaas-single-cell/renderer';
 import { Morphology } from '@/services/bluenaas-single-cell/types';
+import {
+  HoveredSegmentDetailsEvent,
+  SEGMENT_DETAILS_EVENT,
+} from '@/services/bluenaas-single-cell/events';
 import getMorphology from '@/services/bluenaas-synaptome/getMorphology';
+import Renderer from '@/services/bluenaas-single-cell/renderer';
 
 type Props = {
   modelSelfUrl: string;
@@ -21,6 +25,7 @@ export function useMorphology({
   modelSelfUrl: string;
   callback: (morphology: Morphology) => void;
 }) {
+  const mountedRef = useRef(false);
   const readMorphology = useCallback(async (): Promise<Morphology> => {
     const response = await getMorphology({ modelId: modelSelfUrl });
     const reader = response.body?.getReader();
@@ -39,16 +44,28 @@ export function useMorphology({
   }, [modelSelfUrl]);
 
   useEffect(() => {
-    (async function start() {
-      const morphology = await readMorphology();
-      callback(morphology);
-    })();
-  }, [callback, readMorphology]);
+    mountedRef.current = true;
+
+    async function start() {
+      if (mountedRef.current) {
+        const morphology = await readMorphology();
+        mountedRef.current = false;
+        callback(morphology);
+      }
+    }
+
+    start();
+
+    return () => {
+      mountedRef.current = false;
+    };
+  }, [callback, readMorphology, mountedRef]);
 }
 
 export default function NeuronModelView({ modelSelfUrl }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
+  const cursorHoverRef = useRef<HTMLDivElement | null>(null);
 
   const runRenderer = useCallback((morphology: Morphology) => {
     if (!rendererRef.current && containerRef.current) {
@@ -60,40 +77,56 @@ export default function NeuronModelView({ modelSelfUrl }: Props) {
   }, []);
 
   useEffect(() => {
+    const eventAborter = new AbortController();
+
     function displaySynapses3DEventHandler(event: DisplaySynapses3DEvent) {
       if (rendererRef.current) {
-        const { objects } = event.detail;
-        rendererRef.current.addSynapses(objects);
+        const { mesh } = event.detail;
+        rendererRef.current.addSynapses(mesh);
       }
     }
 
     function removeSynapses3DEventHandler(event: RemoveSynapses3DEvent) {
       if (rendererRef.current) {
-        const { objects } = event.detail;
-        if (objects) {
-          rendererRef.current.removeSynapses(objects);
+        const { meshId } = event.detail;
+        if (meshId) {
+          rendererRef.current.removeSynapses(meshId);
+        }
+      }
+    }
+
+    function segmentDetailsEventHandler(event: HoveredSegmentDetailsEvent) {
+      if (cursorHoverRef.current) {
+        if (event.detail.show) {
+          cursorHoverRef.current.setAttribute('style', 'display: flex;');
+          cursorHoverRef.current.innerHTML = `<pre><code>${JSON.stringify(event.detail.data, null, 2)}</code></pre>`;
+        } else {
+          cursorHoverRef.current.innerText = '';
+          cursorHoverRef.current.setAttribute('style', 'display: none;');
         }
       }
     }
 
     window.addEventListener(
       DISPLAY_SYNAPSES_3D_EVENT,
-      displaySynapses3DEventHandler as EventListener
+      displaySynapses3DEventHandler as EventListener,
+      {
+        signal: eventAborter.signal,
+      }
     );
     window.addEventListener(
       REMOVE_SYNAPSES_3D_EVENT,
-      removeSynapses3DEventHandler as EventListener
+      removeSynapses3DEventHandler as EventListener,
+      {
+        signal: eventAborter.signal,
+      }
     );
+    window.addEventListener(SEGMENT_DETAILS_EVENT, segmentDetailsEventHandler as EventListener, {
+      signal: eventAborter.signal,
+    });
 
     return () => {
-      window.removeEventListener(
-        DISPLAY_SYNAPSES_3D_EVENT,
-        displaySynapses3DEventHandler as EventListener
-      );
-      window.removeEventListener(
-        REMOVE_SYNAPSES_3D_EVENT,
-        removeSynapses3DEventHandler as EventListener
-      );
+      eventAborter.abort();
     };
   }, []);
 
@@ -105,6 +138,10 @@ export default function NeuronModelView({ modelSelfUrl }: Props) {
   return (
     <div className="relative h-full w-full">
       <div className="h-screen" ref={containerRef} />
+      <div
+        className="absolute bottom-4 right-4 hidden h-max rounded-sm border bg-white px-2 py-2 text-primary-8 shadow-lg"
+        ref={cursorHoverRef}
+      />
     </div>
   );
 }
