@@ -186,6 +186,13 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
     render: {
       deltaResourceViewFn: (resource) => resource.description,
     },
+    esTerms: {
+      flat: {
+        filter: 'description',
+        aggregation: 'description',
+        sort: 'description',
+      },
+    },
     vocabulary: {
       plural: 'Descriptions',
       singular: 'Description',
