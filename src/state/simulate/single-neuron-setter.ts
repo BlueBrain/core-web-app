@@ -23,7 +23,8 @@ import {
   SingleModelSimulationConfig,
   SingleNeuronSimulationPayload,
 } from '@/types/simulate/single-neuron';
-import { runSimulation } from '@/api/simulation/single-neuron';
+import { runSimulation, runSynapseSimulation } from '@/api/simulation/single-neuron';
+import { SimulationType } from '@/types/simulation';
 
 export const createSingleNeuronSimulationAtom = atom<
   null,
@@ -98,9 +99,9 @@ function isJSON(str: any) {
   }
 }
 
-export const launchSimulationAtom = atom<null, [string], void>(
+export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
   null,
-  async (get, set, model_self_url: string) => {
+  async (get, set, model_self_url: string, simulationType: SimulationType) => {
     const session = get(sessionAtom);
     if (!session?.accessToken) {
       throw new Error('Session token should be valid');
@@ -113,8 +114,7 @@ export const launchSimulationAtom = atom<null, [string], void>(
       );
     }
 
-    const simulationStatus = get(simulationStatusAtom);
-    set(simulationStatusAtom, { ...simulationStatus, launched: true });
+    set(simulationStatusAtom, 'launched');
     set(simulateStepAtom, 'results');
     const initialPlotData: PlotData = [
       {
@@ -126,10 +126,21 @@ export const launchSimulationAtom = atom<null, [string], void>(
     ];
     set(simulationPlotDataAtom, initialPlotData);
 
-    const partialSimData = await runSimulation(model_self_url, session?.accessToken!, {
-      ...simulationConfig.directStimulation[0],
-      recordFrom: simulationConfig.recordFrom,
-    });
+    const partialSimData =
+      simulationType === 'synapses' && simulationConfig.synapses
+        ? await runSynapseSimulation(
+            model_self_url,
+            session?.accessToken,
+            {
+              ...simulationConfig.directStimulation[0],
+              recordFrom: simulationConfig.recordFrom,
+            },
+            simulationConfig.synapses[0]
+          )
+        : await runSimulation(model_self_url, session?.accessToken!, {
+            ...simulationConfig.directStimulation[0],
+            recordFrom: simulationConfig.recordFrom,
+          });
 
     const onTraceData = throttle((data: TraceData) => {
       const updatedPlotData: PlotData = data.map((entry) => ({
@@ -160,12 +171,7 @@ export const launchSimulationAtom = atom<null, [string], void>(
           data = '';
         }
       }
-      set(simulationDoneAtom);
+      set(simulationStatusAtom, 'finished');
     }
   }
 );
-
-export const simulationDoneAtom = atom(null, (get, set) => {
-  const simulationStatus = get(simulationStatusAtom);
-  set(simulationStatusAtom, { ...simulationStatus, finished: true });
-});

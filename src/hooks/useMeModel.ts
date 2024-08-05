@@ -40,7 +40,7 @@ export function useModel({
     return () => {
       isAborted = true;
     };
-  }, [modelId, notifyError]);
+  }, [modelId, notifyError, org, project]);
 
   return { resource, loading };
 }

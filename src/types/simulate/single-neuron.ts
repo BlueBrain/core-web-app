@@ -163,13 +163,11 @@ export type SelectedSynaptomModel = SelectedSingleNeuronModel & {
 export type ModelResource = MEModelResource | SynaptomeModelResource;
 
 export const isSynaptomModel = (model: ModelResource | null): model is SynaptomeModelResource => {
-  console.log('Guard', model);
   if (!model) {
     return false;
   }
 
   const type = Array.isArray(model['@type']) ? model['@type'] : [model['@type']];
-  console.log('Type', type);
   return type.includes(DataType.SingleNeuronSynaptome) && 'distribution' in model;
 };
 

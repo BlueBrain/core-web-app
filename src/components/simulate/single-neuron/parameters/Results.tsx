@@ -35,8 +35,10 @@ export default function Results() {
 
   // plotData with one element is a placeholder to show something
   // in the plot when we launched simulation but still processing
-  const isLoading = simulationStatus.launched && plotData.length === 1;
+  const isLoading = simulationStatus === 'launched';
 
+  console.log('Simulation Status', simulationStatus);
+  console.log('Plot Data', plotData);
   return (
     plotData && (
       <PlotRenderer

@@ -38,6 +38,7 @@ export default function VirtualLabSimulationPage({ params }: Props) {
         modelSelfUrl={resource._self}
         projectId={params.projectId}
         vLabId={params.virtualLabId}
+        simulationType="single-neuron"
       />
     </>
   );

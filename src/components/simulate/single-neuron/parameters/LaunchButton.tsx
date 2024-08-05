@@ -12,14 +12,17 @@ import {
   simulationStatusAtom,
 } from '@/state/simulate/single-neuron';
 import { launchSimulationAtom } from '@/state/simulate/single-neuron-setter';
+import { SimulationType } from '@/types/simulation';
 
 type Props = {
   modelSelfUrl: string;
   vLabId: string;
   projectId: string;
+  simulationType: SimulationType;
 };
 
-export default function LaunchButton({ modelSelfUrl, vLabId, projectId }: Props) {
+export default function LaunchButton({ modelSelfUrl, vLabId, projectId, simulationType }: Props) {
+  console.log('Sim Type', simulationType);
   const [submittable, setSubmittable] = useAtom(simulationFormIsFilledAtom);
   const [simulationStatus, setSimulationStatus] = useAtom(simulationStatusAtom);
   const launchSimulation = useSetAtom(launchSimulationAtom);
@@ -36,40 +39,30 @@ export default function LaunchButton({ modelSelfUrl, vLabId, projectId }: Props)
     };
   }, [setSubmittable, setSimulationStatus, setSecNames]);
 
-  const { launched, finished } = simulationStatus;
-
-  let buttonComponent = null;
-
-  if (!launched && !finished) {
-    buttonComponent = (
-      <GenericButton
-        text="Simulate"
-        className="w-15 absolute bottom-5 right-5 mt-8 bg-primary-8 text-white"
-        disabled={!submittable || secNames.length === 0}
-        onClick={() => launchSimulation(modelSelfUrl)}
-      />
-    );
+  let buttonLabel = '';
+  if (!simulationStatus) {
+    buttonLabel = 'Simulate';
   }
-
-  if (launched && !finished) {
-    buttonComponent = (
-      <GenericButton
-        text="Running..."
-        className="w-15 absolute bottom-5 right-5 mt-8 bg-primary-8 text-white"
-        disabled
-      />
-    );
+  if (simulationStatus === 'launched') {
+    buttonLabel = 'Running...';
   }
-
-  if (launched && finished) {
-    buttonComponent = (
-      <GenericButton
-        text="Save"
-        className="w-15 absolute bottom-5 right-5 mt-8 bg-primary-8 text-white"
-        onClick={createSaveResultModal}
-      />
-    );
+  if (simulationStatus === 'finished') {
+    buttonLabel = 'Save';
   }
+  const buttonComponent = (
+    <GenericButton
+      text={buttonLabel}
+      className="w-15 absolute bottom-5 right-5 mt-8 bg-primary-8 text-white"
+      disabled={!submittable || secNames.length === 0 || simulationStatus === 'launched'}
+      onClick={() => {
+        if (!simulationStatus) {
+          launchSimulation(modelSelfUrl, simulationType);
+        } else if (simulationStatus === 'finished') {
+          createSaveResultModal();
+        }
+      }}
+    />
+  );
 
   return (
     <>

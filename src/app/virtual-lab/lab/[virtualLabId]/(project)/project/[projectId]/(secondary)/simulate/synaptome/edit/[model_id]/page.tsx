@@ -22,6 +22,7 @@ type Props = {
 };
 
 export default function VirtualLabSimulationPage({ params }: Props) {
+  console.log('Synapse Sim Config Form ');
   const [synaptomeConfig, setSynaptomeConfig] = useState<null | SynaptomeConfigDistribution>(null);
 
   const { id } = useResourceInfoFromPath();
@@ -62,6 +63,7 @@ export default function VirtualLabSimulationPage({ params }: Props) {
     return <Spin indicator={<LoadingOutlined />} />;
   }
 
+  console.log('SYNAPSESSSS');
   return (
     <>
       <Title />
@@ -82,6 +84,7 @@ export default function VirtualLabSimulationPage({ params }: Props) {
         modelSelfUrl={synaptomeModel?._self}
         projectId={params.projectId}
         vLabId={params.virtualLabId}
+        simulationType="synapses"
       />
     </>
   );

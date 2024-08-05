@@ -29,6 +29,29 @@ export const runSimulation = async (
   });
 };
 
+export const runSynapseSimulation = async (
+  synaptomeModelSelf: string,
+  token: string,
+  directCurrentConfig: RunSimulationRequestBody,
+  synapseConfig: any
+) => {
+  return await fetch(
+    `${blueNaasUrl}/simulation/synapse/run?model_id=${encodeURIComponent(synaptomeModelSelf)}`,
+    {
+      method: 'post',
+      headers: {
+        accept: 'application/x-ndjson',
+        authorization: `bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        directCurrentConfig,
+        synapseConfig,
+      }),
+    }
+  );
+};
+
 export const getStimuliPlot = async (
   modelSelfUrl: string,
   token: string,

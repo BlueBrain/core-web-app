@@ -30,10 +30,7 @@ export const singleNeuronIdAtom = atom<string | null>((get) => {
   return getIdFromSelfUrl(singleNeuronSelfUrl?.self ?? null);
 });
 
-export const simulationStatusAtom = atomWithReset({
-  launched: false,
-  finished: false,
-});
+export const simulationStatusAtom = atomWithReset<null | 'launched' | 'finished'>(null);
 
 export const simulationFormIsFilledAtom = atomWithReset(false);
 

@@ -45,7 +45,10 @@ export default function ParameterView({ resource, synaptomeConfig }: Props) {
   useEffect(() => {
     form.validateFields().then(
       () => setSubmittable(true),
-      (validationResult) => setSubmittable(!validationResult.errorFields.length)
+      (validationResult) => {
+        console.log('Validation Result', validationResult);
+        return setSubmittable(!validationResult.errorFields.length);
+      }
     );
   }, [formSimConfig, form, setSubmittable]);
 
@@ -58,12 +61,9 @@ export default function ParameterView({ resource, synaptomeConfig }: Props) {
   }, [form, simConfig]);
 
   const defaultSynapsesConfig = useMemo(() => {
-    console.log('Res in form', resource);
     if (isSynaptomModel(resource) && synaptomeConfig) {
-      console.log('Resource is synaptome');
       return getDefaultSynapsesConfig(synaptomeConfig.synapses)!;
     }
-    console.log('Nope');
     return null;
   }, [resource, synaptomeConfig]);
 
