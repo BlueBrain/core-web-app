@@ -22,6 +22,7 @@ import {
 import { getSession } from '@/authFetch';
 import { synapsesPlacementAtom } from '@/state/synaptome';
 import useNotification from '@/hooks/notifications';
+import omit from 'lodash/omit';
 import { MEModelResource } from '@/types/me-model';
 
 const CONFIG_FILE_NAME = 'synaptome_config.json';
@@ -90,7 +91,7 @@ export default function SynaptomeConfigurationForm({
       setLoading(true);
       const session = await getSession();
       const configFileUrl = composeUrl('file', '', { org, project });
-      const SYNAPTOME_CONFIG = { synapses: values.synapses };
+      const SYNAPTOME_CONFIG = { synapses: values.synapses, meModelSelf: resource._self };
 
       const formData = new FormData();
       const dataBlob = new Blob([JSON.stringify(SYNAPTOME_CONFIG)], { type: CONFIG_FILE_FORMAT });
@@ -118,13 +119,12 @@ export default function SynaptomeConfigurationForm({
       });
 
       const sanitizedResource = removeMetadata({
-        ...resource,
+        ...omit(resource, ['@id']),
         '@type': NEXUS_SYNAPTOME_TYPE,
         objectOfStudy: SYNAPTOME_OBJECT_OF_STUDY,
         name: values.name,
         description: values.description,
         seed: values.seed,
-        meModelSelf: resource._self,
         distribution: [createDistribution(fileMetadata, fileMetadata._self)],
       });
 

@@ -11,6 +11,7 @@ import {
 } from '@/types/simulate/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
 import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
+import { SingleSynaptomeConfig } from '@/types/synaptome';
 
 export const stimulusTypeParams: StimulusDropdownInfo & {
   options: StimulusTypeDropdownOptionType[];
@@ -117,11 +118,13 @@ export const DEFAULT_SIM_CONFIG: SimConfig = {
   synapses: null,
 };
 
-export const getDefaultSynapsesConfig = (model: SynaptomeModelResource): SynapsesConfig | null => {
+export const getDefaultSynapsesConfig = (
+  synapsePlacementConfig: SingleSynaptomeConfig[]
+): SynapsesConfig | null => {
   return [
     {
       id: '0',
-      synapseId: model.synapses[0].id,
+      synapseId: synapsePlacementConfig[0].id,
       delay: 100,
       duration: 2000,
       frequency: 20,

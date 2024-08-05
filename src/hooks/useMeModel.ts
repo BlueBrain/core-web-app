@@ -4,7 +4,15 @@ import { getSession } from '@/authFetch';
 import { MEModelResource } from '@/types/me-model';
 import useNotification from '@/hooks/notifications';
 
-export function useMeModel({ modelId }: { modelId: string }) {
+export function useModel({
+  modelId,
+  org,
+  project,
+}: {
+  modelId: string;
+  org?: string;
+  project?: string;
+}) {
   const [resource, setResource] = useState<MEModelResource | null>(null);
   const [loading, setLoading] = useState(false);
   const { error: notifyError } = useNotification();
@@ -16,7 +24,10 @@ export function useMeModel({ modelId }: { modelId: string }) {
         setLoading(true);
         const session = await getSession();
         if (!session) throw new Error('no session');
-        const resourceObject = await fetchResourceById<MEModelResource>(modelId, session);
+        const resourceObject = await fetchResourceById<MEModelResource>(modelId, session, {
+          org,
+          project,
+        });
         if (!isAborted) {
           setResource(resourceObject);
         }

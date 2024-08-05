@@ -15,6 +15,13 @@ import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
 import { detailUrlBuilder } from '@/util/common';
+import { synaptomeModel } from './model';
+
+const typeToNewSimulationPage: Record<string, string> = {
+  [DataType.SingleNeuronSynaptome]: 'synaptome',
+  [DataType.CircuitEModel]: 'single-neuron',
+  [DataType.CircuitMEModel]: 'single-neuron',
+};
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
@@ -29,10 +36,15 @@ export default function VirtualLabProjectSimulateNewPage({
       ? SimulationScopeToModelType[selectedSimulationScope]
       : null;
 
+  // TODO: Use right types
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
     const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-    const baseBuildUrl = `${vlProjectUrl}/simulate/single-neuron/edit`;
-    router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
+
+    const sampleSynapseModel = synaptomeModel;
+    const simulatePage = typeToNewSimulationPage[DataType.SingleNeuronSynaptome];
+    const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePage}/edit`;
+    // @ts-ignore
+    router.push(`${detailUrlBuilder(baseBuildUrl, sampleSynapseModel)}`);
   };
 
   return (

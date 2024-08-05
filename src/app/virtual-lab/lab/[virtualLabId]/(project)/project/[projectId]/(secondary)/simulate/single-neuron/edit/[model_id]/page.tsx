@@ -5,7 +5,7 @@ import { Spin } from 'antd';
 import { Title, StepTabs, Visualization, ParameterView } from '@/components/simulate/single-neuron';
 import LaunchButton from '@/components/simulate/single-neuron/parameters/LaunchButton';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
-import { useMeModel } from '@/hooks/useMeModel';
+import { useModel } from '@/hooks/useMeModel';
 
 type Props = {
   params: {
@@ -16,7 +16,7 @@ type Props = {
 
 export default function VirtualLabSimulationPage({ params }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { resource, loading } = useMeModel({ modelId: id });
+  const { resource, loading } = useModel({ modelId: id });
 
   if (loading || !resource) {
     return <Spin indicator={<LoadingOutlined />} />;

@@ -24,12 +24,14 @@ import {
   isSynaptomModel,
 } from '@/types/simulate/single-neuron';
 import { getDefaultSynapsesConfig } from '@/constants/simulate/single-neuron';
+import { SynaptomeConfigDistribution } from '@/types/synaptome';
 
 type Props = {
   resource: ModelResource;
+  synaptomeConfig?: SynaptomeConfigDistribution;
 };
 
-export default function ParameterView({ resource }: Props) {
+export default function ParameterView({ resource, synaptomeConfig }: Props) {
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
   const [form] = Form.useForm<SimConfig>();
   const formSimConfig = Form.useWatch([], form);
@@ -56,11 +58,14 @@ export default function ParameterView({ resource }: Props) {
   }, [form, simConfig]);
 
   const defaultSynapsesConfig = useMemo(() => {
-    if (isSynaptomModel(resource)) {
-      return getDefaultSynapsesConfig(resource)!;
+    console.log('Res in form', resource);
+    if (isSynaptomModel(resource) && synaptomeConfig) {
+      console.log('Resource is synaptome');
+      return getDefaultSynapsesConfig(synaptomeConfig.synapses)!;
     }
+    console.log('Nope');
     return null;
-  }, [resource]);
+  }, [resource, synaptomeConfig]);
 
   useEffect(() => {
     if (defaultSynapsesConfig) {
@@ -82,13 +87,13 @@ export default function ParameterView({ resource }: Props) {
       >
         <div className="mt-10 text-center text-2xl">
           <div className={simulateStep === 'stimulation' ? '' : 'hidden'}>
-            {isSynaptomModel(resource) ? (
+            {isSynaptomModel(resource) && synaptomeConfig ? (
               <ModelWithSynapseConfig
                 onChange={onChange}
                 simConfig={simConfig}
                 defaultSynapsesConfig={defaultSynapsesConfig!}
-                synapses={resource.synapses.map((s) => s.id)}
-                modelSelfUrl={resource._self}
+                synapses={synaptomeConfig.synapses.map((s) => s.id)}
+                modelSelfUrl={synaptomeConfig.meModelSelf}
               />
             ) : (
               isSingleModelSimConfig(simConfig) && (

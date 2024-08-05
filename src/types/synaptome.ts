@@ -8,6 +8,11 @@ export const SYNAPTOME_OBJECT_OF_STUDY = {
 } as const;
 type SynaptomeObjectOfStudy = typeof SYNAPTOME_OBJECT_OF_STUDY;
 
+export type SynaptomeConfigDistribution = {
+  synapses: SingleSynaptomeConfig[];
+  meModelSelf: string;
+};
+
 export type SingleSynaptomeConfig = {
   id: string;
   name: string;
