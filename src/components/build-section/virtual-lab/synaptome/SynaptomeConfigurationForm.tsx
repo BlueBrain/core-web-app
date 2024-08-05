@@ -126,7 +126,8 @@ export default function SynaptomeMConfigurationForm({
         name: values.name,
         description: values.description,
         seed: values.seed,
-        distribution: [createDistribution(fileMetadata)],
+        meModelSelf: resource._self,
+        distribution: [createDistribution(fileMetadata, fileMetadata._self)],
       });
 
       const resp = await fetch(resourceUrl, {

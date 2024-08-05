@@ -129,7 +129,7 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
       <div className="grid grid-cols-2 gap-2">
         <Form.Item
           name={[field.name, 'target']}
-          rules={[{ required: true, message: 'Please select a target!' }]}
+          rules={[{ required: false, message: 'Please select a target!' }]}
           validateTrigger="onBlur"
           className="[&_.ant-form-item-row]:mb-0 [&_.ant-form-item-row]:inline-block [&_.ant-form-item-row]:w-full"
         >
@@ -138,9 +138,9 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
             placeholder="Select a target"
             size="large"
             options={[
-              { value: 'apical', label: 'Apical' },
+              { value: 'apic', label: 'Apical' },
               { value: 'basal', label: 'Basal' },
-              { value: 'soma', label: 'Soma' },
+              { value: 'dend', label: 'Dendrite' },
             ]}
           />
         </Form.Item>
