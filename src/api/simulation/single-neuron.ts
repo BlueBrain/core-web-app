@@ -3,6 +3,7 @@ import {
   RunSimulationRequestBody,
   StimuliPlotRequest,
   StimuliPlotResponse,
+  SynapsesConfig,
 } from '@/types/simulate/single-neuron';
 
 export const runSimulation = async (
@@ -33,7 +34,7 @@ export const runSynapseSimulation = async (
   synaptomeModelSelf: string,
   token: string,
   directCurrentConfig: RunSimulationRequestBody,
-  synapseConfig: any
+  synapseConfigs: SynapsesConfig
 ) => {
   return await fetch(
     `${blueNaasUrl}/simulation/synapse/run?model_id=${encodeURIComponent(synaptomeModelSelf)}`,
@@ -46,7 +47,7 @@ export const runSynapseSimulation = async (
       },
       body: JSON.stringify({
         directCurrentConfig,
-        synapseConfig,
+        synapseConfigs: synapseConfigs.map((s) => ({ ...s, id: s.synapseId })),
       }),
     }
   );

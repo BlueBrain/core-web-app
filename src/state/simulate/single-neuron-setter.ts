@@ -135,7 +135,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
               ...simulationConfig.directStimulation[0],
               recordFrom: simulationConfig.recordFrom,
             },
-            simulationConfig.synapses[0]
+            simulationConfig.synapses
           )
         : await runSimulation(model_self_url, session?.accessToken!, {
             ...simulationConfig.directStimulation[0],
