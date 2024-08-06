@@ -72,7 +72,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
 
   const tabDetails = selectedModelType && SupportedTypeToTabDetails[selectedModelType];
   return (
-    <div className="flex h-full flex-col gap-6">
+    <div className="flex h-full flex-col">
       <ScopeSelector />
       {selectedModelType && tabDetails ? (
         <div className="flex h-full flex-col">

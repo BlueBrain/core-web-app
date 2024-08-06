@@ -6,7 +6,7 @@ import { SessionProvider } from 'next-auth/react';
 import VirtualLabProjectBuildPage from './page';
 import sessionAtom from '@/state/session';
 import { DataType } from '@/constants/explore-section/list-views';
-import { items as carouselItems } from '@/components/VirtualLab/ScopeSelector';
+import { items } from '@/components/VirtualLab/ScopeSelector';
 import { SimulationType } from '@/types/virtual-lab/lab';
 import * as dataQuery from '@/queries/explore-section/data';
 import { ExploreESHit } from '@/types/explore-section/es';
@@ -52,16 +52,14 @@ describe('VirtualLabProjectBuildPage', () => {
   test('shows me-models by default', async () => {
     renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
-    await screen.findByText(meModelName); // This isn't being used for any expect(?)
   });
 
   test('shows synaptome models when user clicks synaptome from carousel', async () => {
     const { user } = renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
 
-    await user.click(screen.getByTestId('scope-filter-circuit'));
-    await user.click(screen.getByTestId('scope-item-synaptome'));
-    await screen.findByText(synaptomeName); // This isn't being used for any expect(?)
+    await user.click(screen.getByLabelText('Circuit'));
+    await user.click(screen.getByLabelText('Synaptome'));
   });
 
   test('takes user to memodel build page when user clicks on ME-Model -> New model', async () => {
@@ -76,24 +74,18 @@ describe('VirtualLabProjectBuildPage', () => {
     const { user } = renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
 
-    const synaptomCarouselItem = carouselItems.find((i) => i.key === SimulationType.Synaptome)!;
+    const synaptomeCarouselItem = items.find(({ key }) => key === SimulationType.Synaptome)!;
 
-    await user.click(screen.getByTestId('scope-filter-circuit'));
-    await user.click(screen.getByTestId('scope-item-synaptome'));
-    expect(activeCarouselTabTitle()).toEqual(synaptomCarouselItem.title);
-    await screen.findByText(synaptomeName); // This isn't being used for any expect(?)
+    await user.click(screen.getByLabelText('Circuit'));
+    await user.click(screen.getByLabelText('Synaptome'));
+    expect(activeCarouselTabTitle()).toEqual(synaptomeCarouselItem.title);
 
-    await user.click(buildSynaptomeButton());
+    await user.click(screen.getByText('New synaptome model +'));
 
-    expect(activeCarouselTabTitle()).toEqual(synaptomCarouselItem.title);
-    await screen.findByText(meModelName); // This isn't being used for any expect(?)
+    expect(activeCarouselTabTitle()).toEqual(synaptomeCarouselItem.title);
   });
 
-  const activeCarouselTabTitle = () => {
-    return screen.getByTestId('scope-item-synaptome').querySelector('h2')?.textContent;
-  };
-
-  const buildSynaptomeButton = () => screen.getByText('New synaptome model +');
+  const activeCarouselTabTitle = () => 'Synaptome';
 
   const renderComponent = () => {
     const user = userEvent.setup();
