@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import isEqual from 'lodash/isEqual';
 import { captureException } from '@sentry/nextjs';
 
 import PlotRenderer from './PlotRenderer';
@@ -18,24 +17,13 @@ type Props = {
 };
 
 export default function StimuliPreviewPlot({ amplitudes, modelSelfUrl }: Props) {
-  const [stimuliPreviewPlotData, setStimuliPreviewPlotData] = useState<PlotData | null>(null);
   const token = useAccessToken();
-  const [renderedAmplitudes, setRenderedAmplitudes] = useState<number[]>([]);
-  const [renderedProtocolName, setRenderedProtocolName] = useState<string | null>(null);
+  const [stimuliPreviewPlotData, setStimuliPreviewPlotData] = useState<PlotData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const protocolName = useAtomValue(protocolNameAtom);
 
   const updateStimuliPreview = useDebouncedCallback(
     async (amplitudesToRender, protocolToRender, accessToken) => {
-      if (
-        isEqual(renderedAmplitudes, amplitudesToRender) &&
-        isEqual(renderedProtocolName, protocolToRender)
-      )
-        return;
-
-      setRenderedAmplitudes(amplitudesToRender);
-      setRenderedProtocolName(protocolToRender);
-
       try {
         const rawPlotData = await getStimuliPlot(modelSelfUrl, accessToken, {
           amplitudes: amplitudesToRender,
@@ -55,7 +43,7 @@ export default function StimuliPreviewPlot({ amplitudes, modelSelfUrl }: Props) 
         setLoading(false);
       }
     },
-    [renderedAmplitudes, renderedProtocolName, modelSelfUrl],
+    [modelSelfUrl],
     1500
   );
 
