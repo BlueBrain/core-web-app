@@ -43,7 +43,11 @@ export default function PDFViewer({ url, type }: Props) {
 
   return (
     <div className="mt-4 flex flex-col items-center">
-      {type && <h2 className="p-3 text-2xl font-bold text-primary-8">{type}</h2>}
+      {type && (
+        <h2 className="mb-6 w-full bg-neutral-1 p-3 text-center text-2xl font-bold text-primary-8">
+          {type}
+        </h2>
+      )}
       <Document
         options={options}
         file={pdfFile}
