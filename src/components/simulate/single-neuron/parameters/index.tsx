@@ -45,10 +45,7 @@ export default function ParameterView({ resource, synaptomeConfig }: Props) {
   useEffect(() => {
     form.validateFields().then(
       () => setSubmittable(true),
-      (validationResult) => {
-        console.log('Validation Result', validationResult);
-        return setSubmittable(!validationResult.errorFields.length);
-      }
+      (validationResult) => setSubmittable(!validationResult.errorFields.length)
     );
   }, [formSimConfig, form, setSubmittable]);
 

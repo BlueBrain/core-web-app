@@ -10,7 +10,6 @@ import {
   DirectSimulationConfig,
 } from '@/types/simulate/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
-import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 
 export const stimulusTypeParams: StimulusDropdownInfo & {

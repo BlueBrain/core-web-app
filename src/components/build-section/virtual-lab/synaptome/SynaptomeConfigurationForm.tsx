@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Form, Input, Button, ConfigProvider, Space, InputNumber } from 'antd';
 import { useAtom } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
+import omit from 'lodash/omit';
 
 import SynapseGroup from './SynapseGroup';
 import {
@@ -22,7 +23,6 @@ import {
 import { getSession } from '@/authFetch';
 import { synapsesPlacementAtom } from '@/state/synaptome';
 import useNotification from '@/hooks/notifications';
-import omit from 'lodash/omit';
 import { MEModelResource } from '@/types/me-model';
 
 const CONFIG_FILE_NAME = 'synaptome_config.json';

@@ -22,7 +22,6 @@ type Props = {
 };
 
 export default function LaunchButton({ modelSelfUrl, vLabId, projectId, simulationType }: Props) {
-  console.log('Sim Type', simulationType);
   const [submittable, setSubmittable] = useAtom(simulationFormIsFilledAtom);
   const [simulationStatus, setSimulationStatus] = useAtom(simulationStatusAtom);
   const launchSimulation = useSetAtom(launchSimulationAtom);

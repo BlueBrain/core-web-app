@@ -11,6 +11,7 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { ResourceMetadata } from '@/types/nexus';
 import { MEModelResource } from '@/types/me-model';
 import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
+import { SynaptomeConfigDistribution } from '@/types/synaptome';
 
 describe('ParameterViewComponent', () => {
   test('only direct current injection form is visible if model of type MEModels is selected', async () => {
@@ -20,7 +21,7 @@ describe('ParameterViewComponent', () => {
   });
 
   test('shows synapse config & direct current config by default if model of type SingleNeuronSynaptome is selected', async () => {
-    renderComponent(synaptomResource(['Test Synapse 1']));
+    renderComponent(synaptomeModel(), synaptomeConfig(['Test Synapse 1']));
     await expectDirectInjectionFormToBeVisible();
 
     screen.getByTestId(synapsesConfigTestId);
@@ -29,7 +30,8 @@ describe('ParameterViewComponent', () => {
 
   test('adds synapse configuration when user clicks add button', async () => {
     const { user } = renderComponent(
-      synaptomResource(['Test Synapse 1', 'Test Synapse 2', 'Test Synapse 3'])
+      synaptomeModel(),
+      synaptomeConfig(['Test Synapse 1', 'Test Synapse 2', 'Test Synapse 3'])
     );
 
     await screen.findByText(synapseConfigTitle());
@@ -38,7 +40,10 @@ describe('ParameterViewComponent', () => {
   });
 
   test('shows synapse form fields for each synapse in model', async () => {
-    const { user } = renderComponent(synaptomResource(['Test Synapse 1', 'Test Synapse 2']));
+    const { user } = renderComponent(
+      synaptomeModel(),
+      synaptomeConfig(['Test Synapse 1', 'Test Synapse 2'])
+    );
 
     await screen.findByText(synapseConfigTitle());
     await user.click(screen.getByText('+ Add Synapse Configuration'));
@@ -51,7 +56,7 @@ describe('ParameterViewComponent', () => {
   });
 
   test('shows only direct current config for direct current if user selects OnlyDirectInjection option', async () => {
-    const { user } = renderComponent(synaptomResource(['Test Synapse 1']));
+    const { user } = renderComponent(synaptomeModel(), synaptomeConfig(['Test Synapse 1']));
 
     screen.getByTestId(synapsesConfigTestId);
 
@@ -63,7 +68,7 @@ describe('ParameterViewComponent', () => {
   });
 
   test('shows only config for synapses if user selects OnlySynapses option', async () => {
-    const { user } = renderComponent(synaptomResource(['Test Synapse 1']));
+    const { user } = renderComponent(synaptomeModel(), synaptomeConfig(['Test Synapse 1']));
 
     screen.getByTestId(synapsesConfigTestId);
     screen.getByTestId(directCurrentConfigTestId);
@@ -80,9 +85,12 @@ describe('ParameterViewComponent', () => {
   const synapsesConfigTestId = 'synapses-configuration';
   const directCurrentConfigTestId = 'direct-current-configuration';
 
-  const renderComponent = (selectedModel: ModelResource) => {
+  const renderComponent = (
+    modelResource: ModelResource,
+    synaptomeConfig?: SynaptomeConfigDistribution
+  ) => {
     const user = userEvent.setup();
-    render(ParameterViewComponentProvider(selectedModel));
+    render(ParameterViewComponentProvider(modelResource, synaptomeConfig));
 
     return { user };
   };
@@ -100,15 +108,18 @@ describe('ParameterViewComponent', () => {
     );
   }
 
-  function ParameterViewComponentProvider(selectedModel: ModelResource) {
+  function ParameterViewComponentProvider(
+    modelResource: ModelResource,
+    synaptomeConfig?: SynaptomeConfigDistribution
+  ) {
     return (
       <TestProvider
         initialValues={[
           [sessionAtom, { accessToken: 'abc' }],
-          [singleNeuronAtom, selectedModel],
+          [singleNeuronAtom, modelResource],
         ]}
       >
-        <ParameterView resource={selectedModel} />
+        <ParameterView resource={modelResource} synaptomeConfig={synaptomeConfig} />
       </TestProvider>
     );
   }
@@ -159,11 +170,37 @@ const meModelResource: MEModelResource = {
   status: 'initalized',
 };
 
-const synaptomResource = (synapses: string[]): SynaptomeModelResource => ({
+const synaptomeModel = (): SynaptomeModelResource => ({
   ...baseResource,
   _self: 'self-synaptome-model',
   '@id': 'self-synaptome-model',
   '@type': [DataType.SingleNeuronSynaptome],
   '@context': ['boo'],
-  synapses: synapses.map((s) => ({ id: s })),
+  distribution: {
+    '@type': 'DataDownload',
+    name: `synaptome_config.json`,
+    encodingFormat: 'application/json',
+    contentSize: {
+      unitCode: 'bytes',
+      value: 28,
+    },
+    contentUrl: 'https://test-content-url.org',
+    digest: {
+      algorithm: '',
+      value: '',
+    },
+  },
+});
+
+const synaptomeConfig = (synapses: string[]): SynaptomeConfigDistribution => ({
+  meModelSelf: 'self-synaptome-model',
+  synapses: synapses.map((s) => ({
+    id: s,
+    name: s,
+    seed: 101,
+    type: 10,
+    target: 'Apical',
+    distribution: 'formula',
+    formula: '0.1 * x',
+  })),
 });

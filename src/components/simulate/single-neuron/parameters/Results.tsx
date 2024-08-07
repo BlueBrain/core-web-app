@@ -37,8 +37,6 @@ export default function Results() {
   // in the plot when we launched simulation but still processing
   const isLoading = simulationStatus === 'launched';
 
-  console.log('Simulation Status', simulationStatus);
-  console.log('Plot Data', plotData);
   return (
     plotData && (
       <PlotRenderer

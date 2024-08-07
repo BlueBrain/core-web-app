@@ -22,7 +22,6 @@ type Props = {
 };
 
 export default function VirtualLabSimulationPage({ params }: Props) {
-  console.log('Synapse Sim Config Form ');
   const [synaptomeConfig, setSynaptomeConfig] = useState<null | SynaptomeConfigDistribution>(null);
 
   const { id } = useResourceInfoFromPath();
@@ -43,12 +42,12 @@ export default function VirtualLabSimulationPage({ params }: Props) {
       try {
         const session = await getSession();
         if (!session) throw new Error('no session');
-        const resourceObject = await fetchJsonFileByUrl<SynaptomeConfigDistribution>(
+        const synaptomeConfigDistribution = await fetchJsonFileByUrl<SynaptomeConfigDistribution>(
           synaptomeModel.distribution.contentUrl,
           session
         );
         if (!isAborted) {
-          setSynaptomeConfig(resourceObject);
+          setSynaptomeConfig(synaptomeConfigDistribution);
         }
       } catch (error) {
         notifyError('Error while loading the resource details', undefined, 'topRight');
@@ -63,7 +62,6 @@ export default function VirtualLabSimulationPage({ params }: Props) {
     return <Spin indicator={<LoadingOutlined />} />;
   }
 
-  console.log('SYNAPSESSSS');
   return (
     <>
       <Title />
