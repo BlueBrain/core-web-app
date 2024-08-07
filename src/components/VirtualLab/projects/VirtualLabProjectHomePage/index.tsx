@@ -38,7 +38,6 @@ function VirtualLabUsersHorizontalList({ virtualLabId, projectId }: Props) {
             firstName={user.first_name}
             lastName={user.last_name}
             name={user.name}
-            lastActive="N/A"
             memberRole="member"
           />
         ))}

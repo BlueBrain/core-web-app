@@ -12,7 +12,6 @@ export default async function VirtualLabUsers({ id }: { id?: string }) {
           <Member
             key={user.id}
             name={user.name}
-            lastActive="N/A"
             memberRole={user.role}
             firstName={user.first_name}
             lastName={user.last_name}

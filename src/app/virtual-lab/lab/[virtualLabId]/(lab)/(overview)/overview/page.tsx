@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 
 import VirtualLabHome from '@/components/VirtualLab/VirtualLabHomePage';
-import VirtualLabProjects from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabProjects';
 import VirtualLabUsers from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabUsers';
 import { ServerSideComponentProp } from '@/types/common';
 import { VirtualLabDetailSkeleton } from '@/components/VirtualLab/VirtualLabBanner';
@@ -26,9 +25,10 @@ export default function VirtualLab({ params }: ServerSideComponentProp<{ virtual
       <Suspense fallback={null}>
         <VirtualLabUsers id={virtualLabId} />
       </Suspense>
-      <Suspense>
-        <VirtualLabProjects id={virtualLabId} />
-      </Suspense>
+      {/* Temporarily removing the display of highlighted projects */}
+      {/* <Suspense> */}
+      {/* <VirtualLabProjects id={virtualLabId} /> */}
+      {/* </Suspense>  */}
     </div>
   );
 }
