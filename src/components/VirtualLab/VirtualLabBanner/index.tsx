@@ -198,7 +198,7 @@ export function DashboardBanner({ createdAt, description, id, name }: Props & { 
           label="Virtual lab Name"
           userCount={users?.length || 0}
         >
-          <StaticValues description={description} name={name} />
+          <StaticValues description={description} name={name} dataTestid="dashboard-banner" />
         </BannerWrapper>
       </Link>
     </BackgroundImg>
@@ -212,7 +212,7 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
     <BackgroundImg backgroundImage={hippocampusImg}>
       <div className={linkClassName}>
         <BannerWrapper label="Virtual lab Name" userCount={totalUsers}>
-          <StaticValues description={description} name={name} />
+          <StaticValues description={description} name={name} dataTestid="sandbox-banner" />
         </BannerWrapper>
       </div>
     </BackgroundImg>
@@ -247,7 +247,7 @@ export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
     updateVlab({ [fieldName]: value });
   };
 
-  const { button: editBtn, isEditable } = useEditBtn();
+  const { button: editBtn, isEditable } = useEditBtn({ dataTestid: 'lab-detail-banner-edit-btn' });
 
   return (
     <BackgroundImg backgroundImage={hippocampusImg}>
@@ -259,9 +259,14 @@ export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
           userCount={users?.length || 0}
         >
           {isEditable ? (
-            <EditableInputs description={description} name={name} onChange={onChange} />
+            <EditableInputs
+              description={description}
+              name={name}
+              onChange={onChange}
+              dataTestid="lab-detail-banner"
+            />
           ) : (
-            <StaticValues description={description} name={name} />
+            <StaticValues description={description} name={name} dataTestid="lab-detail-banner" />
           )}
         </BannerWrapper>
         {editBtn}
