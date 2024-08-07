@@ -138,7 +138,7 @@ deploy-aws-prod:
     REGISTRY_IMAGE_TAG: latest
     NEXT_PUBLIC_ENVIRONMENT: prod
     NEXT_PUBLIC_BASE_PATH: /mmb-beta
-    NEXT_PUBLIC_NEXUS_URL: https://sbo-nexus-delta.shapes-registry.org/v1
+    NEXT_PUBLIC_NEXUS_URL: https://openbluebrain.com/api/nexus/v1
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
     NEXT_PUBLIC_BRAIN_REGION_ONTOLOGY_RESOURCE_TAG: v2.0.0
     NEXT_PUBLIC_CELL_COMPOSITION_TAG: v1.1.0
