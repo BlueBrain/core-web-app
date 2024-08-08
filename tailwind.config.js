@@ -51,7 +51,7 @@ module.exports = {
         neutral: gray,
         primary: blue,
         secondary: green,
-        warning: '#FA8C16',
+        warning: '#CB5C00',
         highlightPost: '#FF4D4F',
         highlightPre: '#40A9FF',
         transparentWhite: 'rgba(255, 255, 255, 0.3)',

@@ -202,7 +202,7 @@ export function ArticleListing({ basePath }: ArticleListingProps) {
         <Header {...{ loading }} basePath={basePath} />
         <If id="error" condition={Boolean(error && experiment && articles.length === 0)}>
           <div
-            className="mx-auto self-center whitespace-pre-line border border-gray-400 p-7"
+            className="mx-auto self-center whitespace-pre-line border border-gray-400 p-7 text-warning"
             data-testid="article-listing-error"
           >
             {ARTICLE_LISTING_ERRORS_MAP[(error as { cause: number })?.cause] ??
