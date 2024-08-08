@@ -35,7 +35,7 @@ export default function VirtualLabProjectInteractiveExploreLayout({
             links={[
               {
                 key: LinkItemKey.Explore,
-                href: `${labProjectUrl}/explore`,
+                href: `${labProjectUrl}/explore/interactive`,
                 content: Content.Explore,
                 role: Role.Section,
                 styles: 'rounded-full bg-primary-5 py-3 text-primary-9',

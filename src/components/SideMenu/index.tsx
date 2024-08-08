@@ -1,3 +1,5 @@
+'use client';
+
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import Link from 'next/link';
@@ -29,7 +31,7 @@ function ProjectLink({ project, lab }: { project: ProjectItem; lab: LabItem }) {
       <div className="mt-5 flex w-full flex-col items-center justify-center overflow-hidden">
         <Link
           key={lab.id}
-          href={lab.href}
+          href={project.href}
           className="overflow-hidden text-ellipsis whitespace-nowrap text-center font-semibold capitalize hover:text-white"
           style={{
             writingMode: 'vertical-rl',
@@ -74,7 +76,7 @@ export default function SideMenu({ lab, project, links }: SideMenuProps) {
                 )
             )}
           {project && <ProjectLink project={project} lab={lab} />}
-          {lab && (
+          {!!virtualLab && (
             <div className="flex w-full flex-col items-center gap-2 overflow-hidden text-primary-3">
               <Link
                 key={lab.id}
@@ -87,7 +89,7 @@ export default function SideMenu({ lab, project, links }: SideMenuProps) {
               >
                 <span>
                   Virtual lab:
-                  <span className="mt-3 inline-block text-white">{virtualLab?.name}</span>
+                  <span className="mt-3 inline-block text-white">{virtualLab.name}</span>
                 </span>
               </Link>
             </div>
@@ -95,7 +97,7 @@ export default function SideMenu({ lab, project, links }: SideMenuProps) {
         </div>
 
         <div className="mb-5 flex w-full flex-col items-center gap-2 overflow-hidden text-primary-3">
-          <Link href={lab?.href ?? '#'}>
+          <Link href="/virtual-lab">
             <HomeOutlined />
           </Link>
         </div>

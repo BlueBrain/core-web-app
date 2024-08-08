@@ -14,6 +14,7 @@ export enum Content {
   Literature = 'literature',
   Explore = 'explore',
   Build = 'build',
+  Simulate = 'simulate',
 }
 
 export enum LinkItemKey {
