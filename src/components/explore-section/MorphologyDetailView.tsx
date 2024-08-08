@@ -1,12 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, ReactNode, memo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
 import { useSwcContentUrl } from '@/util/content-url';
-import { classNames } from '@/util/utils';
 import createMorphologyDataAtom from '@/state/morpho-viewer';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import WithGeneralization, {
@@ -21,6 +20,13 @@ import { MorphoViewer } from '@/components/MorphoViewer';
 import Morphometrics from '@/components/explore-section/Morphometrics';
 import Detail from '@/components/explore-section/Detail';
 
+function GeneralizationContainer({ children }: { children: ReactNode }) {
+  if (children !== notFound && children !== genarilizationError) {
+    return <div className="min-h-[1500px] text-primary-9">{children}</div>;
+  }
+  return <div className="min-h-auto text-primary-9">{children}</div>;
+}
+
 export default function MorphologyDetailView() {
   return (
     <WithGeneralization dataType={DataType.ExperimentalNeuronMorphology}>
@@ -29,20 +35,11 @@ export default function MorphologyDetailView() {
           {(detail) => (
             <>
               <Morphometrics dataType={DataType.ExperimentalNeuronMorphology} resource={detail} />
-              <MorphoViewerLoader resource={detail} />
+              <MorphoViewerLoaderMemo resource={detail} />
               <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                 <GeneralizationControls dataType={DataType.ExperimentalNeuronMorphology} />
               </ErrorBoundary>
-              <div
-                className={classNames(
-                  'text-primary-9',
-                  renderSimilar === notFound || renderSimilar === genarilizationError
-                    ? 'min-h-auto'
-                    : 'min-h-[1500px]'
-                )}
-              >
-                {renderSimilar}
-              </div>
+              <GeneralizationContainer>{renderSimilar}</GeneralizationContainer>
             </>
           )}
         </Detail>
@@ -79,3 +76,5 @@ function MorphoViewerLoader({ resource }: { resource: ReconstructedNeuronMorphol
       throw Error(`Unknown state for morphologyData: "${state}"!`);
   }
 }
+
+const MorphoViewerLoaderMemo = memo(MorphoViewerLoader);
