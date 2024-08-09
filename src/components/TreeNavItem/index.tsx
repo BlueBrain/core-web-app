@@ -36,7 +36,7 @@ type TreeNavItemProps = {
  * @param {(newValue: string[], path: string[]) => void} args.onValueChange - A callback.
  * @param {string[]} args.path - Used for tracking the "current" nav depth level.
  */
-export function TreeNavItem({
+function TreeNavItem({
   children,
   className = 'ml-3',
   id,

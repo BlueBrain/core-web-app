@@ -51,7 +51,7 @@ type MTypeEntryProps = {
   isExpanded: boolean;
 };
 
-export function MTypeEntry({ name, onExpand, isExpanded }: MTypeEntryProps) {
+function MTypeEntry({ name, onExpand, isExpanded }: MTypeEntryProps) {
   return (
     <button
       onClick={onExpand}

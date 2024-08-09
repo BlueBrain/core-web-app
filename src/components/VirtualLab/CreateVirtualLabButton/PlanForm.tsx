@@ -22,7 +22,7 @@ export type PlanPanelProps = {
   onSelect(plan: VirtualLabPlanDefinition): void;
 };
 
-export function PlanPanel({ plan, selected, onSelect }: PlanPanelProps) {
+function PlanPanel({ plan, selected, onSelect }: PlanPanelProps) {
   const handleClick = () => {
     onSelect(plan);
   };

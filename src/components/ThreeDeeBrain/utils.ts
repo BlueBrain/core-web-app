@@ -114,7 +114,7 @@ export const createMesh = (data: string, color: string) => {
  * Builds the geometry of the point cloud
  * @param points
  */
-export function buildGeometry(points: Point[]) {
+function buildGeometry(points: Point[]) {
   const geometry = new ThreeBufferGeometry();
   const vertices: number[] = [];
   points.forEach((elem) => {

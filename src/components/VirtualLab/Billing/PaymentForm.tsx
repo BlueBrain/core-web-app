@@ -73,7 +73,7 @@ const buildStripeFormOptions = (clientSecret: string): StripeElementsOptions => 
   },
 });
 
-export function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
+function Form({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
   const accessToken = useAccessToken();
   const elements = useElements();
   const stripe = useStripe();
