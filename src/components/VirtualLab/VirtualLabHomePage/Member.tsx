@@ -10,7 +10,7 @@ type Props = {
 
 export default function Member({ name, firstName, lastName, memberRole }: Props) {
   return (
-    <div className="flex max-w-[128px] grow flex-col items-center gap-2 text-center">
+    <div className="flex max-w-[72px] grow flex-col gap-2 text-center">
       <VirtualLabMemberIcon firstName={firstName} lastName={lastName} memberRole={memberRole} />
       <div className="font-bold">{name}</div>
       {/* Commenting out since feature is not present yet */}

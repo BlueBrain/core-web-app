@@ -33,13 +33,14 @@ function VirtualLabUsersHorizontalList({ virtualLabId, projectId }: Props) {
     return (
       <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
         {projectUsers.data?.map((user) => (
-          <Member
-            key={user.id}
-            firstName={user.first_name}
-            lastName={user.last_name}
-            name={user.name}
-            memberRole="member"
-          />
+          <div key={user.id} className="mr-20">
+            <Member
+              firstName={user.first_name}
+              lastName={user.last_name}
+              name={user.name}
+              memberRole="member"
+            />
+          </div>
         ))}
       </div>
     );
