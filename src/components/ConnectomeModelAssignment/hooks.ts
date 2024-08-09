@@ -266,7 +266,7 @@ export function useSetTypes() {
   };
 }
 
-export async function updateRules(
+async function updateRules(
   rulesData: SynapseEditorData,
   rules: SynapticAssignmentRule[],
   session: Session
@@ -298,7 +298,7 @@ export async function updateRules(
   await updateResource(rulesData.configResource, session);
 }
 
-export async function updateTypes(
+async function updateTypes(
   data: SynapseEditorData,
   types: { [type: string]: SynapticType },
   session: Session

@@ -5,7 +5,7 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 
-export function Background() {
+function Background() {
   return (
     <Image
       fill

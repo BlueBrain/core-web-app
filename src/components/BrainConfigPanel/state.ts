@@ -13,15 +13,8 @@ const refetchAllTriggerAtom = atom<{}>({});
 export const triggerRefetchAllAtom = atom(null, (get, set) => set(refetchAllTriggerAtom, {}));
 
 const refetchRecentTriggerAtom = atom<{}>({});
-export const triggerRefetchRecentAtom = atom(null, (get, set) => set(refetchRecentTriggerAtom, {}));
 
 const refetchPublicTriggerAtom = atom<{}>({});
-export const triggerRefetchPublicAtom = atom(null, (get, set) => set(refetchPublicTriggerAtom, {}));
-
-const refetchPersonalTriggerAtom = atom<{}>({});
-export const triggerRefetchPersonalAtom = atom(null, (get, set) =>
-  set(refetchPersonalTriggerAtom, {})
-);
 
 export const recentConfigsAtom = atom<Promise<BrainModelConfigResource[]>>(async (get) => {
   const session = get(sessionAtom);

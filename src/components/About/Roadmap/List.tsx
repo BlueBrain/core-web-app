@@ -15,7 +15,7 @@ export type RoadmapFeature = {
 
 type RoadmapFeatureCardProps = Omit<RoadmapFeature, 'category'>;
 
-export function FeatureCard({ id, title, description }: RoadmapFeatureCardProps) {
+function FeatureCard({ id, title, description }: RoadmapFeatureCardProps) {
   const queryParams = useSearchParams();
   const params = useParams<{ 'feature-id': string }>();
   const selected = params?.['feature-id'] === id;

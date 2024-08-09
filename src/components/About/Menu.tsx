@@ -58,7 +58,7 @@ const MENU_LIST: Array<MenuItem> = [
   },
 ];
 
-export function MenuSingleItem({ id, title, url, description, bgcolor, selected }: MenuItem) {
+function MenuSingleItem({ id, title, url, description, bgcolor, selected }: MenuItem) {
   const path = usePathname();
   const current = selected === 'equal' ? path === url : path?.startsWith(url);
 
