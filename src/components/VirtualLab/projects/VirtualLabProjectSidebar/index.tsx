@@ -1,18 +1,15 @@
 import { usePathname } from 'next/navigation';
 import { Spin } from 'antd';
-import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
-import Link from 'next/link';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { useMemo } from 'react';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import {
-  virtualLabProjectDetailsAtomFamily,
   virtualLabProjectPapersCountAtomFamily,
   virtualLabProjectUsersAtomFamily,
 } from '@/state/virtual-lab/projects';
 import { bookmarksForProjectAtomFamily } from '@/state/virtual-lab/bookmark';
-import { generateLabUrl } from '@/util/virtual-lab/urls';
 import { getBookmarksCount } from '@/services/virtual-lab/bookmark';
 import { useLoadableValue } from '@/hooks/hooks';
 
@@ -22,9 +19,6 @@ type Props = {
 };
 
 export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Props) {
-  const projectDetails = useLoadableValue(
-    virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId })
-  );
   const projectUsers = useLoadableValue(
     virtualLabProjectUsersAtomFamily({ virtualLabId, projectId })
   );
@@ -32,16 +26,6 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
   const projectPapers = useLoadableValue(
     virtualLabProjectPapersCountAtomFamily({ virtualLabId, projectId })
   );
-
-  const renderProjectTitle = () => {
-    if (projectDetails.state === 'loading') {
-      return <Spin indicator={<LoadingOutlined />} />;
-    }
-    if (projectDetails.state === 'hasData') {
-      return projectDetails.data?.name;
-    }
-    return null;
-  };
 
   const renderUserAmount = () => {
     if (projectUsers.state === 'loading') {
@@ -123,16 +107,6 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
   ];
   return (
     <div className="my-8 mr-6 flex w-full flex-col gap-5">
-      <h1 className="leading-12 text-4xl font-bold uppercase text-primary-5">
-        {renderProjectTitle()}
-      </h1>
-      <Link
-        href={`${generateLabUrl(virtualLabId)}/projects`}
-        className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
-      >
-        <span>Switch project</span> <SwapOutlined />
-      </Link>
-
       <VerticalLinks
         {...{
           virtualLabId,
