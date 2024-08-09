@@ -77,18 +77,6 @@ export function fetchJsonFileByUrl<T>(url: string, session: Session) {
   return fetchFileByUrl(url, session).then<T>((res) => res.json());
 }
 
-export function fetchTextFileByUrl(url: string, session: Session): Promise<string> {
-  return fetchFileByUrl(url, session).then((res) => res.text());
-}
-
-export function fetchFileMetadataById(id: string, session: Session) {
-  const url = composeUrl('file', id);
-
-  return fetch(url, {
-    headers: createHeaders(session.accessToken, { Accept: 'application/ld+json' }),
-  }).then<FileMetadata>((res) => res.json());
-}
-
 export function fetchFileMetadataByUrl(url: string, session: Session) {
   return fetch(url, {
     headers: createHeaders(session.accessToken, { Accept: 'application/ld+json' }),
@@ -124,7 +112,7 @@ export function createJsonFile(rawData: any, filename: string, session: Session)
   return createFile(data, filename, contentType, session);
 }
 
-export function createTextFile(data: any, filename: string, session: Session) {
+function createTextFile(data: any, filename: string, session: Session) {
   const contentType = 'text/plain';
   return createFile(data, filename, contentType, session);
 }
@@ -159,7 +147,7 @@ export async function updateFileByUrl(
   }).then<FileMetadata>((res) => res.json());
 }
 
-export async function updateFileById(
+async function updateFileById(
   id: string,
   data: any,
   filename: string,
@@ -176,17 +164,6 @@ export async function updateFileById(
   const url = composeUrl('file', id, { rev: latestRev });
 
   return updateFileByUrl(url, data, filename, contentType, session);
-}
-
-export function updateJsonFileById(
-  id: string,
-  rawData: any,
-  filename: string,
-  session: Session,
-  rev?: number
-) {
-  const data = JSON.stringify(rawData);
-  return updateFileById(id, data, filename, 'application/json', session, rev);
 }
 
 export async function updateJsonFileByUrl(
@@ -279,7 +256,7 @@ export async function updateResource(
   }).then((res) => res.json());
 }
 
-export async function deprecateResource(
+async function deprecateResource(
   resource: EntityResource,
   session: Session,
   options: ComposeUrlParams
@@ -347,7 +324,7 @@ function getConfigVersion(configName: SubConfigName, config: GeneratorConfig) {
 
 // #################################### Non-generic methods ##########################################
 
-export async function cloneCellCompositionConfig(id: string, session: Session) {
+async function cloneCellCompositionConfig(id: string, session: Session) {
   const configName: SubConfigName = 'cellCompositionConfig';
   const config = await fetchResourceById<CellCompositionConfig>(id, session);
   const payload = await getPayloadByConfig<CellCompositionConfigPayload, CellCompositionConfig>(
@@ -367,7 +344,7 @@ export async function cloneCellCompositionConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
-export async function cloneCellPositionConfig(id: string, session: Session) {
+async function cloneCellPositionConfig(id: string, session: Session) {
   const configName: SubConfigName = 'cellPositionConfig';
   const config = await fetchResourceById<CellPositionConfig>(id, session);
   const payload = await getPayloadByConfig<CellPositionConfigPayload, CellPositionConfig>(
@@ -388,7 +365,7 @@ export async function cloneCellPositionConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
-export async function cloneMorphologyAssignmentConfig(id: string, session: Session) {
+async function cloneMorphologyAssignmentConfig(id: string, session: Session) {
   const configName: SubConfigName = 'morphologyAssignmentConfig';
   const config = await fetchResourceById<MorphologyAssignmentConfig>(id, session);
   const payload = await getPayloadByConfig<
@@ -412,7 +389,7 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
   return createResource(clonedConfig, session);
 }
 
-export async function cloneMEModelConfig(id: string, session: Session) {
+async function cloneMEModelConfig(id: string, session: Session) {
   const configName: SubConfigName = 'meModelConfig';
   const config = await fetchResourceById<MEModelConfig>(id, session);
   const payload = await getPayloadByConfig<MEModelConfigPayload, MEModelConfig>(
@@ -433,7 +410,7 @@ export async function cloneMEModelConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
-export async function cloneMacroConnectomeConfig(id: string, session: Session) {
+async function cloneMacroConnectomeConfig(id: string, session: Session) {
   const configName: SubConfigName = 'macroConnectomeConfig';
   const config = await fetchResourceById<MacroConnectomeConfig>(id, session);
   const payload = await getPayloadByConfig<MacroConnectomeConfigPayload, MacroConnectomeConfig>(
@@ -481,7 +458,7 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
-export async function cloneMicroConnectomeConfig(id: string, session: Session) {
+async function cloneMicroConnectomeConfig(id: string, session: Session) {
   const configName: SubConfigName = 'microConnectomeConfig';
   const config = await fetchResourceById<MicroConnectomeConfig>(id, session);
   const payload = await getPayloadByConfig<MicroConnectomeConfigPayload, MicroConnectomeConfig>(
@@ -596,7 +573,7 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
-export async function cloneSynapseConfig(id: string, session: Session) {
+async function cloneSynapseConfig(id: string, session: Session) {
   const configName: SubConfigName = 'synapseConfig';
   const config = await fetchResourceById<SynapseConfig>(id, session);
   const payload = await getPayloadByConfig<SynapseConfigPayload, SynapseConfig>(
