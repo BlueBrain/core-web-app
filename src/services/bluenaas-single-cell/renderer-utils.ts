@@ -46,7 +46,11 @@ export function createSegmentMesh(
   const mesh = new Mesh(geometry, material);
   mesh.userData = {
     segIdx,
-    sectionName: sec.name,
+    section: sec.name,
+    section_nseg: sec.nseg,
+    offset: sec.neuron_segments_offset[segIdx],
+    distance_from_soma: sec.segment_distance_from_soma[segIdx],
+    // ...pick(sec, ["name", "nseg", "neuron_segments_offset", "segment_distance_from_soma", "sec_length", "length"])
   };
   mesh.scale.setY(scaleLength);
   mesh.setRotationFromQuaternion(rotQuat);

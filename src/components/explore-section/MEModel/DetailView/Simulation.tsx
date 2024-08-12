@@ -8,7 +8,7 @@ import { useSessionAtomValue } from '@/hooks/hooks';
 import { getSimulationsPerMEModelQuery } from '@/queries/es';
 import { selectedMEModelIdAtom } from '@/state/virtual-lab/build/me-model';
 import { SingleNeuronSimulation } from '@/types/nexus';
-import { SingleNeuronSimulationPayload } from '@/types/simulate/single-neuron';
+import { SingleNeuronSimulationPayload } from '@/types/simulation/single-neuron';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
 export default function Simulation() {

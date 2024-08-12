@@ -1,23 +1,25 @@
 import { atom } from 'jotai';
-import { atomWithReducer, atomWithReset } from 'jotai/utils';
+import { atomWithReset } from 'jotai/utils';
 
-import { simReducer } from './redurcers';
-import {
-  SelectedSingleNeuronModel,
-  SimAction,
-  SimConfig,
-  SimulateStep,
-} from '@/types/simulate/single-neuron';
-import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
+import { directCurrentInjectionSimulationConfigAtom } from './categories/direct-current-injection-simulation';
+import { SelectedSingleNeuronModel } from '@/types/simulation/single-neuron';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 import { getIdFromSelfUrl } from '@/util/nexus';
+import { SimulationStep, SimulationStepsTraker } from '@/types/simulation/common';
 
-export const simulateStepAtom = atom<SimulateStep>('stimulation');
+export const steps: Array<SimulationStep> = [
+  { title: 'stimulation', status: undefined },
+  { title: 'recording', status: undefined },
+  { title: 'conditions', status: undefined },
+  { title: 'analysis', status: undefined },
+  { title: 'visualization', status: undefined },
+  { title: 'results', status: undefined },
+];
 
-export const simulationConfigAtom = atomWithReducer<SimConfig, SimAction>(
-  { ...DEFAULT_SIM_CONFIG },
-  simReducer
-);
+export const simulateStepTrackerAtom = atom<SimulationStepsTraker>({
+  steps,
+  current: { title: 'stimulation', status: undefined },
+});
 
 export const secNamesAtom = atomWithReset<string[]>([]);
 
@@ -30,16 +32,14 @@ export const singleNeuronIdAtom = atom<string | null>((get) => {
   return getIdFromSelfUrl(singleNeuronSelfUrl?.self ?? null);
 });
 
-export const simulationStatusAtom = atomWithReset({
-  launched: false,
-  finished: false,
-});
-
-export const simulationFormIsFilledAtom = atomWithReset(false);
+export const simulationStatusAtom = atomWithReset<{
+  status: null | 'launched' | 'finished' | 'error';
+  description?: string;
+} | null>(null);
 
 export const simulationPlotDataAtom = atomWithReset<PlotData | null>(null);
 
 export const protocolNameAtom = atom<string | null>((get) => {
-  const simulationConfig = get(simulationConfigAtom);
-  return simulationConfig.directStimulation?.[0].stimulus.stimulusProtocol ?? null; // TODO: The index here should not be hardcoded when synaptome rendering is done.
+  const directCurrentStimulation = get(directCurrentInjectionSimulationConfigAtom);
+  return directCurrentStimulation?.[0].stimulus.stimulusProtocol ?? null; // TODO: The index here should not be hardcoded when synaptome rendering is done.
 });

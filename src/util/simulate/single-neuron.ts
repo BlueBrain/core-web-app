@@ -1,4 +1,4 @@
-import { StimulusParameter } from '@/types/simulate/single-neuron';
+import { StimulusParameter } from '@/types/simulation/single-neuron';
 
 export function getParamValues(paramInfo: StimulusParameter) {
   return Object.entries(paramInfo).reduce(

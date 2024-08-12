@@ -24,7 +24,7 @@ export const DataTypeToNexusType = {
   [DataType.CircuitEModel]: `${neuroShapesBaseUrl}/EModel`,
   [DataType.CircuitMEModel]: `${neuroShapesBaseUrl}/MEModel`,
   [DataType.SingleNeuronSimulation]: `${ontologyBaseUrl}/SingleNeuronSimulation`,
-  [DataType.SingleNeuronSynaptome]: `${neuroShapesBaseUrl}/SingleNeuronSynaptome`,
+  [DataType.SingleNeuronSynaptome]: `${ontologyBaseUrl}/SingleNeuronSynaptome`,
   [DataType.SingleNeuronSynaptomeSimulation]: `${ontologyBaseUrl}/SingleNeuronSynaptomeSimulation`,
 };
 

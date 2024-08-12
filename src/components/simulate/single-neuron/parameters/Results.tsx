@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import dynamic from 'next/dynamic';
 import { RESET } from 'jotai/utils';
+import dynamic from 'next/dynamic';
 
 import { simulationPlotDataAtom, simulationStatusAtom } from '@/state/simulate/single-neuron';
 
@@ -35,7 +35,7 @@ export default function Results() {
 
   // plotData with one element is a placeholder to show something
   // in the plot when we launched simulation but still processing
-  const isLoading = simulationStatus.launched && plotData.length === 1;
+  const isLoading = simulationStatus?.status === 'launched';
 
   return (
     plotData && (

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { useSetAtom } from 'jotai';
 
 import {
   DISPLAY_SYNAPSES_3D_EVENT,
@@ -11,70 +12,59 @@ import {
   HoveredSegmentDetailsEvent,
   SEGMENT_DETAILS_EVENT,
 } from '@/services/bluenaas-single-cell/events';
-import getMorphology from '@/services/bluenaas-synaptome/getMorphology';
+import { secNamesAtom, segNamesAtom } from '@/state/simulate/single-neuron';
+import { DEFAULT_DIRECT_STIM_CONFIG, DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import Renderer from '@/services/bluenaas-single-cell/renderer';
+import useMorphology from '@/hooks/useMorphology';
 
 type Props = {
   modelSelfUrl: string;
 };
 
-export function useMorphology({
-  modelSelfUrl,
-  callback,
-}: {
-  modelSelfUrl: string;
-  callback: (morphology: Morphology) => void;
-}) {
-  const mountedRef = useRef(false);
-  const readMorphology = useCallback(async (): Promise<Morphology> => {
-    const response = await getMorphology({ modelId: modelSelfUrl });
-    const reader = response.body?.getReader();
-    let data: string = '';
-    let value: Uint8Array | undefined;
-    let done: boolean = false;
-    const decoder = new TextDecoder();
-    if (reader) {
-      while (!done) {
-        ({ done, value } = await reader.read());
-        const decodedChunk = decoder.decode(value, { stream: true });
-        data += decodedChunk;
-      }
-    }
-    return JSON.parse(data);
-  }, [modelSelfUrl]);
-
-  useEffect(() => {
-    mountedRef.current = true;
-
-    async function start() {
-      if (mountedRef.current) {
-        const morphology = await readMorphology();
-        mountedRef.current = false;
-        callback(morphology);
-      }
-    }
-
-    start();
-
-    return () => {
-      mountedRef.current = false;
-    };
-  }, [callback, readMorphology, mountedRef]);
-}
-
 export default function NeuronModelView({ modelSelfUrl }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
   const cursorHoverRef = useRef<HTMLDivElement | null>(null);
+  const setSecNames = useSetAtom(secNamesAtom);
+  const setSegNames = useSetAtom(segNamesAtom);
 
-  const runRenderer = useCallback((morphology: Morphology) => {
-    if (!rendererRef.current && containerRef.current) {
-      const renderer = new Renderer(containerRef.current, {});
-      rendererRef.current = renderer;
-      const prunedMorph = renderer.removeNoDiameterSection(morphology);
-      renderer.addMorphology(prunedMorph);
-    }
-  }, []);
+  const setSectionsAndSegments = useCallback(
+    (morphology: Morphology) => {
+      const sectionNames = Object.keys(morphology);
+      const segNames = sectionNames.reduce<string[]>(
+        (names, sectionName) => [
+          ...names,
+          ...morphology[sectionName].diam.map(
+            (_: number, segIdx: number) => `${sectionName}_${segIdx}`
+          ),
+        ],
+        []
+      );
+      setSecNames(sectionNames);
+      setSegNames(segNames);
+
+      if (!sectionNames.includes(DEFAULT_DIRECT_STIM_CONFIG.injectTo)) {
+        throw new Error('No soma section present');
+      }
+      if (!segNames.includes(DEFAULT_SIM_CONFIG.recordFrom[0])) {
+        throw new Error('No soma segment present');
+      }
+    },
+    [setSecNames, setSegNames]
+  );
+
+  const runRenderer = useCallback(
+    (morphology: Morphology) => {
+      if (!rendererRef.current && containerRef.current) {
+        const renderer = new Renderer(containerRef.current, {});
+        rendererRef.current = renderer;
+        const prunedMorph = renderer.removeNoDiameterSection(morphology);
+        renderer.addMorphology(prunedMorph);
+        setSectionsAndSegments(prunedMorph);
+      }
+    },
+    [setSectionsAndSegments]
+  );
 
   useEffect(() => {
     const eventAborter = new AbortController();

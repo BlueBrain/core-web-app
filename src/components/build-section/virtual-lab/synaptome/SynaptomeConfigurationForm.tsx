@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Form, Input, Button, ConfigProvider, Space, InputNumber } from 'antd';
 import { useAtom } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
+import omit from 'lodash/omit';
 
 import SynapseGroup from './SynapseGroup';
 import {
@@ -39,6 +40,7 @@ const defaultSynapseValue: SingleSynaptomeConfig = {
   distribution: undefined,
   formula: undefined,
   seed: undefined,
+  exclusion_rules: null,
 };
 
 type Props = {
@@ -92,7 +94,7 @@ export default function SynaptomeConfigurationForm({
       if (!session) return;
 
       const configFileUrl = composeUrl('file', '', { org, project });
-      const SYNAPTOME_CONFIG = { synapses: values.synapses };
+      const SYNAPTOME_CONFIG = { synapses: values.synapses, meModelSelf: resource._self };
 
       const formData = new FormData();
       const dataBlob = new Blob([JSON.stringify(SYNAPTOME_CONFIG)], { type: CONFIG_FILE_FORMAT });
@@ -108,7 +110,13 @@ export default function SynaptomeConfigurationForm({
       });
 
       if (!configResponse.ok) {
-        return notifyError(CREATE_SYNAPTOME_CONFIG_FAIL, undefined, 'topRight');
+        return notifyError(
+          CREATE_SYNAPTOME_CONFIG_FAIL,
+          undefined,
+          'topRight',
+          undefined,
+          'synaptome-config'
+        );
       }
 
       const fileMetadata = await configResponse.json();
@@ -120,13 +128,12 @@ export default function SynaptomeConfigurationForm({
       });
 
       const sanitizedResource = removeMetadata({
-        ...resource,
+        ...omit(resource, ['@id']),
         '@type': NEXUS_SYNAPTOME_TYPE,
         objectOfStudy: SYNAPTOME_OBJECT_OF_STUDY,
         name: values.name,
         description: values.description,
         seed: values.seed,
-        meModelSelf: resource._self,
         distribution: [createDistribution(fileMetadata, fileMetadata._self)],
       });
 
@@ -137,12 +144,18 @@ export default function SynaptomeConfigurationForm({
       });
 
       if (!resp.ok) {
-        return notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight');
+        return notifyError(
+          CREATE_SYNAPTOME_FAIL,
+          undefined,
+          'topRight',
+          undefined,
+          'synaptome-config'
+        );
       }
       form.resetFields();
       notifySuccess(CREATE_SYNAPTOME_SUCCESS, undefined, 'topRight');
     } catch (error) {
-      notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight');
+      notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight', undefined, 'synaptome-config');
     } finally {
       setLoading(false);
     }
@@ -204,7 +217,7 @@ export default function SynaptomeConfigurationForm({
             onClick={addNewSynapse}
             icon={<PlusOutlined className="text-base" />}
           >
-            Add new Synapse
+            Add new Synapse set
           </Button>
         </div>
         <Form.List name="synapses">

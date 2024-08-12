@@ -44,22 +44,6 @@ export class RemoveSynapses3DEvent extends Event {
   };
 }
 
-export class NeuriteTypesEvent extends Event {
-  constructor(
-    type: string,
-    detail: {
-      types: Array<string>;
-    }
-  ) {
-    super(type);
-    this.detail = detail;
-  }
-
-  detail: {
-    types: Array<string>;
-  };
-}
-
 export function sendDisplaySynapses3DEvent(id: string, mesh: SynapsesMesh) {
   if (mesh) {
     const event = new DisplaySynapses3DEvent(DISPLAY_SYNAPSES_3D_EVENT, {

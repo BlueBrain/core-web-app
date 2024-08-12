@@ -1,15 +1,16 @@
 import { Select, Form } from 'antd';
 import { useAtomValue } from 'jotai';
+import { useMemo } from 'react';
 
-import { SimAction } from '@/types/simulate/single-neuron';
 import { segNamesAtom } from '@/state/simulate/single-neuron';
+import { useRecordingSourceForSimulation } from '@/state/simulate/categories';
 
-type Props = {
-  onChange: (action: SimAction) => void;
-};
-
-export default function Recording({ onChange }: Props) {
+export default function Recording() {
+  const { setSource } = useRecordingSourceForSimulation();
   const segNames = useAtomValue(segNamesAtom);
+  const options = useMemo(() => {
+    return segNames.map((secName) => ({ value: secName, label: secName }));
+  }, [segNames]);
 
   return (
     <Form.Item
@@ -22,14 +23,9 @@ export default function Recording({ onChange }: Props) {
       <Select
         showSearch
         placeholder="Select recording locations"
-        onChange={(newVal) =>
-          onChange({
-            type: 'CHANGE_RECORD_FROM',
-            payload: newVal,
-          })
-        }
+        onChange={setSource}
         mode="multiple"
-        options={segNames.map((secName) => ({ value: secName, label: secName }))}
+        options={options}
       />
     </Form.Item>
   );

@@ -35,6 +35,9 @@ export type MorphSection = {
   diam: number[];
   length: number[];
   distance: number[];
+  neuron_segments_offset: number[];
+  neuron_section_id: number;
+  segment_distance_from_soma: number[];
 };
 
 export type Morphology = {

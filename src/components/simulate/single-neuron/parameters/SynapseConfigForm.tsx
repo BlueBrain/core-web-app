@@ -1,20 +1,15 @@
+import { useAtomValue } from 'jotai';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Card, Form, InputNumber, Select } from 'antd';
-import { SimAction } from '@/types/simulate/single-neuron';
 
-type Props = {
-  onChange: (action: SimAction) => void;
-  onAddSynapseConfig?: () => void;
-  onRemoveSynapseConfig?: (index: number) => void;
-  synapses: string[];
-};
+import { useSynaptomeSimulationConfig } from '@/state/simulate/categories';
+import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
 
-export default function SynapseConfigForm({
-  onRemoveSynapseConfig,
-  onAddSynapseConfig,
-  onChange,
-  synapses,
-}: Props) {
+export default function SynapseConfigForm() {
+  const { newConfig, remove: removeSynapseConfig, setProperty } = useSynaptomeSimulationConfig();
+  const { configuration } = useAtomValue(SynaptomeSimulationInstanceAtom);
+  const synapses = configuration?.synapses.map((s) => s.id);
+
   return (
     <Form.List name="synapses">
       {(fields, { add, remove }) => (
@@ -27,42 +22,41 @@ export default function SynapseConfigForm({
               headStyle={{ background: '#e4e4e4' }}
               key={field.key}
               extra={
-                onRemoveSynapseConfig && (
-                  <DeleteOutlined
-                    className="text-error"
-                    onClick={() => {
-                      remove(field.name);
-                      onRemoveSynapseConfig(field.name);
-                    }}
-                  />
-                )
+                <DeleteOutlined
+                  className="text-error"
+                  onClick={() => {
+                    remove(field.name);
+                    removeSynapseConfig(field.name);
+                  }}
+                />
               }
             >
               <div style={{ display: 'flex', rowGap: 16, flexDirection: 'column' }}>
                 <Form.Item
                   name={[field.name, 'synapseId']}
                   label="Synapse Set"
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, type: 'string' }]}
                   labelAlign="left"
                   className="mb-0"
                 >
                   <Select
                     showSearch
                     placeholder="Select synapse set"
-                    onChange={(newVal) =>
-                      onChange({
-                        type: 'UPDATE_SYNAPSE',
-                        payload: { id: `${field.name}`, key: 'synapseId', value: newVal },
+                    onChange={(newValue) =>
+                      setProperty({
+                        id: `${field.name}`,
+                        key: 'synapseId',
+                        newValue,
                       })
                     }
-                    options={synapses.map((synapse) => ({ value: synapse, label: synapse }))}
+                    options={synapses?.map((synapse) => ({ value: synapse, label: synapse })) ?? []}
                     className="text-left"
                   />
                 </Form.Item>
                 <Form.Item
                   name={[field.name, 'delay']}
                   label="Delay"
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, type: 'number' }]}
                   labelAlign="left"
                   className="mb-0"
                 >
@@ -71,9 +65,10 @@ export default function SynapseConfigForm({
                     className="w-full text-right"
                     type="number"
                     onChange={(newVal) =>
-                      onChange({
-                        type: 'UPDATE_SYNAPSE',
-                        payload: { id: `${field.name}`, key: 'delay', value: newVal ?? 0 },
+                      setProperty({
+                        id: `${field.name}`,
+                        key: 'delay',
+                        newValue: newVal ?? 0,
                       })
                     }
                   />
@@ -82,7 +77,7 @@ export default function SynapseConfigForm({
                 <Form.Item
                   name={[field.name, 'duration']}
                   label="Duration"
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, type: 'number' }]}
                   labelAlign="left"
                   className="mb-0"
                 >
@@ -90,9 +85,10 @@ export default function SynapseConfigForm({
                     addonAfter="ms"
                     className="w-full text-right"
                     onChange={(newVal) =>
-                      onChange({
-                        type: 'UPDATE_SYNAPSE',
-                        payload: { id: `${field.name}`, key: 'duration', value: newVal ?? 0 },
+                      setProperty({
+                        id: `${field.name}`,
+                        key: 'duration',
+                        newValue: newVal ?? 0,
                       })
                     }
                   />
@@ -101,7 +97,7 @@ export default function SynapseConfigForm({
                 <Form.Item
                   name={[field.name, 'frequency']}
                   label="Frequency"
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, type: 'number' }]}
                   labelAlign="left"
                   className="mb-0"
                 >
@@ -109,9 +105,10 @@ export default function SynapseConfigForm({
                     addonAfter="Hz"
                     className="w-full text-right"
                     onChange={(newVal) =>
-                      onChange({
-                        type: 'UPDATE_SYNAPSE',
-                        payload: { id: `${field.name}`, key: 'frequency', value: newVal ?? 0 },
+                      setProperty({
+                        id: `${field.name}`,
+                        key: 'frequency',
+                        newValue: newVal ?? 0,
                       })
                     }
                   />
@@ -120,16 +117,17 @@ export default function SynapseConfigForm({
                 <Form.Item
                   name={[field.name, 'weightScalar']}
                   label="Weight Scalar"
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, type: 'number' }]}
                   labelAlign="left"
                   className="mb-0"
                 >
                   <InputNumber<number>
                     className="w-full text-right"
                     onChange={(newVal) =>
-                      onChange({
-                        type: 'UPDATE_SYNAPSE',
-                        payload: { id: `${field.name}`, key: 'weightScalar', value: newVal ?? 0 },
+                      setProperty({
+                        id: `${field.name}`,
+                        key: 'weightScalar',
+                        newValue: newVal ?? 0,
                       })
                     }
                   />
@@ -137,18 +135,18 @@ export default function SynapseConfigForm({
               </div>
             </Card>
           ))}
-          {onAddSynapseConfig && (
-            <Button
-              className="m-2 ml-auto w-max bg-green-600 text-white"
-              type="primary"
-              onClick={() => {
-                add();
-                onAddSynapseConfig();
-              }}
-            >
-              + Add Synapse Configuration
-            </Button>
-          )}
+          <Button
+            className="m-2 ml-auto w-max bg-green-600 text-white"
+            type="primary"
+            onClick={() => {
+              add();
+              if (configuration?.synapses) {
+                newConfig(configuration.synapses);
+              }
+            }}
+          >
+            + Add Synapse Configuration
+          </Button>
         </div>
       )}
     </Form.List>

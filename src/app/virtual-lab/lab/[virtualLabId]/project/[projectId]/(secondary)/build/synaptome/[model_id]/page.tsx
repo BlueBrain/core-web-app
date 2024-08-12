@@ -10,7 +10,8 @@ import {
   NeuronModelView,
   SynaptomeConfigurationForm,
 } from '@/components/build-section/virtual-lab/synaptome';
-import { useMeModel } from '@/hooks/useMeModel';
+import { MEModelResource } from '@/types/me-model';
+import { useModel } from '@/hooks/useModel';
 
 type Props = {
   params: {
@@ -21,7 +22,7 @@ type Props = {
 
 function Synaptome({ params }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { loading, resource } = useMeModel({ modelId: id });
+  const { loading, resource } = useModel<MEModelResource>({ modelId: id });
   if (loading || !resource) {
     return <Spin indicator={<LoadingOutlined />} />;
   }

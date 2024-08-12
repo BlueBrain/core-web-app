@@ -29,6 +29,7 @@ function ModalContent({ onClose, modelSelfUrl, projectId, vLabId }: Props) {
     await createSingleNeuronSimulation(title, description, modelSelfUrl, vLabId, projectId);
     successNotify('Simulation saved!');
     setIsSaving(false);
+    onClose();
   };
 
   const [form] = Form.useForm();

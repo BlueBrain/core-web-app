@@ -2,18 +2,18 @@ import {
   ConditionalStimulusParamsTypes,
   FunctionParameterNumber,
   StimulusDropdownInfo,
-  StimulusTypeDropdownOptionType,
-  StimulusModuleDropdownOptionType,
-  SimConfig,
+  StimulusTypeOption,
+  StimulusModuleOption,
+  SimulationConfiguration,
   StimulusConfig,
-  SynapsesConfig,
   DirectSimulationConfig,
-} from '@/types/simulate/single-neuron';
+  SynapseConfig,
+} from '@/types/simulation/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
-import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
+import { SingleSynaptomeConfig } from '@/types/synaptome';
 
 export const stimulusTypeParams: StimulusDropdownInfo & {
-  options: StimulusTypeDropdownOptionType[];
+  options: StimulusTypeOption[];
 } = {
   name: 'Type',
   value: 'current_clamp',
@@ -26,7 +26,7 @@ export const stimulusTypeParams: StimulusDropdownInfo & {
 
 // taken from https://github.com/BlueBrain/BlueCelluLab/blob/main/bluecellulab/stimulus/factory.py#L311
 export const stimulusModuleParams: StimulusDropdownInfo & {
-  options: StimulusModuleDropdownOptionType[];
+  options: StimulusModuleOption[];
 } = {
   name: 'Protocol',
   value: 'step',
@@ -111,21 +111,24 @@ export const DEFAULT_DIRECT_STIM_CONFIG: DirectSimulationConfig = {
   stimulus: DEFAULT_STIM_CONFIG,
 };
 
-export const DEFAULT_SIM_CONFIG: SimConfig = {
+export const DEFAULT_SIM_CONFIG: SimulationConfiguration = {
   recordFrom: ['soma[0]_0'],
   directStimulation: [DEFAULT_DIRECT_STIM_CONFIG],
   synapses: null,
 };
 
-export const getDefaultSynapsesConfig = (model: SynaptomeModelResource): SynapsesConfig | null => {
-  return [
-    {
+export const getDefaultSynapseConfig = (
+  synapsePlacementConfig?: SingleSynaptomeConfig[]
+): SynapseConfig | null => {
+  if (synapsePlacementConfig) {
+    return {
       id: '0',
-      synapseId: model.synapses[0].id,
+      synapseId: synapsePlacementConfig[0].id,
       delay: 100,
       duration: 2000,
       frequency: 20,
       weightScalar: 2,
-    },
-  ];
+    };
+  }
+  return null;
 };

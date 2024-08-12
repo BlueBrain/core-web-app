@@ -14,6 +14,7 @@ type Props = {
   title?: string;
   loading?: boolean;
   href?: string;
+  htmlType?: 'button' | 'submit';
 };
 
 export default function GenericButton({
@@ -24,6 +25,7 @@ export default function GenericButton({
   title = '',
   loading = false,
   href = '',
+  htmlType = 'button',
 }: Props) {
   const conditionalStyles = [
     className.includes('border-') ? 'border' : 'border-transparent',
@@ -44,6 +46,7 @@ export default function GenericButton({
       loading={loading}
       type={href ? 'link' : 'default'}
       href={href ? getUrl() : undefined}
+      htmlType={htmlType}
     >
       {text}
     </Button>

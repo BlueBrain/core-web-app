@@ -1,11 +1,13 @@
 import { useCallback, useRef } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 
-import Renderer from '@/services/bluenaas-single-cell/renderer';
 import { Morphology, SecMarkerConfig } from '@/services/bluenaas-single-cell/types';
-import { secNamesAtom, segNamesAtom, simulationConfigAtom } from '@/state/simulate/single-neuron';
+import { secNamesAtom, segNamesAtom } from '@/state/simulate/single-neuron';
 import { DEFAULT_DIRECT_STIM_CONFIG, DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
-import { useMorphology } from '@/components/build-section/virtual-lab/synaptome/NeuronModelView';
+import { recordingSourceForSimulationAtom } from '@/state/simulate/categories/recording-source-for-simulation';
+import { directCurrentInjectionSimulationConfigAtom } from '@/state/simulate/categories/direct-current-injection-simulation';
+import Renderer from '@/services/bluenaas-single-cell/renderer';
+import useMorphology from '@/hooks/useMorphology';
 
 type Props = {
   modelSelfUrl: string;
@@ -17,18 +19,19 @@ export default function NeuronModelViewer({ modelSelfUrl }: Props) {
 
   const setSecNames = useSetAtom(secNamesAtom);
   const setSegNames = useSetAtom(segNamesAtom);
-  const simConfig = useAtomValue(simulationConfigAtom);
+  const recordFrom = useAtomValue(recordingSourceForSimulationAtom);
+  const directStimulation = useAtomValue(directCurrentInjectionSimulationConfigAtom);
 
   const ensureSecMarkers = useCallback(() => {
     rendererRef.current?.ensureSecMarkers([
-      { type: 'stimulus', secName: simConfig.directStimulation![0].injectTo }, // TODO: directStimulation should not be hard coded.
-      ...simConfig.recordFrom.map<SecMarkerConfig>((segName) => ({
+      { type: 'stimulus', secName: directStimulation![0].injectTo }, // TODO: directStimulation should not be hard coded.
+      ...recordFrom.map<SecMarkerConfig>((segName) => ({
         type: 'recording',
         secName: segName.replace(/_.*/, ''),
         segIdx: parseInt(segName.match(/_(\d+)$/)?.[1] ?? '0', 10),
       })),
     ]);
-  }, [rendererRef, simConfig.directStimulation, simConfig.recordFrom]);
+  }, [directStimulation, recordFrom]);
 
   const setSectionsAndSegments = useCallback(
     (morphology: Morphology) => {

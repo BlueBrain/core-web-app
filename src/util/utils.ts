@@ -240,7 +240,7 @@ export const getZodErrorPath = ({ issues }: ZodError) => {
  */
 export function isJSON(str: any) {
   try {
-    return JSON.parse(JSON.stringify(str)) && !!str;
+    return JSON.parse(str) && !!str;
   } catch (e) {
     return false;
   }

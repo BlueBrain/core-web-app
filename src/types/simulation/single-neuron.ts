@@ -4,26 +4,15 @@ import { MEModelResource } from '../me-model';
 import { DataType } from '@/constants/explore-section/list-views';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 
-export type SimulateStep =
-  | 'stimulation'
-  | 'recording'
-  | 'conditions'
-  | 'analysis'
-  | 'visualization'
-  | 'results';
-
-// ------------------ Stimulation protocols types ------------------
-
 export type StimulusType = 'current_clamp' | 'voltage_clamp' | 'conductance';
-
 export type StimulusModule = 'ap_waveform' | 'idrest' | 'iv' | 'fire_pattern';
 
-export type StimulusTypeDropdownOptionType = {
+export type StimulusTypeOption = {
   label: string;
   value: StimulusType;
 };
 
-export type StimulusModuleDropdownOptionType = {
+export type StimulusModuleOption = {
   label: string;
   value: StimulusModule;
   usedBy: StimulusType[];
@@ -57,7 +46,7 @@ export type StimulusDropdownInfo = {
 
 export type SynapsesConfig = SynapseConfig[];
 
-export interface SimConfig {
+export interface SimulationConfiguration {
   recordFrom: string[];
   directStimulation: null | DirectSimulationConfig[];
   synapses: null | SynapsesConfig;
@@ -81,61 +70,26 @@ export type SynapseConfig = {
   weightScalar: number;
 };
 
-export type SingleModelSimConfig = SimConfig & {
+export type SingleModelSimConfig = SimulationConfiguration & {
   directStimulation: DirectSimulationConfig[];
   synapses: null;
 };
 
-export type SynapseModelSimConfig = SimConfig & {
+export type SynapseModelSimConfig = SimulationConfiguration & {
   synapses: SynapsesConfig;
 };
-
-export function isSingleModelSimConfig(
-  config: SimConfig | SingleModelSimConfig
-): config is SingleModelSimConfig {
-  return !!config.directStimulation;
-}
-
-export function isSynapseModelSimConfig(config: SimConfig): config is SynapseModelSimConfig {
-  return !!config.synapses;
-}
 
 export type StimulusConfig = {
   stimulusType: StimulusType;
   stimulusProtocol: StimulusModule | null;
-  stimulusProtocolInfo: StimulusModuleDropdownOptionType | null;
-  stimulusProtocolOptions: StimulusModuleDropdownOptionType[];
+  stimulusProtocolInfo: StimulusModuleOption | null;
+  stimulusProtocolOptions: StimulusModuleOption[];
   paramInfo: StimulusParameter;
   paramValues: Record<string, number | null>;
   amplitudes: number[];
 };
 
-export type SimAction =
-  | { type: 'CHANGE_STIMULATION_TYPE'; payload: { stimulationId: string; value: StimulusType } }
-  | { type: 'CHANGE_PROTOCOL'; payload: { stimulationId: string; value: StimulusModule } }
-  | {
-      type: 'CHANGE_STIM_PARAM';
-      payload: { stimulationId: string; key: keyof StimulusParameter; value: number | null };
-    }
-  | {
-      type: 'CHANGE_DIRECT_STIM_PROPERTY';
-      payload: { stimulationId: string; key: keyof DirectSimulationConfig; value: unknown };
-    }
-  | { type: 'CHANGE_AMPLITUDES'; payload: { stimulationId: string; value: number[] } }
-  | { type: 'CHANGE_RECORD_FROM'; payload: string[] }
-  | {
-      type: 'UPDATE_SYNAPSE';
-      payload: { id: string; key: keyof SynapseConfig; value: number };
-    }
-  | { type: 'SET_ONLY_STIMULUS'; payload: undefined }
-  | { type: 'SET_ONLY_SYNAPSES'; payload: SynapsesConfig }
-  | { type: 'SET_STIMULUS_AND_SYNAPSES'; payload: SynapsesConfig }
-  | { type: 'ADD_SYNAPSE'; payload: SynapseConfig }
-  | { type: 'REMOVE_SYNAPSE'; payload: { id: number } }
-  | { type: 'ADD_STIMULATION_CONFIG'; payload: undefined }
-  | { type: 'REMOVE_STIMULATION_CONFIG'; payload: { stimulationId: number } };
-
-export interface SingleModelSimulationConfig {
+export interface SingleNeuronModelSimulationConfig {
   celsius: number;
   hypamp: number;
   vinit: number;
@@ -145,7 +99,7 @@ export interface SingleModelSimulationConfig {
 }
 
 export interface SingleNeuronSimulationPayload {
-  config: SingleModelSimulationConfig;
+  config: SingleNeuronModelSimulationConfig;
   simulationResult: PlotData;
   stimuliPreviewData: PlotData;
 }
@@ -156,7 +110,7 @@ export type SelectedSingleNeuronModel = {
   source: ExploreResource;
 };
 
-export type SelectedSynaptomModel = SelectedSingleNeuronModel & {
+export type SelectedSynaptomeModel = SelectedSingleNeuronModel & {
   source: MEModelSynaptome;
 };
 
@@ -166,25 +120,9 @@ export const isSynaptomModel = (model: ModelResource | null): model is Synaptome
   if (!model) {
     return false;
   }
+
   const type = Array.isArray(model['@type']) ? model['@type'] : [model['@type']];
-  return type.includes(DataType.SingleNeuronSynaptome) && 'synapses' in model;
+  return type.includes(DataType.SingleNeuronSynaptome) && 'distribution' in model;
 };
 
 export type RunSimulationRequestBody = DirectSimulationConfig & { recordFrom: string[] };
-
-export type ResponsePlotData = {
-  t: number[];
-  v: number[];
-  name: string;
-};
-
-export type StimuliPlotRequest = {
-  stimulusProtocol: StimulusModule;
-  amplitudes: number[];
-};
-
-export type StimuliPlotResponse = {
-  x: number[];
-  y: number[];
-  name: string;
-};

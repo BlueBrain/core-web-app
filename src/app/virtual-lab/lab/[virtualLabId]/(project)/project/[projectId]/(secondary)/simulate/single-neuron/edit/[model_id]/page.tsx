@@ -2,10 +2,18 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import { Title, StepTabs, Visualization, ParameterView } from '@/components/simulate/single-neuron';
-import LaunchButton from '@/components/simulate/single-neuron/parameters/LaunchButton';
+
+import { ParameterView } from '@/components/simulate/single-neuron';
+import { useModel } from '@/hooks/useModel';
+import { ModelResource, SimulationConfiguration } from '@/types/simulation/single-neuron';
+import { DEFAULT_RECORD_SOURCE } from '@/state/simulate/categories/recording-source-for-simulation';
+import { DEFAULT_DIRECT_STIM_CONFIG } from '@/constants/simulate/single-neuron';
+import { NeuronModelView } from '@/components/build-section/virtual-lab/synaptome';
+
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
-import { useMeModel } from '@/hooks/useMeModel';
+import Stimulation from '@/components/simulate/single-neuron/parameters/Stimulation';
+import Wrapper from '@/components/simulate/single-neuron/Wrapper';
 
 type Props = {
   params: {
@@ -14,31 +22,46 @@ type Props = {
   };
 };
 
-export default function VirtualLabSimulationPage({ params }: Props) {
+function MorphologyViewer({ modelUrl }: { modelUrl?: string }) {
+  if (!modelUrl) return null;
+
+  return (
+    <DefaultLoadingSuspense>
+      <NeuronModelView modelSelfUrl={modelUrl} />
+    </DefaultLoadingSuspense>
+  );
+}
+
+export default function SingleNeuronSimulation({ params: { projectId, virtualLabId } }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { resource, loading } = useMeModel({ modelId: id });
+  const { resource, loading } = useModel<ModelResource>({ modelId: id });
+
+  const initialValues: SimulationConfiguration = {
+    recordFrom: [DEFAULT_RECORD_SOURCE],
+    directStimulation: [DEFAULT_DIRECT_STIM_CONFIG],
+    synapses: null,
+  };
 
   if (loading || !resource) {
-    return <Spin indicator={<LoadingOutlined />} />;
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+        <Spin indicator={<LoadingOutlined />} />
+        <h2 className="font-bold text-primary-9">Loading Configuration</h2>
+      </div>
+    );
   }
 
   return (
-    <>
-      <Title />
-      <StepTabs />
-      <div className="flex h-[calc(100vh-72px)]">
-        <div className="flex w-1/2 items-center justify-center bg-black">
-          <Visualization resource={resource} />
-        </div>
-        <div className="flex w-1/2">
-          <ParameterView resource={resource} />
-        </div>
-      </div>
-      <LaunchButton
-        modelSelfUrl={resource._self}
-        projectId={params.projectId}
-        vLabId={params.virtualLabId}
-      />
-    </>
+    <Wrapper viewer={<MorphologyViewer modelUrl={resource._self} />}>
+      <ParameterView
+        initialValues={initialValues}
+        vlabId={virtualLabId}
+        projectId={projectId}
+        simResourceSelf={resource._self}
+        type="single-neuron-simulation"
+      >
+        <Stimulation modelSelfUrl={resource._self} />
+      </ParameterView>
+    </Wrapper>
   );
 }
