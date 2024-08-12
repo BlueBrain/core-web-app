@@ -1,49 +1,34 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { Steps } from 'antd';
 
-import { simulateStepAtom } from '@/state/simulate/single-neuron';
-import { SimulateStep } from '@/types/simulate/single-neuron';
-import { classNames } from '@/util/utils';
-
-const steps: SimulateStep[] = [
-  'stimulation',
-  'recording',
-  'conditions',
-  'analysis',
-  'visualization',
-  'results',
-];
+import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
 
 export default function StepTabs() {
-  const [simulateStep, setSimulateStep] = useAtom(simulateStepAtom);
+  const [{ steps, current: currentStep }, updateSimulationStep] = useAtom(simulateStepTrackerAtom);
+  const newCurrentStep = steps.findIndex((o) => o.title === currentStep?.title);
 
-  const handleClick = (step: SimulateStep) => {
-    setSimulateStep(step);
-  };
-
-  const getStyle = (step: SimulateStep) => {
-    const selectedOrNotStyle =
-      step === simulateStep
-        ? 'bg-primary-8 text-white font-bold'
-        : 'bg-white text-neutral-4 font-light';
-
-    const commonTabStyle = 'flex-grow border border-l-0 border-neural-2 capitalize';
-    return classNames(selectedOrNotStyle, commonTabStyle);
+  const onChange = (index: number) => {
+    const current = steps.find((o, i) => i === index)!;
+    updateSimulationStep({
+      steps,
+      current,
+    });
   };
 
   return (
-    <div className="flex h-[36px]">
-      {steps.map((step) => (
-        <button
-          type="button"
-          onClick={() => handleClick(step)}
-          key={step}
-          className={getStyle(step)}
-        >
-          {step}
-        </button>
-      ))}
-    </div>
+    <Steps
+      responsive
+      type="navigation"
+      className="my-1 px-1 [&_.ant-steps-item-active]:before:!hidden [&_.ant-steps-item-title]:capitalize"
+      size="default"
+      current={newCurrentStep}
+      onChange={onChange}
+      items={steps.map(({ title, status }) => ({
+        title,
+        status,
+      }))}
+    />
   );
 }

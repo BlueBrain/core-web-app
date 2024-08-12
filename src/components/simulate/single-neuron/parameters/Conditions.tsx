@@ -1,13 +1,14 @@
 import { Form, InputNumber } from 'antd';
 
-import { SimAction } from '@/types/simulate/single-neuron';
+import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 
 type Props = {
-  onChange: (action: SimAction) => void;
   stimulationId: number;
 };
 
-export default function Conditions({ onChange, stimulationId }: Props) {
+export default function Conditions({ stimulationId }: Props) {
+  const { setProperty } = useDirectCurrentInjectionSimulationConfig();
+
   return (
     <div className="flex gap-6">
       <Form.Item
@@ -20,10 +21,11 @@ export default function Conditions({ onChange, stimulationId }: Props) {
           className="w-full"
           min={20}
           max={40}
-          onChange={(newVal) =>
-            onChange({
-              type: 'CHANGE_DIRECT_STIM_PROPERTY',
-              payload: { key: 'celsius', value: newVal, stimulationId: '0' },
+          onChange={(newValue) =>
+            setProperty({
+              id: '0',
+              key: 'celsius',
+              newValue,
             })
           }
         />
@@ -38,15 +40,15 @@ export default function Conditions({ onChange, stimulationId }: Props) {
           className="w-full"
           min={-100}
           max={100}
-          onChange={(newVal) =>
-            onChange({
-              type: 'CHANGE_DIRECT_STIM_PROPERTY',
-              payload: { key: 'vinit', value: newVal, stimulationId: '0' },
+          onChange={(newValue) =>
+            setProperty({
+              id: '0',
+              key: 'vinit',
+              newValue,
             })
           }
         />
       </Form.Item>
-
       <Form.Item
         name={['directStimulation', stimulationId, 'hypamp']}
         label="Holding current"
@@ -57,10 +59,11 @@ export default function Conditions({ onChange, stimulationId }: Props) {
           className="w-full"
           min={-10}
           max={10}
-          onChange={(newVal) =>
-            onChange({
-              type: 'CHANGE_DIRECT_STIM_PROPERTY',
-              payload: { key: 'hypamp', value: newVal, stimulationId: '0' },
+          onChange={(newValue) =>
+            setProperty({
+              id: '0',
+              key: 'hypamp',
+              newValue,
             })
           }
         />

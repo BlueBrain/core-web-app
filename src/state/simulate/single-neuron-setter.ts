@@ -2,11 +2,13 @@ import { atom } from 'jotai';
 import throttle from 'lodash/throttle';
 
 import {
-  simulateStepAtom,
-  simulationConfigAtom,
+  simulateStepTrackerAtom,
   simulationPlotDataAtom,
   simulationStatusAtom,
 } from './single-neuron';
+import { directCurrentInjectionSimulationConfigAtom } from './categories/direct-current-injection-simulation';
+import { synaptomeSimulationConfigAtom } from './categories/synaptome-simulation-config';
+import { recordingSourceForSimulationAtom } from './categories/recording-source-for-simulation';
 import {
   EntityCreation,
   SingleNeuronSimulation,
@@ -19,11 +21,14 @@ import { PlotData, TraceData } from '@/services/bluenaas-single-cell/types';
 import { EModel } from '@/types/e-model';
 import { MEModel } from '@/types/me-model';
 import {
-  ResponsePlotData,
-  SingleModelSimulationConfig,
+  SingleNeuronModelSimulationConfig,
   SingleNeuronSimulationPayload,
-} from '@/types/simulate/single-neuron';
-import { runSimulation } from '@/api/simulation/single-neuron';
+} from '@/types/simulation/single-neuron';
+import { runSynaptomeSimulation, runSingleNeuronSimulation } from '@/api/bluenaas';
+import { SimulationType } from '@/types/simulation/common';
+import { isJSON } from '@/util/utils';
+import { getSession } from '@/authFetch';
+import { SimulationPlotResponse } from '@/types/simulation/graph';
 
 export const createSingleNeuronSimulationAtom = atom<
   null,
@@ -31,20 +36,21 @@ export const createSingleNeuronSimulationAtom = atom<
   Promise<SingleNeuronSimulationResource | null>
 >(null, async (get, set, name, description, modelSelfUrl, vLabId, projectId) => {
   const session = get(sessionAtom);
-  const simulationConfig = get(simulationConfigAtom);
+  const directStimulation = get(directCurrentInjectionSimulationConfigAtom);
+  const recordFrom = get(recordingSourceForSimulationAtom);
   const simulationResults = get(simulationPlotDataAtom);
   const singleNeuronId = getIdFromSelfUrl(modelSelfUrl);
 
-  if (!session || !simulationConfig || !simulationResults || !singleNeuronId) return null;
+  if (!session || !directStimulation || !simulationResults || !singleNeuronId) return null;
 
   // TODO: Remove `singleNeuronSimulationConfig` and use `simulationConfig` directly once backend is updated to accept this type
-  const singleNeuronSimulationConfig: SingleModelSimulationConfig = {
-    recordFrom: [...simulationConfig.recordFrom],
-    celsius: simulationConfig.directStimulation![0].celsius,
-    hypamp: simulationConfig.directStimulation![0].hypamp,
-    vinit: simulationConfig.directStimulation![0].vinit,
-    injectTo: simulationConfig.directStimulation![0].injectTo,
-    stimulus: simulationConfig.directStimulation![0].stimulus,
+  const singleNeuronSimulationConfig: SingleNeuronModelSimulationConfig = {
+    recordFrom,
+    celsius: directStimulation![0].celsius,
+    hypamp: directStimulation![0].hypamp,
+    vinit: directStimulation![0].vinit,
+    injectTo: directStimulation![0].injectTo,
+    stimulus: directStimulation![0].stimulus,
   };
 
   const resource = await fetchResourceById<EModel | MEModel>(singleNeuronId, session);
@@ -89,33 +95,39 @@ export const createSingleNeuronSimulationAtom = atom<
   return createResource<SingleNeuronSimulationResource>(entity, session, resourceUrl);
 });
 
-function isJSON(str: any) {
-  try {
-    JSON.parse(str);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-export const launchSimulationAtom = atom<null, [string], void>(
+export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
   null,
-  async (get, set, model_self_url: string) => {
-    const session = get(sessionAtom);
+  async (get, set, modelSelfUrl: string, simulationType: SimulationType) => {
+    const session = await getSession();
     if (!session?.accessToken) {
       throw new Error('Session token should be valid');
     }
-    const simulationConfig = get(simulationConfigAtom);
+    const directStimulation = get(directCurrentInjectionSimulationConfigAtom);
+    const synapses = get(synaptomeSimulationConfigAtom);
+    const recordFrom = get(recordingSourceForSimulationAtom);
 
-    if (!simulationConfig.directStimulation) {
-      throw new Error(
-        'Cannot run simulation without valid configuration for direct current injection'
-      );
+    if (simulationType === 'single-neuron-simulation') {
+      if (!directStimulation) {
+        throw new Error(
+          'Cannot run simulation without valid configuration for direct current injection'
+        );
+      }
+    } else if (simulationType === 'synaptome-simulation') {
+      if (!directStimulation || !directStimulation.length) {
+        throw new Error(
+          'Cannot run simulation without valid configuration for direct current injection'
+        );
+      }
+      if (!synapses || !synapses.length) {
+        throw new Error('Cannot run simulation without valid configuration for synapses');
+      }
     }
 
-    const simulationStatus = get(simulationStatusAtom);
-    set(simulationStatusAtom, { ...simulationStatus, launched: true });
-    set(simulateStepAtom, 'results');
+    set(simulationStatusAtom, { status: 'launched' });
+    set(simulateStepTrackerAtom, {
+      steps: get(simulateStepTrackerAtom).steps,
+      current: { title: 'results' },
+    });
     const initialPlotData: PlotData = [
       {
         x: [0],
@@ -125,12 +137,6 @@ export const launchSimulationAtom = atom<null, [string], void>(
       },
     ];
     set(simulationPlotDataAtom, initialPlotData);
-
-    const partialSimData = await runSimulation(model_self_url, session?.accessToken!, {
-      ...simulationConfig.directStimulation[0],
-      recordFrom: simulationConfig.recordFrom,
-    });
-
     const onTraceData = throttle((data: TraceData) => {
       const updatedPlotData: PlotData = data.map((entry) => ({
         x: entry.t,
@@ -141,31 +147,63 @@ export const launchSimulationAtom = atom<null, [string], void>(
       set(simulationPlotDataAtom, updatedPlotData);
     }, 100);
 
-    const reader = partialSimData.body?.getReader();
-    let data: string = '';
-    const traceData: TraceData = [];
-    let value: Uint8Array | undefined;
-    let done: boolean = false;
-    const decoder = new TextDecoder();
+    try {
+      const partialSimData =
+        simulationType === 'synaptome-simulation' && synapses
+          ? await runSynaptomeSimulation(
+              modelSelfUrl,
+              session?.accessToken,
+              {
+                ...directStimulation[0],
+                recordFrom,
+              },
+              synapses
+            )
+          : await runSingleNeuronSimulation(modelSelfUrl, session?.accessToken!, {
+              ...directStimulation[0],
+              recordFrom,
+            });
 
-    if (reader) {
-      while (!done) {
-        ({ done, value } = await reader.read());
-        const decodedChunk = decoder.decode(value, { stream: true });
-        data += decodedChunk;
-        if (isJSON(data)) {
-          const partialData: ResponsePlotData = JSON.parse(data);
-          traceData.push({ t: partialData.t, v: partialData.v, label: partialData.name });
-          onTraceData(traceData);
-          data = '';
-        }
+      if (!partialSimData.ok) {
+        const error = await partialSimData.json();
+        set(simulationStatusAtom, {
+          status: 'error',
+          description: JSON.stringify(error),
+        });
+        set(simulateStepTrackerAtom, {
+          steps: get(simulateStepTrackerAtom).steps,
+          current: { title: 'stimulation' },
+        });
+        return;
       }
-      set(simulationDoneAtom);
+
+      const reader = partialSimData.body?.getReader();
+      let data: string = '';
+      const traceData: TraceData = [];
+      let value: Uint8Array | undefined;
+      let done: boolean = false;
+      const decoder = new TextDecoder();
+
+      if (reader) {
+        while (!done) {
+          ({ done, value } = await reader.read());
+          const decodedChunk = decoder.decode(value, { stream: true });
+          data += decodedChunk;
+          if (isJSON(data)) {
+            const partialData: SimulationPlotResponse = JSON.parse(data);
+            traceData.push({ t: partialData.t, v: partialData.v, label: partialData.name });
+            onTraceData(traceData);
+            data = '';
+          }
+        }
+        set(simulationStatusAtom, { status: 'finished' });
+      }
+    } catch (error) {
+      set(simulationStatusAtom, { status: 'error', description: JSON.stringify(error) });
+      set(simulateStepTrackerAtom, {
+        steps: get(simulateStepTrackerAtom).steps,
+        current: { title: 'stimulation' },
+      });
     }
   }
 );
-
-export const simulationDoneAtom = atom(null, (get, set) => {
-  const simulationStatus = get(simulationStatusAtom);
-  set(simulationStatusAtom, { ...simulationStatus, finished: true });
-});

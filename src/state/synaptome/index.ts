@@ -22,6 +22,7 @@ export type SectionSynapses = {
 
 type SectionSynapsesWith3D = {
   sectionSynapses: Array<SectionSynapses>;
+  count?: number;
   meshId?: string;
 };
 

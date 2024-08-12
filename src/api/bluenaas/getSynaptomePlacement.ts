@@ -14,7 +14,7 @@ export default async function getSynapsesPlacement({
 }) {
   const session = await getSession();
   const response = await fetch(
-    `${blueNaasUrl}/morphology/synapses?model_id=${encodeURIComponent(modelId)}`,
+    `${blueNaasUrl}/synaptome/generate-placement?model_id=${encodeURIComponent(modelId)}`,
     {
       method: 'post',
       headers: createHeaders(session.accessToken),

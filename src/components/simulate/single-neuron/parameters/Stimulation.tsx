@@ -2,37 +2,29 @@ import { Select, Form, InputNumber, Card, Button } from 'antd';
 import { useAtomValue } from 'jotai';
 import { DeleteOutlined } from '@ant-design/icons';
 
-import AmperageRangeComponent from './AmperageRangeComponent';
-import { SimAction, SingleModelSimConfig } from '@/types/simulate/single-neuron';
+import AmperageRangeComponent from './AmperageRange';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { stimulusTypeParams } from '@/constants/simulate/single-neuron';
+import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 
 type Props = {
-  onChange: (action: SimAction) => void;
-  simConfig: SingleModelSimConfig;
-  onAddDirectStimConfig?: () => void;
-  onRemoveDirectStimConfig?: (index: number) => void;
   modelSelfUrl: string;
 };
 
 type FormItemProps = {
-  onChange: (action: SimAction) => void;
   stimulationId: number;
 };
 
 type FormItemPropsWithConfig = {
-  onChange: (action: SimAction) => void;
   stimulationId: number;
-  simConfig: SingleModelSimConfig;
 };
 
-export default function Stimulation({
-  onChange,
-  simConfig,
-  onAddDirectStimConfig,
-  onRemoveDirectStimConfig,
-  modelSelfUrl,
-}: Props) {
+export default function Stimulation({ modelSelfUrl }: Props) {
+  const {
+    add: addNewDirectConfig,
+    remove: removeDirectConfig,
+    state,
+  } = useDirectCurrentInjectionSimulationConfig();
   return (
     <Form.List name="directStimulation">
       {(fields, { add, remove }) => (
@@ -45,53 +37,46 @@ export default function Stimulation({
               headStyle={{ background: '#e4e4e4' }}
               key={field.key}
               extra={
-                onRemoveDirectStimConfig && (
-                  <DeleteOutlined
-                    className="text-error"
-                    onClick={() => {
-                      remove(field.name);
-                      onRemoveDirectStimConfig(field.name);
-                    }}
-                  />
-                )
+                <DeleteOutlined
+                  className="text-error"
+                  onClick={() => {
+                    remove(field.name);
+                    removeDirectConfig(field.name);
+                  }}
+                />
               }
             >
-              <StimulusLocation onChange={onChange} stimulationId={field.name} />
-              <StimulationMode onChange={onChange} stimulationId={field.name} />
-              <StimulationProtocol
-                onChange={onChange}
-                simConfig={simConfig}
-                stimulationId={field.name}
-              />
-              <Parameters onChange={onChange} simConfig={simConfig} stimulationId={field.name} />
+              <StimulusLocation stimulationId={field.name} />
+              <StimulationMode stimulationId={field.name} />
+              <StimulationProtocol stimulationId={field.name} />
+              <Parameters stimulationId={field.name} />
               <AmperageRangeComponent
                 stimulationId={field.name}
-                onChange={onChange}
-                amplitudes={simConfig.directStimulation[field.name].stimulus.amplitudes}
+                amplitudes={state[field.name].stimulus.amplitudes}
                 modelSelfUrl={modelSelfUrl}
               />
             </Card>
           ))}
 
-          {onAddDirectStimConfig && (
-            <Button
-              className="m-2 ml-auto w-max bg-green-600 text-white"
-              type="primary"
-              onClick={() => {
-                add();
-                onAddDirectStimConfig();
-              }}
-            >
-              + Add Direct Current Configuration
-            </Button>
-          )}
+          <Button
+            className="m-2 ml-auto w-max bg-green-600 text-white"
+            type="primary"
+            onClick={() => {
+              add();
+              addNewDirectConfig();
+            }}
+          >
+            + Add Direct Current Configuration
+          </Button>
         </div>
       )}
     </Form.List>
   );
 }
 
-function StimulusLocation({ onChange, stimulationId }: FormItemProps) {
+function StimulusLocation({ stimulationId }: FormItemProps) {
+  const { setProperty } = useDirectCurrentInjectionSimulationConfig();
+
   const secNames = useAtomValue(secNamesAtom);
   return (
     <Form.Item
@@ -104,10 +89,11 @@ function StimulusLocation({ onChange, stimulationId }: FormItemProps) {
       <Select
         showSearch
         placeholder="Select stimulus location"
-        onChange={(newVal) =>
-          onChange({
-            type: 'CHANGE_DIRECT_STIM_PROPERTY',
-            payload: { key: 'injectTo', value: newVal, stimulationId: `${stimulationId}` },
+        onChange={(newValue) =>
+          setProperty({
+            id: `${stimulationId}`,
+            key: 'injectTo',
+            newValue,
           })
         }
         options={secNames.map((secName) => ({ value: secName, label: secName }))}
@@ -117,9 +103,9 @@ function StimulusLocation({ onChange, stimulationId }: FormItemProps) {
   );
 }
 
-function StimulationMode({ onChange, stimulationId }: FormItemProps) {
+function StimulationMode({ stimulationId }: FormItemProps) {
   const stimulusModeClone = structuredClone(stimulusTypeParams);
-
+  const { setMode } = useDirectCurrentInjectionSimulationConfig();
   return (
     <Form.Item
       name={[stimulationId, 'stimulus', 'stimulusType']}
@@ -130,10 +116,10 @@ function StimulationMode({ onChange, stimulationId }: FormItemProps) {
     >
       <Select
         options={[...stimulusModeClone.options]}
-        onSelect={(newVal) =>
-          onChange({
-            type: 'CHANGE_STIMULATION_TYPE',
-            payload: { stimulationId: `${stimulationId}`, value: newVal },
+        onSelect={(newValue) =>
+          setMode({
+            id: `${stimulationId}`,
+            newValue,
           })
         }
         className="text-left"
@@ -142,7 +128,8 @@ function StimulationMode({ onChange, stimulationId }: FormItemProps) {
   );
 }
 
-function StimulationProtocol({ onChange, simConfig, stimulationId }: FormItemPropsWithConfig) {
+function StimulationProtocol({ stimulationId }: FormItemPropsWithConfig) {
+  const { setProtocol, state } = useDirectCurrentInjectionSimulationConfig();
   return (
     <Form.Item
       name={[stimulationId, 'stimulus', 'stimulusProtocol']}
@@ -153,11 +140,11 @@ function StimulationProtocol({ onChange, simConfig, stimulationId }: FormItemPro
     >
       <Select
         placeholder="Select stimulus protocol"
-        options={simConfig.directStimulation[stimulationId].stimulus.stimulusProtocolOptions}
-        onSelect={(newVal) => {
-          onChange({
-            type: 'CHANGE_PROTOCOL',
-            payload: { stimulationId: `${stimulationId}`, value: newVal },
+        options={state[stimulationId].stimulus.stimulusProtocolOptions}
+        onSelect={(newValue) => {
+          setProtocol({
+            id: `${stimulationId}`,
+            newValue,
           });
         }}
         className="text-left"
@@ -166,37 +153,37 @@ function StimulationProtocol({ onChange, simConfig, stimulationId }: FormItemPro
   );
 }
 
-function Parameters({ onChange, simConfig, stimulationId }: FormItemPropsWithConfig) {
+function Parameters({ stimulationId }: FormItemPropsWithConfig) {
+  const { setParamValue, state } = useDirectCurrentInjectionSimulationConfig();
   return (
     <div className="flex gap-6">
-      {Object.entries(simConfig.directStimulation[stimulationId].stimulus.paramInfo).map(
-        ([key, info]) => (
-          <Form.Item
-            key={key}
-            name={[stimulationId, 'stimulus', 'paramValues', key]}
-            label={info.name}
-            rules={[{ required: true }]}
-            tooltip={info.description}
-            labelAlign="left"
-            className="mb-2"
-          >
-            <InputNumber
-              disabled
-              addonAfter={info.unit}
-              className="w-full text-right"
-              step={info.step}
-              min={info.min}
-              max={info.max}
-              onChange={(newVal) =>
-                onChange({
-                  type: 'CHANGE_STIM_PARAM',
-                  payload: { key, value: newVal, stimulationId: `${stimulationId}` },
-                })
-              }
-            />
-          </Form.Item>
-        )
-      )}
+      {Object.entries(state[stimulationId].stimulus.paramInfo).map(([key, info]) => (
+        <Form.Item
+          key={key}
+          name={[stimulationId, 'stimulus', 'paramValues', key]}
+          label={info.name}
+          rules={[{ required: true }]}
+          tooltip={info.description}
+          labelAlign="left"
+          className="mb-2"
+        >
+          <InputNumber
+            disabled
+            addonAfter={info.unit}
+            className="w-full text-right"
+            step={info.step}
+            min={info.min}
+            max={info.max}
+            onChange={(newValue) =>
+              setParamValue({
+                id: `${stimulationId}`,
+                key,
+                newValue,
+              })
+            }
+          />
+        </Form.Item>
+      ))}
     </div>
   );
 }

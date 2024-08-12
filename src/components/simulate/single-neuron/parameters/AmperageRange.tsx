@@ -5,7 +5,7 @@ import round from 'lodash/round';
 import isEqual from 'lodash/isEqual';
 import dynamic from 'next/dynamic';
 
-import { SimAction } from '@/types/simulate/single-neuron';
+import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 
 const StimuliPreviewPlot = dynamic(() => import('../visualization/StimuliPreviewPlot'), {
   ssr: false,
@@ -29,7 +29,6 @@ type AmperageStateType = typeof amperageInitialState;
 
 type Props = {
   stimulationId: number;
-  onChange: (action: SimAction) => void;
   amplitudes: number[];
   modelSelfUrl: string;
 };
@@ -83,23 +82,24 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   return newState;
 }
 
-export default function AmperageRangeComponent({
-  onChange,
-  amplitudes,
-  stimulationId,
-  modelSelfUrl,
-}: Props) {
+export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl }: Props) {
   const [amperageState, dispatch] = useReducer(rangeReducer, { ...amperageInitialState });
+  const { setAmplitudes } = useDirectCurrentInjectionSimulationConfig();
 
   useEffect(() => {
     if (!amperageState.isConsistent) return;
     if (isEqual(amperageState.computed, amplitudes)) return;
-
-    onChange({
-      type: 'CHANGE_AMPLITUDES',
-      payload: { stimulationId: `${stimulationId}`, value: amperageState.computed },
+    setAmplitudes({
+      id: `${stimulationId}`,
+      newValue: amperageState.computed,
     });
-  }, [onChange, amperageState.computed, amperageState.isConsistent, amplitudes, stimulationId]);
+  }, [
+    amperageState.computed,
+    amperageState.isConsistent,
+    amplitudes,
+    setAmplitudes,
+    stimulationId,
+  ]);
 
   return (
     <>

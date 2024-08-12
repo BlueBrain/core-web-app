@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import isEqual from 'lodash/isEqual';
 import { captureException } from '@sentry/nextjs';
 
 import PlotRenderer from './PlotRenderer';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 import { protocolNameAtom } from '@/state/simulate/single-neuron';
-import { getStimuliPlot } from '@/api/simulation/single-neuron';
-import { useAccessToken } from '@/hooks/useAccessToken';
+import { getDirectCurrentGraph } from '@/api/bluenaas';
 import { useDebouncedCallback } from '@/hooks/hooks';
+import { getSession } from '@/authFetch';
 
 type Props = {
   amplitudes: number[];
@@ -19,25 +18,17 @@ type Props = {
 
 export default function StimuliPreviewPlot({ amplitudes, modelSelfUrl }: Props) {
   const [stimuliPreviewPlotData, setStimuliPreviewPlotData] = useState<PlotData | null>(null);
-  const token = useAccessToken();
-  const [renderedAmplitudes, setRenderedAmplitudes] = useState<number[]>([]);
-  const [renderedProtocolName, setRenderedProtocolName] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const protocolName = useAtomValue(protocolNameAtom);
 
   const updateStimuliPreview = useDebouncedCallback(
-    async (amplitudesToRender, protocolToRender, accessToken) => {
-      if (
-        isEqual(renderedAmplitudes, amplitudesToRender) &&
-        isEqual(renderedProtocolName, protocolToRender)
-      )
-        return;
-
-      setRenderedAmplitudes(amplitudesToRender);
-      setRenderedProtocolName(protocolToRender);
-
+    async (amplitudesToRender, protocolToRender) => {
       try {
-        const rawPlotData = await getStimuliPlot(modelSelfUrl, accessToken, {
+        const session = await getSession();
+        if (!session) {
+          return;
+        }
+        const rawPlotData = await getDirectCurrentGraph(modelSelfUrl, session.accessToken, {
           amplitudes: amplitudesToRender,
           stimulusProtocol: protocolToRender,
         });
@@ -55,17 +46,14 @@ export default function StimuliPreviewPlot({ amplitudes, modelSelfUrl }: Props) 
         setLoading(false);
       }
     },
-    [renderedAmplitudes, renderedProtocolName, modelSelfUrl],
+    [modelSelfUrl],
     1500
   );
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
     setLoading(true);
-    updateStimuliPreview(amplitudes, protocolName, token);
-  }, [amplitudes, protocolName, token, updateStimuliPreview]);
+    updateStimuliPreview(amplitudes, protocolName);
+  }, [amplitudes, protocolName, updateStimuliPreview]);
 
   return (
     <PlotRenderer
