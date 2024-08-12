@@ -17,15 +17,16 @@ export type MenuTabItem = {
 
 function Tab({ id, label, active, className, activeClassName, onClick }: TabProps) {
   return (
-    <li className="me-2">
+    <li className="mr-[2px]">
       <button
         type="button"
         onClick={() => onClick(id)}
         className={clsx(
-          'group relative inline-block px-4 pb-2 pt-4 text-base',
-          'hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300',
+          'w-40 p-2 text-base',
           className,
-          active ? clsx('font-bold', activeClassName) : 'font-light'
+          active
+            ? clsx('bg-white font-bold text-black', activeClassName)
+            : 'bg-neutral-10 text-white'
         )}
         role="tab"
       >

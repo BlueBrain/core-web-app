@@ -100,7 +100,7 @@ function QAHistoryNavigationItem({
       role="button"
       onClick={onClick}
       className={classNames(
-        'gqa-nav-item text-neutral-8 group relative inline-flex cursor-pointer list-none items-center rounded-r-sm py-4 pr-2 first:mt-auto last:mb-auto hover:bg-gray-50',
+        'gqa-nav-item group relative inline-flex cursor-pointer list-none items-center rounded-r-sm py-4 pr-2 text-neutral-8 first:mt-auto last:mb-auto hover:bg-gray-50',
         isDeleting && 'animate-scale-down overflow-hidden bg-gray-100 py-4',
         isBuildSection ? 'pl-16' : 'pl-7',
         showExpandedView ? 'w-full' : 'w-max'

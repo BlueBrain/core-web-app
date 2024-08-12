@@ -31,9 +31,9 @@ export default function DataTypeTabs() {
 
   return (
     selected && (
-      <div className="z-10 flex max-h-[80px] w-full items-start justify-between px-4">
+      <div className="z-10 flex max-h-[80px] w-full items-center justify-between px-4 pt-8">
         <h1
-          className="flex w-1/2 items-center justify-start self-start  pl-4 pt-2 text-[1.6rem] font-bold"
+          className="flex w-1/2 items-center justify-start self-start  pl-4 text-[1.6rem] font-bold"
           style={{ color: selected?.colorCode }}
           title={selectedBrainRegion?.title}
         >
