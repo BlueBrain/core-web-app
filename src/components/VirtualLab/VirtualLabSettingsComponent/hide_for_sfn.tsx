@@ -126,35 +126,37 @@ export function Settings({
       <FormPanel
         className="grid grid-cols-2 gap-x-6"
         initialValues={{
+          description: virtualLabDetail.data?.description,
+          entity: virtualLabDetail.data?.entity,
           name: virtualLabDetail.data?.name,
           reference_email: virtualLabDetail.data?.reference_email,
-          description: virtualLabDetail.data?.description,
         }}
         items={[
           {
             className: 'col-span-2',
             children: renderInput,
             label: 'Lab Name',
+            maxLength: 250,
             name: 'name',
-            required: true,
+            required: true, // This effectively only appends '*' to the label
             rules: [{ max: 250 }],
           },
           {
             className: 'col-span-2',
             children: renderTextArea,
             label: 'Description',
+            maxLength: 450,
             name: 'description',
+            rules: [{ max: 450 }],
           },
           {
             children: renderInput,
             label: 'Reference email',
             name: 'reference_email',
             type: 'email',
-            required: true,
-            // TODO: Figure-out whether "rules" prop is actually useful.
+            required: true, // This effectively only appends '*' to the label
             rules: [
               {
-                required: true,
                 pattern: VALID_EMAIL_REGEXP,
                 message: 'Entered value is not the correct email format',
               },
@@ -164,9 +166,9 @@ export function Settings({
             children: renderInput,
             label: 'Entity',
             name: 'entity',
+            required: true, // This effectively only appends '*' to the label
           },
         ]}
-        name="settings" // TODO: Check whether this prop is necessary.
         onValuesChange={updateVirtualLab}
       />
     )

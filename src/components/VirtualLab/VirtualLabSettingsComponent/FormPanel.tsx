@@ -14,19 +14,28 @@ import { useDebouncedCallback } from '@/hooks/hooks';
 
 type RenderInputProps = Omit<FormItemProps, 'children'> & {
   children: (props: InputProps & TextAreaProps) => ReactNode;
+  maxLength?: number;
   type?: string;
 };
 
 type InformationForm = { name: string; description: string; reference_email: string };
 
-export const renderInput = ({ disabled, onClick, placeholder, style, title, type }: InputProps) => {
+export const renderInput = ({
+  disabled,
+  maxLength,
+  onClick,
+  placeholder,
+  style,
+  title,
+  type,
+}: InputProps) => {
   return (
     <Input
       addonAfter={<Button ghost icon={<EditOutlined />} onClick={onClick} />}
       className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
       disabled={disabled}
+      maxLength={maxLength} // Used in conjunction with "rules"
       placeholder={placeholder}
-      required
       style={style}
       title={title}
       type={type}
@@ -37,6 +46,7 @@ export const renderInput = ({ disabled, onClick, placeholder, style, title, type
 
 export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
   disabled,
+  maxLength,
   name,
   onClick,
   placeholder,
@@ -49,6 +59,7 @@ export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
         <Input.TextArea
           className={classNames('!h-auto !bg-transparent', disabled ? '' : 'font-bold')}
           disabled={disabled}
+          maxLength={maxLength}
           placeholder={placeholder}
           required
           rows={2}
@@ -66,9 +77,10 @@ function SettingsFormItem({
   children,
   className,
   label,
+  maxLength,
   name,
   required,
-  rules: _rules, // Available as prop, but not necessary. AndD will trickle any rules down to the inputs.
+  rules,
   type,
   validateStatus,
 }: RenderInputProps) {
@@ -102,16 +114,18 @@ function SettingsFormItem({
         )}
       >
         <Form.Item
+          hasFeedback={validateStatus === 'validating'}
           label={required ? `${label}*` : label}
           name={name}
           required={required}
+          rules={rules} // Used in conjunction with "maxLength"
           style={{ width: '100%' }}
-          hasFeedback={validateStatus === 'validating'}
           validateStatus={validateStatus}
         >
           {children({
             disabled,
-            name,
+            maxLength, // Used in conjunction with "rules"
+            name, // Used for TextArea, not for Input
             onClick,
             placeholder: `${label}...`,
             type,
