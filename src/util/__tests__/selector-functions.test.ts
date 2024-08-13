@@ -5,7 +5,7 @@ import {
   semSelectorFn,
   subjectAgeSelectorFn,
 } from '@/util/explore-section/selector-functions';
-import { NO_DATA_STRING } from '@/constants/explore-section/queries';
+import { DisplayMessages } from '@/constants/display-messages';
 
 describe('selectorFunctions', () => {
   describe('subjectAgeSelectorFn', () => {
@@ -56,7 +56,7 @@ describe('selectorFunctions', () => {
 
     test('returns undefined if subject age is not present', () => {
       // @ts-ignore
-      expect(subjectAgeSelectorFn({})).toBe(NO_DATA_STRING);
+      expect(subjectAgeSelectorFn({})).toBe(DisplayMessages.NO_DATA_STRING);
     });
   });
 
@@ -84,7 +84,7 @@ describe('selectorFunctions', () => {
       expect(
         // @ts-ignore
         mTypeSelectorFn({})
-      ).toBe(NO_DATA_STRING);
+      ).toBe(DisplayMessages.NO_DATA_STRING);
     });
   });
 
@@ -112,7 +112,7 @@ describe('selectorFunctions', () => {
       expect(
         // @ts-ignore
         eTypeSelectorFn({})
-      ).toBe(NO_DATA_STRING);
+      ).toBe(DisplayMessages.NO_DATA_STRING);
     });
   });
 
@@ -141,7 +141,7 @@ describe('selectorFunctions', () => {
       expect(
         // @ts-ignore
         semSelectorFn({})
-      ).toBe(NO_DATA_STRING);
+      ).toBe(DisplayMessages.NO_DATA_STRING);
     });
   });
 
@@ -189,7 +189,7 @@ describe('selectorFunctions', () => {
           },
           'N'
         )
-      ).toBe(NO_DATA_STRING);
+      ).toBe(DisplayMessages.NO_DATA_STRING);
     });
   });
 });

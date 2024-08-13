@@ -7,7 +7,7 @@ import { isNeuronMorphologyFeatureAnnotation } from '@/util/explore-section/type
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
-import { NO_DATA_STRING } from '@/constants/explore-section/queries';
+import { DisplayMessages } from '@/constants/display-messages';
 
 export const useMorphometrics = (
   dataType: DataType,
@@ -35,7 +35,7 @@ export const useMorphometrics = (
           <div key={field.field} className={`mb-2 h-6 truncate ${field.className}`}>
             {metricSource
               ? fieldObj?.render?.esResourceViewFn?.('text', metricSource)
-              : NO_DATA_STRING}
+              : DisplayMessages.NO_DATA_STRING}
           </div>
         </div>
       </div>

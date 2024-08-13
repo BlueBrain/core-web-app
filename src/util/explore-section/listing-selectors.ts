@@ -16,7 +16,7 @@ import {
   NeuronMorphologyFeatureAnnotation,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
-import { NO_DATA_STRING } from '@/constants/explore-section/queries';
+import { DisplayMessages } from '@/constants/display-messages';
 import { formatEsContributors } from '@/components/explore-section/Contributors';
 import { Contributor } from '@/types/explore-section/es-properties';
 
@@ -139,7 +139,7 @@ export const selectorFnDate = (date: string): string =>
  * @param {string} text - The text value to render.
  * @returns {string} - The rendered text value.
  */
-export const selectorFnBasic = (text?: string): string => text || NO_DATA_STRING;
+export const selectorFnBasic = (text?: string): string => text || DisplayMessages.NO_DATA_STRING;
 
 export const selectorFnSpecies = (species?: IdWithLabel | IdWithLabel[]) => {
   if (species) {
@@ -175,7 +175,7 @@ export const selectorFnMorphologyFeature = (
   statistic: string,
   showUnits?: boolean
 ) => {
-  if (!source || !source.featureSeries) return NO_DATA_STRING;
+  if (!source || !source.featureSeries) return DisplayMessages.NO_DATA_STRING;
 
   const feature = source.featureSeries.find((s) => isMatch(s, { compartment, label, statistic }));
 
@@ -188,5 +188,5 @@ export const selectorFnMorphologyFeature = (
     return `${formatNumber(value)}${unit}`;
   }
 
-  return NO_DATA_STRING;
+  return DisplayMessages.NO_DATA_STRING;
 };

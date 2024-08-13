@@ -1,6 +1,6 @@
-import { NO_DATA_STRING } from '../queries';
 import { ExploreFieldsConfigProps } from './types';
 import { Field } from './enums';
+import { DisplayMessages } from '@/constants/display-messages';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Model } from '@/types/explore-section/delta-model';
 import { formatNumber } from '@/util/common';
@@ -20,7 +20,8 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
       },
     },
     render: {
-      esResourceViewFn: (_t, r) => r._source.emodel?.neuronMorphology?.name || NO_DATA_STRING,
+      esResourceViewFn: (_t, r) =>
+        r._source.emodel?.neuronMorphology?.name || DisplayMessages.NO_DATA_STRING,
     },
     vocabulary: {
       plural: 'Morphology',
@@ -39,9 +40,11 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     },
     render: {
       esResourceViewFn: (_t, r) =>
-        r._source.emodel?.score ? formatNumber(r._source.emodel?.score) : NO_DATA_STRING,
+        r._source.emodel?.score
+          ? formatNumber(r._source.emodel?.score)
+          : DisplayMessages.NO_DATA_STRING,
       deltaResourceViewFn: (resource) =>
-        resource.score ? formatNumber(resource.score) : NO_DATA_STRING,
+        resource.score ? formatNumber(resource.score) : DisplayMessages.NO_DATA_STRING,
     },
     vocabulary: {
       plural: 'Model cumulated score',

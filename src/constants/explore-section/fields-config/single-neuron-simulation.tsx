@@ -1,5 +1,5 @@
 import { Empty } from 'antd';
-import { NO_DATA_STRING } from '../queries';
+import { DisplayMessages } from '@/constants/display-messages';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { SingleNeuronSimulation } from '@/types/nexus';
@@ -10,7 +10,7 @@ export const SINGLE_NEURON_FIELDS_CONFIG: ExploreFieldsConfigProps<SingleNeuronS
     filter: null,
     render: {
       esResourceViewFn: (_t, r) => {
-        return r._source.singleNeuronSimulation?.emodel?.name || NO_DATA_STRING;
+        return r._source.singleNeuronSimulation?.emodel?.name || DisplayMessages.NO_DATA_STRING;
       },
     },
     vocabulary: {
@@ -49,7 +49,9 @@ export const SINGLE_NEURON_FIELDS_CONFIG: ExploreFieldsConfigProps<SingleNeuronS
     filter: null,
     render: {
       esResourceViewFn: (_t, r) => {
-        return r._source.singleNeuronSimulation?.injectionLocation || NO_DATA_STRING;
+        return (
+          r._source.singleNeuronSimulation?.injectionLocation || DisplayMessages.NO_DATA_STRING
+        );
       },
     },
     vocabulary: {
@@ -63,7 +65,9 @@ export const SINGLE_NEURON_FIELDS_CONFIG: ExploreFieldsConfigProps<SingleNeuronS
     filter: null,
     render: {
       esResourceViewFn: (_t, r) => {
-        return r._source.singleNeuronSimulation?.recordingLocation || NO_DATA_STRING;
+        return (
+          r._source.singleNeuronSimulation?.recordingLocation || DisplayMessages.NO_DATA_STRING
+        );
       },
     },
     vocabulary: {

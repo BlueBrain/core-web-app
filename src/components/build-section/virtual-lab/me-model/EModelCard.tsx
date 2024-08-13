@@ -65,22 +65,22 @@ function Details({ emodel }: { emodel: EModel }) {
     <div className="mt-4 grid grid-cols-3 gap-4 text-primary-8">
       <div>
         <div className={subtitleStyle}>Examplar morphology</div>
-        <div>{DisplayMessages.UNKNOWN}</div>
+        <div>{DisplayMessages.NO_DATA_STRING}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>Optimization target</div>
-        <div>{DisplayMessages.UNKNOWN}</div>
+        <div>{DisplayMessages.NO_DATA_STRING}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>Brain Region</div>
-        <div>{emodel.brainLocation?.brainRegion?.label || DisplayMessages.UNKNOWN}</div>
+        <div>{emodel.brainLocation?.brainRegion?.label || DisplayMessages.NO_DATA_STRING}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>E-Type</div>
-        <div>{emodel.eType || DisplayMessages.UNKNOWN}</div>
+        <div>{emodel.eType || DisplayMessages.NO_DATA_STRING}</div>
       </div>
     </div>
   );

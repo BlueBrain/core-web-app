@@ -10,7 +10,7 @@ import {
 } from '@/types/explore-section/delta-experiment';
 import { Annotation, SeriesStatistic } from '@/types/explore-section/delta-properties';
 import { ensureArray } from '@/util/nexus';
-import { NO_DATA_STRING } from '@/constants/explore-section/queries';
+import { DisplayMessages } from '@/constants/display-messages';
 import { formatNumber } from '@/util/common';
 import { NeuronMorphology } from '@/types/e-model';
 
@@ -32,7 +32,7 @@ export const ageSelectorFn = (subject: Subject | null): string => {
     return `${subject?.age.minValue} to ${subject?.age.maxValue} ${subject?.age.unitCode} ${subject?.age.period}`;
   }
 
-  return NO_DATA_STRING;
+  return DisplayMessages.NO_DATA_STRING;
 };
 
 /**
@@ -54,7 +54,7 @@ export const mTypeSelectorFn = (
   const entity = find(annotationArrayFunc(detail?.annotation), (o: Annotation) =>
     o['@type'].includes('MTypeAnnotation')
   );
-  return entity ? entity.hasBody?.label : NO_DATA_STRING;
+  return entity ? entity.hasBody?.label : DisplayMessages.NO_DATA_STRING;
 };
 
 // renders etype or 'no EType' text if not present
@@ -64,7 +64,7 @@ export const eTypeSelectorFn = (
   const entity = find(annotationArrayFunc(detail?.annotation), (o: Annotation) =>
     o['@type'].includes('ETypeAnnotation')
   );
-  return entity ? entity.hasBody?.label : NO_DATA_STRING;
+  return entity ? entity.hasBody?.label : DisplayMessages.NO_DATA_STRING;
 };
 
 // renders standard error of the mean if present
@@ -77,7 +77,7 @@ export const semSelectorFn = (
     ?.find((series) => series.statistic === 'standard error of the mean')
     ?.value.toFixed(5);
 
-  return Number(value) || NO_DATA_STRING;
+  return Number(value) || DisplayMessages.NO_DATA_STRING;
 };
 
 /**
@@ -94,9 +94,9 @@ export const selectorFnStatisticDetail = (
   field: string,
   withUnits: boolean = false
 ): string | number => {
-  if (!detail?.series) return NO_DATA_STRING;
+  if (!detail?.series) return DisplayMessages.NO_DATA_STRING;
 
   const found = ensureArray(detail?.series).find((el: SeriesStatistic) => el.statistic === field);
   const units = withUnits && found ? found.unitCode : '';
-  return found ? `${formatNumber(found.value)} ${units}` : NO_DATA_STRING;
+  return found ? `${formatNumber(found.value)} ${units}` : DisplayMessages.NO_DATA_STRING;
 };

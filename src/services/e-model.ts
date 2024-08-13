@@ -30,7 +30,7 @@ import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
-import { NO_DATA_STRING } from '@/constants/explore-section/queries';
+import { DisplayMessages } from '@/constants/display-messages';
 
 export function convertRemoteParamsForUI(
   remoteParams: EModelRemoteParameters
@@ -69,7 +69,7 @@ export function convertMorphologyForUI(
     '@id': remoteMorphology['@id'],
     '@type': remoteMorphology['@type'],
     name: remoteMorphology.name,
-    description: remoteMorphology?.description || NO_DATA_STRING,
+    description: remoteMorphology?.description || DisplayMessages.NO_DATA_STRING,
     isPlaceholder: remoteMorphology['@type'].includes('SynthesizedNeuronMorphology'),
     distribution: swcDistribution,
   };
@@ -78,17 +78,18 @@ export function convertMorphologyForUI(
     // morph from e-model pipeline - NeuronMorphology
     return {
       ...commonProps,
-      brainLocation: remoteMorphology?.brainLocation?.brainRegion?.label || NO_DATA_STRING,
-      mType: NO_DATA_STRING,
-      contributor: remoteMorphology?.contribution?.agent?.name || NO_DATA_STRING,
+      brainLocation:
+        remoteMorphology?.brainLocation?.brainRegion?.label || DisplayMessages.NO_DATA_STRING,
+      mType: DisplayMessages.NO_DATA_STRING,
+      contributor: remoteMorphology?.contribution?.agent?.name || DisplayMessages.NO_DATA_STRING,
     };
   }
 
   return {
     // morph from search table - ReconstructedNeuronMorphology
     ...commonProps,
-    brainLocation: remoteMorphology?.brainRegion?.label || NO_DATA_STRING,
-    mType: remoteMorphology?.mType?.label || NO_DATA_STRING,
+    brainLocation: remoteMorphology?.brainRegion?.label || DisplayMessages.NO_DATA_STRING,
+    mType: remoteMorphology?.mType?.label || DisplayMessages.NO_DATA_STRING,
     contributor: remoteMorphology?.contributors?.map((c) => c.label).join(' '),
   };
 }
@@ -105,24 +106,24 @@ export function convertTraceForUI(trace: Trace | ExperimentalTrace): Experimenta
     // trace from e-model pipeline
     return {
       ...commonProps,
-      mType: NO_DATA_STRING,
+      mType: DisplayMessages.NO_DATA_STRING,
       eType:
         ensureArray(trace.annotation).find((anno) => anno['@type'].includes('ETypeAnnotation'))
-          ?.hasBody?.label || NO_DATA_STRING,
-      description: NO_DATA_STRING,
+          ?.hasBody?.label || DisplayMessages.NO_DATA_STRING,
+      description: DisplayMessages.NO_DATA_STRING,
       eCodes: trace.stimulus.map((s) => s.stimulusType.label as ECode),
-      subjectSpecies: trace.subject?.species?.label || NO_DATA_STRING,
+      subjectSpecies: trace.subject?.species?.label || DisplayMessages.NO_DATA_STRING,
     };
   }
 
   return {
     // trace from search table
     ...commonProps,
-    mType: NO_DATA_STRING,
-    eType: NO_DATA_STRING,
-    description: trace?.description || NO_DATA_STRING,
+    mType: DisplayMessages.NO_DATA_STRING,
+    eType: DisplayMessages.NO_DATA_STRING,
+    description: trace?.description || DisplayMessages.NO_DATA_STRING,
     eCodes: [],
-    subjectSpecies: NO_DATA_STRING,
+    subjectSpecies: DisplayMessages.NO_DATA_STRING,
   };
 }
 

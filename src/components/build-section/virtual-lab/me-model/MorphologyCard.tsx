@@ -73,12 +73,12 @@ function MorphDetails({ morph }: { morph: NeuronMorphology }) {
     <div className="mt-4 grid grid-cols-3 gap-4 text-primary-8">
       <div>
         <div className={subtitleStyle}>Brain Region</div>
-        <div>{morph.brainLocation?.brainRegion?.label || DisplayMessages.UNKNOWN}</div>
+        <div>{morph.brainLocation?.brainRegion?.label || DisplayMessages.NO_DATA_STRING}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>Species</div>
-        <div>{morph.subject?.species?.label || DisplayMessages.UNKNOWN}</div>
+        <div>{morph.subject?.species?.label || DisplayMessages.NO_DATA_STRING}</div>
       </div>
 
       <div>
@@ -90,12 +90,12 @@ function MorphDetails({ morph }: { morph: NeuronMorphology }) {
 
       <div>
         <div className={subtitleStyle}>M-Type</div>
-        <div>{mTypeSelectorFn(morph) || DisplayMessages.UNKNOWN}</div>
+        <div>{mTypeSelectorFn(morph) || DisplayMessages.NO_DATA_STRING}</div>
       </div>
 
       <div>
         <div className={subtitleStyle}>Age</div>
-        <div>{DisplayMessages.UNKNOWN}</div>
+        <div>{DisplayMessages.NO_DATA_STRING}</div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { NO_DATA_STRING } from '@/constants/explore-section/queries';
+import { DisplayMessages } from '@/constants/display-messages';
 import {
   selectorFnBasic,
   selectorFnBrainRegion,
@@ -224,7 +224,7 @@ describe('Selectors', () => {
 
     it('returns NO_DATA_STRING if text is undefined', () => {
       const result = selectorFnBasic(undefined);
-      expect(result).toBe(NO_DATA_STRING);
+      expect(result).toBe(DisplayMessages.NO_DATA_STRING);
     });
   });
 
@@ -670,7 +670,7 @@ describe('Selectors', () => {
     it('returns NO_DATA_STRING if statistic is not found', () => {
       // @ts-ignore
       const result = selectorFnMorphologyFeature(mockSource, 'compartment', 'nonexistent', 'mean');
-      expect(result).toBe(NO_DATA_STRING);
+      expect(result).toBe(DisplayMessages.NO_DATA_STRING);
     });
 
     it('returns NO_DATA_STRING for 0 value', () => {
@@ -682,7 +682,7 @@ describe('Selectors', () => {
         'minimum',
         true
       );
-      expect(result).toBe(NO_DATA_STRING);
+      expect(result).toBe(DisplayMessages.NO_DATA_STRING);
     });
 
     it('returns NO DATA STRING when value is not a number', () => {
@@ -694,7 +694,7 @@ describe('Selectors', () => {
         'maximum',
         true
       );
-      expect(result).toBe(NO_DATA_STRING);
+      expect(result).toBe(DisplayMessages.NO_DATA_STRING);
     });
   });
 });
