@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { atomWithDefault } from 'jotai/utils';
 
 import {
   selectedEModelIdAtom,
@@ -15,12 +16,25 @@ import { createResource, fetchResourceById, updateResource } from '@/api/nexus';
 import { composeUrl } from '@/util/nexus';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
+export const meModelDetailsAtom = atomWithDefault<Promise<{ description: string; name: string }>>(
+  async (get) => {
+    const selectedMModel = await get(selectedMModelAtom);
+
+    return {
+      name: `WIP ME-Model - ${selectedMModel?.name}`,
+      description:
+        'Nunc mi ipsum faucibus vitae aliquet nec ullamcorper sit amet. Tincidunt vitae semper quis lectus nulla at. Volutpat ac tincidunt vitae semper. Adipiscing commodo elit at imperdiet dui accumsan',
+    };
+  }
+);
+
 export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelResource | null>>(
   null,
   async (get, set, virtualLabInfo) => {
     const session = get(sessionAtom);
     const selectedMModel = await get(selectedMModelAtom);
     const selectedEModel = await get(selectedEModelAtom);
+    const meModelDetails = await get(meModelDetailsAtom);
 
     if (!session || !selectedMModel || !selectedEModel) return null;
 
@@ -28,8 +42,8 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
       '@type': ['Entity', 'MEModel'],
       '@context': 'https://bbp.neuroshapes.org',
       // these name and description will be filled properly when the user saves the me-model
-      name: `WIP ME-Model - ${selectedMModel.name}`,
-      description: 'TODO',
+      name: meModelDetails.name,
+      description: meModelDetails.description,
       hasPart: [
         {
           '@type': 'EModel',
@@ -59,8 +73,7 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
 
 export const saveMEModelAtom = atom<null, [string, string], void>(
   null,
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  async (get, set, name, description) => {
+  async (get, _set, name, description) => {
     const session = get(sessionAtom);
 
     const meModelResource = await get(meModelResourceAtom);

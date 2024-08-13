@@ -30,7 +30,7 @@ export default function ReconstrucedMorphologyPage() {
 
       const morph = selectedRows[0]._source as ReconstructedNeuronMorphology;
       setSelectedMModelId(morph['@id']);
-      router.push('../electrophysiology');
+      router.push('../new');
     },
     [setSelectedMModelId, router]
   );
@@ -43,10 +43,10 @@ export default function ReconstrucedMorphologyPage() {
         selectionType="radio"
         renderButton={({ selectedRows }) => (
           <Btn
-            className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2"
+            className="fit-content sticky bottom-0 ml-auto w-fit bg-primary-8"
             onClick={() => onMorphPicked(selectedRows)}
           >
-            Use morphology
+            Select m-model
           </Btn>
         )}
       />

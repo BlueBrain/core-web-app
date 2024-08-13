@@ -7,7 +7,6 @@ import { useSetAtom } from 'jotai';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
-import ModelTypeTab from '@/components/build-section/virtual-lab/me-model/ModelTypeTab';
 import { sectionAtom } from '@/state/application';
 
 type GenericLayoutProps = {
@@ -29,9 +28,8 @@ export default function BuildMEModelLayout({ children, params }: GenericLayoutPr
       </ErrorBoundary>
 
       <div className="flex flex-col">
-        <ModelTypeTab params={params} />
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <div className="flex h-full flex-col">{children}</div>
+          <div className="flex h-full flex-col p-10">{children}</div>
         </ErrorBoundary>
       </div>
     </div>

@@ -12,7 +12,7 @@ import * as dataQuery from '@/queries/explore-section/data';
 import { ExploreESHit } from '@/types/explore-section/es';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 
-const buildMEModelLink = 'build/me-model/new/morphology/reconstructed';
+const buildMEModelLink = 'build/me-model/new';
 
 const spy = jest.spyOn(dataQuery, 'default');
 

@@ -32,7 +32,7 @@ type TabDetails = {
   buildModelLabel: string;
 };
 
-const buildMEModelLink = 'build/me-model/new/morphology/reconstructed';
+const buildMEModelLink = 'build/me-model/new';
 
 const SupportedTypeToTabDetails: Record<string, TabDetails> = {
   [DataType.CircuitMEModel]: {

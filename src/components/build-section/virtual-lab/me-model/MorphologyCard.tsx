@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 import { selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
@@ -38,10 +38,23 @@ export default function MorphologyCard() {
     );
   };
 
-  if (!selectedMModel) return null;
+  const router = useRouter();
+
+  if (!selectedMModel)
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          router.push('new/morphology');
+        }}
+        className="flex h-48 w-full items-center rounded-lg border border-neutral-2 pl-32 text-4xl text-neutral-4 hover:bg-primary-7 hover:text-white"
+      >
+        Select morphology
+      </button>
+    );
 
   return (
-    <div className="w-full border p-10">
+    <div className="w-full rounded-lg border p-10">
       <div className="flex justify-between">
         <div className={classNames('text-2xl', subtitleStyle)}>M-Model</div>
         <Link href={generateDetailUrl()} target="_blank" className="font-bold text-primary-8">
