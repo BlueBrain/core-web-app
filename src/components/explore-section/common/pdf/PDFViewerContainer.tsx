@@ -194,7 +194,17 @@ const matchesType = (distribution: AnalysisPDF, type: AnalysisType) => {
   }
 
   const name = distribution.name ?? distribution.label;
-  return name.toLowerCase().includes(type);
+  const lowerCaseName = name.toLowerCase();
+
+  if (type === 'other') {
+    return !(
+      lowerCaseName.endsWith('distribution.pdf') ||
+      lowerCaseName.endsWith('traces.pdf') ||
+      lowerCaseName.endsWith('scores.pdf')
+    );
+  }
+
+  return lowerCaseName.includes(type);
 };
 
 const nameToType = (name: string) => {
