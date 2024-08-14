@@ -3,7 +3,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { LoadingOutlined } from '@ant-design/icons';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
-import VirtualLabSidebarWithTitle from '@/components/VirtualLab/VirtualLabSidebar';
+import VirtualLabSidebarWithTitle from '@/components/VirtualLab/VirtualLabSidebar/VirtualLabSidebarWithTitle';
 import { VirtualLabSidebarSkeleton } from '@/components/VirtualLab/VirtualLabSidebar/VirtualLabSidebarSkeleton';
 
 export default function VirtualLabPageLayout({
