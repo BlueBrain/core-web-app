@@ -10,7 +10,7 @@ import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { defaultModelRelease } from '@/config';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
-import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 
@@ -37,7 +37,6 @@ export default function VirtualLabProjectInteractiveExploreLayout({
                 key: LinkItemKey.Explore,
                 href: `${labProjectUrl}/explore/interactive`,
                 content: Content.Explore,
-                role: Role.Section,
                 styles: 'rounded-full bg-primary-5 py-3 text-primary-9',
               },
             ]}

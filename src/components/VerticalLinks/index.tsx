@@ -4,13 +4,12 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 import { useRouter, useSelectedLayoutSegment } from 'next/navigation';
 
-import { Role, Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { Label } from '@/constants/virtual-labs/sidemenu';
 
 export type GenericLinkItem = {
-  key: LinkItemKey;
+  key: string;
   href: string;
   label?: Label;
-  role?: Role;
   styles?: string;
 };
 

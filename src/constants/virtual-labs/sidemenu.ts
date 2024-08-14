@@ -1,9 +1,3 @@
-export enum Role {
-  Current = 'current',
-  Section = 'section',
-  Scale = 'scale',
-}
-
 export enum Label {
   VirtualLab = 'virtual lab',
   Project = 'project',
