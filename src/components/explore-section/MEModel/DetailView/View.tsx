@@ -17,7 +17,6 @@ import GenericButton from '@/components/Global/GenericButton';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter';
 
-
 type Params = {
   projectId: string;
   virtualLabId: string;
