@@ -708,7 +708,21 @@ export interface SingleNeuronSimulation extends Entity {
     '@type': 'EModel' | 'MEModel';
     '@id': string;
   };
-  distribution: Distribution;
+  distribution: Distribution | Array<Distribution>;
+  injectionLocation: string;
+  recordingLocation: string[];
+  brainLocation?: BrainLocation;
+}
+
+export interface SynaptomeSimulation extends Entity {
+  '@type': ['Entity', 'SynaptomeSimulation'];
+  name: string;
+  description: string;
+  used: {
+    '@type': 'EModel' | 'MEModel';
+    '@id': string;
+  };
+  distribution: Distribution | Array<Distribution>;
   injectionLocation: string;
   recordingLocation: string[];
   brainLocation?: BrainLocation;

@@ -31,6 +31,7 @@ type Props = {
   stimulationId: number;
   amplitudes: number[];
   modelSelfUrl: string;
+  configId: string;
 };
 
 type StepType = 'stepSize' | 'stepNumber';
@@ -82,7 +83,12 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   return newState;
 }
 
-export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl }: Props) {
+export default function AmperageRange({
+  configId,
+  amplitudes,
+  stimulationId,
+  modelSelfUrl,
+}: Props) {
   const [amperageState, dispatch] = useReducer(rangeReducer, { ...amperageInitialState });
   const { setAmplitudes } = useDirectCurrentInjectionSimulationConfig();
 
@@ -90,7 +96,7 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
     if (!amperageState.isConsistent) return;
     if (isEqual(amperageState.computed, amplitudes)) return;
     setAmplitudes({
-      id: `${stimulationId}`,
+      id: stimulationId,
       newValue: amperageState.computed,
     });
   }, [
@@ -163,14 +169,18 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
       </div>
 
       <div className="mb-2 mt-4 text-left text-sm text-gray-400">Output amperages</div>
-      <div className="flex flex-wrap gap-4 text-base font-bold text-gray-400">
+      <div className="mb-4 flex flex-wrap gap-4 text-base font-bold text-gray-400">
         {amperageState.computed.map((value) => (
           <span key={value} className="">
             {value}
           </span>
         ))}
       </div>
-      <StimuliPreviewPlot amplitudes={amperageState.computed} modelSelfUrl={modelSelfUrl} />
+      <StimuliPreviewPlot
+        configId={configId}
+        amplitudes={amperageState.computed}
+        modelSelfUrl={modelSelfUrl}
+      />
     </>
   );
 }

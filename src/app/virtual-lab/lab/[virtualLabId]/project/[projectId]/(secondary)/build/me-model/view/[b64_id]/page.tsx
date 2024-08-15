@@ -24,9 +24,11 @@ export default function MEModelViewPage({ params }: Params) {
   }, [setBackToListPath, vlProjectUrl]);
 
   return (
-    <div className="grid grid-cols-[min-content_auto] bg-white">
+    <div className="grid grid-cols-[min-content_auto] overflow-hidden bg-white">
       <Nav params={params} />
-      <MEModelDetailView vlProjectUrl={vlProjectUrl} showViewMode />
+      <div className="secondary-scrollbar h-screen w-full overflow-y-auto">
+        <MEModelDetailView params={params} vlProjectUrl={vlProjectUrl} showViewMode/>
+      </div>
     </div>
   );
 }

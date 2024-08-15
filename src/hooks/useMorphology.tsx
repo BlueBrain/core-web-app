@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
+import isNil from 'lodash/isNil';
 
 import { Morphology } from '@/services/bluenaas-single-cell/types';
 import getMorphology from '@/api/bluenaas/getMorphology';
+import { getSession } from '@/authFetch';
 
 export default function useMorphology({
   modelSelfUrl,
@@ -12,7 +14,12 @@ export default function useMorphology({
 }) {
   const mountedRef = useRef(false);
   const readMorphology = useCallback(async (): Promise<Morphology> => {
-    const response = await getMorphology({ modelId: modelSelfUrl });
+    const session = await getSession();
+    if (isNil(session)) {
+      throw new Error('No session found');
+    }
+
+    const response = await getMorphology({ modelId: modelSelfUrl, token: session.accessToken });
     const reader = response.body?.getReader();
     let data: string = '';
     let value: Uint8Array | undefined;

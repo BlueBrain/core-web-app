@@ -1,65 +1,81 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 import { captureException } from '@sentry/nextjs';
 
 import PlotRenderer from './PlotRenderer';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
-import { protocolNameAtom } from '@/state/simulate/single-neuron';
+import { protocolNameAtom, stimulusPreviewPlotDataAtom } from '@/state/simulate/single-neuron';
 import { getDirectCurrentGraph } from '@/api/bluenaas';
-import { useDebouncedCallback } from '@/hooks/hooks';
 import { getSession } from '@/authFetch';
+import useNotification from '@/hooks/notifications';
 
 type Props = {
+  configId: string;
   amplitudes: number[];
   modelSelfUrl: string;
 };
 
-export default function StimuliPreviewPlot({ amplitudes, modelSelfUrl }: Props) {
-  const [stimuliPreviewPlotData, setStimuliPreviewPlotData] = useState<PlotData | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+export default function StimuliPreviewPlot({ configId, amplitudes, modelSelfUrl }: Props) {
+  const renderRef = useRef(false);
   const protocolName = useAtomValue(protocolNameAtom);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [stimuliPreviewPlotData, setStimuliPreviewPlotData] = useAtom(stimulusPreviewPlotDataAtom);
+  const { error: notifyError } = useNotification();
 
-  const updateStimuliPreview = useDebouncedCallback(
-    async (amplitudesToRender, protocolToRender) => {
-      try {
-        const session = await getSession();
-        if (!session) {
-          return;
-        }
-        const rawPlotData = await getDirectCurrentGraph(modelSelfUrl, session.accessToken, {
-          amplitudes: amplitudesToRender,
-          stimulusProtocol: protocolToRender,
-        });
-
-        const plotData: PlotData = rawPlotData.map((d) => ({
-          type: 'scatter',
-          ...d,
-        }));
-
-        setStimuliPreviewPlotData(plotData);
-      } catch {
-        // TODO: Show error state to user
-        captureException(new Error('Preview plot could not be retrived for model'));
-      } finally {
-        setLoading(false);
+  const updateStimuliPreview = useCallback(async () => {
+    try {
+      setLoading(true);
+      const session = await getSession();
+      if (!session || !protocolName) {
+        return;
       }
-    },
-    [modelSelfUrl],
-    1500
-  );
+
+      const rawPlotData = await getDirectCurrentGraph(modelSelfUrl, session.accessToken, {
+        amplitudes,
+        stimulusProtocol: protocolName,
+      });
+
+      const plotData: PlotData = rawPlotData.map((d) => ({
+        type: 'scatter',
+        ...d,
+      }));
+      setStimuliPreviewPlotData([
+        ...stimuliPreviewPlotData,
+        {
+          id: configId,
+          data: plotData,
+        },
+      ]);
+      renderRef.current = true;
+    } catch {
+      captureException(new Error('Preview plot could not be retrived for model'));
+      notifyError('Error while loading stimulus plot data', undefined, 'topRight');
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    protocolName,
+    stimuliPreviewPlotData,
+    modelSelfUrl,
+    amplitudes,
+    configId,
+    notifyError,
+    setStimuliPreviewPlotData,
+  ]);
 
   useEffect(() => {
-    setLoading(true);
-    updateStimuliPreview(amplitudes, protocolName);
-  }, [amplitudes, protocolName, updateStimuliPreview]);
+    if (!renderRef.current) {
+      updateStimuliPreview();
+    }
+  }, [updateStimuliPreview]);
 
   return (
     <PlotRenderer
       className="min-h-[320px]"
       isLoading={loading}
-      data={stimuliPreviewPlotData ?? []}
+      data={stimuliPreviewPlotData.find((o) => o.id === configId)?.data ?? []}
       plotConfig={{
         yAxisTitle: 'Current, nA',
       }}

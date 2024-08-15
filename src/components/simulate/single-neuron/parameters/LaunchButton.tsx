@@ -30,7 +30,7 @@ export default function LaunchButton({
   const launchSimulation = useSetAtom(launchSimulationAtom);
   const { error: notifyError } = useNotification();
   const { createModal: createSaveResultModal, contextHolder: saveResultModalContext } =
-    useSaveSimulationModal(modelSelfUrl, vLabId, projectId);
+    useSaveSimulationModal({ modelSelfUrl, vLabId, projectId, type: simulationType });
   const [secNames, setSecNames] = useAtom(secNamesAtom);
 
   useEffect(() => {

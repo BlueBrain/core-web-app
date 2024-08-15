@@ -4,6 +4,11 @@ import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-con
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { SingleNeuronSimulation } from '@/types/nexus';
 
+import { ensureArray } from '@/util/nexus';
+import { DataType } from '@/constants/explore-section/list-views';
+import PreviewThumbnail from '@/components/explore-section/ExploreSectionListingView/PreviewThumbnail';
+import { SIMULATION_CONFIG_FILE_NAME_BASE } from '@/state/simulate/single-neuron-setter';
+
 export const SINGLE_NEURON_FIELDS_CONFIG: ExploreFieldsConfigProps<SingleNeuronSimulation> = {
   [Field.SingleNeuronSimulationUsedModelName]: {
     title: 'Model',
@@ -21,10 +26,30 @@ export const SINGLE_NEURON_FIELDS_CONFIG: ExploreFieldsConfigProps<SingleNeuronS
   [Field.SingleNeuronSimulationStimulus]: {
     title: 'Stimulus',
     filter: null,
+    style: {
+      width: 184,
+    },
     render: {
-      esResourceViewFn: () => (
-        <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      ),
+      esResourceViewFn: (value) => {
+        const distribution = ensureArray(value._source.distribution).find(
+          (o) => o.label && o.label.startsWith(SIMULATION_CONFIG_FILE_NAME_BASE)
+        );
+        if (!distribution) {
+          return (
+            <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          );
+        }
+        return (
+          <PreviewThumbnail
+            className="max-h-[116px] border border-neutral-2"
+            contentUrl={distribution.contentUrl}
+            height={116}
+            type={DataType.SingleNeuronSimulation}
+            width={184}
+            target="stimulus"
+          />
+        );
+      },
     },
     vocabulary: {
       plural: 'Stimuli',
@@ -34,10 +59,30 @@ export const SINGLE_NEURON_FIELDS_CONFIG: ExploreFieldsConfigProps<SingleNeuronS
   [Field.SingleNeuronSimulationResponse]: {
     title: 'Response',
     filter: null,
+    style: {
+      width: 184,
+    },
     render: {
-      esResourceViewFn: () => (
-        <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      ),
+      esResourceViewFn: (value) => {
+        const distribution = ensureArray(value._source.distribution).find(
+          (o) => o.label && o.label.startsWith(SIMULATION_CONFIG_FILE_NAME_BASE)
+        );
+        if (!distribution) {
+          return (
+            <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          );
+        }
+        return (
+          <PreviewThumbnail
+            className="max-h-[116px] border border-neutral-2"
+            contentUrl={distribution.contentUrl}
+            height={116}
+            type={DataType.SingleNeuronSimulation}
+            width={184}
+            target="simulation"
+          />
+        );
+      },
     },
     vocabulary: {
       plural: 'Responses',
