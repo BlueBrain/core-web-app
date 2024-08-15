@@ -6,10 +6,13 @@ import { useSynaptomeSimulationConfig } from '@/state/simulate/categories';
 import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
+import { synapsesPlacementAtom } from '@/state/synaptome';
+import { sendRemoveSynapses3DEvent } from '@/components/build-section/virtual-lab/synaptome/events';
 
 export default function SynapseSimulationFormsGroup() {
   const { newConfig, remove: removeSynapseConfig } = useSynaptomeSimulationConfig();
   const [synapseSimulationAtomState, setSynapseSimState] = useAtom(synaptomeSimulationConfigAtom);
+  const visualizedSynaptomes = useAtomValue(synapsesPlacementAtom);
 
   const { configuration: synaptomeModel } = useAtomValue(SynaptomeSimulationInstanceAtom);
 
@@ -48,6 +51,11 @@ export default function SynapseSimulationFormsGroup() {
               removeForm={() => {
                 remove(field.name);
                 removeSynapseConfig(field.name);
+                const formName = `${field.name}`;
+                const meshForForm = visualizedSynaptomes?.[formName]?.meshId;
+                if (meshForForm) {
+                  sendRemoveSynapses3DEvent(formName, meshForForm);
+                }
               }}
               onChange={setAtomProperty}
             />

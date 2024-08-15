@@ -207,7 +207,6 @@ function VisualizeSynaptomePerSimulationConfig({
     );
   }
 
-  // TODO: Reuse visualization if possible
   return (
     <VisualizeSynaptomeButton
       config={placementConfig}
