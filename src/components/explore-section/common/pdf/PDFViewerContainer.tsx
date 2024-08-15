@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { ConfigProvider, Select, Button } from 'antd';
 import { PlusOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import groupBy from 'lodash/groupBy';
-import { FileDistribution } from '@/types/explore-section/delta-properties';
+import { AnalysisFileType, AnalysisPDF, AnalysisType } from './types';
 import EModelAnalysisLauncher from '@/components/explore-section/EModel/DetailView/EModelAnalysisLauncher';
 import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
 import Link from '@/components/Link';
@@ -12,16 +12,20 @@ const DynamicPDFViewer = dynamic(() => import('./PDFViewer'), {
   ssr: false,
 });
 
-type AnalysisPDF = FileDistribution & { name?: string };
-
-type AnalysisType = 'all' | 'traces' | 'scores' | 'distribution' | 'other' | 'custom';
+const fileTypeToType: { [key in AnalysisFileType]: AnalysisType } = {
+  [AnalysisFileType.Traces]: AnalysisType.Traces,
+  [AnalysisFileType.Scores]: AnalysisType.Scores,
+  [AnalysisFileType.Distribution]: AnalysisType.Distribution,
+  [AnalysisFileType.Thumbnail]: AnalysisType.Thumbnail,
+  [AnalysisFileType.Currentscape]: AnalysisType.Other,
+};
 
 interface Props {
   distributions: AnalysisPDF[];
 }
 
 export function PDFViewerContainer({ distributions }: Props) {
-  const [type, setType] = useState<AnalysisType>('all');
+  const [type, setType] = useState<AnalysisType>(AnalysisType.All);
   const [analyses] = useAnalyses('EModel');
   const [analysis, setAnalysis] = useState('');
 
@@ -52,9 +56,9 @@ export function PDFViewerContainer({ distributions }: Props) {
     });
   };
 
-  const canScrollLeft = type === 'all' && scrollPosition > 0;
+  const canScrollLeft = type === AnalysisType.All && scrollPosition > 0;
   const canScrollRight =
-    type === 'all' &&
+    type === AnalysisType.All &&
     scrollPosition <
       (scrollContainerRef.current?.scrollWidth ?? 0) -
         (scrollContainerRef.current?.clientWidth ?? 0) -
@@ -74,19 +78,19 @@ export function PDFViewerContainer({ distributions }: Props) {
       >
         <div className="flex items-center justify-between pl-2">
           <div className="flex space-x-10">
-            {options.map((option) => (
+            {Object.values(AnalysisType).map((option) => (
               <button
                 type="button"
-                key={option.value}
-                className={`cursor-pointer text-primary-8 focus:outline-none ${type === option.value ? 'font-bold' : ''}`}
-                onClick={() => setType(option.value)}
+                key={option}
+                className={`cursor-pointer capitalize text-primary-8 focus:outline-none ${type === option ? 'font-bold' : ''}`}
+                onClick={() => setType(option)}
               >
-                {option.label}
+                {option}
                 <span className="pl-1 text-neutral-4">
                   (
-                  {option.value === 'all'
+                  {option === AnalysisType.All
                     ? distributions.length
-                    : groupedDistributionsAll[option.label]?.length || 0}
+                    : groupedDistributionsAll[option]?.length || 0}
                   )
                 </span>
               </button>
@@ -115,17 +119,19 @@ export function PDFViewerContainer({ distributions }: Props) {
           className="overflow-x-auto"
           style={{ width: '100%', overflowX: 'scroll' }}
         >
-          {type !== 'custom' ? (
+          {type !== AnalysisType.Custom ? (
             <div className="flex gap-x-16" style={{ minWidth: 'min-content' }}>
               {Object.entries(groupedDistributions).map(([pdfType, groupedDistribution]) => (
                 <div style={{ minWidth: '30%' }} key={pdfType}>
-                  {groupedDistribution.map((pdf, index) => (
-                    <DynamicPDFViewer
-                      url={pdf.contentUrl}
-                      type={index === 0 ? pdfType : undefined}
-                      key={pdf.contentUrl}
-                    />
-                  ))}
+                  {groupedDistribution.map((pdf, index) => {
+                    return (
+                      <DynamicPDFViewer
+                        url={pdf.contentUrl}
+                        type={index === 0 ? pdfType : undefined}
+                        key={pdf.contentUrl}
+                      />
+                    );
+                  })}
                 </div>
               ))}
             </div>
@@ -155,67 +161,41 @@ export function PDFViewerContainer({ distributions }: Props) {
   );
 }
 
-type Option = {
-  label: string;
-  value: AnalysisType;
-};
-
-const options: Option[] = [
-  {
-    label: 'All',
-    value: 'all',
-  },
-  {
-    label: 'Traces',
-    value: 'traces',
-  },
-  {
-    label: 'Scores',
-    value: 'scores',
-  },
-  {
-    label: 'Distribution',
-    value: 'distribution',
-  },
-  {
-    label: 'Other',
-    value: 'other',
-  },
-  { label: 'Custom', value: 'custom' },
-];
-
 const matchesType = (distribution: AnalysisPDF, type: AnalysisType) => {
-  if (distribution.encodingFormat !== 'application/pdf') {
+  if (
+    distribution.encodingFormat !== 'application/pdf' &&
+    distribution.encodingFormat !== 'application/png'
+  ) {
     return false;
   }
 
-  if (type === 'all') {
+  if (type === AnalysisType.All) {
     return true;
   }
 
   const name = distribution.name ?? distribution.label;
   const lowerCaseName = name.toLowerCase();
 
-  if (type === 'other') {
+  if (type === AnalysisType.Other) {
     return !(
-      lowerCaseName.endsWith('distribution.pdf') ||
-      lowerCaseName.endsWith('traces.pdf') ||
-      lowerCaseName.endsWith('scores.pdf')
+      lowerCaseName.endsWith(AnalysisFileType.Distribution) ||
+      lowerCaseName.endsWith(AnalysisFileType.Traces) ||
+      lowerCaseName.endsWith(AnalysisFileType.Thumbnail) ||
+      lowerCaseName.endsWith(AnalysisFileType.Scores)
     );
   }
 
   return lowerCaseName.includes(type);
 };
 
-const nameToType = (name: string) => {
-  if (name.toLowerCase().endsWith('distribution.pdf')) {
-    return 'Distribution';
+const nameToType = (name: string): AnalysisType => {
+  const lowerCaseName = name.toLowerCase();
+
+  for (const fileTypeValue of Object.values(AnalysisFileType)) {
+    if (lowerCaseName.endsWith(fileTypeValue.toLowerCase())) {
+      return fileTypeToType[fileTypeValue];
+    }
   }
-  if (name.toLowerCase().endsWith('traces.pdf')) {
-    return 'Traces';
-  }
-  if (name.toLowerCase().endsWith('scores.pdf')) {
-    return 'Scores';
-  }
-  return 'Other';
+
+  return AnalysisType.Other;
 };

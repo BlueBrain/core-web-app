@@ -7,6 +7,7 @@ import { EModelResource } from '@/types/explore-section/delta-model';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
+import { ensureArray } from '@/util/nexus';
 
 export default function Analysis() {
   const resourceInfo = useResourceInfoFromPath();
@@ -22,13 +23,7 @@ export default function Analysis() {
 
   return (
     <div className="-mt-7 border border-primary-8 p-6">
-      <PDFViewerContainer
-        distributions={
-          Array.isArray(detail.data.distribution)
-            ? detail.data.distribution
-            : [detail.data.distribution]
-        }
-      />
+      <PDFViewerContainer distributions={ensureArray(detail.data.distribution)} />
     </div>
   );
 }
