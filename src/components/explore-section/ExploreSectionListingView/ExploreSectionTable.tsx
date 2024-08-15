@@ -110,9 +110,11 @@ export function BaseTable({
   onCellClick,
   rowSelection,
   showLoadMore,
+  scrollable = true,
 }: TableProps<ExploreESHit<ExploreSectionResource>> &
   AdditionalTableProps & {
     showLoadMore?: (value?: boolean) => void;
+    scrollable?: boolean;
   }) {
   const [containerDimension, setContainerDimension] = useState<{ height: number; width: number }>({
     height: 0,
@@ -181,10 +183,14 @@ export function BaseTable({
         rowClassName={styles.tableRow}
         rowKey={(row) => row._source._self}
         rowSelection={rowSelection}
-        scroll={{
-          x: 'fit-content',
-          y: containerDimension.height - (headerHeight + 100), // 100 is to make space for load more button,
-        }}
+        scroll={
+          scrollable
+            ? {
+                x: 'fit-content',
+                y: containerDimension.height - (headerHeight + 100), // 100 is to make space for load more button,
+              }
+            : undefined
+        }
       />
     </ConfigProvider>
   );
@@ -217,17 +223,21 @@ function TableControls({
   children,
   renderButton,
   selectedRows,
+  visible,
 }: {
   clearSelectedRows: RenderButtonProps['clearSelectedRows'];
   children?: ReactNode;
   renderButton?: (props: RenderButtonProps) => ReactNode;
   selectedRows: RenderButtonProps['selectedRows'];
+  visible: boolean;
 }) {
   const { left, right } = useScrollNav(
     typeof document !== 'undefined'
       ? (document.querySelector('.ant-table-body') as HTMLDivElement)
       : undefined
   );
+
+  if (!visible) return null;
 
   return (
     <div className="flex h-[100px] shrink-0 items-center justify-between gap-5 px-5">
@@ -254,10 +264,14 @@ export default function ExploreSectionTable({
   onCellClick,
   renderButton,
   selectionType,
+  scrollable = true,
+  controlsVisible = true,
 }: TableProps<ExploreESHit<ExploreSectionResource>> &
   AdditionalTableProps & {
     renderButton?: (props: RenderButtonProps) => ReactNode;
     selectionType?: RowSelectionType;
+    scrollable?: boolean;
+    controlsVisible?: boolean;
   }) {
   const { rowSelection, selectedRows, clearSelectedRows } = useRowSelection({
     dataType: dataContext.dataType,
@@ -278,11 +292,13 @@ export default function ExploreSectionTable({
         rowKey={(row) => row._source._self}
         rowSelection={rowSelection}
         showLoadMore={toggleDisplayMore}
+        scrollable={scrollable}
       />
       <TableControls
         renderButton={renderButton}
         selectedRows={selectedRows}
         clearSelectedRows={clearSelectedRows}
+        visible={controlsVisible}
       >
         {displayLoadMoreBtn && (
           <LoadMoreButton dataContext={dataContext} hide={toggleDisplayMore} />

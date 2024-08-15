@@ -1,6 +1,5 @@
-import { ReactNode, useEffect, useState, useMemo } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { ReactNode, useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
 import { RowSelectionType } from 'antd/es/table/interface';
 
 import FilterControls from './FilterControls';
@@ -17,6 +16,7 @@ import { ExploreDataScope } from '@/types/explore-section/application';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { DataType } from '@/constants/explore-section/list-views';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
+import { useLoadableValue } from '@/hooks/hooks';
 
 export default function DefaultListView({
   dataType,
@@ -25,6 +25,8 @@ export default function DefaultListView({
   onCellClick,
   selectionType,
   virtualLabInfo,
+  tableScrollable = true,
+  controlsVisible = true,
 }: {
   dataType: DataType;
   dataScope: ExploreDataScope;
@@ -32,23 +34,19 @@ export default function DefaultListView({
   onCellClick?: OnCellClick;
   selectionType?: RowSelectionType;
   virtualLabInfo?: VirtualLabInfo;
+  tableScrollable?: boolean;
+  controlsVisible?: boolean;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
   const [dataSource, setDataSource] = useState<ExploreESHit<ExploreSectionResource>[]>();
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
-  const data = useAtomValue(
-    useMemo(
-      () =>
-        loadable(
-          dataAtom({
-            dataType,
-            dataScope,
-            virtualLabInfo,
-          })
-        ),
-      [dataScope, dataType, virtualLabInfo]
-    )
+  const data = useLoadableValue(
+    dataAtom({
+      dataType,
+      dataScope,
+      virtualLabInfo,
+    })
   );
 
   useEffect(() => {
@@ -89,6 +87,8 @@ export default function DefaultListView({
                 onCellClick={onCellClick}
                 renderButton={renderButton}
                 selectionType={selectionType}
+                scrollable={tableScrollable}
+                controlsVisible={controlsVisible}
               />
             </>
           )}

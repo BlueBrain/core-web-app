@@ -8,6 +8,9 @@ import { SimulationScopeToDataType } from '@/types/virtual-lab/lab';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { DataType } from '@/constants/explore-section/list-views';
 import Link from '@/components/Link';
+import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
+import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
+import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 
 type TabDetails = {
   title: string;
@@ -35,8 +38,15 @@ export default function VirtualLabProjectSimulatePage({
       : null;
 
   const tabDetails = simulationType && SupportedTypeToTabDetails[simulationType];
+
+  const selectedRows = useAtomValue(
+    selectedRowsAtom({ dataType: simulationType ?? DataType.CircuitMEModel })
+  );
+
   return (
-    <div className="flex h-full flex-col pt-14">
+    <div className="mt-8 flex h-full flex-col">
+      <VirtualLabTopMenu />
+      <ScopeSelector />
       {simulationType && tabDetails ? (
         <>
           <div className="flex justify-between">
@@ -51,20 +61,23 @@ export default function VirtualLabProjectSimulatePage({
               New simulation +
             </Link>
           </div>
-          <div id="explore-table-container-for-observable" className="h-screen">
+          <div id="explore-table-container-for-observable" className="h-full pb-10">
             <ExploreSectionListingView
               dataType={simulationType}
               dataScope={ExploreDataScope.SelectedBrainRegion}
               virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
               selectionType="radio"
-              renderButton={() => (
-                <div className="mr-5 flex items-center justify-end gap-2">
-                  <GenericButton disabled className="bg-slate-400" text="View simulation" />
-                  <GenericButton disabled className="bg-slate-400" text="New simulation" />
-                </div>
-              )}
+              renderButton={() => null}
+              tableScrollable={false}
+              controlsVisible={false}
             />
           </div>
+          {selectedRows.length > 0 && (
+            <div className="fixed bottom-7 right-10 mb-6 flex items-center justify-end gap-2">
+              <GenericButton disabled className="bg-white" text="Clone configuration" />
+              <GenericButton disabled className="bg-white" text="View" />
+            </div>
+          )}
         </>
       ) : (
         <div className="m-auto w-fit border p-6">Coming Soon</div>

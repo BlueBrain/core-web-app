@@ -1,16 +1,14 @@
-import { Provider, useAtomValue } from 'jotai';
+import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { SessionProvider } from 'next-auth/react';
+import * as nextAuthReact from 'next-auth/react';
+import { Session } from 'next-auth';
 import VirtualLabProjectBuildPage from './page';
 import sessionAtom from '@/state/session';
 import { DataType } from '@/constants/explore-section/list-views';
-import { items } from '@/components/VirtualLab/ScopeSelector';
-import { SimulationType } from '@/types/virtual-lab/lab';
 import * as dataQuery from '@/queries/explore-section/data';
 import { ExploreESHit } from '@/types/explore-section/es';
-import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 
 const buildMEModelLink = 'build/me-model/new';
 
@@ -19,26 +17,26 @@ const spy = jest.spyOn(dataQuery, 'default');
 const meModelName = 'ME-MODEL-ID-1';
 const synaptomeName = 'SYNAPTOME-MODEL-ID-1';
 
-function HydrateAtoms({ initialValues, children }: any) {
-  useHydrateAtoms(initialValues);
-  return children;
-}
+jest.mock('next-auth/react', () => ({
+  ...jest.requireActual('next-auth/react'),
+  useSession: jest.fn(),
+}));
 
-function TestProvider({ initialValues, children }: any) {
-  return (
-    <Provider>
-      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-    </Provider>
-  );
+function TestProvider({ children }: { children: React.ReactNode }) {
+  useHydrateAtoms([[sessionAtom, { accessToken: 'abc' } as Session]]);
+  return <Provider>{children}</Provider>;
 }
 
 function VirtualLabProjectBuildPageProvider() {
-  const session = useAtomValue(sessionAtom);
+  // @ts-expect-error
+  nextAuthReact.useSession.mockReturnValue({
+    user: {
+      username: 'test-user',
+      accessToken: 'abc',
+    },
+  });
   return (
-    <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
-      <SessionProvider session={session}>
-        <VirtualLabTopMenu />
-      </SessionProvider>
+    <TestProvider>
       <VirtualLabProjectBuildPage params={{ virtualLabId: '123', projectId: '456' }} />
     </TestProvider>
   );
@@ -74,18 +72,10 @@ describe('VirtualLabProjectBuildPage', () => {
     const { user } = renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
 
-    const synaptomeCarouselItem = items.find(({ key }) => key === SimulationType.Synaptome)!;
-
     await user.click(screen.getByLabelText('Circuit'));
     await user.click(screen.getByLabelText('Synaptome'));
-    expect(activeCarouselTabTitle()).toEqual(synaptomeCarouselItem.title);
-
     await user.click(screen.getByText('New synaptome model +'));
-
-    expect(activeCarouselTabTitle()).toEqual(synaptomeCarouselItem.title);
   });
-
-  const activeCarouselTabTitle = () => 'Synaptome';
 
   const renderComponent = () => {
     const user = userEvent.setup();

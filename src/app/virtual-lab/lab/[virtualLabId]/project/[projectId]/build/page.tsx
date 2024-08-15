@@ -19,6 +19,8 @@ import BookmarkButton from '@/components/explore-section/BookmarkButton';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType, SimulationType } from '@/types/virtual-lab/lab';
+import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
+import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 
 type Params = {
   params: {
@@ -71,11 +73,17 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
   };
 
   const tabDetails = selectedModelType && SupportedTypeToTabDetails[selectedModelType];
+
+  const selectedRows = useAtomValue(
+    selectedRowsAtom({ dataType: selectedModelType ?? DataType.CircuitMEModel })
+  );
+
   return (
-    <div className="flex h-full flex-col">
+    <div className="mt-8 flex h-full flex-col">
+      <VirtualLabTopMenu />
       <ScopeSelector />
       {selectedModelType && tabDetails ? (
-        <div className="flex h-full flex-col">
+        <>
           <div className="flex justify-between">
             <GenericButton
               text={tabDetails.title}
@@ -94,37 +102,40 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               {tabDetails.buildModelLabel}
             </Button>
           </div>
-          <div id="explore-table-container-for-observable" className="h-screen">
+          <div id="explore-table-container-for-observable" className="h-full pb-10">
             <ExploreSectionListingView
               dataType={selectedModelType ?? DataType.CircuitMEModel}
               dataScope={ExploreDataScope.SelectedBrainRegion}
               virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
               selectionType="radio"
-              renderButton={({ selectedRows }) => (
-                <div className="mr-5 flex items-center justify-end gap-2">
-                  <GenericButton
-                    text="Generate synaptome"
-                    className="bg-primary-9  text-white hover:!bg-primary-7"
-                    href={generateSynaptomeUrl(selectedRows[0])}
-                  />
-                  <GenericButton
-                    text="View model"
-                    className="bg-primary-9  text-white hover:!bg-primary-7"
-                    href={generateDetailUrl(selectedRows[0])}
-                  />
-                  <BookmarkButton
-                    virtualLabId={params.virtualLabId}
-                    projectId={params.projectId}
-                    // `selectedRows` will be an array with only one element because `selectionType` is a radio button not a checkbox.
-                    resourceId={selectedRows[0]._source['@id']}
-                    type={ModelTypeNames.ME_MODEL}
-                    customButton={customBookmarkButton}
-                  />
-                </div>
-              )}
+              tableScrollable={false}
+              controlsVisible={false}
             />
+
+            {selectedRows.length > 0 && (
+              <div className="fixed bottom-10 right-10 mb-6 flex items-center justify-end gap-2">
+                <GenericButton
+                  text="View model"
+                  className="bg-primary-9  text-white hover:!bg-primary-7"
+                  href={generateDetailUrl(selectedRows[0])}
+                />
+                <GenericButton
+                  text="Clone model"
+                  className="bg-primary-9  text-white hover:!bg-primary-7"
+                  href={generateSynaptomeUrl(selectedRows[0])}
+                />
+                <BookmarkButton
+                  virtualLabId={params.virtualLabId}
+                  projectId={params.projectId}
+                  // `selectedRows` will be an array with only one element because `selectionType` is a radio button not a checkbox.
+                  resourceId={selectedRows[0]?._source['@id']}
+                  type={ModelTypeNames.ME_MODEL}
+                  customButton={customBookmarkButton}
+                />
+              </div>
+            )}
           </div>
-        </div>
+        </>
       ) : (
         <div className="m-auto w-fit border p-6">Coming Soon</div>
       )}

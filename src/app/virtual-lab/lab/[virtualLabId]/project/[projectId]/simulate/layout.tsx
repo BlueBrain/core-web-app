@@ -6,11 +6,9 @@ import { useAtomValue } from 'jotai';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
 import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
-import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 import SideMenu from '@/components/SideMenu';
 import { LinkItemKey, Label } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
-import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { LinkItem } from '@/components/VerticalLinks';
 
@@ -37,9 +35,9 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
     });
 
   return (
-    <div className="grid h-screen grid-cols-[1fr_3fr] grid-rows-1 bg-primary-9 pr-5 text-white">
+    <div className="flex bg-primary-9 pr-5 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="flex flex-row gap-4">
+        <div className="flex h-screen w-1/4 flex-row gap-4">
           <SideMenu
             links={links}
             lab={{
@@ -64,11 +62,7 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
         </div>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="mt-8 flex w-full flex-col gap-10 overflow-y-auto overflow-x-hidden">
-          <VirtualLabTopMenu />
-          <ScopeSelector />
-          {children}
-        </div>
+        <div className="flex h-screen w-3/4 flex-col gap-10 overflow-scroll">{children}</div>
       </ErrorBoundary>
     </div>
   );
