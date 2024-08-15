@@ -10,9 +10,9 @@ import delay from 'lodash/delay';
 import { GENERATE_SYNAPSES_FAIL } from './messages';
 import { sendRemoveSynapses3DEvent } from './events';
 import VisualizeSynaptomeButton from './ShowHideSynaptomeButton';
+import useNotification from '@/hooks/notifications';
 import { classNames } from '@/util/utils';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
-import useNotification from '@/hooks/notifications';
 import { synapsesPlacementAtom } from '@/state/synaptome';
 
 type Props = {
