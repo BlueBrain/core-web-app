@@ -1,13 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { useEffect, useState } from 'react';
-import { MorphologyCanvas, TgdColor } from '@bbp/morphoviewer';
+import { MorphologyCanvas } from '@bbp/morphoviewer';
 
 import { MorphoViewerSettings, useMorphoViewerSettings } from '../../hooks/settings';
 import { ColorInput } from './ColorInput';
 import { classNames } from '@/util/utils';
-import { EyeIcon, ResetIcon } from '@/components/icons';
+import { ResetIcon } from '@/components/icons';
 import { Switch } from '@/components/common/Switch';
-import EyeSlashIcon from '@/components/icons/EyeSlashIcon';
 
 import styles from './colors-legend.module.css';
 
@@ -85,49 +84,19 @@ function renderLabels(
   settings: MorphoViewerSettings,
   update: (patch: Partial<MorphoViewerSettings>) => void
 ) {
-  const handleToggleVisibility = (att: keyof Labels, color: string) => {
-    update({ [att]: toggleOpacity(color) });
-  };
   return Object.keys(labels).map((key) => {
     const att = key as keyof Labels;
     const color = settings[att];
     return (
-      <ColorInput key={key} value={color} onChange={(v) => update({ [att]: v })}>
-        <button
-          className={styles.eye}
-          type="button"
-          onClick={(evt) => {
-            evt.preventDefault();
-            evt.stopPropagation();
-            handleToggleVisibility(att, color);
-          }}
-        >
-          {isOpaque(color) ? <EyeIcon /> : <EyeSlashIcon />}
-        </button>
-        <div
-          className={styles.color}
-          style={{
-            backgroundColor: color,
-            opacity: isOpaque(color) ? 1 : 0,
-          }}
-        />
-        <div>{labels[att]}</div>
-      </ColorInput>
+      <ColorInput
+        key={key}
+        value={color}
+        onChange={(v) => update({ [att]: v })}
+        label={labels[att] ?? ''}
+        canBeHidden={att !== 'colorSoma'}
+      />
     );
   });
-}
-
-const COLOR = new TgdColor();
-
-function toggleOpacity(color: string): string {
-  COLOR.parse(color);
-  COLOR.A = COLOR.A < 1 ? 1 : 0.99;
-  return COLOR.toString();
-}
-
-function isOpaque(color: string) {
-  COLOR.parse(color);
-  return COLOR.A >= 1;
 }
 
 function getProperLabels(painter: MorphologyCanvas): Partial<Labels> {

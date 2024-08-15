@@ -7,14 +7,6 @@
   color: var(--custom-color-text);
 }
 
-.main .color {
-  content: '';
-  border-radius: 0.25em;
-  width: 1em;
-  height: 1em;
-  border: 1px solid currentColor;
-}
-
 .main button.reset {
   border: none;
   color: currentColor;
