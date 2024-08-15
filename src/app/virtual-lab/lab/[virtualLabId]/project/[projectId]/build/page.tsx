@@ -110,6 +110,30 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               selectionType="radio"
               tableScrollable={false}
               controlsVisible={false}
+              renderButton={() => (
+                <div className="mr-5 flex items-center justify-end gap-2">
+                  {selectedSimulationScope === SimulationType.Synaptome && (
+                    <GenericButton
+                      text="Generate synaptome"
+                      className="bg-primary-9  text-white hover:!bg-primary-7"
+                      href={generateSynaptomeUrl(selectedRows[0])}
+                    />
+                  )}
+                  <GenericButton
+                    text="View model"
+                    className="bg-primary-9  text-white hover:!bg-primary-7"
+                    href={generateDetailUrl(selectedRows[0])}
+                  />
+                  <BookmarkButton
+                    virtualLabId={params.virtualLabId}
+                    projectId={params.projectId}
+                    // `selectedRows` will be an array with only one element because `selectionType` is a radio button not a checkbox.
+                    resourceId={selectedRows[0]._source['@id']}
+                    type={ModelTypeNames.ME_MODEL}
+                    customButton={customBookmarkButton}
+                  />
+                </div>
+              )}
             />
 
             {selectedRows.length > 0 && (

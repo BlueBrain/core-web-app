@@ -56,6 +56,13 @@ export default function VisualizeSynaptomeButton({
   };
 
   const onVisualize = async () => {
+    const isAlreadyVisualized = Object.values(synapsesPlacement ?? []).find(
+      (c) => c?.synapsePlacementConfigId === config.id
+    );
+    if (isAlreadyVisualized) {
+      return;
+    }
+
     setLoadingVisualize(true);
     onHideSynapse();
 
@@ -94,6 +101,7 @@ export default function VisualizeSynaptomeButton({
           sectionSynapses: result.synapses,
           count: synapsePositions.length,
           meshId: mesh.uuid,
+          synapsePlacementConfigId: config.id,
         },
       });
       setSynapseVis(true);
