@@ -26,7 +26,7 @@ export default function DetailPage({ params }: Params) {
     case 'e-model':
       return <EModelDetailView />;
     case 'me-model':
-      return <MEModelDetailView vlProjectUrl={vlProjectUrl} />;
+      return <MEModelDetailView params={params} vlProjectUrl={vlProjectUrl} />;
     default:
       break;
   }

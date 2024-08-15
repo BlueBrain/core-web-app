@@ -8,15 +8,17 @@ import { useSetAtom } from 'jotai';
 import CloneIcon from '@/components/icons/Clone';
 import { createSingleNeuronSimulationAtom } from '@/state/simulate/single-neuron-setter';
 import useNotification from '@/hooks/notifications';
+import { SimulationType } from '@/types/simulation/common';
 
 type Props = {
   onClose: () => void;
   modelSelfUrl: string;
   vLabId: string;
   projectId: string;
+  type: SimulationType;
 };
 
-function ModalContent({ onClose, modelSelfUrl, projectId, vLabId }: Props) {
+function ModalContent({ onClose, modelSelfUrl, projectId, vLabId, type }: Props) {
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
   const [formValid, setFormValid] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -26,7 +28,7 @@ function ModalContent({ onClose, modelSelfUrl, projectId, vLabId }: Props) {
     setIsSaving(true);
     const title = form.getFieldValue('name');
     const description = form.getFieldValue('description');
-    await createSingleNeuronSimulation(title, description, modelSelfUrl, vLabId, projectId);
+    await createSingleNeuronSimulation(title, description, modelSelfUrl, vLabId, projectId, type);
     successNotify('Simulation saved!');
     setIsSaving(false);
     onClose();
@@ -108,7 +110,17 @@ function ModalContent({ onClose, modelSelfUrl, projectId, vLabId }: Props) {
   );
 }
 
-export function useSaveSimulationModal(modelSelfUrl: string, vLabId: string, projectId: string) {
+export function useSaveSimulationModal({
+  modelSelfUrl,
+  vLabId,
+  projectId,
+  type,
+}: {
+  modelSelfUrl: string;
+  vLabId: string;
+  projectId: string;
+  type: SimulationType;
+}) {
   const [modal, contextHolder] = Modal.useModal();
   const destroyRef = useRef<() => void>();
   const onClose = () => destroyRef?.current?.();
@@ -135,6 +147,7 @@ export function useSaveSimulationModal(modelSelfUrl: string, vLabId: string, pro
           modelSelfUrl={modelSelfUrl}
           vLabId={vLabId}
           projectId={projectId}
+          type={type}
         />
       ),
     });

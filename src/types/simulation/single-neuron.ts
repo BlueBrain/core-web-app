@@ -45,20 +45,20 @@ export type StimulusDropdownInfo = {
 };
 
 export type SynapsesConfig = SynapseConfig[];
-
-export interface SimulationConfiguration {
-  recordFrom: string[];
-  directStimulation: null | DirectSimulationConfig[];
-  synapses: null | SynapsesConfig;
-}
-
-export interface DirectSimulationConfig {
-  id: string;
+export interface DirectCurrentInjectionSimulationConfig {
+  id: number;
+  configId: string;
   celsius: number;
   hypamp: number;
   vinit: number;
   injectTo: string;
   stimulus: StimulusConfig;
+}
+
+export interface SimulationConfiguration {
+  recordFrom: string[];
+  directStimulation: null | DirectCurrentInjectionSimulationConfig[];
+  synapses: null | SynapsesConfig;
 }
 
 export type SynapseConfig = {
@@ -71,7 +71,7 @@ export type SynapseConfig = {
 };
 
 export type SingleModelSimConfig = SimulationConfiguration & {
-  directStimulation: DirectSimulationConfig[];
+  directStimulation: DirectCurrentInjectionSimulationConfig[];
   synapses: null;
 };
 
@@ -96,12 +96,13 @@ export interface SingleNeuronModelSimulationConfig {
   injectTo: string;
   recordFrom: string[];
   stimulus: StimulusConfig;
+  synaptome?: Array<SynapseConfig>;
 }
 
-export interface SingleNeuronSimulationPayload {
+export interface SimulationPayload {
   config: SingleNeuronModelSimulationConfig;
-  simulationResult: PlotData;
-  stimuliPreviewData: PlotData;
+  simulation: PlotData;
+  stimulus: Array<{ id: string; data: PlotData }>;
 }
 
 export type SelectedSingleNeuronModel = {
@@ -125,4 +126,6 @@ export const isSynaptomModel = (model: ModelResource | null): model is Synaptome
   return type.includes(DataType.SingleNeuronSynaptome) && 'distribution' in model;
 };
 
-export type RunSimulationRequestBody = DirectSimulationConfig & { recordFrom: string[] };
+export type RunSimulationRequestBody = DirectCurrentInjectionSimulationConfig & {
+  recordFrom: string[];
+};

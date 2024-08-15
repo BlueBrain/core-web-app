@@ -4,8 +4,7 @@ import { getParamValues } from '@/util/simulate/single-neuron';
 import updateArray from '@/util/updateArray';
 import {
   StimulusModuleOption,
-  StimulusConfig,
-  DirectSimulationConfig,
+  DirectCurrentInjectionSimulationConfig,
   StimulusType,
   StimulusModule,
   StimulusParameter,
@@ -16,15 +15,6 @@ import {
   stimulusParams,
 } from '@/constants/simulate/single-neuron';
 
-export interface DirectCurrentInjectionSimulationConfig {
-  id: string;
-  celsius: number;
-  hypamp: number;
-  vinit: number;
-  injectTo: string;
-  stimulus: StimulusConfig;
-}
-
 export const directCurrentInjectionSimulationConfigAtom = atom<
   Array<DirectCurrentInjectionSimulationConfig>
 >([DEFAULT_DIRECT_STIM_CONFIG]);
@@ -34,7 +24,7 @@ directCurrentInjectionSimulationConfigAtom.debugLabel =
 export default function useDirectCurrentInjectionSimulationConfig() {
   const [state, update] = useAtom(directCurrentInjectionSimulationConfigAtom);
 
-  function findConfig(id: string) {
+  function findConfig(id: number) {
     const stimConfig = state.find(
       (config: DirectCurrentInjectionSimulationConfig) => config.id === id
     );
@@ -44,7 +34,7 @@ export default function useDirectCurrentInjectionSimulationConfig() {
     return stimConfig;
   }
 
-  function setMode({ id, newValue }: { id: string; newValue: StimulusType }) {
+  function setMode({ id, newValue }: { id: number; newValue: StimulusType }) {
     const stimConfig = findConfig(id);
 
     const options = stimulusModuleParams.options.filter((option) =>
@@ -70,7 +60,7 @@ export default function useDirectCurrentInjectionSimulationConfig() {
     );
   }
 
-  function setProtocol({ id, newValue }: { id: string; newValue: StimulusModule }) {
+  function setProtocol({ id, newValue }: { id: number; newValue: StimulusModule }) {
     const stimConfig = findConfig(id);
 
     const protocolInfo = stimulusModuleParams.options.find(
@@ -104,7 +94,7 @@ export default function useDirectCurrentInjectionSimulationConfig() {
     key,
     newValue,
   }: {
-    id: string;
+    id: number;
     key: keyof StimulusParameter;
     newValue: number | null;
   }) {
@@ -132,8 +122,8 @@ export default function useDirectCurrentInjectionSimulationConfig() {
     key,
     newValue,
   }: {
-    id: string;
-    key: keyof DirectSimulationConfig;
+    id: number;
+    key: keyof DirectCurrentInjectionSimulationConfig;
     newValue: number | null;
   }) {
     const stimConfig = findConfig(id);
@@ -150,7 +140,7 @@ export default function useDirectCurrentInjectionSimulationConfig() {
     );
   }
 
-  function setAmplitudes({ id, newValue }: { id: string; newValue: Array<number> }) {
+  function setAmplitudes({ id, newValue }: { id: number; newValue: Array<number> }) {
     const stimConfig = findConfig(id);
 
     const updatedStimulus = {
@@ -172,7 +162,8 @@ export default function useDirectCurrentInjectionSimulationConfig() {
       ...state,
       {
         ...DEFAULT_DIRECT_STIM_CONFIG,
-        id: `${state.length}`,
+        configId: crypto.randomUUID(),
+        id: state.length,
       },
     ]);
   }

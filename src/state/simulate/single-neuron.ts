@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import { atomWithReset } from 'jotai/utils';
 
 import { directCurrentInjectionSimulationConfigAtom } from './categories/direct-current-injection-simulation';
-import { SelectedSingleNeuronModel } from '@/types/simulation/single-neuron';
+import { SelectedSingleNeuronModel, StimulusModule } from '@/types/simulation/single-neuron';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 import { getIdFromSelfUrl } from '@/util/nexus';
 import { SimulationStep, SimulationStepsTraker } from '@/types/simulation/common';
@@ -37,9 +37,16 @@ export const simulationStatusAtom = atomWithReset<{
   description?: string;
 } | null>(null);
 
-export const simulationPlotDataAtom = atomWithReset<PlotData | null>(null);
-
-export const protocolNameAtom = atom<string | null>((get) => {
+export const protocolNameAtom = atom<StimulusModule | null>((get) => {
   const directCurrentStimulation = get(directCurrentInjectionSimulationConfigAtom);
   return directCurrentStimulation?.[0].stimulus.stimulusProtocol ?? null; // TODO: The index here should not be hardcoded when synaptome rendering is done.
 });
+
+export const stimulusPreviewPlotDataAtom = atomWithReset<
+  Array<{
+    id: string;
+    data: PlotData;
+  }>
+>([]);
+
+export const genericSingleNeuronSimulationPlotDataAtom = atomWithReset<PlotData | null>(null);

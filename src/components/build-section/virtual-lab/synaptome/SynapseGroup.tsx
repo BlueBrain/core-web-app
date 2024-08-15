@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import { z } from 'zod';
 import delay from 'lodash/delay';
+import isNil from 'lodash/isNil';
 
 import { GENERATE_SYNAPSES_FAIL } from './messages';
 import { sendDisplaySynapses3DEvent, sendRemoveSynapses3DEvent } from './events';
@@ -27,6 +28,7 @@ import {
 
 import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
 import { getSynaptomePlacement } from '@/api/bluenaas';
+import { getSession } from '@/authFetch';
 
 type Props = {
   modelId: string;
@@ -49,7 +51,18 @@ const SynapseGroupValidationSchema = z
           distance_soma_lte: z.number().nullish(),
         })
       )
-      .nullish(),
+      .nullish()
+      .superRefine((values, ctx) => {
+        values?.forEach((v, i) => {
+          if (!v.distance_soma_gte && !v.distance_soma_lte) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Exclusion rule ${i + 1} required to have either gte, lte or both`,
+              path: [`exclusion_rules[${i + 1}]`],
+            });
+          }
+        });
+      }),
   })
   .superRefine((values, ctx) => {
     if (values.distribution === 'formula' && !values.formula) {
@@ -106,7 +119,17 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
     onHideSynapse();
 
     try {
-      const response = await getSynaptomePlacement({ modelId, seed, config });
+      const session = await getSession();
+      if (isNil(session)) {
+        throw new Error('No session found');
+      }
+
+      const response = await getSynaptomePlacement({
+        modelId,
+        seed,
+        config,
+        token: session.accessToken,
+      });
       if (!response.ok) {
         notifyError(
           GENERATE_SYNAPSES_FAIL.replace('$$', (index + 1).toString()),

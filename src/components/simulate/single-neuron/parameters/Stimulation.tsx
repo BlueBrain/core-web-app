@@ -2,7 +2,7 @@ import { Select, Form, InputNumber, Card, Button } from 'antd';
 import { useAtomValue } from 'jotai';
 import { DeleteOutlined } from '@ant-design/icons';
 
-import AmperageRangeComponent from './AmperageRange';
+import AmperageRange from './AmperageRange';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { stimulusTypeParams } from '@/constants/simulate/single-neuron';
 import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
@@ -28,7 +28,7 @@ export default function Stimulation({ modelSelfUrl }: Props) {
   return (
     <Form.List name="directStimulation">
       {(fields, { add, remove }) => (
-        <div style={{ display: 'flex', rowGap: 2, flexDirection: 'column' }}>
+        <div className="flex flex-col gap-2">
           {fields.map((field) => (
             <Card
               size="small"
@@ -50,7 +50,8 @@ export default function Stimulation({ modelSelfUrl }: Props) {
               <StimulationMode stimulationId={field.name} />
               <StimulationProtocol stimulationId={field.name} />
               <Parameters stimulationId={field.name} />
-              <AmperageRangeComponent
+              <AmperageRange
+                configId={state[field.name].configId}
                 stimulationId={field.name}
                 amplitudes={state[field.name].stimulus.amplitudes}
                 modelSelfUrl={modelSelfUrl}
@@ -91,7 +92,7 @@ function StimulusLocation({ stimulationId }: FormItemProps) {
         placeholder="Select stimulus location"
         onChange={(newValue) =>
           setProperty({
-            id: `${stimulationId}`,
+            id: stimulationId,
             key: 'injectTo',
             newValue,
           })
@@ -118,7 +119,7 @@ function StimulationMode({ stimulationId }: FormItemProps) {
         options={[...stimulusModeClone.options]}
         onSelect={(newValue) =>
           setMode({
-            id: `${stimulationId}`,
+            id: stimulationId,
             newValue,
           })
         }
@@ -143,7 +144,7 @@ function StimulationProtocol({ stimulationId }: FormItemPropsWithConfig) {
         options={state[stimulationId].stimulus.stimulusProtocolOptions}
         onSelect={(newValue) => {
           setProtocol({
-            id: `${stimulationId}`,
+            id: stimulationId,
             newValue,
           });
         }}
@@ -176,7 +177,7 @@ function Parameters({ stimulationId }: FormItemPropsWithConfig) {
             max={info.max}
             onChange={(newValue) =>
               setParamValue({
-                id: `${stimulationId}`,
+                id: stimulationId,
                 key,
                 newValue,
               })

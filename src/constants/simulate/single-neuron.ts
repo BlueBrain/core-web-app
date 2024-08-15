@@ -6,7 +6,7 @@ import {
   StimulusModuleOption,
   SimulationConfiguration,
   StimulusConfig,
-  DirectSimulationConfig,
+  DirectCurrentInjectionSimulationConfig,
   SynapseConfig,
 } from '@/types/simulation/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
@@ -102,8 +102,9 @@ export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   amplitudes: [40, 80, 120],
 };
 
-export const DEFAULT_DIRECT_STIM_CONFIG: DirectSimulationConfig = {
-  id: '0',
+export const DEFAULT_DIRECT_STIM_CONFIG: DirectCurrentInjectionSimulationConfig = {
+  id: 0,
+  configId: crypto.randomUUID(),
   celsius: 34,
   hypamp: 0,
   vinit: -73,

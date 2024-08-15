@@ -23,7 +23,7 @@ export default function Conditions({ stimulationId }: Props) {
           max={40}
           onChange={(newValue) =>
             setProperty({
-              id: '0',
+              id: 0,
               key: 'celsius',
               newValue,
             })
@@ -42,7 +42,7 @@ export default function Conditions({ stimulationId }: Props) {
           max={100}
           onChange={(newValue) =>
             setProperty({
-              id: '0',
+              id: 0,
               key: 'vinit',
               newValue,
             })
@@ -61,7 +61,7 @@ export default function Conditions({ stimulationId }: Props) {
           max={10}
           onChange={(newValue) =>
             setProperty({
-              id: '0',
+              id: 0,
               key: 'hypamp',
               newValue,
             })
