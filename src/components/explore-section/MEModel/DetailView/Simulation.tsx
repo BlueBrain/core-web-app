@@ -108,7 +108,12 @@ function SimulationDetail({ simulation }: { simulation: SingleNeuronSimulation }
         <div>
           <div className={subtitleStyle}>Recording locations</div>
           <div className="font-bold">
-            {distributionJson?.config.recordFrom.map((r) => <span key={r}>{r}</span>)}
+            {distributionJson?.config.recordFrom.map((r) => (
+              <div key={`${r.section}_${r.segmentOffset}`}>
+                <span>Section: {r.section}</span>
+                <span>Segment Offset: {r.segmentOffset}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

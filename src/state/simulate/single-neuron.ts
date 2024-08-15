@@ -23,8 +23,6 @@ export const simulateStepTrackerAtom = atom<SimulationStepsTraker>({
 
 export const secNamesAtom = atomWithReset<string[]>([]);
 
-export const segNamesAtom = atom<string[]>(['soma[0]', 'axon[1]']);
-
 export const singleNeuronAtom = atom<SelectedSingleNeuronModel | null>(null);
 
 export const singleNeuronIdAtom = atom<string | null>((get) => {
