@@ -131,18 +131,14 @@ function ScopeFilter({
             {isSelectedScope ? (
               <>
                 <span>{scope}</span>
-                <DownOutlined
-                  className="transition-transform"
-                  style={{
-                    fontSize: 12,
-                    ...(contentIsVisible
-                      ? {
-                          transform: 'rotate(180deg)',
-                        }
-                      : {}),
-                  }}
-                  size={4}
-                />
+                {contentIsVisible && (
+                  <DownOutlined
+                    style={{
+                      fontSize: 12,
+                    }}
+                    size={4}
+                  />
+                )}
               </>
             ) : (
               scope
