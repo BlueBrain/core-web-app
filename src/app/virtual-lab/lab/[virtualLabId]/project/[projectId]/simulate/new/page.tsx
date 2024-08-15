@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAtomValue } from 'jotai';
 
+import { getSynaptomeModel } from './model';
 import { ServerSideComponentProp } from '@/types/common';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
@@ -39,10 +40,11 @@ export default function VirtualLabProjectSimulateNewPage({
   // TODO: Use right types
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
     const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-    const simulatePageA = typeToNewSimulationPage[DataType.CircuitMEModel];
+    const simulatePageA = typeToNewSimulationPage[DataType.SingleNeuronSynaptome];
     const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePageA}/edit`;
 
-    router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
+    // @ts-ignore
+    router.push(`${detailUrlBuilder(baseBuildUrl, getSynaptomeModel() ?? model)}`);
   };
 
   return (

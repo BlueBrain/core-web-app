@@ -8,6 +8,7 @@ import {
   StimulusConfig,
   DirectCurrentInjectionSimulationConfig,
   SynapseConfig,
+  RecordLocation,
 } from '@/types/simulation/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
@@ -89,6 +90,12 @@ export const stimulusParams: ConditionalStimulusParamsTypes = {
   },
 };
 
+const DEFAULT_SECTION = 'soma[0]';
+export const DEFAULT_RECORDING_LOCATION: RecordLocation = {
+  section: DEFAULT_SECTION,
+  segmentOffset: 0,
+};
+
 export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   stimulusType: 'current_clamp',
   stimulusProtocol: 'iv',
@@ -108,12 +115,12 @@ export const DEFAULT_DIRECT_STIM_CONFIG: DirectCurrentInjectionSimulationConfig 
   celsius: 34,
   hypamp: 0,
   vinit: -73,
-  injectTo: 'soma[0]',
+  injectTo: DEFAULT_SECTION,
   stimulus: DEFAULT_STIM_CONFIG,
 };
 
 export const DEFAULT_SIM_CONFIG: SimulationConfiguration = {
-  recordFrom: ['soma[0]_0'],
+  recordFrom: [{ ...DEFAULT_RECORDING_LOCATION }],
   directStimulation: [DEFAULT_DIRECT_STIM_CONFIG],
   synapses: null,
 };

@@ -55,8 +55,13 @@ export interface DirectCurrentInjectionSimulationConfig {
   stimulus: StimulusConfig;
 }
 
+export type RecordLocation = {
+  section: string;
+  segmentOffset: number;
+};
+
 export interface SimulationConfiguration {
-  recordFrom: string[];
+  recordFrom: RecordLocation[];
   directStimulation: null | DirectCurrentInjectionSimulationConfig[];
   synapses: null | SynapsesConfig;
 }
@@ -94,7 +99,7 @@ export interface SingleNeuronModelSimulationConfig {
   hypamp: number;
   vinit: number;
   injectTo: string;
-  recordFrom: string[];
+  recordFrom: RecordLocation[];
   stimulus: StimulusConfig;
   synaptome?: Array<SynapseConfig>;
 }
@@ -127,5 +132,11 @@ export const isSynaptomModel = (model: ModelResource | null): model is Synaptome
 };
 
 export type RunSimulationRequestBody = DirectCurrentInjectionSimulationConfig & {
-  recordFrom: string[];
+  recordFrom: RecordLocation[];
+};
+
+export type UpdateSynapseSimulationProperty = {
+  id: string;
+  key: keyof SynapseConfig;
+  newValue: number;
 };

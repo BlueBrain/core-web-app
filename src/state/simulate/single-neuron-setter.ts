@@ -205,7 +205,9 @@ export const createSingleNeuronSimulationAtom = atom<
       '@id': singleNeuronId,
     },
     injectionLocation: singleNeuronSimulationConfig.injectTo,
-    recordingLocation: singleNeuronSimulationConfig.recordFrom,
+    recordingLocation: singleNeuronSimulationConfig.recordFrom.map(
+      (r) => `${r.section}_${r.segmentOffset}` // TODO: recordingLocation is not needed in the entity since it is present in the distribution and the enity schema does not allow saving correct format for record location
+    ),
     brainLocation: resource.brainLocation,
   };
 

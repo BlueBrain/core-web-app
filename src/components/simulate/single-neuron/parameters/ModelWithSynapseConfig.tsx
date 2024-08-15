@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 
 import Stimulation from './Stimulation';
-import SynapseConfigForm from './SynapseConfigForm';
+import SynapseSimulationFormsGroup from './SynapseSimulationFormsGroup';
 import {
   useDirectCurrentInjectionSimulationConfig,
   useSynaptomeSimulationConfig,
@@ -73,7 +73,7 @@ export default function ModelWithSynapseConfig() {
             <div className="flex w-full items-center bg-primary-8 px-4 py-3 text-lg text-white">
               Synapses
             </div>
-            <SynapseConfigForm />
+            <SynapseSimulationFormsGroup />
           </div>
         )}
       </div>

@@ -3,32 +3,17 @@
 import { useMemo, useState } from 'react';
 import { Form, Input, Select, Button, Space, Tag, FormListFieldData, InputNumber } from 'antd';
 import { useAtom } from 'jotai';
-import {
-  AppstoreAddOutlined,
-  DeleteOutlined,
-  EyeInvisibleOutlined,
-  EyeOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
+import { AppstoreAddOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { z } from 'zod';
 import delay from 'lodash/delay';
-import isNil from 'lodash/isNil';
 
 import { GENERATE_SYNAPSES_FAIL } from './messages';
-import { sendDisplaySynapses3DEvent, sendRemoveSynapses3DEvent } from './events';
+import { sendRemoveSynapses3DEvent } from './events';
+import VisualizeSynaptomeButton from './ShowHideSynaptomeButton';
 import { classNames } from '@/util/utils';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 import useNotification from '@/hooks/notifications';
-import {
-  SectionSynapses,
-  synapsesPlacementAtom,
-  SynapseTypeColorMap,
-  SynapseTypeColorMapKey,
-} from '@/state/synaptome';
-
-import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
-import { getSynaptomePlacement } from '@/api/bluenaas';
-import { getSession } from '@/authFetch';
+import { synapsesPlacementAtom } from '@/state/synaptome';
 
 type Props = {
   modelId: string;
@@ -75,9 +60,7 @@ const SynapseGroupValidationSchema = z
   });
 
 export default function SynapseGroup({ modelId, index, field, removeGroup }: Props) {
-  const [visualizeLoading, setLoadingVisualize] = useState(false);
   const [generateError, setGenerateError] = useState(false);
-  const [synapseVis, setSynapseVis] = useState(false);
   const [generateSuccess, setGenerateSuccess] = useState(false);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
 
@@ -93,7 +76,6 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
   }, [config]);
 
   const onHideSynapse = () => {
-    setSynapseVis(false);
     const currentSynapsesPlacementConfig = synapsesPlacement?.[config.id];
     if (currentSynapsesPlacementConfig && currentSynapsesPlacementConfig.meshId) {
       sendRemoveSynapses3DEvent(config.id, currentSynapsesPlacementConfig.meshId);
@@ -113,69 +95,19 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
     onHideSynapse();
   };
 
-  const onVisualize = async () => {
-    setLoadingVisualize(true);
-    setGenerateError(false);
-    onHideSynapse();
+  const onVisualizationError = () => {
+    notifyError(
+      GENERATE_SYNAPSES_FAIL.replace('$$', (index + 1).toString()),
+      undefined,
+      'topRight'
+    );
+    setGenerateError(true);
+    return delay(() => setGenerateError(false), 2000);
+  };
 
-    try {
-      const session = await getSession();
-      if (isNil(session)) {
-        throw new Error('No session found');
-      }
-
-      const response = await getSynaptomePlacement({
-        modelId,
-        seed,
-        config,
-        token: session.accessToken,
-      });
-      if (!response.ok) {
-        notifyError(
-          GENERATE_SYNAPSES_FAIL.replace('$$', (index + 1).toString()),
-          undefined,
-          'topRight'
-        );
-        setGenerateError(true);
-        return delay(() => setGenerateError(false), 2000);
-      }
-
-      const result: { synapses: Array<SectionSynapses> } = await response.json();
-
-      const synapsePositions = result.synapses
-        .flat()
-        .flatMap((p) => p.synapses)
-        .map((o) => o.coordinates);
-
-      const mesh = createBubblesInstanced(
-        synapsePositions,
-        config.type ? SynapseTypeColorMap[config.type as SynapseTypeColorMapKey] : undefined
-      );
-
-      sendDisplaySynapses3DEvent(config.id, mesh);
-
-      setSynapsesPlacementAtom({
-        ...synapsesPlacement,
-        [config.id]: {
-          sectionSynapses: result.synapses,
-          count: synapsePositions.length,
-          meshId: mesh.uuid,
-        },
-      });
-      setGenerateSuccess(true);
-      setSynapseVis(true);
-      return delay(() => setGenerateSuccess(false), 2000);
-    } catch (error) {
-      notifyError(
-        GENERATE_SYNAPSES_FAIL.replace('$$', (index + 1).toString()),
-        undefined,
-        'topRight'
-      );
-      setGenerateError(true);
-      return delay(() => setGenerateError(false), 2000);
-    } finally {
-      setLoadingVisualize(false);
-    }
+  const onVisualizationSuccess = () => {
+    setGenerateSuccess(true);
+    return delay(() => setGenerateSuccess(false), 2000);
   };
 
   const addNewExclusionRule = () => {
@@ -199,8 +131,8 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
     <div
       className={classNames(
         'mb-4 rounded-md border border-zinc-300 p-6',
-        generateError && 'border-2 border-rose-500',
-        generateSuccess && 'border-2 border-teal-500'
+        generateError && '!border-2 !border-rose-500',
+        generateSuccess && '!border-2 !border-teal-500'
       )}
     >
       <div className="mb-3 flex items-center justify-between">
@@ -214,17 +146,15 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
           )}
         </div>
         <Space className="w-full justify-end">
-          <Button
-            type="default"
-            htmlType="button"
-            icon={<EyeOutlined />}
-            onClick={onVisualize}
-            disabled={visualizeLoading || disableVisualizeBtn}
-            loading={visualizeLoading}
+          <VisualizeSynaptomeButton
+            config={config}
+            modelSelf={modelId}
+            seed={seed}
+            disable={disableVisualizeBtn}
+            onError={onVisualizationError}
+            onSuccess={onVisualizationSuccess}
+            id={config?.id}
           />
-          {synapseVis && (
-            <Button type="default" icon={<EyeInvisibleOutlined />} onClick={onHideSynapse} />
-          )}
           {synapses?.length > 1 && (
             <Button
               aria-label="Delete Synapse"

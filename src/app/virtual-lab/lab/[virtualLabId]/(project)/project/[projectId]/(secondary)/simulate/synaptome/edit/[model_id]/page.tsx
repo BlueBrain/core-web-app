@@ -13,7 +13,6 @@ import { useModelConfiguration } from '@/hooks/useModelConfiguration';
 import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
 import { SynaptomeConfigDistribution } from '@/types/synaptome';
 import { SimulationConfiguration } from '@/types/simulation/single-neuron';
-import { DEFAULT_RECORD_SOURCE } from '@/state/simulate/categories/recording-source-for-simulation';
 import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
@@ -21,6 +20,7 @@ import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import useSynaptomeSimulationConfig from '@/state/simulate/categories/synaptome-simulation-config';
 import ModelWithSynapseConfig from '@/components/simulate/single-neuron/parameters/ModelWithSynapseConfig';
 import Wrapper from '@/components/simulate/single-neuron/Wrapper';
+import { DEFAULT_RECORDING_LOCATION } from '@/constants/simulate/single-neuron';
 
 type Props = {
   params: {
@@ -75,7 +75,7 @@ function useSynaptomeModel({
 
   const initialValues: SimulationConfiguration = useMemo(() => {
     return {
-      recordFrom: [DEFAULT_RECORD_SOURCE],
+      recordFrom: [DEFAULT_RECORDING_LOCATION],
       directStimulation: directCurrentConfig,
       synapses: synaptomeConfig,
     };

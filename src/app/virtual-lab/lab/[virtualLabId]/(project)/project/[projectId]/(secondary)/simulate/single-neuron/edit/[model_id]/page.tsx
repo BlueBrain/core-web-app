@@ -6,8 +6,10 @@ import { Spin } from 'antd';
 import { ParameterView } from '@/components/simulate/single-neuron';
 import { useModel } from '@/hooks/useModel';
 import { ModelResource, SimulationConfiguration } from '@/types/simulation/single-neuron';
-import { DEFAULT_RECORD_SOURCE } from '@/state/simulate/categories/recording-source-for-simulation';
-import { DEFAULT_DIRECT_STIM_CONFIG } from '@/constants/simulate/single-neuron';
+import {
+  DEFAULT_DIRECT_STIM_CONFIG,
+  DEFAULT_RECORDING_LOCATION,
+} from '@/constants/simulate/single-neuron';
 import { NeuronModelView } from '@/components/build-section/virtual-lab/synaptome';
 
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
@@ -37,7 +39,7 @@ export default function SingleNeuronSimulation({ params: { projectId, virtualLab
   const { resource, loading } = useModel<ModelResource>({ modelId: id });
 
   const initialValues: SimulationConfiguration = {
-    recordFrom: [DEFAULT_RECORD_SOURCE],
+    recordFrom: [DEFAULT_RECORDING_LOCATION],
     directStimulation: [DEFAULT_DIRECT_STIM_CONFIG],
     synapses: null,
   };

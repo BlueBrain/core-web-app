@@ -1,7 +1,6 @@
 import { atom, useAtom } from 'jotai';
-
 import { getDefaultSynapseConfig } from '@/constants/simulate/single-neuron';
-import { SynapseConfig } from '@/types/simulation/single-neuron';
+import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import updateArray from '@/util/updateArray';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 
@@ -48,15 +47,7 @@ export default function useSynaptomeSimulationConfig() {
     update(state.filter((s, index) => index !== id) ?? []);
   }
 
-  function setProperty({
-    id,
-    key,
-    newValue,
-  }: {
-    id: string;
-    key: keyof SynapseConfig;
-    newValue: number;
-  }) {
+  function setProperty({ id, key, newValue }: UpdateSynapseSimulationProperty) {
     const config = findConfig(id);
     const updateConfig = {
       ...config,
@@ -73,6 +64,7 @@ export default function useSynaptomeSimulationConfig() {
 
   return {
     state,
+    findConfig,
     newConfig,
     remove,
     setProperty,
