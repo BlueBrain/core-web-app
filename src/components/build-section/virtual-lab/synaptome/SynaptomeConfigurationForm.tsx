@@ -11,6 +11,7 @@ import {
   CREATE_SYNAPTOME_FAIL,
   CREATE_SYNAPTOME_SUCCESS,
 } from './messages';
+import { sendRemoveSynapses3DEvent } from './events';
 import { createHeaders, getRandomIntInclusive } from '@/util/utils';
 import { composeUrl, createDistribution } from '@/util/nexus';
 import {
@@ -167,6 +168,26 @@ export default function SynaptomeConfigurationForm({
     } finally {
       setLoading(false);
       sendResetSynapses3DEvent();
+    }
+  };
+
+  const onSeedChange = (value: number | null) => {
+    if (value) {
+      const formSynapses = form.getFieldValue('synapses');
+      form.setFieldsValue({
+        ...form.getFieldsValue(),
+        seed: value,
+        synapses: formSynapses.map((c: SingleSynaptomeConfig) => ({
+          ...c,
+          seed: value + getRandomIntInclusive(0, value),
+        })),
+      });
+      formSynapses.forEach((c: SingleSynaptomeConfig) => {
+        const mesh = synapsesPlacement?.[c.id]?.meshId;
+        if (mesh) {
+          sendRemoveSynapses3DEvent(c.id, mesh);
+        }
+      });
     }
   };
 
