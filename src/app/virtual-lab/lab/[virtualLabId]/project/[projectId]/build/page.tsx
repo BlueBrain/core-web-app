@@ -5,21 +5,22 @@ import { HTMLProps, useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
-import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
-import GenericButton from '@/components/Global/GenericButton';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { detailUrlBuilder } from '@/util/common';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
-import BookmarkButton from '@/components/explore-section/BookmarkButton';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType, SimulationType } from '@/types/virtual-lab/lab';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
+
+import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
+import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
+import BookmarkButton from '@/components/explore-section/BookmarkButton';
+import GenericButton from '@/components/Global/GenericButton';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 
 type Params = {
