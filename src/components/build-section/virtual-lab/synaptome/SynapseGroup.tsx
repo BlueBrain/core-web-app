@@ -66,10 +66,9 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
 
   const { error: notifyError } = useNotification();
   const form = Form.useFormInstance();
-  const seed = Form.useWatch<number>('seed', form);
   const synapses = Form.useWatch<Array<SingleSynaptomeConfig>>('synapses', form);
+  const seed = Form.useWatch<number>('seed', form);
   const config = synapses?.[index];
-
   const disableVisualizeBtn = useMemo(() => {
     const result = SynapseGroupValidationSchema.safeParse(config);
     return !result.success;
@@ -147,13 +146,13 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
         </div>
         <Space className="w-full justify-end">
           <VisualizeSynaptomeButton
+            id={config?.id}
             config={config}
-            modelSelf={modelId}
             seed={seed}
+            modelSelf={modelId}
             disable={disableVisualizeBtn}
             onError={onVisualizationError}
             onSuccess={onVisualizationSuccess}
-            id={config?.id}
           />
           {synapses?.length > 1 && (
             <Button

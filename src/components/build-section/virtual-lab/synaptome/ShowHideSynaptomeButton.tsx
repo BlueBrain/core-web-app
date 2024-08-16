@@ -1,8 +1,8 @@
+import { useMemo, useRef, useState } from 'react';
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { useState } from 'react';
 import { useAtom } from 'jotai';
-import delay from 'lodash/delay';
+import isEqual from 'lodash/isEqual';
 
 import { sendDisplaySynapses3DEvent, sendRemoveSynapses3DEvent } from './events';
 import {
@@ -38,6 +38,7 @@ export default function VisualizeSynaptomeButton({
   const [synapseVis, setSynapseVis] = useState(false);
   const [visualizeLoading, setLoadingVisualize] = useState(false);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
+  const configRef = useRef(config);
 
   const onHideSynapse = () => {
     setSynapseVis(false);
@@ -55,10 +56,19 @@ export default function VisualizeSynaptomeButton({
     }
   };
 
+  const isAlreadyVisualized = useMemo(
+    () =>
+      !!Object.values(synapsesPlacement ?? []).find(
+        (c) =>
+          config &&
+          c?.synapsePlacementConfigId === config.id &&
+          c.meshId &&
+          isEqual(config, configRef.current)
+      ),
+    [config, synapsesPlacement]
+  );
+
   const onVisualize = async () => {
-    const isAlreadyVisualized = Object.values(synapsesPlacement ?? []).find(
-      (c) => c?.synapsePlacementConfigId === config.id
-    );
     if (isAlreadyVisualized) {
       return;
     }
@@ -69,7 +79,7 @@ export default function VisualizeSynaptomeButton({
     try {
       const session = await getSession();
       if (!session?.accessToken) {
-        throw new Error('User should be logged in');
+        throw new Error('No session found');
       }
       const response = await getSynaptomePlacement({
         modelId: modelSelf,
@@ -78,7 +88,7 @@ export default function VisualizeSynaptomeButton({
         token: session?.accessToken,
       });
       if (!response.ok) {
-        return delay(() => onError(), 2000);
+        return onError();
       }
 
       const result: { synapses: Array<SectionSynapses> } = await response.json();
@@ -105,21 +115,22 @@ export default function VisualizeSynaptomeButton({
         },
       });
       setSynapseVis(true);
-      return delay(() => onSuccess(), 2000);
+      configRef.current = config;
+      return onSuccess();
     } catch (error) {
-      return delay(() => onError(), 2000);
+      return onError();
     } finally {
       setLoadingVisualize(false);
     }
   };
   return (
-    <>
+    <div className="flex items-center gap-2">
       <Button
         type="default"
         htmlType="button"
         icon={<EyeOutlined />}
         onClick={onVisualize}
-        disabled={visualizeLoading || disable}
+        disabled={visualizeLoading || isAlreadyVisualized || disable}
         loading={visualizeLoading}
         title="Show synapses"
       />
@@ -131,6 +142,6 @@ export default function VisualizeSynaptomeButton({
           title="Hide synapses"
         />
       )}
-    </>
+    </div>
   );
 }

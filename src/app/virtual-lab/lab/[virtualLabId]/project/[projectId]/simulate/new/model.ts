@@ -1,11 +1,11 @@
 const defaultId =
-  'https://openbluebrain.com/data/bb848ba6-9436-4871-be45-84ec201909f8/6fef27da-359a-43b2-a524-a6dad7b9ff44/81f8ebe5-d825-4103-833c-433da750cfd5';
+  'https://openbluebrain.com/data/7fa6efce-8809-407f-b4a2-ff8b67e24c59/d5230743-48bf-446a-8054-14c6685f776e/56de2c6c-f281-4135-a011-297b39c2d8ae';
 
 export const getSynaptomeModel = (id = defaultId) => {
   const [org, project] = id.split('/data/')[1].split('/');
 
   const projectLabel = `https://openbluebrain.com/v1/projects/${org}/${project}`;
-  const contentUrl = `https://openbluebrain.com/v1/files/${org}/${project}/${encodeURIComponent(id)}`;
+  // const contentUrl = `https://openbluebrain.com/v1/files/${org}/${project}/${encodeURIComponent(id)}`;
 
   return {
     _id: id,
@@ -55,7 +55,8 @@ export const getSynaptomeModel = (id = defaultId) => {
           unitCode: 'bytes',
           value: 660,
         },
-        contentUrl,
+        contentUrl:
+          'https://openbluebrain.com/api/nexus/v1/files/7fa6efce-8809-407f-b4a2-ff8b67e24c59/d5230743-48bf-446a-8054-14c6685f776e/https:%2F%2Fopenbluebrain.com%2Fdata%2F7fa6efce-8809-407f-b4a2-ff8b67e24c59%2Fd5230743-48bf-446a-8054-14c6685f776e%2F96ea01c5-0844-40a0-b242-6b88ff713f65',
         digest: {
           algorithm: 'SHA-256',
           value: '11fd8b203005319d1bab34f0245f6861e1fce0b9ab97407af4663a5e0c09dcc0',

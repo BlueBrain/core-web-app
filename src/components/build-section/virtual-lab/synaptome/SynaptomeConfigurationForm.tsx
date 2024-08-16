@@ -12,6 +12,7 @@ import {
   CREATE_SYNAPTOME_FAIL,
   CREATE_SYNAPTOME_SUCCESS,
 } from './messages';
+import { sendRemoveSynapses3DEvent } from './events';
 import { createHeaders, getRandomIntInclusive } from '@/util/utils';
 import { composeUrl, createDistribution, removeMetadata } from '@/util/nexus';
 import {
@@ -161,6 +162,26 @@ export default function SynaptomeConfigurationForm({
     }
   };
 
+  const onSeedChange = (value: number | null) => {
+    if (value) {
+      const formSynapses = form.getFieldValue('synapses');
+      form.setFieldsValue({
+        ...form.getFieldsValue(),
+        seed: value,
+        synapses: formSynapses.map((c: SingleSynaptomeConfig) => ({
+          ...c,
+          seed: value + getRandomIntInclusive(0, value),
+        })),
+      });
+      formSynapses.forEach((c: SingleSynaptomeConfig) => {
+        const mesh = synapsesPlacement?.[c.id]?.meshId;
+        if (mesh) {
+          sendRemoveSynapses3DEvent(c.id, mesh);
+        }
+      });
+    }
+  };
+
   return (
     <ConfigProvider theme={{ hashed: false, token: { borderRadius: 0 } }}>
       <Form
@@ -201,7 +222,12 @@ export default function SynaptomeConfigurationForm({
           />
         </Form.Item>
         <Form.Item name="seed" label={label('Seed')}>
-          <InputNumber placeholder="Enter a seed " className="w-full" size="large" />
+          <InputNumber
+            placeholder="Enter a seed "
+            className="w-full"
+            size="large"
+            onChange={onSeedChange}
+          />
         </Form.Item>
         <div className="mb-5 flex items-center justify-between gap-2">
           <h2 className="my-3 text-xl font-bold text-primary-8">

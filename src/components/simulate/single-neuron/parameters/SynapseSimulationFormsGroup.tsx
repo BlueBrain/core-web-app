@@ -41,10 +41,11 @@ export default function SynapseSimulationFormsGroup() {
   return (
     <Form.List name="synapses">
       {(fields, { add, remove }) => (
-        <div style={{ display: 'flex', rowGap: 16, flexDirection: 'column' }}>
+        <div className="flex flex-col gap-4">
           {fields.map((field) => (
             <SynapseSimulationForm
               key={`${field.name}`}
+              index={field.name}
               synaptomeModelConfig={synaptomeModel}
               formName={`${field.name}`}
               selectedSynapseGroupPlacementConfig={placementConfigForForm(`${field.name}`)}

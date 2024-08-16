@@ -3,7 +3,6 @@
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import {
@@ -12,6 +11,9 @@ import {
 } from '@/components/build-section/virtual-lab/synaptome';
 import { MEModelResource } from '@/types/me-model';
 import { useModel } from '@/hooks/useModel';
+import SideMenu from '@/components/SideMenu';
+import { Content, Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { generateLabUrl } from '@/util/virtual-lab/urls';
 
 type Props = {
   params: {
@@ -23,13 +25,39 @@ type Props = {
 function Synaptome({ params }: Props) {
   const { id } = useResourceInfoFromPath();
   const { loading, resource } = useModel<MEModelResource>({ modelId: id });
+  const labUrl = generateLabUrl(params.virtualLabId);
+
+  const labProjectUrl = `${labUrl}/project/${params.projectId}`;
+
   if (loading || !resource) {
     return <Spin indicator={<LoadingOutlined />} />;
   }
 
   return (
     <div className="grid max-h-screen grid-cols-[min-content_auto] overflow-hidden bg-white">
-      <Nav params={params} />
+      <SideMenu
+        links={[
+          {
+            key: LinkItemKey.Build,
+            href: `${labProjectUrl}/build`,
+            content: Content.Build,
+            styles: 'rounded-full bg-primary-5 py-3 text-primary-9 w-2/3',
+          },
+        ]}
+        lab={{
+          key: LinkItemKey.VirtualLab,
+          id: params.virtualLabId,
+          label: Label.VirtualLab,
+          href: `${labUrl}/overview`,
+        }}
+        project={{
+          key: LinkItemKey.Project,
+          id: params.projectId,
+          virtualLabId: params.virtualLabId,
+          label: Label.Project,
+          href: `${labProjectUrl}/home`,
+        }}
+      />
       <div className="grid w-full grid-cols-2">
         <div className="flex items-center justify-center bg-black">
           <DefaultLoadingSuspense>

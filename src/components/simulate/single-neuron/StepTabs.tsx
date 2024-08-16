@@ -22,7 +22,7 @@ export default function StepTabs() {
       responsive
       type="navigation"
       className="my-1 px-1 [&_.ant-steps-item-active]:before:!hidden [&_.ant-steps-item-title]:capitalize"
-      size="default"
+      size="small"
       current={newCurrentStep}
       onChange={onChange}
       items={steps.map(({ title, status }) => ({
