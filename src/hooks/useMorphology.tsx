@@ -4,6 +4,7 @@ import isNil from 'lodash/isNil';
 import { Morphology } from '@/services/bluenaas-single-cell/types';
 import getMorphology from '@/api/bluenaas/getMorphology';
 import { getSession } from '@/authFetch';
+import { isJSON } from '@/util/utils';
 
 export default function useMorphology({
   modelSelfUrl,
@@ -25,14 +26,18 @@ export default function useMorphology({
     let value: Uint8Array | undefined;
     let done: boolean = false;
     const decoder = new TextDecoder();
+
     if (reader) {
       while (!done) {
         ({ done, value } = await reader.read());
         const decodedChunk = decoder.decode(value, { stream: true });
         data += decodedChunk;
+        if (isJSON(data)) {
+          return JSON.parse(data);
+        }
       }
     }
-    return JSON.parse(data);
+    throw new Error('Morphology could not be constructed');
   }, [modelSelfUrl]);
 
   useEffect(() => {

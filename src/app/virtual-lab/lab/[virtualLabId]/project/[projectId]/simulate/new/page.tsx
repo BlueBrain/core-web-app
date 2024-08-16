@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useAtomValue } from 'jotai';
 
-import { getSynaptomeModel } from './model';
 import { ServerSideComponentProp } from '@/types/common';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
@@ -14,7 +13,6 @@ import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
 import { detailUrlBuilder } from '@/util/common';
-
 import GenericButton from '@/components/Global/GenericButton';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 
@@ -40,11 +38,11 @@ export default function VirtualLabProjectSimulateNewPage({
   // TODO: Use right types
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
     const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-    const simulatePageA = typeToNewSimulationPage[DataType.SingleNeuronSynaptome];
+    const simulatePageA = typeToNewSimulationPage[DataType.CircuitMEModel];
     const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePageA}/edit`;
 
     // @ts-ignore
-    router.push(`${detailUrlBuilder(baseBuildUrl, getSynaptomeModel() ?? model)}`);
+    router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
   };
 
   return (

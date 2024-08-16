@@ -1,15 +1,16 @@
+import { useState } from 'react';
 import { DeleteOutlined, WarningFilled } from '@ant-design/icons';
 import { Button, Card, Form, InputNumber, Select } from 'antd';
 import delay from 'lodash/delay';
 
-import { useState } from 'react';
-import useNotification from '@/hooks/notifications';
-import VisualizeSynaptomeButton from '@/components/build-section/virtual-lab/synaptome/ShowHideSynaptomeButton';
 import { SingleSynaptomeConfig, SynaptomeConfigDistribution } from '@/types/synaptome';
 import { UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import { classNames } from '@/util/utils';
+import useNotification from '@/hooks/notifications';
+import VisualizeSynaptomeButton from '@/components/build-section/virtual-lab/synaptome/ShowHideSynaptomeButton';
 
 type Props = {
+  index: number;
   formName: string;
   onChange: (change: UpdateSynapseSimulationProperty) => void;
   removeForm: (key: string) => void;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export default function SynapseSimulationForm({
+  index,
   formName,
   onChange,
   removeForm,
@@ -52,11 +54,11 @@ export default function SynapseSimulationForm({
         visualizationState === 'error' && 'border-2 border-rose-500',
         visualizationState === 'success' && 'border-2 border-teal-500'
       )}
-      title={`Synapse Configuration  ${formName + 1}`}
+      title={`Synapse Configuration  ${index + 1}`}
       headStyle={{ background: '#e4e4e4' }}
       key={formName}
       extra={
-        <>
+        <div className="flex items-center gap-1">
           <VisualizeSynaptomePerSimulationConfig
             placementConfig={selectedSynapseGroupPlacementConfig}
             modelSelf={synaptomeModelConfig.meModelSelf}
@@ -71,10 +73,10 @@ export default function SynapseSimulationForm({
             type="default"
             htmlType="button"
           />
-        </>
+        </div>
       }
     >
-      <div style={{ display: 'flex', rowGap: 16, flexDirection: 'column' }}>
+      <div className="flex flex-col gap-4">
         <Form.Item
           name={[formName, 'synapseId']}
           label="Synapse Set"
