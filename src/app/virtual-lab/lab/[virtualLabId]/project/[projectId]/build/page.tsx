@@ -79,11 +79,11 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
   );
 
   return (
-    <div className="mt-8 flex h-full flex-col">
+    <div className="mt-8 flex h-full flex-col gap-5">
       <VirtualLabTopMenu />
       <ScopeSelector />
       {selectedModelType && tabDetails ? (
-        <>
+        <div>
           <div className="flex justify-between">
             <GenericButton
               text={tabDetails.title}
@@ -135,7 +135,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               </div>
             )}
           </div>
-        </>
+        </div>
       ) : (
         <div className="m-auto w-fit border p-6">Coming Soon</div>
       )}
