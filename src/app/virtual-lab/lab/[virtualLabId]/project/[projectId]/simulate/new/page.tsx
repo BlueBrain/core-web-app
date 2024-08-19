@@ -2,9 +2,15 @@
 
 import { useRouter } from 'next/navigation';
 import { useAtomValue } from 'jotai';
+import find from 'lodash/find';
+import flatMap from 'lodash/flatMap';
 
 import { ServerSideComponentProp } from '@/types/common';
-import { DataType } from '@/constants/explore-section/list-views';
+import {
+  DataType,
+  DataTypeToNewSimulationPage,
+  DataTypeToNexusType,
+} from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
@@ -13,14 +19,10 @@ import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
 import { detailUrlBuilder } from '@/util/common';
+import { ensureArray } from '@/util/nexus';
+
 import GenericButton from '@/components/Global/GenericButton';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-
-const typeToNewSimulationPage: Record<string, string> = {
-  [DataType.SingleNeuronSynaptome]: 'synaptome',
-  [DataType.CircuitEModel]: 'single-neuron',
-  [DataType.CircuitMEModel]: 'single-neuron',
-};
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
@@ -35,13 +37,18 @@ export default function VirtualLabProjectSimulateNewPage({
       ? SimulationScopeToModelType[selectedSimulationScope]
       : null;
 
-  // TODO: Use right types
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
     const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-    const simulatePageA = typeToNewSimulationPage[DataType.CircuitMEModel];
-    const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePageA}/edit`;
-
-    router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
+    const simulateType = flatMap(ensureArray(model._source['@type']), (type) =>
+      find(DataTypeToNexusType, (value) => value === type)
+    ).at(0);
+    if (simulateType) {
+      const simulatePagePath = DataTypeToNewSimulationPage[simulateType];
+      if (simulatePagePath) {
+        const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePagePath}/edit`;
+        router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
+      }
+    }
   };
 
   return (

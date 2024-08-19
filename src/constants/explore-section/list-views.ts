@@ -28,6 +28,12 @@ export const DataTypeToNexusType = {
   [DataType.SingleNeuronSynaptomeSimulation]: `${ontologyBaseUrl}/SingleNeuronSynaptomeSimulation`,
 };
 
+export const DataTypeToNewSimulationPage: Record<string, string> = {
+  [DataTypeToNexusType.SingleNeuronSynaptome]: 'synaptome',
+  [DataTypeToNexusType.CircuitEModel]: 'single-neuron',
+  [DataTypeToNexusType.CircuitMEModel]: 'single-neuron',
+};
+
 export const DEFAULT_CHECKLIST_RENDER_LENGTH = 8;
 export const PAGE_SIZE = 30;
 export const PAGE_NUMBER = 1;
