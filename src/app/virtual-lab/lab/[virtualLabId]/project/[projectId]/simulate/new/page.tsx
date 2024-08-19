@@ -23,6 +23,8 @@ import { ensureArray } from '@/util/nexus';
 
 import GenericButton from '@/components/Global/GenericButton';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
+import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
+import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 
 export default function VirtualLabProjectSimulateNewPage({
   params: { virtualLabId, projectId },
@@ -53,6 +55,8 @@ export default function VirtualLabProjectSimulateNewPage({
 
   return (
     <div className="flex flex-col pt-14">
+      <VirtualLabTopMenu />
+      <ScopeSelector />
       <div className="flex justify-between align-middle">
         <div className="text-2xl font-bold text-white">
           Select a single neuron model to simulate
