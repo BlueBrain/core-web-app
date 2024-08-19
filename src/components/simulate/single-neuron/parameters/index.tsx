@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, ReactNode, useState } from 'react';
-import { useAtom } from 'jotai';
+import { useEffect, ReactNode, useState, useMemo } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 import { Form } from 'antd';
 
 import Recording from './Recording';
@@ -14,12 +14,14 @@ import LaunchButton from './LaunchButton';
 import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
 import { SimulationConfiguration } from '@/types/simulation/single-neuron';
 import { SimulationStepTitle, SimulationType } from '@/types/simulation/common';
+import { recordingSourceForSimulationAtom } from '@/state/simulate/categories/recording-source-for-simulation';
+import { directCurrentInjectionSimulationConfigAtom } from '@/state/simulate/categories/direct-current-injection-simulation';
+import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 
 type Props = {
   vlabId: string;
   projectId: string;
   simResourceSelf: string;
-  initialValues: SimulationConfiguration;
   children: ReactNode;
   type: SimulationType;
 };
@@ -64,12 +66,24 @@ export default function ParameterView({
   vlabId,
   projectId,
   simResourceSelf,
-  initialValues,
   type,
   children,
 }: Props) {
   const [form] = Form.useForm<SimulationConfiguration>();
   const [disableSubmit, setDisableSubmit] = useState(false);
+  const recordFromConfig = useAtomValue(recordingSourceForSimulationAtom);
+  const directCurrentConfig = useAtomValue(directCurrentInjectionSimulationConfigAtom);
+  const synaptomeConfig = useAtomValue(synaptomeSimulationConfigAtom);
+
+  const initialValues: SimulationConfiguration = useMemo(
+    () => ({
+      recordFrom: recordFromConfig,
+      directStimulation: directCurrentConfig,
+      ...(type === 'synaptome-simulation' ? { synapses: synaptomeConfig ?? undefined } : {}),
+    }),
+    [directCurrentConfig, recordFromConfig, synaptomeConfig, type]
+  );
+
   const [{ steps, current: currentSimulationStep }, upadteSimulationStepsStatus] =
     useAtom(simulateStepTrackerAtom);
 
@@ -78,8 +92,8 @@ export default function ParameterView({
       await form.validateFields({ recursive: true });
     } catch (error) {
       const errorObject = error as { errorFields: Array<any> };
-      setDisableSubmit(errorObject.errorFields.length > 0);
       const list = checkStepError(errorObject.errorFields);
+      setDisableSubmit(errorObject.errorFields.length > 0);
       upadteSimulationStepsStatus({
         current: currentSimulationStep,
         steps: steps.map((s) => {
@@ -99,12 +113,8 @@ export default function ParameterView({
   };
 
   useEffect(() => {
-    form.setFieldsValue({
-      recordFrom: initialValues.recordFrom,
-      directStimulation: initialValues.directStimulation ?? undefined,
-      ...(type === 'synaptome-simulation' ? { synapses: initialValues.synapses ?? undefined } : {}),
-    });
-  }, [form, initialValues, type]);
+    form.setFieldsValue(initialValues);
+  }, [form, initialValues]);
 
   return (
     <div className="relative h-full w-full px-8 py-6">

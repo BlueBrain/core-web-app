@@ -53,7 +53,7 @@ export type SynapseBubblesMesh = Mesh<InstancedBufferGeometry, MeshPhongMaterial
 export type ClickData = {
   type: string;
   data: any;
-  clickPosition: {
+  position: {
     x: number;
     y: number;
   };
@@ -64,7 +64,7 @@ export type HoverData = {
   data: any;
 };
 
-type BlueNaasRendererConfig = {
+export type NeuronViewerConfig = {
   onClick?: (data: ClickData) => void;
   onHover?: (data: HoverData) => void;
   onHoverEnd?: (data: HoverData) => void;
@@ -120,7 +120,7 @@ function getElementOffset(element: HTMLElement): { x: number; y: number } {
 
 type MorphMesh = Mesh<CylinderGeometry, MeshLambertMaterial>;
 type HoverBox = LineSegments<EdgesGeometry, LineBasicMaterial>;
-export default class BlueNaasRenderer {
+export default class NeuronViewerRenderer {
   private container: HTMLDivElement;
 
   private containerOffset: { x: number; y: number };
@@ -137,7 +137,7 @@ export default class BlueNaasRenderer {
 
   private controls: OrbitControls;
 
-  private config: BlueNaasRendererConfig;
+  private config: NeuronViewerConfig;
 
   private pointerDownTimestamp: number | null = null;
 
@@ -165,7 +165,7 @@ export default class BlueNaasRenderer {
 
   private synapses: Array<SynapsesMesh> = [];
 
-  constructor(container: HTMLDivElement, config: BlueNaasRendererConfig) {
+  constructor(container: HTMLDivElement, config: NeuronViewerConfig) {
     this.config = config;
 
     this.container = container;
@@ -265,7 +265,7 @@ export default class BlueNaasRenderer {
     this.config.onClick({
       type: clickedMesh.name,
       data: clickedMesh.userData,
-      clickPosition: {
+      position: {
         x: e.clientX,
         y: e.clientY,
       },
@@ -361,6 +361,18 @@ export default class BlueNaasRenderer {
 
     this.animationFrameHandle = requestAnimationFrame(this.startRenderLoop);
   };
+
+  public set configOnClick(onClick: (data: ClickData) => void) {
+    this.config.onClick = onClick;
+  }
+
+  public set configOnHover(onHover: (data: HoverData) => void) {
+    this.config.onHover = onHover;
+  }
+
+  public set configOnHoverEnd(onHoverEnd: (data: HoverData) => void) {
+    this.config.onHoverEnd = onHoverEnd;
+  }
 
   removeNoDiameterSection(morphology: Morphology) {
     // workaround sinde the implementation of stub axon in hoc files

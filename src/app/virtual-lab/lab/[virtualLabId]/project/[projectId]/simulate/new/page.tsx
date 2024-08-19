@@ -41,7 +41,6 @@ export default function VirtualLabProjectSimulateNewPage({
     const simulatePageA = typeToNewSimulationPage[DataType.CircuitMEModel];
     const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePageA}/edit`;
 
-    // @ts-ignore
     router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
   };
 

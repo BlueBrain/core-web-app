@@ -62,8 +62,8 @@ export type RecordLocation = {
 
 export interface SimulationConfiguration {
   recordFrom: RecordLocation[];
-  directStimulation: null | DirectCurrentInjectionSimulationConfig[];
-  synapses: null | SynapsesConfig;
+  directStimulation: DirectCurrentInjectionSimulationConfig[];
+  synapses?: SynapsesConfig;
 }
 
 export type SynapseConfig = {

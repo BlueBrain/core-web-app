@@ -5,17 +5,21 @@ import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { useRecordingSourceForSimulation } from '@/state/simulate/categories';
 
 export default function Recording() {
-  const { state, setSource } = useRecordingSourceForSimulation();
+  const { setSource } = useRecordingSourceForSimulation();
   const sectionNames = useAtomValue(secNamesAtom);
 
-  // TODO: Allow adding multiple form items if multiple recording location feature should be supported
   return (
-    <Form.List name="recordForm" initialValue={state}>
+    <Form.List name="recordFrom">
       {(fields) => {
         return fields.map((f, indx) => {
           return (
             <div key={f.key} className="grid grid-cols-[1fr_1fr_40px_40px] gap-x-2">
-              <Form.Item className="mb-2" name={[f.name, 'section']} label="Section">
+              <Form.Item
+                className="mb-2"
+                name={[f.name, 'section']}
+                label="Section"
+                rules={[{ required: true }]}
+              >
                 <Select<string>
                   showSearch
                   placeholder="Section name"
@@ -24,7 +28,7 @@ export default function Recording() {
                 />
               </Form.Item>
               <Form.Item
-                label="Segment Offset"
+                label="Segment offset"
                 className="mb-2"
                 name={[f.name, 'segmentOffset']}
                 rules={[

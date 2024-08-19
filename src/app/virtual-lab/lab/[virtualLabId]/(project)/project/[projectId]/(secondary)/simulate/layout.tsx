@@ -4,9 +4,9 @@ import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import SideMenu from '@/components/SideMenu';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { LinkItemKey, Content, Label } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
-import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
 type Props = {
   children: ReactNode;

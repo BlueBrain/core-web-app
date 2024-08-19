@@ -16,6 +16,16 @@ import {
 } from 'three';
 import { MorphSection } from './types';
 
+type MeshUserData = {
+  segIdx: number;
+  section: string;
+  section_nseg: number;
+  offset: number;
+  distance_from_soma: number;
+} & {
+  [key: string]: any;
+};
+
 export function createSegmentMesh(
   sec: MorphSection,
   segIdx: number,
@@ -50,8 +60,8 @@ export function createSegmentMesh(
     section_nseg: sec.nseg,
     offset: sec.neuron_segments_offset[segIdx],
     distance_from_soma: sec.segment_distance_from_soma[segIdx],
-    // ...pick(sec, ["name", "nseg", "neuron_segments_offset", "segment_distance_from_soma", "sec_length", "length"])
-  };
+  } as MeshUserData;
+
   mesh.scale.setY(scaleLength);
   mesh.setRotationFromQuaternion(rotQuat);
   mesh.position.copy(v);

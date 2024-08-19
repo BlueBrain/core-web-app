@@ -1,26 +1,22 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 
 import { ParameterView } from '@/components/simulate/single-neuron';
-import { NeuronModelView } from '@/components/build-section/virtual-lab/synaptome';
 import { useModel } from '@/hooks/useModel';
 import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
 import { useModelConfiguration } from '@/hooks/useModelConfiguration';
 import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
 import { SynaptomeConfigDistribution } from '@/types/synaptome';
-import { SimulationConfiguration } from '@/types/simulation/single-neuron';
-import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 
-import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import useSynaptomeSimulationConfig from '@/state/simulate/categories/synaptome-simulation-config';
 import ModelWithSynapseConfig from '@/components/simulate/single-neuron/parameters/ModelWithSynapseConfig';
 import Wrapper from '@/components/simulate/single-neuron/Wrapper';
-import { DEFAULT_RECORDING_LOCATION } from '@/constants/simulate/single-neuron';
+import NeuronViewerContainer from '@/components/neuron-viewer/NeuronViewerWithActions';
 
 type Props = {
   params: {
@@ -28,18 +24,6 @@ type Props = {
     virtualLabId: string;
   };
 };
-
-function MorphologyViewer() {
-  const { configuration } = useAtomValue(SynaptomeSimulationInstanceAtom);
-
-  if (!configuration) return null;
-
-  return (
-    <DefaultLoadingSuspense>
-      <NeuronModelView modelSelfUrl={configuration.meModelSelf} />
-    </DefaultLoadingSuspense>
-  );
-}
 
 function useSynaptomeModel({
   virtualLabId,
@@ -53,8 +37,6 @@ function useSynaptomeModel({
   const bootstrapSimulationContext = useSetAtom(SynaptomeSimulationInstanceAtom);
 
   const { newConfig } = useSynaptomeSimulationConfig();
-  const { state: directCurrentConfig } = useDirectCurrentInjectionSimulationConfig();
-  const { state: synaptomeConfig } = useSynaptomeSimulationConfig();
   const { resource: model } = useModel<SynaptomeModelResource>({
     modelId: id,
     org: virtualLabId,
@@ -73,23 +55,14 @@ function useSynaptomeModel({
     }
   }, [configuration, model, newConfig, bootstrapSimulationContext]);
 
-  const initialValues: SimulationConfiguration = useMemo(() => {
-    return {
-      recordFrom: [DEFAULT_RECORDING_LOCATION],
-      directStimulation: directCurrentConfig,
-      synapses: synaptomeConfig,
-    };
-  }, [directCurrentConfig, synaptomeConfig]);
-
   return {
     model,
     configuration,
-    initialValues,
   };
 }
 
 export default function SynaptomeSimulation({ params: { virtualLabId, projectId } }: Props) {
-  const { model, configuration, initialValues } = useSynaptomeModel({
+  const { model, configuration } = useSynaptomeModel({
     projectId,
     virtualLabId,
   });
@@ -97,16 +70,15 @@ export default function SynaptomeSimulation({ params: { virtualLabId, projectId 
   if (!model || !configuration) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center gap-3">
-        <Spin indicator={<LoadingOutlined />} />
-        <h2 className="font-bold text-primary-9">Loading Configuration</h2>
+        <Spin indicator={<LoadingOutlined />} size="large" />
+        <h2 className="font-light text-primary-9">Loading Configuration ...</h2>
       </div>
     );
   }
 
   return (
-    <Wrapper viewer={<MorphologyViewer />}>
+    <Wrapper viewer={<NeuronViewerContainer modelUrl={configuration.meModelSelf} />}>
       <ParameterView
-        initialValues={initialValues}
         vlabId={virtualLabId}
         projectId={projectId}
         simResourceSelf={model._self}
