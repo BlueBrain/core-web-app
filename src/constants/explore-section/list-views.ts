@@ -25,7 +25,7 @@ export const DataTypeToNexusType = {
   [DataType.CircuitMEModel]: `${neuroShapesBaseUrl}/MEModel`,
   [DataType.SingleNeuronSimulation]: `${ontologyBaseUrl}/SingleNeuronSimulation`,
   [DataType.SingleNeuronSynaptome]: `${ontologyBaseUrl}/SingleNeuronSynaptome`,
-  [DataType.SingleNeuronSynaptomeSimulation]: `${ontologyBaseUrl}/SingleNeuronSynaptomeSimulation`,
+  [DataType.SingleNeuronSynaptomeSimulation]: `${ontologyBaseUrl}/SynaptomeSimulation`,
 };
 
 export const DataTypeToNewSimulationPage: Record<string, string> = {
