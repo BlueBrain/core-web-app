@@ -42,7 +42,10 @@ export default function VirtualLabTopMenu({ className, extraItems, ghost = true 
   const menuButtonStyle = { height: menuElementsHeight ?? undefined }; // eslint-disable-line
 
   return (
-    <div className={classNames('flex h-14 w-full justify-between overflow-y-visible', className)}>
+    <div
+      className={classNames('flex h-14 w-full justify-between overflow-y-visible', className)}
+      role="menu"
+    >
       <div className="flex gap-4" ref={localRef} />
       <div className={classNames('flex w-fit justify-end')}>
         {/* TODO: Re-enable buttons after SfN */}

@@ -6,7 +6,9 @@ import { unwrap } from 'jotai/utils';
 import { Button, ConfigProvider, Input } from 'antd';
 import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import VirtualLabMainStatistics from '../VirtualLabMainStatistics';
+
+import VirtualLabMainStatistics from './VirtualLabMainStatistics';
+
 import { basePath } from '@/config';
 import useUpdateProject from '@/hooks/useUpdateVirtualLabProject';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
