@@ -122,7 +122,7 @@ export const DEFAULT_DIRECT_STIM_CONFIG: DirectCurrentInjectionSimulationConfig 
 export const DEFAULT_SIM_CONFIG: SimulationConfiguration = {
   recordFrom: [{ ...DEFAULT_RECORDING_LOCATION }],
   directStimulation: [DEFAULT_DIRECT_STIM_CONFIG],
-  synapses: null,
+  synapses: undefined,
 };
 
 export const getDefaultSynapseConfig = (

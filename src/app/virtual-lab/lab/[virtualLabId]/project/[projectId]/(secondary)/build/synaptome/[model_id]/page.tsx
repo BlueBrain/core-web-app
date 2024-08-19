@@ -6,14 +6,14 @@ import { LoadingOutlined } from '@ant-design/icons';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import {
-  NeuronModelView,
+  NeuronViwer,
   SynaptomeConfigurationForm,
 } from '@/components/build-section/virtual-lab/synaptome';
 import { MEModelResource } from '@/types/me-model';
 import { useModel } from '@/hooks/useModel';
-import SideMenu from '@/components/SideMenu';
 import { Content, Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
+import SideMenu from '@/components/SideMenu';
 
 type Props = {
   params: {
@@ -61,7 +61,7 @@ function Synaptome({ params }: Props) {
       <div className="grid w-full grid-cols-2">
         <div className="flex items-center justify-center bg-black">
           <DefaultLoadingSuspense>
-            <NeuronModelView modelSelfUrl={resource._self} />
+            <NeuronViwer useEvents useActions modelSelfUrl={resource._self} />
           </DefaultLoadingSuspense>
         </div>
         <div className="secondary-scrollbar h-screen w-full overflow-y-auto p-8">

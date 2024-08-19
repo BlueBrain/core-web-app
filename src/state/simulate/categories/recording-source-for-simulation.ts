@@ -16,8 +16,13 @@ export default function useRecordingSourceForSimulation() {
     update(state.map((r, i) => (i === index ? { ...r, ...updatedLocation } : r)));
   }
 
+  function add(location: RecordLocation) {
+    update([...state, location]);
+  }
+
   return {
     state,
     setSource,
+    add,
   };
 }
