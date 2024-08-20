@@ -6,9 +6,10 @@ import {
   StimulusModuleOption,
   SimulationConfiguration,
   StimulusConfig,
-  DirectCurrentInjectionSimulationConfig,
+  CurrentInjectionSimulationConfig,
   SynapseConfig,
   RecordLocation,
+  SimulationConditions,
 } from '@/types/simulation/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
@@ -91,9 +92,17 @@ export const stimulusParams: ConditionalStimulusParamsTypes = {
 };
 
 const DEFAULT_SECTION = 'soma[0]';
+
 export const DEFAULT_RECORDING_LOCATION: RecordLocation = {
   section: DEFAULT_SECTION,
-  segmentOffset: 0,
+  offset: 0.5,
+};
+
+export const DEFAULT_SIMULATION_CONDITIONS: SimulationConditions = {
+  celsius: 34,
+  vinit: -73,
+  hypamp: 0,
+  max_time: 2000,
 };
 
 export const DEFAULT_STIM_CONFIG: StimulusConfig = {
@@ -109,19 +118,17 @@ export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   amplitudes: [40, 80, 120],
 };
 
-export const DEFAULT_DIRECT_STIM_CONFIG: DirectCurrentInjectionSimulationConfig = {
+export const DEFAULT_DIRECT_STIM_CONFIG: CurrentInjectionSimulationConfig = {
   id: 0,
   configId: crypto.randomUUID(),
-  celsius: 34,
-  hypamp: 0,
-  vinit: -73,
   injectTo: DEFAULT_SECTION,
   stimulus: DEFAULT_STIM_CONFIG,
 };
 
 export const DEFAULT_SIM_CONFIG: SimulationConfiguration = {
+  conditions: DEFAULT_SIMULATION_CONDITIONS,
   recordFrom: [{ ...DEFAULT_RECORDING_LOCATION }],
-  directStimulation: [DEFAULT_DIRECT_STIM_CONFIG],
+  currentInjection: [DEFAULT_DIRECT_STIM_CONFIG],
   synapses: undefined,
 };
 
@@ -131,7 +138,7 @@ export const getDefaultSynapseConfig = (
   if (synapsePlacementConfig) {
     return {
       id: '0',
-      synapseId: synapsePlacementConfig[0].id,
+      id: synapsePlacementConfig[0].id,
       delay: 100,
       duration: 2000,
       frequency: 20,

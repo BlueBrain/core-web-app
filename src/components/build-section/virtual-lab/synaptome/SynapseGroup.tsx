@@ -253,7 +253,7 @@ export default function SynapseGroup({ modelId, index, field, removeGroup }: Pro
         </Form.Item>
       </div>
       {!!config?.exclusion_rules?.length && (
-        <div className="my-3 font-bold text-primary-8">Exclution Rules</div>
+        <div className="my-3 font-bold text-primary-8">Filters</div>
       )}
       <Form.List name={[field.name, 'exclusion_rules']}>
         {(fields, { remove: removeRule }) => {

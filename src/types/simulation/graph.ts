@@ -14,5 +14,6 @@ export type DirectCurrentInjectionGraphPlotResponse = {
 export type SimulationPlotResponse = {
   t: number[];
   v: number[];
-  name: string;
+  stimulus_name: string;
+  recording_name: string;
 };

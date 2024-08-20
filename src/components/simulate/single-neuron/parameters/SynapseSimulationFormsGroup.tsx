@@ -7,7 +7,7 @@ import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/sim
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import { synapsesPlacementAtom } from '@/state/synaptome';
-import { sendRemoveSynapses3DEvent } from '@/components/build-section/virtual-lab/synaptome/events';
+import { sendRemoveSynapses3DEvent } from '@/components/neuron-viewer/events';
 
 export default function SynapseSimulationFormsGroup() {
   const { newConfig, remove: removeSynapseConfig } = useSynaptomeSimulationConfig();
@@ -16,12 +16,12 @@ export default function SynapseSimulationFormsGroup() {
 
   const { configuration: synaptomeModel } = useAtomValue(SynaptomeSimulationInstanceAtom);
 
-  const placementConfigForForm = (simFormIndex: string) => {
+  const placementConfigForForm = (simFormIndex: number) => {
     const simConfigForForm = synapseSimulationAtomState.find(
-      (config: SynapseConfig) => config.id === simFormIndex
+      (config: SynapseConfig) => config.key === simFormIndex
     );
     const placementConfig = synaptomeModel?.synapses.find(
-      (s) => s.id === simConfigForForm?.synapseId
+      (s) => s.id === simConfigForForm?.id
     );
     return placementConfig;
   };
@@ -29,7 +29,7 @@ export default function SynapseSimulationFormsGroup() {
   const setAtomProperty = (change: UpdateSynapseSimulationProperty) => {
     setSynapseSimState(
       synapseSimulationAtomState.map((s) =>
-        s.id === change.id ? { ...s, [change.key]: change.newValue } : s
+        s.key === change.id ? { ...s, [change.key]: change.newValue } : s
       )
     );
   };
@@ -48,7 +48,7 @@ export default function SynapseSimulationFormsGroup() {
               index={field.name}
               synaptomeModelConfig={synaptomeModel}
               formName={`${field.name}`}
-              selectedSynapseGroupPlacementConfig={placementConfigForForm(`${field.name}`)}
+              selectedSynapseGroupPlacementConfig={placementConfigForForm(field.name)}
               removeForm={() => {
                 remove(field.name);
                 removeSynapseConfig(field.name);
@@ -71,7 +71,7 @@ export default function SynapseSimulationFormsGroup() {
               }
             }}
           >
-            + Add Synapse Configuration
+            + Add Synapses Configuration
           </Button>
         </div>
       )}

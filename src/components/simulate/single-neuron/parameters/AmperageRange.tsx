@@ -5,7 +5,7 @@ import round from 'lodash/round';
 import isEqual from 'lodash/isEqual';
 import dynamic from 'next/dynamic';
 
-import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
+import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 
 const StimuliPreviewPlot = dynamic(() => import('../visualization/StimuliPreviewPlot'), {
   ssr: false,
@@ -31,7 +31,6 @@ type Props = {
   stimulationId: number;
   amplitudes: number[];
   modelSelfUrl: string;
-  configId: string;
 };
 
 type StepType = 'stepSize' | 'stepNumber';
@@ -84,13 +83,12 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
 }
 
 export default function AmperageRange({
-  configId,
   amplitudes,
   stimulationId,
   modelSelfUrl,
 }: Props) {
   const [amperageState, dispatch] = useReducer(rangeReducer, { ...amperageInitialState });
-  const { setAmplitudes } = useDirectCurrentInjectionSimulationConfig();
+  const { setAmplitudes } = useCurrentInjectionSimulationConfig();
 
   useEffect(() => {
     if (!amperageState.isConsistent) return;
@@ -177,7 +175,6 @@ export default function AmperageRange({
         ))}
       </div>
       <StimuliPreviewPlot
-        configId={configId}
         amplitudes={amperageState.computed}
         modelSelfUrl={modelSelfUrl}
       />

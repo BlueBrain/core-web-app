@@ -26,7 +26,7 @@ export default function NeuronViewerContainer({ modelUrl }: { modelUrl: string }
               x: neuronViewerClickData.position.x,
               y: neuronViewerClickData.position.y,
               section: neuronViewerClickData.data.section,
-              segmentOffset: neuronViewerClickData.data.offset,
+              offset: neuronViewerClickData.data.offset,
             }}
             onClose={() => setNeuronViewerOnClickData(null)}
           />

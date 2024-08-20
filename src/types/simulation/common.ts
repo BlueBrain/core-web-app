@@ -3,12 +3,11 @@ import { StepsProps } from 'antd/lib/steps';
 export type SimulationType = 'single-neuron-simulation' | 'synaptome-simulation';
 
 export type SimulationStepTitle =
-  | 'stimulation'
-  | 'recording'
-  | 'conditions'
-  | 'analysis'
-  | 'visualization'
-  | 'results';
+  | 'Experimental setup'
+  | 'Synaptic inputs'
+  | 'Stimulation protocol'
+  | 'Recording'
+  | 'Results';
 
 export type SimulationStep = {
   title: SimulationStepTitle;

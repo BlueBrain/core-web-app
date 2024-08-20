@@ -46,6 +46,7 @@ export type Morphology = {
 
 type SegTrace = {
   label: string;
+  recording?: string;
   t: number[];
   v: number[];
 };
@@ -57,6 +58,7 @@ export type PlotDataEntry = {
   y: number[];
   type: 'scatter';
   name: string;
+  recording?: string;
 };
 
 export type PlotData = PlotDataEntry[];

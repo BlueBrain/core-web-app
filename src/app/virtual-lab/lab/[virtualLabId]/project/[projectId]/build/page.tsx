@@ -115,7 +115,18 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
             />
 
             {selectedRows.length > 0 && (
+<<<<<<< HEAD
               <div className="fixed bottom-3 right-[60px] mb-6 flex items-center justify-end gap-2">
+=======
+              <div className="fixed bottom-10 right-10 mb-6 flex items-center justify-end gap-2">
+                {selectedSimulationScope === SimulationType.Synaptome && selectedModelType === DataType.CircuitMEModel && (
+                  <GenericButton
+                    text="Generate synaptome"
+                    className="bg-primary-9  text-white hover:!bg-primary-7"
+                    href={generateSynaptomeUrl(selectedRows[0])}
+                  />
+                )}
+>>>>>>> f8830794 (update: refactor sim conditions, use one query to run sim)
                 <GenericButton
                   text="View model"
                   className="bg-primary-9  text-white hover:!bg-primary-7"

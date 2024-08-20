@@ -1,18 +1,14 @@
 import { Form, InputNumber } from 'antd';
 
-import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
+import { useSimulationConditions } from '@/state/simulate/categories';
 
-type Props = {
-  stimulationId: number;
-};
-
-export default function Conditions({ stimulationId }: Props) {
-  const { setProperty } = useDirectCurrentInjectionSimulationConfig();
+export default function ExperimentSetup() {
+  const { setProperty } = useSimulationConditions();
 
   return (
     <div className="flex gap-6">
       <Form.Item
-        name={['directStimulation', stimulationId, 'celsius']}
+        name={['conditions', 'celsius']}
         label="Temperature"
         rules={[{ required: true }]}
       >
@@ -23,7 +19,6 @@ export default function Conditions({ stimulationId }: Props) {
           max={40}
           onChange={(newValue) =>
             setProperty({
-              id: 0,
               key: 'celsius',
               newValue,
             })
@@ -31,7 +26,7 @@ export default function Conditions({ stimulationId }: Props) {
         />
       </Form.Item>
       <Form.Item
-        name={['directStimulation', stimulationId, 'vinit']}
+        name={['conditions', 'vinit']}
         label="Initial voltage"
         rules={[{ required: true }]}
       >
@@ -42,7 +37,6 @@ export default function Conditions({ stimulationId }: Props) {
           max={100}
           onChange={(newValue) =>
             setProperty({
-              id: 0,
               key: 'vinit',
               newValue,
             })
@@ -50,7 +44,7 @@ export default function Conditions({ stimulationId }: Props) {
         />
       </Form.Item>
       <Form.Item
-        name={['directStimulation', stimulationId, 'hypamp']}
+        name={['conditions', 'hypamp']}
         label="Holding current"
         rules={[{ required: true }]}
       >
@@ -61,7 +55,6 @@ export default function Conditions({ stimulationId }: Props) {
           max={10}
           onChange={(newValue) =>
             setProperty({
-              id: 0,
               key: 'hypamp',
               newValue,
             })

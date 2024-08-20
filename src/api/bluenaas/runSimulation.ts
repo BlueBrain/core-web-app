@@ -1,41 +1,27 @@
 import { blueNaasUrl } from '@/config';
-import { RunSimulationRequestBody, SynapsesConfig } from '@/types/simulation/single-neuron';
+import { SimulationType } from '@/types/simulation/common';
+import { CurrentInjectionSimulationConfig, RecordLocation, SimulationConditions, SynapsesConfig } from '@/types/simulation/single-neuron';
 
-export const runSingleNeuronSimulation = async (
-  modelSelfUrl: string,
-  token: string,
-  config: RunSimulationRequestBody
-) => {
-  return await fetch(
-    `${blueNaasUrl}/simulation/single-neuron/run?model_id=${encodeURIComponent(modelSelfUrl)}`,
-    {
-      method: 'post',
-      headers: {
-        accept: 'application/x-ndjson',
-        authorization: `bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...config,
-        stimulus: {
-          stimulusType: config.stimulus.stimulusType,
-          stimulusProtocol: config.stimulus.stimulusProtocol,
-          paramValues: { ...config.stimulus.paramValues },
-          amplitudes: config.stimulus.amplitudes,
-        },
-      }),
+
+export const runGenericSingleNeuronSimulation = async ({
+  modelUrl,
+  token,
+  config,
+}:
+  {
+    modelUrl: string,
+    token: string,
+    config: {
+      recordFrom: Array<RecordLocation>;
+      conditions: SimulationConditions;
+      currentInjection?: CurrentInjectionSimulationConfig;
+      synapses?: SynapsesConfig;
+      type: SimulationType
     }
-  );
-};
-
-export const runSynaptomeSimulation = async (
-  synaptomeModelSelf: string,
-  token: string,
-  directCurrentConfig: RunSimulationRequestBody,
-  synapseConfigs: SynapsesConfig
+  }
 ) => {
   return await fetch(
-    `${blueNaasUrl}/simulation/synaptome/run?model_id=${encodeURIComponent(synaptomeModelSelf)}`,
+    `${blueNaasUrl}/simulation/single-neuron/run?model_id=${encodeURIComponent(modelUrl)}`,
     {
       method: 'post',
       headers: {
@@ -43,10 +29,7 @@ export const runSynaptomeSimulation = async (
         authorization: `bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        directCurrentConfig,
-        synapseConfigs: synapseConfigs.map((s) => ({ ...s, id: s.synapseId })),
-      }),
+      body: JSON.stringify(config),
     }
   );
 };
