@@ -4,13 +4,15 @@ import { useAtom } from 'jotai';
 import { Steps } from 'antd';
 
 import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
+import { SimulationType } from '@/types/simulation/common';
 
-export default function StepTabs() {
+export default function StepTabs({ type }: { type: SimulationType }) {
   const [{ steps, current: currentStep }, updateSimulationStep] = useAtom(simulateStepTrackerAtom);
-  const newCurrentStep = steps.findIndex((o) => o.title === currentStep?.title);
+  const items = type === "single-neuron-simulation" ? steps.filter(o => o.title !== "Synaptic inputs") : steps;
+  const newCurrentStep = items.findIndex((o) => o.title === currentStep?.title);
 
   const onChange = (index: number) => {
-    const current = steps.find((o, i) => i === index)!;
+    const current = items.find((o, i) => i === index)!;
     updateSimulationStep({
       steps,
       current,
@@ -23,12 +25,9 @@ export default function StepTabs() {
       type="navigation"
       className="my-1 px-1 [&_.ant-steps-item-active]:before:!hidden [&_.ant-steps-item-title]:capitalize"
       size="small"
+      items={items}
       current={newCurrentStep}
       onChange={onChange}
-      items={steps.map(({ title, status }) => ({
-        title,
-        status,
-      }))}
     />
   );
 }

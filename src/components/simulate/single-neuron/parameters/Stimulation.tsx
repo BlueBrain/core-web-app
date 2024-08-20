@@ -3,9 +3,11 @@ import { useAtomValue } from 'jotai';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import AmperageRange from './AmperageRange';
-import { secNamesAtom } from '@/state/simulate/single-neuron';
+import { secNamesAtom, } from '@/state/simulate/single-neuron';
 import { stimulusTypeParams } from '@/constants/simulate/single-neuron';
-import { useDirectCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
+import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
+import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
+
 
 type Props = {
   modelSelfUrl: string;
@@ -23,10 +25,10 @@ export default function Stimulation({ modelSelfUrl }: Props) {
   const {
     add: addNewDirectConfig,
     remove: removeDirectConfig,
-    state,
-  } = useDirectCurrentInjectionSimulationConfig();
+  } = useCurrentInjectionSimulationConfig();
+  const state = useAtomValue(currentInjectionSimulationConfigAtom);
   return (
-    <Form.List name="directStimulation">
+    <Form.List name="currentInjection">
       {(fields, { add, remove }) => (
         <div className="flex flex-col gap-2">
           {fields.map((field) => (
@@ -51,7 +53,6 @@ export default function Stimulation({ modelSelfUrl }: Props) {
               <StimulationProtocol stimulationId={field.name} />
               <Parameters stimulationId={field.name} />
               <AmperageRange
-                configId={state[field.name].configId}
                 stimulationId={field.name}
                 amplitudes={state[field.name].stimulus.amplitudes}
                 modelSelfUrl={modelSelfUrl}
@@ -76,7 +77,7 @@ export default function Stimulation({ modelSelfUrl }: Props) {
 }
 
 function StimulusLocation({ stimulationId }: FormItemProps) {
-  const { setProperty } = useDirectCurrentInjectionSimulationConfig();
+  const { setProperty } = useCurrentInjectionSimulationConfig();
 
   const secNames = useAtomValue(secNamesAtom);
   return (
@@ -106,7 +107,7 @@ function StimulusLocation({ stimulationId }: FormItemProps) {
 
 function StimulationMode({ stimulationId }: FormItemProps) {
   const stimulusModeClone = structuredClone(stimulusTypeParams);
-  const { setMode } = useDirectCurrentInjectionSimulationConfig();
+  const { setMode } = useCurrentInjectionSimulationConfig();
   return (
     <Form.Item
       name={[stimulationId, 'stimulus', 'stimulusType']}
@@ -129,8 +130,9 @@ function StimulationMode({ stimulationId }: FormItemProps) {
   );
 }
 
-function StimulationProtocol({ stimulationId }: FormItemPropsWithConfig) {
-  const { setProtocol, state } = useDirectCurrentInjectionSimulationConfig();
+function StimulationProtocol({ stimulationId }: FormItemProps) {
+  const { setProtocol } = useCurrentInjectionSimulationConfig();
+  const currentInjectionConfig = useAtomValue(currentInjectionSimulationConfigAtom);
   return (
     <Form.Item
       name={[stimulationId, 'stimulus', 'stimulusProtocol']}
@@ -141,7 +143,7 @@ function StimulationProtocol({ stimulationId }: FormItemPropsWithConfig) {
     >
       <Select
         placeholder="Select stimulus protocol"
-        options={state[stimulationId].stimulus.stimulusProtocolOptions}
+        options={currentInjectionConfig[stimulationId].stimulus.stimulusProtocolOptions}
         onSelect={(newValue) => {
           setProtocol({
             id: stimulationId,
@@ -155,7 +157,7 @@ function StimulationProtocol({ stimulationId }: FormItemPropsWithConfig) {
 }
 
 function Parameters({ stimulationId }: FormItemPropsWithConfig) {
-  const { setParamValue, state } = useDirectCurrentInjectionSimulationConfig();
+  const { setParamValue, state } = useCurrentInjectionSimulationConfig();
   return (
     <div className="flex gap-6">
       {Object.entries(state[stimulationId].stimulus.paramInfo).map(([key, info]) => (

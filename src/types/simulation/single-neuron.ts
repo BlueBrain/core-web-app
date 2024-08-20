@@ -45,30 +45,35 @@ export type StimulusDropdownInfo = {
 };
 
 export type SynapsesConfig = SynapseConfig[];
-export interface DirectCurrentInjectionSimulationConfig {
+export interface CurrentInjectionSimulationConfig {
   id: number;
   configId: string;
-  celsius: number;
-  hypamp: number;
-  vinit: number;
   injectTo: string;
   stimulus: StimulusConfig;
 }
 
+export type SimulationConditions =  {
+  celsius: number;
+  vinit: number;
+  hypamp: number;
+  max_time: number;
+}
+
 export type RecordLocation = {
   section: string;
-  segmentOffset: number;
+  offset: number;
 };
 
 export interface SimulationConfiguration {
   recordFrom: RecordLocation[];
-  directStimulation: DirectCurrentInjectionSimulationConfig[];
+  currentInjection: CurrentInjectionSimulationConfig[];
+  conditions: SimulationConditions;
   synapses?: SynapsesConfig;
 }
 
 export type SynapseConfig = {
+  key: number;
   id: string;
-  synapseId: string;
   delay: number;
   duration: number;
   frequency: number;
@@ -76,7 +81,7 @@ export type SynapseConfig = {
 };
 
 export type SingleModelSimConfig = SimulationConfiguration & {
-  directStimulation: DirectCurrentInjectionSimulationConfig[];
+  directStimulation: CurrentInjectionSimulationConfig[];
   synapses: null;
 };
 
@@ -95,19 +100,16 @@ export type StimulusConfig = {
 };
 
 export interface SingleNeuronModelSimulationConfig {
-  celsius: number;
-  hypamp: number;
-  vinit: number;
-  injectTo: string;
   recordFrom: RecordLocation[];
-  stimulus: StimulusConfig;
+  conditions: SimulationConditions,
+  currentInjection: CurrentInjectionSimulationConfig;
   synaptome?: Array<SynapseConfig>;
 }
 
 export interface SimulationPayload {
   config: SingleNeuronModelSimulationConfig;
-  simulation: PlotData;
-  stimulus: Array<{ id: string; data: PlotData }>;
+  simulation: Record<string, PlotData>;
+  stimulus: PlotData | null;
 }
 
 export type SelectedSingleNeuronModel = {
@@ -131,12 +133,9 @@ export const isSynaptomModel = (model: ModelResource | null): model is Synaptome
   return type.includes(DataType.SingleNeuronSynaptome) && 'distribution' in model;
 };
 
-export type RunSimulationRequestBody = DirectCurrentInjectionSimulationConfig & {
-  recordFrom: RecordLocation[];
-};
 
 export type UpdateSynapseSimulationProperty = {
-  id: string;
+  id: number;
   key: keyof SynapseConfig;
   newValue: number;
 };

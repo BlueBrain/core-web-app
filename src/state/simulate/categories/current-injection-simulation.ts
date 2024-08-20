@@ -4,7 +4,7 @@ import { getParamValues } from '@/util/simulate/single-neuron';
 import updateArray from '@/util/updateArray';
 import {
   StimulusModuleOption,
-  DirectCurrentInjectionSimulationConfig,
+  CurrentInjectionSimulationConfig,
   StimulusType,
   StimulusModule,
   StimulusParameter,
@@ -15,18 +15,18 @@ import {
   stimulusParams,
 } from '@/constants/simulate/single-neuron';
 
-export const directCurrentInjectionSimulationConfigAtom = atom<
-  Array<DirectCurrentInjectionSimulationConfig>
+export const currentInjectionSimulationConfigAtom = atom<
+  Array<CurrentInjectionSimulationConfig>
 >([DEFAULT_DIRECT_STIM_CONFIG]);
-directCurrentInjectionSimulationConfigAtom.debugLabel =
+currentInjectionSimulationConfigAtom.debugLabel =
   'directCurrentInjectionSimulationConfigAtom';
 
-export default function useDirectCurrentInjectionSimulationConfig() {
-  const [state, update] = useAtom(directCurrentInjectionSimulationConfigAtom);
+export default function useCurrentInjectionSimulationConfig() {
+  const [state, update] = useAtom(currentInjectionSimulationConfigAtom);
 
   function findConfig(id: number) {
     const stimConfig = state.find(
-      (config: DirectCurrentInjectionSimulationConfig) => config.id === id
+      (config: CurrentInjectionSimulationConfig) => config.id === id
     );
     if (!stimConfig) {
       throw new Error(`No stimulation config for id ${id} exists`);
@@ -51,6 +51,7 @@ export default function useDirectCurrentInjectionSimulationConfig() {
       paramValues: getParamValues(paramInfo),
       paramInfo,
     };
+
     return update(
       updateArray({
         array: state,
@@ -123,7 +124,7 @@ export default function useDirectCurrentInjectionSimulationConfig() {
     newValue,
   }: {
     id: number;
-    key: keyof DirectCurrentInjectionSimulationConfig;
+    key: keyof CurrentInjectionSimulationConfig;
     newValue: number | null;
   }) {
     const stimConfig = findConfig(id);
@@ -176,6 +177,10 @@ export default function useDirectCurrentInjectionSimulationConfig() {
     update([DEFAULT_DIRECT_STIM_CONFIG]);
   }
 
+  function empty(){
+    update([]);
+  }
+
   return {
     state,
     setMode,
@@ -186,5 +191,6 @@ export default function useDirectCurrentInjectionSimulationConfig() {
     reset,
     remove,
     add,
+    empty,
   };
 }

@@ -8,7 +8,6 @@ import { useModel } from '@/hooks/useModel';
 import { ModelResource } from '@/types/simulation/single-neuron';
 
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
-import Stimulation from '@/components/simulate/single-neuron/parameters/Stimulation';
 import Wrapper from '@/components/simulate/single-neuron/Wrapper';
 import NeuronViewerContainer from '@/components/neuron-viewer/NeuronViewerWithActions';
 
@@ -21,7 +20,7 @@ type Props = {
 
 export default function SingleNeuronSimulation({ params: { projectId, virtualLabId } }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { resource, loading } = useModel<ModelResource>({ modelId: id });
+  const { resource, loading } = useModel<ModelResource>({ modelId: id, org: virtualLabId, project: projectId });
 
   if (loading || !resource) {
     return (
@@ -33,15 +32,17 @@ export default function SingleNeuronSimulation({ params: { projectId, virtualLab
   }
 
   return (
-    <Wrapper viewer={<NeuronViewerContainer modelUrl={resource._self} />}>
+    <Wrapper
+      viewer={<NeuronViewerContainer modelUrl={resource._self} />}
+      type="single-neuron-simulation"
+    >
       <ParameterView
         vlabId={virtualLabId}
         projectId={projectId}
         simResourceSelf={resource._self}
+        modelSelf={resource._self}
         type="single-neuron-simulation"
-      >
-        <Stimulation modelSelfUrl={resource._self} />
-      </ParameterView>
+      />
     </Wrapper>
   );
 }

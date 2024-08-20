@@ -10,10 +10,10 @@ synaptomeSimulationConfigAtom.debugLabel = 'synaptomeSimulationConfigAtom';
 export default function useSynaptomeSimulationConfig() {
   const [state, update] = useAtom(synaptomeSimulationConfigAtom);
 
-  function findConfig(id: string) {
-    const synapseConfig = state.find((config: SynapseConfig) => config.id === id);
+  function findConfig(key: number) {
+    const synapseConfig = state.find((config: SynapseConfig) => config.key === key);
     if (!synapseConfig) {
-      throw new Error(`No Synapse Config for id ${id} exists`);
+      throw new Error(`No Synapse Config for id ${key} exists`);
     }
     return synapseConfig;
   }
@@ -24,7 +24,7 @@ export default function useSynaptomeSimulationConfig() {
       update([
         {
           ...defaultSynapseConfig,
-          id: `${state.length}`,
+          key: state.length,
         },
       ]);
     }
@@ -37,14 +37,18 @@ export default function useSynaptomeSimulationConfig() {
         ...(state || []),
         {
           ...defaultSynapseConfig,
-          id: `${state.length}`,
+          key: state.length,
         },
       ]);
     }
   }
 
-  function remove(id: number) {
-    update(state.filter((s, index) => index !== id) ?? []);
+  function remove(key: number) {
+    update(state.filter((s, index) => index !== key) ?? []);
+  }
+
+  function empty() {
+    update([]);
   }
 
   function setProperty({ id, key, newValue }: UpdateSynapseSimulationProperty) {
@@ -56,7 +60,7 @@ export default function useSynaptomeSimulationConfig() {
     return update(
       updateArray({
         array: state,
-        keyfn: (item) => item.id === id,
+        keyfn: (item) => item.key === id,
         newVal: (item) => Object.assign(item, { ...updateConfig }),
       })
     );
@@ -69,5 +73,6 @@ export default function useSynaptomeSimulationConfig() {
     remove,
     setProperty,
     reset,
+    empty,
   };
 }

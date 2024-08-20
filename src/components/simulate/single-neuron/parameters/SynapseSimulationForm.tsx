@@ -78,7 +78,7 @@ export default function SynapseSimulationForm({
     >
       <div className="flex flex-col gap-4">
         <Form.Item
-          name={[formName, 'synapseId']}
+          name={[formName, 'id']}
           label="Synapse Set"
           rules={[{ required: true, type: 'string' }]}
           labelAlign="left"
@@ -87,17 +87,18 @@ export default function SynapseSimulationForm({
           <Select
             showSearch
             placeholder="Select synapse set"
-            onChange={(newValue) =>
+            onChange={(newValue) =>{
               onChange({
-                id: `${formName}`,
-                key: 'synapseId',
+                id: index,
+                key: 'id',
                 newValue,
-              })
+              });
+            }
             }
             options={
               synaptomeModelConfig.synapses.map((synapse) => ({
                 value: synapse.id,
-                label: synapse.id,
+                label: synapse.name,
               })) ?? []
             }
             className="text-left"
@@ -116,7 +117,7 @@ export default function SynapseSimulationForm({
             type="number"
             onChange={(newVal) =>
               onChange({
-                id: `${formName}`,
+                id: index,
                 key: 'delay',
                 newValue: newVal ?? 0,
               })
@@ -136,7 +137,7 @@ export default function SynapseSimulationForm({
             className="w-full text-right"
             onChange={(newVal) =>
               onChange({
-                id: `${formName}`,
+                id: index,
                 key: 'duration',
                 newValue: newVal ?? 0,
               })
@@ -156,7 +157,7 @@ export default function SynapseSimulationForm({
             className="w-full text-right"
             onChange={(newVal) =>
               onChange({
-                id: `${formName}`,
+                id: index,
                 key: 'frequency',
                 newValue: newVal ?? 0,
               })
@@ -175,7 +176,7 @@ export default function SynapseSimulationForm({
             className="w-full text-right"
             onChange={(newVal) =>
               onChange({
-                id: `${formName}`,
+                id: index,
                 key: 'weightScalar',
                 newValue: newVal ?? 0,
               })

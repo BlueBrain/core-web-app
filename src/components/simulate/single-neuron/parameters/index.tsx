@@ -5,24 +5,25 @@ import { useAtom, useAtomValue } from 'jotai';
 import { Form } from 'antd';
 
 import Recording from './Recording';
-import Conditions from './Conditions';
-import Analysis from './Analysis';
-import Visualization from './Visualization';
+import ExperimentSetup from './Conditions';
 import Results from './Results';
 import LaunchButton from './LaunchButton';
+import Stimulation from './Stimulation';
+import SynapseSimulationFormsGroup from './SynapseSimulationFormsGroup';
 
 import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
 import { SimulationConfiguration } from '@/types/simulation/single-neuron';
 import { SimulationStepTitle, SimulationType } from '@/types/simulation/common';
 import { recordingSourceForSimulationAtom } from '@/state/simulate/categories/recording-source-for-simulation';
-import { directCurrentInjectionSimulationConfigAtom } from '@/state/simulate/categories/direct-current-injection-simulation';
+import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
+import { simulationConditionsAtom } from '@/state/simulate/categories/simulation-conditions';
 
 type Props = {
   vlabId: string;
   projectId: string;
   simResourceSelf: string;
-  children: ReactNode;
+  modelSelf: string;
   type: SimulationType;
 };
 
@@ -40,22 +41,26 @@ function checkStepError(errorFields: Array<ErrorField>): Array<SimulationStepTit
     'stimulusType',
     'stimulusProtocol',
     'paramValues',
-    'synapseId',
+  ];
+  const synapticInputs = [
+    'id',
     'delay',
     'duration',
     'frequency',
     'weightScalar',
-  ];
+  ]
   const stepsHasErrors: Array<SimulationStepTitle> = [];
   errorFields.forEach((elt) => {
     const hasErrors = elt.errors.length > 0;
-    const conditionsErrors = elt.name.some((v) => conditions.includes(v));
+    const experimentalSetupErrors = elt.name.some((v) => conditions.includes(v));
     const recordingErrors = elt.name.some((v) => recoding.includes(v));
-    const stimulationErros = elt.name.some((v) => stimulation.includes(v));
+    const stimulationProtocolErros = elt.name.some((v) => stimulation.includes(v));
+    const synapticInputsErros = elt.name.some((v) => synapticInputs.includes(v));
     if (hasErrors) {
-      if (conditionsErrors) stepsHasErrors.push('conditions');
-      if (recordingErrors) stepsHasErrors.push('recording');
-      if (stimulationErros) stepsHasErrors.push('stimulation');
+      if (experimentalSetupErrors) stepsHasErrors.push('Experimental setup');
+      if (synapticInputsErros) stepsHasErrors.push('Synaptic inputs');
+      if (stimulationProtocolErros) stepsHasErrors.push('Stimulation protocol');
+      if (recordingErrors) stepsHasErrors.push('Recording');
     }
   });
 
@@ -66,22 +71,24 @@ export default function ParameterView({
   vlabId,
   projectId,
   simResourceSelf,
+  modelSelf,
   type,
-  children,
 }: Props) {
   const [form] = Form.useForm<SimulationConfiguration>();
   const [disableSubmit, setDisableSubmit] = useState(false);
   const recordFromConfig = useAtomValue(recordingSourceForSimulationAtom);
-  const directCurrentConfig = useAtomValue(directCurrentInjectionSimulationConfigAtom);
+  const currentInjectionConfig = useAtomValue(currentInjectionSimulationConfigAtom);
   const synaptomeConfig = useAtomValue(synaptomeSimulationConfigAtom);
+  const conditionsConfig = useAtomValue(simulationConditionsAtom);
 
   const initialValues: SimulationConfiguration = useMemo(
     () => ({
       recordFrom: recordFromConfig,
-      directStimulation: directCurrentConfig,
+      currentInjection: currentInjectionConfig,
+      conditions: conditionsConfig,
       ...(type === 'synaptome-simulation' ? { synapses: synaptomeConfig ?? undefined } : {}),
     }),
-    [directCurrentConfig, recordFromConfig, synaptomeConfig, type]
+    [currentInjectionConfig, recordFromConfig, synaptomeConfig, conditionsConfig, type]
   );
 
   const [{ steps, current: currentSimulationStep }, upadteSimulationStepsStatus] =
@@ -131,25 +138,24 @@ export default function ParameterView({
         onValuesChange={onValuesChange}
       >
         <div className="flex h-full w-full flex-col items-center text-center text-2xl">
-          <div className={currentSimulationStep.title === 'stimulation' ? 'w-full' : 'hidden'}>
-            {children}
+          <div className={currentSimulationStep.title === 'Experimental setup' ? 'w-full' : 'hidden'}>
+            <ExperimentSetup />
           </div>
-          <div className={currentSimulationStep.title === 'recording' ? 'w-full' : 'hidden'}>
+          {type === "synaptome-simulation" && (
+            <div className={currentSimulationStep.title === 'Synaptic inputs' ? 'w-full' : 'hidden'}>
+              <SynapseSimulationFormsGroup />
+            </div>
+          )}
+          <div className={currentSimulationStep.title === 'Stimulation protocol' ? 'w-full' : 'hidden'}>
+            <Stimulation modelSelfUrl={modelSelf} />
+          </div>
+          <div className={currentSimulationStep.title === 'Recording' ? 'w-full' : 'hidden'}>
             <Recording />
           </div>
-          <div className={currentSimulationStep.title === 'conditions' ? 'w-full' : 'hidden'}>
-            <Conditions stimulationId={0} />
-          </div>
-          <div className={currentSimulationStep.title === 'analysis' ? 'w-full' : 'hidden'}>
-            <Analysis />
-          </div>
-          <div className={currentSimulationStep.title === 'visualization' ? 'w-full' : 'hidden'}>
-            <Visualization />
-          </div>
-          <div className={currentSimulationStep.title === 'results' ? 'w-full' : 'hidden'}>
+          <div className={currentSimulationStep.title === 'Results' ? 'w-full' : 'hidden'}>
             <Results />
           </div>
-          <div className="fixed bottom-4 right-8 mt-auto">
+          <div className="fixed bottom-4 left-[calc(50%-125px)] mt-auto">
             <LaunchButton
               modelSelfUrl={simResourceSelf}
               vLabId={vlabId}

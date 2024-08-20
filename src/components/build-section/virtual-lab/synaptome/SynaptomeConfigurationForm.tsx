@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Form, Input, Button, ConfigProvider, Space, InputNumber } from 'antd';
 import { useAtom } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
-import omit from 'lodash/omit';
 
 import SynapseGroup from './SynapseGroup';
 import {
@@ -12,9 +11,8 @@ import {
   CREATE_SYNAPTOME_FAIL,
   CREATE_SYNAPTOME_SUCCESS,
 } from './messages';
-import { sendRemoveSynapses3DEvent } from './events';
 import { createHeaders, getRandomIntInclusive } from '@/util/utils';
-import { composeUrl, createDistribution, removeMetadata } from '@/util/nexus';
+import { composeUrl, createDistribution } from '@/util/nexus';
 import {
   NEXUS_SYNAPTOME_TYPE,
   SingleSynaptomeConfig,
@@ -23,8 +21,9 @@ import {
 } from '@/types/synaptome';
 import { getSession } from '@/authFetch';
 import { synapsesPlacementAtom } from '@/state/synaptome';
-import useNotification from '@/hooks/notifications';
 import { MEModelResource } from '@/types/me-model';
+import { sendRemoveSynapses3DEvent, sendResetSynapses3DEvent } from '@/components/neuron-viewer/events';
+import useNotification from '@/hooks/notifications';
 
 const CONFIG_FILE_NAME = 'synaptome_config.json';
 const CONFIG_FILE_FORMAT = 'application/json';
@@ -128,15 +127,20 @@ export default function SynaptomeConfigurationForm({
         schema: null,
       });
 
-      const sanitizedResource = removeMetadata({
-        ...omit(resource, ['@id']),
-        '@type': NEXUS_SYNAPTOME_TYPE,
+      const sanitizedResource = {
+        "@context": 'https://bbp.neuroshapes.org',
+        "@type": NEXUS_SYNAPTOME_TYPE,
         objectOfStudy: SYNAPTOME_OBJECT_OF_STUDY,
         name: values.name,
         description: values.description,
         seed: values.seed,
         distribution: [createDistribution(fileMetadata, fileMetadata._self)],
-      });
+        used: {
+          "@id": resource['@id'],
+          "@type": resource['@type'],
+        },
+        brainLocation: resource.brainLocation
+      };
 
       const resp = await fetch(resourceUrl, {
         method: 'POST',
@@ -159,6 +163,7 @@ export default function SynaptomeConfigurationForm({
       notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight', undefined, 'synaptome-config');
     } finally {
       setLoading(false);
+      sendResetSynapses3DEvent();
     }
   };
 
@@ -231,7 +236,7 @@ export default function SynaptomeConfigurationForm({
         </Form.Item>
         <div className="mb-5 flex items-center justify-between gap-2">
           <h2 className="my-3 text-xl font-bold text-primary-8">
-            Synapse groups{' '}
+            Synaptic input{' '}
             <span className="text-base font-light">
               {synapses?.length ? `(${synapses.length})` : ''}
             </span>
@@ -243,7 +248,7 @@ export default function SynaptomeConfigurationForm({
             onClick={addNewSynapse}
             icon={<PlusOutlined className="text-base" />}
           >
-            Add new Synapse set
+            Add new synapses
           </Button>
         </div>
         <Form.List name="synapses">
@@ -266,11 +271,8 @@ export default function SynaptomeConfigurationForm({
 
         <Form.Item className="my-6">
           <Space className="w-full justify-end">
-            <Button type="default" htmlType="reset">
-              Reset
-            </Button>
             <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
-              Save Changes
+              Save
             </Button>
           </Space>
         </Form.Item>

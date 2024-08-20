@@ -22,12 +22,12 @@ type Props = {
   };
 };
 
-function Synaptome({ params }: Props) {
+function Synaptome({ params: { virtualLabId, projectId } }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { loading, resource } = useModel<MEModelResource>({ modelId: id });
-  const labUrl = generateLabUrl(params.virtualLabId);
+  const { loading, resource } = useModel<MEModelResource>({ modelId: id, org: virtualLabId, project: projectId });
+  const labUrl = generateLabUrl(virtualLabId);
 
-  const labProjectUrl = `${labUrl}/project/${params.projectId}`;
+  const labProjectUrl = `${labUrl}/project/${projectId}`;
 
   if (loading || !resource) {
     return <Spin indicator={<LoadingOutlined />} />;
@@ -46,14 +46,14 @@ function Synaptome({ params }: Props) {
         ]}
         lab={{
           key: LinkItemKey.VirtualLab,
-          id: params.virtualLabId,
+          id: virtualLabId,
           label: Label.VirtualLab,
           href: `${labUrl}/overview`,
         }}
         project={{
           key: LinkItemKey.Project,
-          id: params.projectId,
-          virtualLabId: params.virtualLabId,
+          id: projectId,
+          virtualLabId,
           label: Label.Project,
           href: `${labProjectUrl}/home`,
         }}
@@ -68,8 +68,8 @@ function Synaptome({ params }: Props) {
           <SynaptomeConfigurationForm
             {...{
               resource,
-              org: params.virtualLabId,
-              project: params.projectId,
+              org: virtualLabId,
+              project: projectId,
               resourceLoading: loading,
             }}
           />

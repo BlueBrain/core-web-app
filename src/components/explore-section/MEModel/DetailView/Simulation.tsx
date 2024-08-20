@@ -1,10 +1,9 @@
-import Image from 'next/image';
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import { ErrorBoundary } from '@sentry/nextjs';
-import { Empty, Skeleton } from 'antd';
-import { useInView } from 'react-intersection-observer';
 
+
+import SimulationPlotAsImage from './SimulationPlotAsImage';
 import { fetchJsonFileByUrl, queryES } from '@/api/nexus';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { getSimulationsPerMEModelQuery } from '@/queries/es';
@@ -14,11 +13,8 @@ import { SimulationPayload } from '@/types/simulation/single-neuron';
 import { ensureArray } from '@/util/nexus';
 import {
   SIMULATION_CONFIG_FILE_NAME_BASE,
-  SIMULATION_PLOT_NAME,
-  STIMULUS_PLOT_NAME,
 } from '@/state/simulate/single-neuron-setter';
 import { getSession } from '@/authFetch';
-import { createHeaders } from '@/util/utils';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
 type LocationParams = {
@@ -40,6 +36,7 @@ export default function Simulation({ params }: { params: LocationParams }) {
         org: params.virtualLabId,
         project: params.projectId,
       });
+      console.log('@@sims', sims)
       setSimulations(sims);
     };
     fetchSims();
@@ -67,7 +64,7 @@ const subtitleStyle = 'font-thin text-slate-600';
 
 function SimulationDetail({ simulation }: { simulation: SingleNeuronSimulation }) {
   const [distributionJson, setDistributionJson] = useState<SimulationPayload | null>(null);
-
+  console.log('@@distributionJson', distributionJson)
   useEffect(() => {
     const configuration = ensureArray(simulation.distribution).find((o) =>
       o.name.startsWith(SIMULATION_CONFIG_FILE_NAME_BASE)
@@ -90,12 +87,7 @@ function SimulationDetail({ simulation }: { simulation: SingleNeuronSimulation }
     fetchPayload();
   }, [simulation]);
 
-  const stimulusDistribution = ensureArray(simulation.distribution).find((o) =>
-    o.name.startsWith(STIMULUS_PLOT_NAME)
-  );
-  const simulationDistribution = ensureArray(simulation.distribution).find((o) =>
-    o.name.startsWith(SIMULATION_PLOT_NAME)
-  );
+
   return (
     <div className="grid grid-cols-2 gap-8 border p-8">
       <div className="flex flex-col gap-10 text-primary-8">
@@ -103,15 +95,15 @@ function SimulationDetail({ simulation }: { simulation: SingleNeuronSimulation }
         <Params payload={distributionJson} />
         <div>
           <div className={subtitleStyle}>Injection location</div>
-          <div className="font-bold">{distributionJson?.config.injectTo}</div>
+          <div className="font-bold">{distributionJson?.config.currentInjection.injectTo}</div>
         </div>
         <div>
           <div className={subtitleStyle}>Recording locations</div>
-          <div className="font-bold">
+          <div className="flex gap-2 flex-flow-row">
             {distributionJson?.config.recordFrom.map((r) => (
-              <div key={`${r.section}_${r.segmentOffset}`}>
-                <span>Section: {r.section}</span>
-                <span>Segment Offset: {r.segmentOffset}</span>
+              <div key={`${r.section}_${r.offset}`} className='flex border border-gray-100'>
+                <span className='text-base font-light bg-primary-8 p-2'>Section: {r.section}</span>
+                <span className='text-base font-normal text-primary-8'>Segment Offset: {r.offset}</span>
               </div>
             ))}
           </div>
@@ -119,22 +111,19 @@ function SimulationDetail({ simulation }: { simulation: SingleNeuronSimulation }
       </div>
 
       <div className="flex w-full flex-col items-end justify-center gap-2">
-        {stimulusDistribution && (
-          <SimulationImage
-            {...{
-              contentUrl: stimulusDistribution?.contentUrl,
-              encodingFormat: stimulusDistribution.encodingFormat,
-            }}
+        {distributionJson?.stimulus && (
+          <SimulationPlotAsImage
+            title='Stimulus'
+            plotData={distributionJson.stimulus}
           />
         )}
-        {simulationDistribution && (
-          <SimulationImage
-            {...{
-              contentUrl: simulationDistribution.contentUrl,
-              encodingFormat: simulationDistribution.encodingFormat,
-            }}
+        {distributionJson?.simulation && Object.entries(distributionJson?.simulation).map(([key, value]) => (
+          <SimulationPlotAsImage
+            key={key}
+            title={`Recording ${key}`}
+            plotData={value}
           />
-        )}
+        ))}
       </div>
     </div>
   );
@@ -158,7 +147,7 @@ function Params({ payload }: { payload: SimulationPayload | null }) {
       <div>
         <div className={subtitleStyle}>Temperature</div>
         <div>
-          <span className="font-bold">{payload.config.celsius}</span>
+          <span className="font-bold">{payload.config.conditions.celsius}</span>
           <span>&nbsp;°C</span>
         </div>
       </div>
@@ -174,7 +163,7 @@ function Params({ payload }: { payload: SimulationPayload | null }) {
       <div>
         <div className={subtitleStyle}>Voltage initial</div>
         <div>
-          <span className="font-bold">{payload.config.vinit}</span>
+          <span className="font-bold">{payload.config.conditions.vinit}</span>
           <span>&nbsp;mV</span>
         </div>
       </div>
@@ -182,7 +171,7 @@ function Params({ payload }: { payload: SimulationPayload | null }) {
       <div>
         <div className={subtitleStyle}>Holding current</div>
         <div>
-          <span className="font-bold">{payload.config.hypamp}</span>
+          <span className="font-bold">{payload.config.conditions.vinit}</span>
           <span>&nbsp;nA</span>
         </div>
       </div>
@@ -190,68 +179,3 @@ function Params({ payload }: { payload: SimulationPayload | null }) {
   );
 }
 
-function SimulationImage({
-  contentUrl,
-  encodingFormat,
-}: {
-  contentUrl: string;
-  encodingFormat: string;
-}) {
-  const [image, setImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const { ref, inView } = useInView({
-    threshold: 0.2,
-  });
-
-  useEffect(() => {
-    if (inView) {
-      (async () => {
-        const session = await getSession();
-        if (!session) {
-          return null;
-        }
-        setLoading(true);
-        fetch(contentUrl, {
-          method: 'GET',
-          headers: createHeaders(session.accessToken, {
-            Accept: encodingFormat,
-          }),
-        })
-          .then((response) => response.blob())
-          .then((blob) => {
-            setImage(URL.createObjectURL(blob));
-            setLoading(false);
-          })
-          .catch(() => setLoading(false));
-      })();
-    }
-  }, [contentUrl, encodingFormat, inView]);
-
-  if (image) {
-    return (
-      <div className="relative flex h-96 w-full max-w-2xl items-center justify-center">
-        <Image
-          fill
-          objectFit="contains"
-          alt="Stimulus plot"
-          className="border border-neutral-2"
-          src={image}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div ref={ref} className="flex h-96 w-full max-w-2xl items-center justify-center">
-      {loading ? (
-        <Skeleton.Image
-          active={loading}
-          className="!h-full !w-full rounded-none"
-          rootClassName="!h-full !w-full"
-        />
-      ) : (
-        <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      )}
-    </div>
-  );
-}

@@ -37,7 +37,7 @@ export default function useMorphology({
         }
       }
     }
-    throw new Error('Morphology could not be constructed');
+    throw new Error('Neuron morphology could not be constructed');
   }, [modelSelfUrl]);
 
   useEffect(() => {

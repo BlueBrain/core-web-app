@@ -429,6 +429,14 @@ export default class NeuronViewerRenderer {
     }
   };
 
+  cleanSynapses = () => {
+    this.synapses.forEach(o => {
+      this.scene.remove(o);
+    });
+    this.synapses = [];
+    this.ctrl.renderOnce();
+  };
+
   private addSecMarker = (config: SecMarkerConfig) => {
     if (!this.morphology) {
       throw new Error("Morphology couldn't be found");

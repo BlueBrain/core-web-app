@@ -7,7 +7,7 @@ import useOnClickOutside from '@/hooks/useOnClickOutside';
 
 export default function NeuronMeshInjectionRecordingPopover({
   show,
-  data: { section, segmentOffset, x, y },
+  data: { section, offset, x, y },
   onClose,
 }: {
   show: boolean;
@@ -15,7 +15,7 @@ export default function NeuronMeshInjectionRecordingPopover({
     x: number;
     y: number;
     section: string;
-    segmentOffset: number;
+    offset: number;
   };
   onClose: () => void;
 }) {
@@ -28,7 +28,7 @@ export default function NeuronMeshInjectionRecordingPopover({
   };
 
   const onRecord = () => {
-    add({ section, segmentOffset });
+    add({ section, offset });
     onClose();
   };
 

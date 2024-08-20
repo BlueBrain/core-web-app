@@ -5,7 +5,7 @@ import { useAtomValue } from 'jotai';
 import Stimulation from './Stimulation';
 import SynapseSimulationFormsGroup from './SynapseSimulationFormsGroup';
 import {
-  useDirectCurrentInjectionSimulationConfig,
+  useCurrentInjectionSimulationConfig,
   useSynaptomeSimulationConfig,
 } from '@/state/simulate/categories';
 import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
@@ -17,8 +17,8 @@ enum SimulationType {
 }
 
 export default function ModelWithSynapseConfig() {
-  const { reset: resetSynaptomeConfig } = useSynaptomeSimulationConfig();
-  const { reset: resetDirectConfig } = useDirectCurrentInjectionSimulationConfig();
+  const { reset: resetSynaptomeConfig, empty: clearSynaptomeConfig} = useSynaptomeSimulationConfig();
+  const { reset: resetCurrentInjectionConfig, empty: clearCurrentInjectionConfig } = useCurrentInjectionSimulationConfig();
   const { configuration } = useAtomValue(SynaptomeSimulationInstanceAtom);
   const [simulationType, setSimulationType] = useState<SimulationType>(SimulationType.Both);
 
@@ -26,17 +26,19 @@ export default function ModelWithSynapseConfig() {
     setSimulationType(newType);
     switch (newType) {
       case SimulationType.Both: {
-        resetDirectConfig();
+        resetCurrentInjectionConfig();
         if (configuration?.synapses) {
           resetSynaptomeConfig(configuration.synapses);
         }
         break;
       }
       case SimulationType.OnlyDirectInjection: {
-        resetDirectConfig();
+        resetCurrentInjectionConfig();
+        clearSynaptomeConfig();
         break;
       }
       case SimulationType.OnlySynapse: {
+        clearCurrentInjectionConfig();
         if (configuration?.synapses) {
           resetSynaptomeConfig(configuration.synapses);
         }
@@ -60,7 +62,7 @@ export default function ModelWithSynapseConfig() {
           simulationType === SimulationType.OnlyDirectInjection) && (
           <div data-testid="direct-current-configuration">
             <div className="flex w-full items-center bg-primary-8 px-4 py-3 text-lg text-white">
-              Direct Current Injection
+              Current Injection
             </div>
             {configuration?.meModelSelf && (
               <Stimulation modelSelfUrl={configuration?.meModelSelf} />
@@ -71,7 +73,7 @@ export default function ModelWithSynapseConfig() {
           simulationType === SimulationType.OnlySynapse) && (
           <div className="mt-4 " data-testid="synapses-configuration">
             <div className="flex w-full items-center bg-primary-8 px-4 py-3 text-lg text-white">
-              Synapses
+              Synaptic input
             </div>
             <SynapseSimulationFormsGroup />
           </div>

@@ -20,9 +20,14 @@ export default function useRecordingSourceForSimulation() {
     update([...state, location]);
   }
 
+  function remove(indx: number) {
+    update(state.filter((_, i) => i !== indx));
+  }
+
   return {
     state,
     setSource,
     add,
+    remove,
   };
 }

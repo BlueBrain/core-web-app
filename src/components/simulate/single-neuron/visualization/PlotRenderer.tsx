@@ -8,33 +8,33 @@ import lodashSet from 'lodash/set';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 
 const PLOT_LAYOUT: Partial<Layout> = {
-  plot_bgcolor: '#141414',
-  paper_bgcolor: '#141414',
+  plot_bgcolor: '#fff',
+  paper_bgcolor: '#fff',
   xaxis: {
     automargin: true,
-    color: '#eaeaea',
+    color: '#003A8C',
     zeroline: false,
     showline: true,
     linecolor: '#888888',
-    title: { text: 'Time, ms', font: { size: 12 }, standoff: 6 },
+    title: { text: 'Time [ms]', font: { size: 12 }, standoff: 6 },
   },
   yaxis: {
     automargin: true,
-    color: '#eaeaea',
+    color: '#003A8C',
     zeroline: false,
     showline: true,
     linecolor: '#888888',
-    title: { text: 'Current, nA', font: { size: 12 }, standoff: 6 },
+    title: { text: 'Current [nA]', font: { size: 12 }, standoff: 6 },
   },
   legend: {
     orientation: 'h',
     xanchor: 'center',
     x: 0.5,
     y: 1.1,
-    font: { size: 10, color: '#eaeaea' },
+    font: { size: 10, color: '#003A8C' },
   },
   height: 320,
-  margin: { t: 0, r: 0, b: 20, l: 20 },
+  margin: { t: 20, r: 20, b: 20, l: 20 },
 };
 
 const PLOT_CONFIG: Partial<Config> = {
@@ -82,7 +82,7 @@ export default function PlotRenderer({ className, data, isLoading, plotConfig }:
   }, [data, initialized, plotConfig]);
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className={className} ref={containerRef} style={{ opacity: isLoading ? 0.5 : 1 }} />
       {isLoading && (
         <div className="absolute top-0 flex h-full w-full items-center justify-center text-sm text-gray-500">

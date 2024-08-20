@@ -77,15 +77,17 @@ export default function SynaptomeSimulation({ params: { virtualLabId, projectId 
   }
 
   return (
-    <Wrapper viewer={<NeuronViewerContainer modelUrl={configuration.meModelSelf} />}>
+    <Wrapper
+      viewer={<NeuronViewerContainer modelUrl={configuration.meModelSelf} />}
+      type="synaptome-simulation"
+    >
       <ParameterView
         vlabId={virtualLabId}
         projectId={projectId}
         simResourceSelf={model._self}
+        modelSelf={configuration.meModelSelf}
         type="synaptome-simulation"
-      >
-        <ModelWithSynapseConfig />
-      </ParameterView>
+      />
     </Wrapper>
   );
 }

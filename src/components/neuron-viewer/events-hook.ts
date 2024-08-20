@@ -3,6 +3,7 @@ import { MutableRefObject, useEffect } from 'react';
 import {
   DISPLAY_SYNAPSES_3D_EVENT,
   REMOVE_SYNAPSES_3D_EVENT,
+  RESET_SYNAPSES_3D_EVENT,
   DisplaySynapses3DEvent,
   RemoveSynapses3DEvent,
 } from './events';
@@ -42,6 +43,12 @@ export default function useNeuronViewerEvents({
       }
     }
 
+    function resetSynapses3DEventHandler() {
+      if (renderer.current) {
+          renderer.current.cleanSynapses();
+      }
+    }
+
     function segmentDetailsEventHandler(event: HoveredSegmentDetailsEvent) {
       if (cursor.current) {
         if (event.detail.show) {
@@ -71,6 +78,9 @@ export default function useNeuronViewerEvents({
       }
     );
     window.addEventListener(SEGMENT_DETAILS_EVENT, segmentDetailsEventHandler as EventListener, {
+      signal: eventAborter.signal,
+    });
+    window.addEventListener(RESET_SYNAPSES_3D_EVENT, resetSynapses3DEventHandler as EventListener, {
       signal: eventAborter.signal,
     });
 
