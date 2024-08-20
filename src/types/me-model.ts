@@ -80,4 +80,4 @@ export interface MEModel extends Entity {
   brainLocation?: BrainLocation; // it will be added later when the me-model analysis is run
 }
 
-export interface MEModelResource extends ResourceMetadata, MEModel {}
+export interface MEModelResource extends ResourceMetadata, MEModel { }

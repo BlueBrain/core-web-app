@@ -28,6 +28,7 @@ export function useModel<T>({
         const session = await getSession();
         if (!session) throw new Error('no session');
 
+<<<<<<< HEAD
         const resourceObject = await fetchResourceById<T>(
           modelId,
           session,
@@ -38,6 +39,13 @@ export function useModel<T>({
                 project,
               }
         );
+=======
+        const resourceObject = await fetchResourceById<T>(modelId, session,
+          modelId.startsWith(nexus.defaultIdBaseUrl) ? {} : {
+            org,
+            project,
+          });
+>>>>>>> f8830794 (update: refactor sim conditions, use one query to run sim)
         if (!isAborted) {
           setResource(resourceObject);
           callbackRef.current?.(resourceObject);

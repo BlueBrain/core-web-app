@@ -18,11 +18,7 @@ type Props = {
   selectedSynapseGroupPlacementConfig?: SingleSynaptomeConfig;
 };
 
-<<<<<<< HEAD:src/components/simulate/single-neuron/steps/synaptic-input/SynapticInputItem.tsx
 export default function SynapticInputItem({
-=======
-export default function SynapseSimulationForm({
->>>>>>> 58706ebd (fix: seed per synapse group and some style):src/components/simulate/single-neuron/parameters/SynapseSimulationForm.tsx
   index,
   formName,
   onChange,

@@ -33,6 +33,7 @@ export default function Simulation({ params }: { params: LocationParams }) {
         org: params.virtualLabId,
         project: params.projectId,
       });
+      console.log('@@sims', sims)
       setSimulations(sims);
     };
     fetchSims();
