@@ -26,7 +26,7 @@ export default function MEModelViewPage({ params }: Params) {
   return (
     <div className="grid grid-cols-[min-content_auto] bg-white">
       <Nav params={params} />
-      <MEModelDetailView vlProjectUrl={vlProjectUrl} />
+      <MEModelDetailView vlProjectUrl={vlProjectUrl} showViewMode />
     </div>
   );
 }

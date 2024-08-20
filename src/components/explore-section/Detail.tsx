@@ -18,9 +18,11 @@ type ExtendsExperiment<T> = T extends DeltaResource ? T : never;
 
 export default function Detail<T extends DeltaResource>({
   fields,
+  showViewMode,
   children,
 }: {
   fields: DetailProps[];
+  showViewMode?: boolean;
   children?: (detail: ExtendsExperiment<T>) => ReactNode;
 }) {
   const setBrainRegionSidebarIsCollapsed = useSetAtom(brainRegionSidebarIsCollapsedAtom);
@@ -53,6 +55,7 @@ export default function Detail<T extends DeltaResource>({
     <div className="flex h-full min-h-screen">
       <DetailsPageSideBackLink />
       <div className="ml-10 flex h-full w-full flex-col gap-7 overflow-auto bg-white p-7 pr-12">
+        {showViewMode && <div className="text-right font-thin text-gray-400">View mode</div>}
         <DetailHeader fields={fields} detail={detail.data} url={path} />
         {children && detail.data && children(detail.data)}
       </div>

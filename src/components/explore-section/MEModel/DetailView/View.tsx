@@ -19,9 +19,10 @@ import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter
 
 type Props = {
   vlProjectUrl: string;
+  showViewMode?: boolean;
 };
 
-export default function MEModelDetailView({ vlProjectUrl }: Props) {
+export default function MEModelDetailView({ vlProjectUrl, showViewMode = false }: Props) {
   const [activeTab] = useQueryState(
     'tab',
     parseAsString.withDefault(EMODEL_TABS.at(0)!.key)
@@ -40,7 +41,7 @@ export default function MEModelDetailView({ vlProjectUrl }: Props) {
 
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={ME_MODEL_FIELDS}>
+      <Detail fields={ME_MODEL_FIELDS} showViewMode={showViewMode}>
         {() => (
           <>
             <SectionTabs />
@@ -62,7 +63,6 @@ export default function MEModelDetailView({ vlProjectUrl }: Props) {
               className="fixed bottom-10 right-10 w-[200px] bg-primary-9 font-bold text-white hover:!bg-primary-7"
               href={`${vlProjectUrl}/build/me-model/new/morphology/reconstructed`}
             />
-            <div className="absolute right-7 top-5 font-thin text-gray-400">View mode</div>
           </>
         )}
       </Detail>

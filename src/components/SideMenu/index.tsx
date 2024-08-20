@@ -48,7 +48,7 @@ function ProjectLink({ project, lab }: { project: ProjectItem; lab: LabItem }) {
 export default function SideMenu({ lab, project, links }: SideMenuProps) {
   const virtualLab = useAtomValue(unwrap(virtualLabDetailAtomFamily(lab.id)));
   return (
-    <div className="relative flex h-screen w-10 flex-col items-center gap-2 bg-primary-9 text-light transition-transform ease-in-out will-change-auto">
+    <div className="sticky top-0 flex h-screen w-10 flex-col items-center gap-2 bg-primary-9 text-light transition-transform ease-in-out will-change-auto">
       <div className="h-5 w-full" />
       <div className="flex grow flex-col items-center justify-between gap-3 overflow-hidden">
         <div className="ml-2 flex w-full flex-col items-center gap-3 overflow-hidden">
