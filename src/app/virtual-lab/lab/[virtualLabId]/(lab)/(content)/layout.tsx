@@ -3,7 +3,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { LoadingOutlined } from '@ant-design/icons';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
-import VirtualLabSidebarWithTitle from '@/components/VirtualLab/VirtualLabSidebar';
+import VirtualLabSidebar from '@/components/VirtualLab/VirtualLabSidebar';
 import { VirtualLabSidebarSkeleton } from '@/components/VirtualLab/VirtualLabSidebar/VirtualLabSidebarSkeleton';
 
 export default function VirtualLabPageLayout({
@@ -18,7 +18,7 @@ export default function VirtualLabPageLayout({
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="m-w-3/12 flex flex-row gap-4" style={{ width: '25%' }}>
           <Suspense fallback={<VirtualLabSidebarSkeleton titleGap />}>
-            <VirtualLabSidebarWithTitle virtualLabId={params.virtualLabId} />
+            <VirtualLabSidebar virtualLabId={params.virtualLabId} showTitle />
           </Suspense>
         </div>
 

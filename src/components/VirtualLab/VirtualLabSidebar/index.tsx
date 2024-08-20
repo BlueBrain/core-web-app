@@ -1,25 +1,17 @@
-import VirtualLabSidebarContent, { VirtualLabSidebarTitle } from './VirtualLabSidebar';
+import VirtualLabSidebarContent from './VirtualLabSidebar';
 import { getVirtualLabDetail } from '@/services/virtual-lab/labs';
 
-export async function VirtualLabSidebar({ virtualLabId }: { virtualLabId: string }) {
-  const vlab = (await getVirtualLabDetail(virtualLabId)).data.virtual_lab;
-  return (
-    <div className="mr-5 flex w-full flex-col gap-5">
-      <VirtualLabSidebarContent initialVlab={vlab} />
-    </div>
-  );
-}
-
-export default async function VirtualLabSidebarWithTitle({
+export default async function VirtualLabSidebar({
   virtualLabId,
+  showTitle = false,
 }: {
   virtualLabId: string;
+  showTitle?: boolean;
 }) {
   const vlab = (await getVirtualLabDetail(virtualLabId)).data.virtual_lab;
   return (
     <div className="mr-5 flex w-full flex-col gap-5">
-      <VirtualLabSidebarTitle name={vlab.name} />
-      <VirtualLabSidebarContent initialVlab={vlab} />
+      <VirtualLabSidebarContent initialVlab={vlab} showTitle={showTitle} />
     </div>
   );
 }

@@ -10,15 +10,13 @@ import { useInitAtom } from '@/state/state';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
-export function VirtualLabSidebarTitle({ name }: { name: string }) {
-  return (
-    <div className="text-5xl font-bold uppercase text-primary-5" style={{ minHeight: '84px' }}>
-      {name}
-    </div>
-  );
-}
-
-export default function VirtualLabSidebarContent({ initialVlab }: { initialVlab: VirtualLab }) {
+export default function VirtualLabSidebarContent({
+  initialVlab,
+  showTitle,
+}: {
+  initialVlab: VirtualLab;
+  showTitle: boolean;
+}) {
   const currentPage = usePathname().split('/').pop();
   const vlabAtom = useInitAtom<VirtualLab>(initialVlab.id, initialVlab);
 
@@ -53,5 +51,14 @@ export default function VirtualLabSidebarContent({ initialVlab }: { initialVlab:
     },
     { key: LinkItemKey.Admin, content: 'Admin', href: 'admin' },
   ];
-  return <VerticalLinks links={linkItems} currentPage={currentPage} />;
+  return (
+    <>
+      {showTitle && (
+        <div className="text-5xl font-bold uppercase text-primary-5" style={{ minHeight: '84px' }}>
+          {vlab.name}
+        </div>
+      )}
+      <VerticalLinks links={linkItems} currentPage={currentPage} />
+    </>
+  );
 }
