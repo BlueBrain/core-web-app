@@ -182,7 +182,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
   },
   [Field.Description]: {
     title: 'Description',
-    filter: FilterTypeEnum.CheckList,
+    filter: FilterTypeEnum.Text,
     render: {
       deltaResourceViewFn: (resource) => resource.description,
     },
