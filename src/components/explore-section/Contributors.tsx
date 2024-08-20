@@ -6,6 +6,7 @@ import ListField from '@/components/explore-section/Fields/ListField';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { Contributor as DeltaContributor } from '@/types/explore-section/delta-contributor';
+import { DisplayMessages } from '@/constants/display-messages';
 
 import { Contributor as ESContributor } from '@/types/explore-section/es-properties';
 import { IdLabelWithType, normalizeContributors } from '@/util/explore-section/sort-contributors';
@@ -49,5 +50,5 @@ export default function Contributors() {
   if (contributors.state === 'hasData')
     return <ListField<IdLabelWithType> items={contributorLabelParser(contributors.data)} />;
 
-  return <>Not Found</>;
+  return <>{DisplayMessages.NO_DATA_STRING}</>;
 }

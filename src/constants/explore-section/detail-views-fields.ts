@@ -1,10 +1,28 @@
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DetailProps } from '@/types/explore-section/application';
 
-export const NEURON_MORPHOLOGY_FIELDS = [
+export const COMMON_FIELDS = [
   {
     field: Field.Description,
-    className: 'col-span-3 row-span-2',
+    className: 'col-span-3',
+  },
+  {
+    field: Field.Contributors,
+  },
+  {
+    field: Field.CreatedAt,
+  },
+] as DetailProps[];
+
+export const NEURON_MORPHOLOGY_FIELDS = [
+  {
+    field: Field.BrainRegion,
+  },
+  {
+    field: Field.SubjectSpecies,
+  },
+  {
+    field: Field.License,
   },
   {
     field: Field.MType,
@@ -12,28 +30,9 @@ export const NEURON_MORPHOLOGY_FIELDS = [
   {
     field: Field.SubjectAge,
   },
-  {
-    field: Field.SubjectSpecies,
-  },
-  {
-    field: Field.BrainRegion,
-  },
-  {
-    field: Field.CreatedAt,
-  },
-  {
-    field: Field.License,
-  },
-  {
-    field: Field.Contributors,
-  },
 ] as DetailProps[];
 
 export const BOUTON_DENSITY_FIELDS = [
-  {
-    field: Field.Description,
-    className: 'col-span-3 row-span-2',
-  },
   {
     field: Field.BrainRegion,
   },
@@ -52,55 +51,27 @@ export const BOUTON_DENSITY_FIELDS = [
   {
     field: Field.Weight,
   },
-  {
-    field: Field.Contributors,
-  },
-  {
-    field: Field.CreatedAt,
-  },
-  {
-    field: Field.License,
-  },
-  {
-    field: Field.NumberOfMeasurements,
-    className: 'col-span-2 col-start-5',
-  },
 ] as DetailProps[];
 
 export const ELECTRO_PHYSIOLOGY_FIELDS = [
   {
-    field: Field.Description,
-    className: 'col-span-3 row-span-2',
-  },
-  {
-    field: Field.EType,
-    className: 'row-span-2',
+    field: Field.BrainRegion,
   },
   {
     field: Field.SubjectSpecies,
-    className: 'row-span-2',
-  },
-  {
-    field: Field.BrainRegion,
-    className: 'row-span-2',
-  },
-  {
-    field: Field.Contributors,
-    className: 'col-span-3',
-  },
-  {
-    field: Field.CreatedAt,
   },
   {
     field: Field.License,
   },
+  {
+    field: Field.EType,
+  },
+  {
+    field: Field.SubjectAge,
+  },
 ] as DetailProps[];
 
 export const NEURON_DENSITY_FIELDS = [
-  {
-    field: Field.Description,
-    className: 'col-span-3 row-span-2',
-  },
   {
     field: Field.BrainRegion,
   },
@@ -120,14 +91,6 @@ export const NEURON_DENSITY_FIELDS = [
     field: Field.EType,
   },
   {
-    field: Field.Contributors,
-    className: 'row-span-3',
-  },
-  {
-    field: Field.CreatedAt,
-    className: 'col-span-2',
-  },
-  {
     field: Field.NeuronDensity,
   },
   {
@@ -136,10 +99,6 @@ export const NEURON_DENSITY_FIELDS = [
 ] as DetailProps[];
 
 export const SYNAPSE_PER_CONNECTION_FIELDS = [
-  {
-    field: Field.Description,
-    className: 'row-span-2 col-span-3',
-  },
   {
     field: Field.PreSynapticBrainRegion,
   },
@@ -155,14 +114,6 @@ export const SYNAPSE_PER_CONNECTION_FIELDS = [
   {
     field: Field.SubjectAge,
     className: 'col-span-2',
-  },
-  {
-    field: Field.Contributors,
-    className: 'row-span-5',
-  },
-  {
-    field: Field.CreatedAt,
-    className: 'row-span-5 col-span-2',
   },
   {
     field: Field.PreSynapticCellType,

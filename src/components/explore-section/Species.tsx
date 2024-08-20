@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useMemo } from 'react';
 import { speciesDataFamily } from '@/state/explore-section/detail-view-atoms';
+import { DisplayMessages } from '@/constants/display-messages';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function Species() {
@@ -18,5 +19,5 @@ export default function Species() {
   if (speciesLabel && speciesLabel.state === 'hasData')
     return <span>{speciesLabel.data?.subject?.species?.label}</span>;
 
-  return <>Not Found</>;
+  return <>{DisplayMessages.NO_DATA_STRING}</>;
 }

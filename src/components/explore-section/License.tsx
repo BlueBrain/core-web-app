@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useMemo } from 'react';
 import { licenseDataFamily } from '@/state/explore-section/detail-view-atoms';
+import { DisplayMessages } from '@/constants/display-messages';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function License() {
@@ -17,5 +18,5 @@ export default function License() {
 
   if (license.state === 'hasData') return <span>{license.data}</span>;
 
-  return <>Not Found</>;
+  return <>{DisplayMessages.NO_DATA_STRING}</>;
 }
