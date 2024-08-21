@@ -43,13 +43,19 @@ function ModalHeader({ step, setStep }: { step: Step; setStep: (step: Step) => v
 export default function CreateVirtualLabModal() {
   const [isModalVisible, setIsModalVisible] = useAtom<boolean>('new-vlab-modal-open');
   const [step, setStep] = useState<Step>('Information');
+  const [, setIsFormValid] = useAtom<boolean>('new-vlab-modal-form-valid');
   const [virtualLab, setVirtualLab] = useState<VirtualLabWithOptionalId>(EMPTY_VIRTUAL_LAB);
   const [loading, setLoading] = useState(false);
   const refreshVirtualLabs = useSetAtom(virtualLabsOfUserAtom);
   const notification = useNotification();
   const router = useRouter();
 
-  const closeModalFn = useCallback(() => setIsModalVisible(false), [setIsModalVisible]);
+  const closeModalFn = useCallback(() => {
+    setVirtualLab(EMPTY_VIRTUAL_LAB);
+    setStep('Information');
+    setIsModalVisible(false);
+    setIsFormValid(false);
+  }, [setIsModalVisible, setIsFormValid]);
 
   const onVirtualLabCreate = async () => {
     setLoading(true);
@@ -72,7 +78,7 @@ export default function CreateVirtualLabModal() {
   };
 
   return (
-    <Modal title={null} open={!!isModalVisible} width={800} footer={null}>
+    <Modal title={null} open={!!isModalVisible} width={800} footer={null} onCancel={closeModalFn}>
       <div className="m-10">
         <ModalHeader step={step} setStep={setStep} />
         {step === 'Information' && (

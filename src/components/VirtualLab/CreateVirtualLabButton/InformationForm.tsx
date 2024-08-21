@@ -1,6 +1,7 @@
 import { Button, ConfigProvider, Form, Input } from 'antd';
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Step, VirtualLabWithOptionalId } from './types';
+import { useAtom } from '@/state/state';
 
 import styles from './InformationForm.module.css';
 
@@ -27,7 +28,7 @@ export default function InformationForm({
   setVirtualLabFn,
 }: InformationFormProps) {
   const [form] = Form.useForm();
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [isFormValid, setIsFormValid] = useAtom<boolean>('new-vlab-modal-form-valid');
 
   const onValuesChange = () => {
     form
@@ -146,7 +147,14 @@ export default function InformationForm({
           </Form.Item>
         </div>
         <div className="flex flex-row justify-end gap-2">
-          <Button type="text" className="min-w-36 text-primary-8" onClick={() => closeModalFn()}>
+          <Button
+            type="text"
+            className="min-w-36 text-primary-8"
+            onClick={() => {
+              form.resetFields();
+              closeModalFn();
+            }}
+          >
             Cancel
           </Button>
           <Button

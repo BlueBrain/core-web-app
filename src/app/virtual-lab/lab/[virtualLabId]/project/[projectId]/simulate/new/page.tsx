@@ -47,7 +47,9 @@ export default function VirtualLabProjectSimulateNewPage({
   return (
     <div className="flex flex-col pt-14">
       <div className="flex justify-between align-middle">
-        <div className="text-2xl font-bold text-white">Create new simulation</div>
+        <div className="text-2xl font-bold text-white">
+          Select a single neuron model to simulate
+        </div>
         <GenericButton text="Cancel" className="text-white hover:text-white" href={simulatePage} />
       </div>
       {/* TODO: replace this list with items saved in Model Library */}
