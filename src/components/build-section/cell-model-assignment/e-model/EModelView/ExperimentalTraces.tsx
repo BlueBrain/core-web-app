@@ -6,7 +6,7 @@ import { useAtom, useAtomValue } from 'jotai';
 
 import DefaultEModelTable from './DefaultEModelTable';
 import PickTraces from './PickTraces';
-import ErrorMessageLine from './ErrorMessageLine';
+import { WarningMessageBox } from './ErrorMessageLine';
 import {
   eModelEditModeAtom,
   eModelUIConfigAtom,
@@ -118,15 +118,14 @@ export default function ExperimentalTraces() {
 
   const columns = [previewColumn, ...defaultColumns, ...(eModelEditMode ? [deleteColumn] : [])];
 
-  const tracesEmptyListMessage = traces?.length ? '' : 'Select at least one trace';
-
   return (
-    <>
-      <div className="text-2xl font-bold text-primary-8">Experimental traces</div>
-      {traces && <DefaultEModelTable dataSource={traces} columns={columns} />}
-
-      <ErrorMessageLine message={tracesEmptyListMessage} />
-
+    <div className="flex flex-col gap-4">
+      <div className="text-2xl font-bold text-primary-8">Exemplar traces</div>
+      {traces?.length ? (
+        <DefaultEModelTable dataSource={traces} columns={columns} />
+      ) : (
+        <WarningMessageBox message="Information not available" />
+      )}
       {eModelEditMode && (
         <>
           <GenericButton
@@ -143,6 +142,6 @@ export default function ExperimentalTraces() {
           />
         </>
       )}
-    </>
+    </div>
   );
 }
