@@ -16,6 +16,7 @@ import {
   ExperimentDatasetCountPerBrainRegion,
 } from '@/api/explore-section/resources';
 import { GteLteValue } from '@/components/Filter/types';
+import authFetch from '@/authFetch';
 
 const normalizeBrainRegionQueryParam = (region: string) =>
   region.toLowerCase().replace(': other', '');
@@ -53,7 +54,7 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
       paramsWithFilters.toString().length > 0 ? `?${paramsWithFilters.toString()}` : '';
 
     const url = `${bbsMlBaseUrl}/qa/streamed_generative${urlQueryParams}`;
-    const response = await fetch(url, {
+    const response = await authFetch(url, {
       signal,
       method: 'POST',
       headers: new Headers({
@@ -81,7 +82,7 @@ const ML_HEADERS = {
 };
 
 const fetchArticleTypes = (): Promise<ArticleTypeSuggestionResponse> => {
-  return fetch(`${bbsMlBaseUrl}/suggestions/article_types`, {
+  return authFetch(`${bbsMlBaseUrl}/suggestions/article_types`, {
     method: 'GET',
     headers: new Headers({ ...ML_HEADERS }),
   })
@@ -98,7 +99,7 @@ const fetchAuthorSuggestions = (
   searchTerm: string,
   signal?: AbortSignal
 ): Promise<AuthorSuggestionResponse> => {
-  return fetch(`${bbsMlBaseUrl}/suggestions/author?name=${searchTerm}&limit=100`, {
+  return authFetch(`${bbsMlBaseUrl}/suggestions/author?name=${searchTerm}&limit=100`, {
     signal,
     headers: new Headers({ ...ML_HEADERS }),
   })
@@ -120,7 +121,7 @@ export const fetchJournalSuggestions = (
   searchTerm: string,
   signal?: AbortSignal
 ): Promise<JournalSuggestionResponse> => {
-  return fetch(`${bbsMlBaseUrl}/suggestions/journal?keywords=${searchTerm}&limit=100`, {
+  return authFetch(`${bbsMlBaseUrl}/suggestions/journal?keywords=${searchTerm}&limit=100`, {
     signal,
     headers: new Headers({ ...ML_HEADERS }),
   })
@@ -142,7 +143,7 @@ const fetchParagraphCountForBrainRegionAndExperiment = (
   params.set('topics', normalizeQueryParam(experimentType.name));
   params.set('regions', normalizeBrainRegionQueryParam(brainRegion));
 
-  return fetch(`${bbsMlBaseUrl}/retrieval/article_count?${params.toString()}`, {
+  return authFetch(`${bbsMlBaseUrl}/retrieval/article_count?${params.toString()}`, {
     signal,
     headers: new Headers({ ...ML_HEADERS }),
   })
@@ -193,7 +194,7 @@ const fetchArticlesForBrainRegionAndExperiment = (
   const urlQueryParams =
     paramsWithFilter.toString().length > 0 ? `?${paramsWithFilter.toString()}` : '';
 
-  return fetch(`${url}/retrieval/article_listing${urlQueryParams}`, {
+  return authFetch(`${url}/retrieval/article_listing${urlQueryParams}`, {
     signal,
     headers: new Headers({ ...ML_HEADERS }),
   })
