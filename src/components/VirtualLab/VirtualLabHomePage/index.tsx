@@ -1,14 +1,17 @@
+'use client';
+
 import { LabDetailBanner } from '../VirtualLabBanner';
 import WelcomeUserBanner from './WelcomeUserBanner';
-import { getVirtualLabDetail } from '@/services/virtual-lab/labs';
+import { useUnwrappedValue } from '@/hooks/hooks';
+import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 
-export default async function VirtualLabHome({ id }: { id: string }) {
-  const vlab = (await getVirtualLabDetail(id)).data.virtual_lab;
+export default function VirtualLabHome({ id }: { id: string }) {
+  const vlab = useUnwrappedValue(virtualLabDetailAtomFamily(id));
   return (
     <>
-      <WelcomeUserBanner title={vlab.name} />
+      <WelcomeUserBanner title={vlab?.name} />
       <div className="mt-10">
-        <LabDetailBanner initialVlab={vlab} />
+        <LabDetailBanner vlab={vlab ?? undefined} />
       </div>
     </>
   );

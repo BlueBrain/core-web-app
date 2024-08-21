@@ -50,7 +50,7 @@ describe('LabDetailBanner Component', () => {
   };
 
   it('should display the correct name and description', () => {
-    render(<LabDetailBanner initialVlab={initialVlab} />);
+    render(<LabDetailBanner vlab={initialVlab} />);
     expect(screen.getByTestId('lab-detail-banner-name-element')).toHaveTextContent(
       initialVlab.name
     );
@@ -60,7 +60,7 @@ describe('LabDetailBanner Component', () => {
   });
 
   it('should toggle edit mode on button click', () => {
-    render(<LabDetailBanner initialVlab={initialVlab} />);
+    render(<LabDetailBanner vlab={initialVlab} />);
     const editButton = screen.getByTestId('lab-detail-banner-edit-btn');
     fireEvent.click(editButton);
     expect(screen.getByTestId('lab-detail-banner-name-input')).toBeVisible();

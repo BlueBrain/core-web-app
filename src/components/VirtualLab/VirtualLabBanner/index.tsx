@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, CSSProperties, ReactNode, useCallback, useRef, useState } from 'react';
+import { ChangeEvent, CSSProperties, ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { Button, ConfigProvider, Input } from 'antd';
@@ -10,17 +10,16 @@ import Link from 'next/link';
 import VirtualLabMainStatistics from './VirtualLabMainStatistics';
 
 import { basePath } from '@/config';
+import { VirtualLab } from '@/types/virtual-lab/lab';
 import useUpdateProject from '@/hooks/useUpdateVirtualLabProject';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
-import { assertErrorMessage, classNames } from '@/util/utils';
+import { classNames } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
-import { useInitAtom, useAtom } from '@/state/state';
-import { VirtualLab } from '@/types/virtual-lab/lab';
-import { patchVirtualLab } from '@/services/virtual-lab/labs';
-import openNotification, { notification as notify } from '@/api/notifications';
+import { notification as notify } from '@/api/notifications';
+import useUpdateVirtualLab from '@/hooks/useUpdateVirtualLab';
 import styles from './virtual-lab-banner.module.css';
 
 function BackgroundImg({
@@ -103,7 +102,7 @@ function EditableInputs({
       <Input
         className="text-5xl font-bold"
         data-testid={`${dataTestid}-name-input`}
-        value={name}
+        defaultValue={name}
         maxLength={80}
         name="name"
         onChange={onChange}
@@ -113,7 +112,7 @@ function EditableInputs({
       />
       <Input.TextArea
         data-testid={`${dataTestid}-description-input`}
-        value={description}
+        defaultValue={description}
         maxLength={600}
         name="description"
         onChange={onChange}
@@ -221,21 +220,11 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
   );
 }
 
-export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
-  const vlabAtom = useInitAtom<VirtualLab>(initialVlab.id, initialVlab);
-
-  const vlab = useAtomValue(vlabAtom);
+export function LabDetailBanner({ vlab }: { vlab?: VirtualLab }) {
   const users = useUnwrappedValue(virtualLabMembersAtomFamily(vlab?.id));
 
-  const vlabUpdater = useCallback(
-    async (partialVlab: Partial<VirtualLab>) => {
-      if (!vlab?.id) return;
-      return patchVirtualLab(partialVlab, vlab.id);
-    },
-    [vlab?.id]
-  );
-
-  const updateVlab = useUpdateOptimistically(initialVlab.id, vlabUpdater);
+  const updateVlab = useUpdateVirtualLab(vlab?.id);
+  const updateDebounced = useDebouncedCallback(updateVlab, [updateVlab], 600);
 
   const name = vlab?.name;
   const description = vlab?.description;
@@ -246,7 +235,7 @@ export function LabDetailBanner({ initialVlab }: { initialVlab: VirtualLab }) {
     if (!fieldName || !vlab) return;
 
     const { value } = target;
-    updateVlab({ [fieldName]: value });
+    updateDebounced({ [fieldName]: value })?.catch((error) => notify.error(error.message));
   };
 
   const { button: editBtn, isEditable } = useEditBtn({ dataTestid: 'lab-detail-banner-edit-btn' });
@@ -356,52 +345,5 @@ export function ProjectDetailBanner({
         {editBtn}
       </div>
     </BackgroundImg>
-  );
-}
-
-// TODO: Improve implementaion and make it generalizable
-function useUpdateOptimistically<T extends {}, RT>(
-  atomKey: string,
-  updater: (data: Partial<T>) => Promise<RT>
-) {
-  const [data, setData] = useAtom<T>(atomKey);
-  const currentDataRef = useRef(data);
-  const originalDataRef = useRef(data);
-
-  const updaterDebounced = useDebouncedCallback(updater, [updater], 600, { leading: true });
-
-  return useCallback(
-    async (newData: Partial<T>) => {
-      if (!currentDataRef.current) return;
-      const updated = { ...currentDataRef.current, ...newData };
-      setData(updated);
-      currentDataRef.current = updated;
-      try {
-        await updaterDebounced(newData);
-        originalDataRef.current = currentDataRef.current;
-      } catch (e) {
-        openNotification(
-          'error',
-          assertErrorMessage(e),
-          5,
-          'bottomRight',
-          true,
-          'error-notification'
-        );
-      }
-    },
-    [setData, updaterDebounced]
-  );
-}
-
-export function VirtualLabDetailSkeleton() {
-  return (
-    <div className="mt-10">
-      <BackgroundImg backgroundImage={hippocampusImg}>
-        <div className={linkClassName}>
-          <BannerWrapper label="Virtual lab Name" />
-        </div>
-      </BackgroundImg>
-    </div>
   );
 }

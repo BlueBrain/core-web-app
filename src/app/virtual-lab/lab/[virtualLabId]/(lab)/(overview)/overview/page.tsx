@@ -4,16 +4,13 @@ import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 import VirtualLabHome from '@/components/VirtualLab/VirtualLabHomePage';
 import VirtualLabUsers from '@/components/VirtualLab/VirtualLabHomePage/VirtualLabUsers';
 import { ServerSideComponentProp } from '@/types/common';
-import { VirtualLabDetailSkeleton } from '@/components/VirtualLab/VirtualLabBanner';
 import NewProjectCTABanner from '@/components/VirtualLab/VirtualLabCTABanner/NewProjectCTABanner';
 
 export default function VirtualLab({ params }: ServerSideComponentProp<{ virtualLabId: string }>) {
   const { virtualLabId } = params;
   return (
     <div className="pb-5">
-      <Suspense fallback={<VirtualLabDetailSkeleton />}>
-        <VirtualLabHome id={virtualLabId} />
-      </Suspense>
+      <VirtualLabHome id={virtualLabId} />
 
       <NewProjectCTABanner
         id={virtualLabId}
