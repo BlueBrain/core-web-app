@@ -128,7 +128,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
   const selectedEModel = useAtomValue(selectedEModelAtom);
   const createMEModel = useSetAtom(createMEModelAtom);
 
-  const { createModal } = usePendingValidationModal();
+  const { contextHolder, createModal } = usePendingValidationModal();
 
   const modelsAreSelected = selectedEModel && selectedMModel;
 
@@ -165,6 +165,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
         </div>
       </div>
       {validateTrigger}
+      {contextHolder}
     </>
   );
 }
