@@ -51,11 +51,9 @@ export function OBPLogo({
         className
       )}
     >
-      <div className="flex flex-col text-4xl font-bold">
-        <span>Blue</span>
-        <span>Brain</span>
-        <span>Open</span>
-        <span>Platform</span>
+      <div className="flex flex-col text-nowrap text-4xl font-bold">
+        <span className="text-brand">Blue Brain</span>
+        <span>Open Platform</span>
       </div>
     </Link>
   );

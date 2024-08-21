@@ -59,6 +59,7 @@ module.exports = {
         highlightPre: '#40A9FF',
         transparentWhite: 'rgba(255, 255, 255, 0.3)',
         transparentBlack: 'rgba(0, 0, 0, 0.3)',
+        brand: '#00d4fe',
       },
       fontFamily: {
         sans: ['var(--font-titillium-web)', ...fontFamily.sans],
