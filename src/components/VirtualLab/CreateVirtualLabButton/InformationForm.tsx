@@ -1,6 +1,7 @@
 import { Button, ConfigProvider, Form, Input } from 'antd';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Step, VirtualLabWithOptionalId } from './types';
+import { EMPTY_VIRTUAL_LAB } from './constants';
 import { useAtom } from '@/state/state';
 
 import styles from './InformationForm.module.css';
@@ -27,7 +28,13 @@ export default function InformationForm({
   setStepFn,
   setVirtualLabFn,
 }: InformationFormProps) {
-  const [form] = Form.useForm();
+  const initialValues = {
+    name: currentVirtualLab.name,
+    description: currentVirtualLab.description,
+    email: currentVirtualLab.reference_email,
+    entity: currentVirtualLab.entity,
+  };
+  const [form] = Form.useForm<typeof initialValues>();
   const [isFormValid, setIsFormValid] = useAtom<boolean>('new-vlab-modal-form-valid');
 
   const onValuesChange = () => {
@@ -76,12 +83,7 @@ export default function InformationForm({
         layout="vertical"
         onFinish={onFinish}
         onValuesChange={onValuesChange}
-        initialValues={{
-          name: currentVirtualLab.name,
-          description: currentVirtualLab.description,
-          email: currentVirtualLab.reference_email,
-          entity: currentVirtualLab.entity,
-        }}
+        initialValues={initialValues}
         requiredMark={false}
       >
         <div className="flex flex-col gap-4">
@@ -151,7 +153,7 @@ export default function InformationForm({
             type="text"
             className="min-w-36 text-primary-8"
             onClick={() => {
-              form.resetFields();
+              form.setFieldsValue(EMPTY_VIRTUAL_LAB);
               closeModalFn();
             }}
           >
