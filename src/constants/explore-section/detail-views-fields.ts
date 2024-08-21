@@ -141,10 +141,6 @@ export const SYNAPSE_PER_CONNECTION_FIELDS = [
 
 export const E_MODEL_FIELDS = [
   {
-    field: Field.Description,
-    className: 'col-span-3 row-span-2',
-  },
-  {
     field: Field.BrainRegion,
   },
   {
@@ -153,13 +149,6 @@ export const E_MODEL_FIELDS = [
   {
     field: Field.MType,
     className: 'col-span-3',
-  },
-  {
-    field: Field.Contributors,
-  },
-  {
-    field: Field.CreatedAt,
-    className: 'col-span-2',
   },
   {
     field: Field.EType,
@@ -173,10 +162,6 @@ export const ME_MODEL_FIELDS = [
   },
   {
     field: Field.CreatedBy,
-    className: 'col-span-2',
-  },
-  {
-    field: Field.CreatedAt,
     className: 'col-span-2',
   },
   {
