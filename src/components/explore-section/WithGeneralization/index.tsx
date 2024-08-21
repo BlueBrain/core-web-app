@@ -10,9 +10,14 @@ import {
   ReconstructedNeuronMorphology,
   ExperimentalTrace,
 } from '@/types/explore-section/es-experiment';
+import CentralLoadingWheel from '@/components/CentralLoadingWheel';
 
-export const notFound = <h1>No similar resources were found.</h1>;
+const spinStyles = { display: 'table', width: '100%', height: '200px' };
+const loadingIconText = 'Searching for similar morphologies';
+const notFoundText = 'No similar morphologies were found';
+
 export const genarilizationError = <h1>Something went wrong while fetching the data</h1>;
+export const notFound = <CentralLoadingWheel style={spinStyles} text={notFoundText} noResults />;
 
 export default function WithGeneralization({
   children,
@@ -34,6 +39,7 @@ export default function WithGeneralization({
 
   switch (resourceBasedResponseHits.state) {
     case 'loading':
+      render = <CentralLoadingWheel style={spinStyles} text={loadingIconText} />;
       break;
     case 'hasError':
       render = genarilizationError;
@@ -50,7 +56,7 @@ export default function WithGeneralization({
           resourceId={resourceId}
         />
       ) : (
-        notFound
+        (render = notFound)
       );
       break;
     default: {

@@ -22,7 +22,7 @@ import Detail from '@/components/explore-section/Detail';
 
 function GeneralizationContainer({ children }: { children: ReactNode }) {
   if (children !== notFound && children !== genarilizationError) {
-    return <div className="min-h-[1500px] text-primary-9">{children}</div>;
+    return <div className="min-h-[1000px] text-primary-9">{children}</div>;
   }
   return <div className="min-h-auto text-primary-9">{children}</div>;
 }
