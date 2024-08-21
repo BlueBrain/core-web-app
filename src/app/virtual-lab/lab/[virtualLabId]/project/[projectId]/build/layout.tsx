@@ -21,7 +21,7 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
         </div>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="flex h-screen w-3/4 flex-col gap-10 overflow-scroll">{children}</div>
+        <div className="flex h-screen w-3/4 flex-col gap-10 overflow-y-auto">{children}</div>
       </ErrorBoundary>
     </div>
   );

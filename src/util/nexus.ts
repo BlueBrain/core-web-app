@@ -114,8 +114,8 @@ export function createDistribution(
   };
 }
 
-export function ensureArray<T>(value: T | T[]) {
-  return Array.isArray(value) ? value : [value];
+export function ensureArray<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value].filter((v) => v !== undefined);
 }
 
 export function removeMetadata(resource: Record<string, any>) {

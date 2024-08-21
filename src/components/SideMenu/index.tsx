@@ -27,7 +27,7 @@ function ProjectLink({ project, lab }: { project: ProjectItem; lab: LabItem }) {
 
   return (
     projectInfo && (
-      <div className="mt-5 flex w-full flex-col items-center justify-center overflow-hidden">
+      <div className="mt-2 flex w-full flex-col items-center justify-center overflow-hidden">
         <Link
           key={lab.id}
           href={project.href}
@@ -48,10 +48,9 @@ function ProjectLink({ project, lab }: { project: ProjectItem; lab: LabItem }) {
 export default function SideMenu({ lab, project, links }: SideMenuProps) {
   const virtualLab = useAtomValue(unwrap(virtualLabDetailAtomFamily(lab.id)));
   return (
-    <div className="sticky top-0 flex h-screen w-10 flex-col items-center gap-2 bg-primary-9 text-light transition-transform ease-in-out will-change-auto">
-      <div className="h-5 w-full" />
+    <div className="sticky top-0 flex h-screen w-[45px] flex-col items-center justify-center gap-2 border-r-[1px] border-primary-5 bg-primary-9 text-light transition-transform ease-in-out will-change-auto">
       <div className="flex grow flex-col items-center justify-between gap-3 overflow-hidden">
-        <div className="ml-2 flex w-full flex-col items-center gap-3 overflow-hidden">
+        <div className="mt-2 flex w-full flex-col items-center gap-3 overflow-hidden">
           {links
             .slice()
             .reverse()
@@ -60,18 +59,18 @@ export default function SideMenu({ lab, project, links }: SideMenuProps) {
                 key={link.key}
                 href={link.href}
                 className={classNames(
-                  link.styles,
-                  'w-[21px] font-semibold capitalize hover:text-white'
+                  'mt-2 w-[21px] font-semibold capitalize hover:text-white',
+                  link.styles
                 )}
                 style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
               >
                 {link.content}
               </Link>
             ))}
-          <UpOutlined className="ml-1 mt-2 text-primary-3" />
+          {links.length > 0 && <UpOutlined className="ml-1 mt-2 text-primary-3" />}
           {project && <ProjectLink project={project} lab={lab} />}
           {!!virtualLab && (
-            <div className="flex w-full flex-col items-center gap-2 overflow-hidden text-primary-3">
+            <div className="mt-2 flex w-full flex-col items-center gap-2 overflow-hidden text-primary-3">
               <Link
                 key={lab.id}
                 href={lab.href}

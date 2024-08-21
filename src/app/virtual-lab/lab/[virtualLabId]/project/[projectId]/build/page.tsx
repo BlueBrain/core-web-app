@@ -79,11 +79,11 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
   );
 
   return (
-    <div className="mt-8 flex h-full flex-col gap-5">
+    <div className="mt-8 flex h-full w-full flex-col gap-5 pr-5">
       <VirtualLabTopMenu />
       <ScopeSelector />
       {selectedModelType && tabDetails ? (
-        <div>
+        <>
           <div className="flex justify-between">
             <GenericButton
               text={tabDetails.title}
@@ -102,7 +102,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               {tabDetails.buildModelLabel}
             </Button>
           </div>
-          <div id="explore-table-container-for-observable" className="h-full pb-10">
+          <div id="explore-table-container-for-observable" className="h-full w-full pb-5">
             <ExploreSectionListingView
               dataType={selectedModelType ?? DataType.CircuitMEModel}
               dataScope={ExploreDataScope.SelectedBrainRegion}
@@ -113,7 +113,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
             />
 
             {selectedRows.length > 0 && (
-              <div className="fixed bottom-10 right-10 mb-6 flex items-center justify-end gap-2">
+              <div className="fixed bottom-3 right-[60px] mb-6 flex items-center justify-end gap-2">
                 <GenericButton
                   text="View model"
                   className="bg-primary-9  text-white hover:!bg-primary-7"
@@ -135,7 +135,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               </div>
             )}
           </div>
-        </div>
+        </>
       ) : (
         <div className="m-auto w-fit border p-6">Coming Soon</div>
       )}

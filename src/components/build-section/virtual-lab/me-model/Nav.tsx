@@ -35,7 +35,7 @@ export default function Nav({ params }: Props) {
       key: 'scope',
       href: '#',
       content: <>{scope.replace('-', ' ')}</>,
-      styles: 'text-primary-5',
+      styles: 'text-primary-5 hover:!text-primary-5 cursor-default',
     });
 
   return (
