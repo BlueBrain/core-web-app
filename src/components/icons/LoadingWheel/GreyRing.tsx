@@ -11,8 +11,6 @@ function GreyRingIcon({ className, fill = '#fff', style }: Props) {
     <svg
       className={`loadingWheel ${className}`}
       style={style}
-      width="380"
-      height="380"
       viewBox="0 0 380 380"
       fill={fill}
       xmlns="http://www.w3.org/2000/svg"

@@ -24,10 +24,10 @@ function CentralLoadingWheel({
       }}
     >
       <div style={{ position: 'relative', display: 'inline-block' }}>
-        <IconComponent style={{ fontSize: 54 }} />
+        <IconComponent style={{ height: '300px' }} />
         {text && (
           <div
-            className="max-w-[10rem] text-lg"
+            className="max-w-[25rem] text-2xl font-semibold text-primary-9"
             style={{
               position: 'absolute',
               top: '50%',
