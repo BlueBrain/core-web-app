@@ -17,8 +17,8 @@ import {
 import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
 import { getLicenseByIdQuery } from '@/queries/es';
-import { licensesESView } from '@/config';
 import { subjectAgeSelectorFn, ageSelectorFn } from '@/util/explore-section/selector-functions';
+import { atlasESView } from '@/config';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
@@ -91,7 +91,11 @@ export const licenseDataFamily = atomFamily<ResourceInfo, Atom<Promise<string | 
       if (!detail || !detail.license || !session) throw new Error('No license found');
 
       const licenseQuery = getLicenseByIdQuery(detail.license['@id']);
-      const [license] = await queryES<{ label: string }>(licenseQuery, session, licensesESView);
+      const [license] = await queryES<{ label: string }>(licenseQuery, session, {
+        org: atlasESView.org,
+        project: atlasESView.project,
+        viewId: atlasESView.id,
+      });
       return license.label || detail.license['@id'];
     }),
   isEqual

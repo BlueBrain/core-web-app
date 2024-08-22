@@ -100,12 +100,6 @@ export const connInitialParamsFile = {
   id: env.NEXT_PUBLIC_CONN_INITIAL_PARAMS_FILE_ID,
 };
 
-export const licensesESView = {
-  org: env.NEXT_PUBLIC_LICENSE_ES_VIEW_ORG,
-  project: env.NEXT_PUBLIC_LICENSE_ES_VIEW_PROJECT,
-  viewId: env.NEXT_PUBLIC_LICENSE_ES_VIEW_ID,
-};
-
 export const autoSaveDebounceInterval = 10000;
 
 export const virtualLabApi = {
