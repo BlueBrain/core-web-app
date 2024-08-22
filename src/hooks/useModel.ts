@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { fetchResourceById } from '@/api/nexus';
 import { getSession } from '@/authFetch';
-import useNotification from '@/hooks/notifications';
 import { nexus } from '@/config';
+import useNotification from '@/hooks/notifications';
 
 export function useModel<T>({
   modelId,
@@ -27,25 +27,17 @@ export function useModel<T>({
         setLoading(true);
         const session = await getSession();
         if (!session) throw new Error('no session');
-
-<<<<<<< HEAD
         const resourceObject = await fetchResourceById<T>(
           modelId,
           session,
           modelId.startsWith(nexus.defaultIdBaseUrl)
             ? {}
             : {
-                org,
-                project,
-              }
+              org,
+              project,
+            }
         );
-=======
-        const resourceObject = await fetchResourceById<T>(modelId, session,
-          modelId.startsWith(nexus.defaultIdBaseUrl) ? {} : {
-            org,
-            project,
-          });
->>>>>>> f8830794 (update: refactor sim conditions, use one query to run sim)
+
         if (!isAborted) {
           setResource(resourceObject);
           callbackRef.current?.(resourceObject);

@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import AmperageRange from './AmperageRange';
-import { secNamesAtom, } from '@/state/simulate/single-neuron';
+import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { stimulusTypeParams } from '@/constants/simulate/single-neuron';
 import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
