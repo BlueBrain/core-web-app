@@ -56,7 +56,7 @@ describe('VirtualLabProjectBuildPage', () => {
     const { user } = renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
 
-    await user.click(screen.getByLabelText('Circuit'));
+    await user.click(screen.getByLabelText('Cellular'));
     await user.click(screen.getByLabelText('Synaptome'));
   });
 
@@ -72,7 +72,7 @@ describe('VirtualLabProjectBuildPage', () => {
     const { user } = renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
 
-    await user.click(screen.getByLabelText('Circuit'));
+    await user.click(screen.getByLabelText('Cellular'));
     await user.click(screen.getByLabelText('Synaptome'));
     await user.click(screen.getByText('New synaptome model +'));
   });
