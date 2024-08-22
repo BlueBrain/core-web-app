@@ -17,6 +17,7 @@ import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { DataType } from '@/constants/explore-section/list-views';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
 import { useLoadableValue } from '@/hooks/hooks';
+import { classNames } from '@/util/utils';
 
 export default function DefaultListView({
   dataType,
@@ -57,7 +58,12 @@ export default function DefaultListView({
 
   return (
     <div className="h-full bg-[#d1d1d1]" data-testid="explore-section-listing-view">
-      <div className="relative grid h-full max-h-[calc(100vh-3.3rem)] w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden">
+      <div
+        className={classNames(
+          'relative grid w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden',
+          tableScrollable === true ? 'h-full max-h-[calc(100vh-3.3rem)]' : 'mb-5'
+        )}
+      >
         <WithControlPanel
           dataType={dataType}
           dataScope={dataScope}

@@ -44,11 +44,11 @@ export default function VirtualLabProjectSimulatePage({
   );
 
   return (
-    <div className="mt-8 flex h-full w-full flex-col gap-5 pr-5">
+    <div className="flex min-h-full w-full flex-col gap-5 pr-5 pt-8">
       <VirtualLabTopMenu />
       <ScopeSelector />
       {simulationType && tabDetails ? (
-        <>
+        <div className="flex h-full flex-col">
           <div className="flex justify-between">
             <GenericButton
               text={tabDetails.title}
@@ -78,7 +78,7 @@ export default function VirtualLabProjectSimulatePage({
               <GenericButton disabled className="bg-white" text="View" />
             </div>
           )}
-        </>
+        </div>
       ) : (
         <div className="m-auto w-fit border p-6">Coming Soon</div>
       )}
