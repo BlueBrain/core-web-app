@@ -1,4 +1,4 @@
-import { Dropdown, MenuProps, Spin } from 'antd';
+import { Dropdown, MenuProps, Spin, Button } from 'antd';
 import { useAtomValue } from 'jotai';
 import { useMemo, useState } from 'react';
 import { DownloadOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -100,23 +100,24 @@ export default function DetailHeaderName({
                 type={experimentOrModelType}
               />
             )}
-            <div className="flex items-center gap-2">
+            <Button
+              type="text"
+              className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
+              onClick={() => {
+                setFetching(true);
+                fetchArchive([detail._self], session, () => setFetching(false));
+              }}
+            >
               Download
               {fetching ? (
                 <Spin
-                  className="border border-neutral-2 px-3 py-2"
+                  className="border border-neutral-2 px-4 py-3"
                   indicator={<LoadingOutlined />}
                 />
               ) : (
-                <DownloadOutlined
-                  className="border border-neutral-2 px-4 py-3"
-                  onClick={() => {
-                    setFetching(true);
-                    fetchArchive([detail._self], session, () => setFetching(false));
-                  }}
-                />
+                <DownloadOutlined className="border border-neutral-2 px-4 py-3" />
               )}
-            </div>
+            </Button>
           </div>
         )}
 

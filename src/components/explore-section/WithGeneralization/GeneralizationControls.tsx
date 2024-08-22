@@ -80,6 +80,8 @@ function GeneralizationControls({ dataType }: { dataType: DataType }) {
             setFilters={setFilters}
             toggleDisplay={() => setDisplayControlPanel(false)}
             dataType={dataType}
+            showDisplayTrigger={false}
+            resourceId={resourceId}
           />
         </div>
       )}

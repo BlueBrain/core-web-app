@@ -39,6 +39,8 @@ export type ControlPanelProps = {
   aggregations?: Aggregations;
   filters: Filter[];
   setFilters: any;
+  showDisplayTrigger?: boolean;
+  resourceId?: string;
 };
 
 function createFilterItemComponent(
@@ -157,13 +159,15 @@ export default function ControlPanel({
   aggregations,
   filters,
   setFilters,
+  showDisplayTrigger = true,
+  resourceId,
 }: ControlPanelProps) {
   const [activeColumns, setActiveColumns] = useAtom(
     useMemo(() => unwrap(activeColumnsAtom({ dataType })), [dataType])
   );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});
-  const resetFilters = useResetAtom(filtersAtom({ dataType }));
+  const resetFilters = useResetAtom(filtersAtom({ dataType, resourceId }));
   const setSearchString = useSetAtom(searchStringAtom({ dataType }));
 
   const onToggleActive = (key: string) => {
@@ -201,17 +205,21 @@ export default function ControlPanel({
     activeColumnsLength === 1 ? 'column' : 'columns'
   }`;
 
-  const filterItems = filters?.map((filter) => {
-    return {
-      content: filter.type
-        ? createFilterItemComponent(filter, aggregations, filterValues, setFilterValues)
-        : undefined,
-      display: activeColumns?.includes(filter.field),
-      label: getFieldLabel(filter.field),
-      type: filter.type,
-      toggleFunc: () => onToggleActive && onToggleActive(filter.field),
-    };
-  });
+  const filterItems = filters
+    ?.map((filter) => {
+      return {
+        content: filter.type
+          ? createFilterItemComponent(filter, aggregations, filterValues, setFilterValues)
+          : undefined,
+        display: activeColumns?.includes(filter.field),
+        label: getFieldLabel(filter.field),
+        type: filter.type,
+        toggleFunc: showDisplayTrigger
+          ? () => onToggleActive && onToggleActive(filter.field)
+          : undefined, // There are cases where we don't want to show the display trigger. Undefined toggleFunc achieves this.
+      };
+    })
+    .filter((item) => showDisplayTrigger || item.content !== undefined); // If showDisplayTrigger is false and content is undefined that filter is not needed.
 
   // The columnKeyToFilter method receives a string (key)
   // and in this case it is the equivalent to a filters[x].field

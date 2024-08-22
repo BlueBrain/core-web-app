@@ -36,6 +36,17 @@ export function isNumeric(str: string) {
   ); // ...and ensure strings of whitespace fail
 }
 
+export const isValidBase64 = (str: string): boolean => {
+  try {
+    return (
+      Buffer.from(Buffer.from(str, 'base64').toString('binary'), 'binary').toString('base64') ===
+      str
+    );
+  } catch (err) {
+    return false;
+  }
+};
+
 export const detailUrlBuilder = (
   basePath: string,
   resource: ExploreESHit<ExploreSectionResource>

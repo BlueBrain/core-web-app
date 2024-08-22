@@ -66,7 +66,7 @@ function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
           </Accordion.Item>
         ) : (
           <div className="flex items-center gap-3 pt-5 text-lg text-white" key={label}>
-            {displayTrigger}
+            {toggleFunc && displayTrigger}
             <span className="font-bold">{label}</span>
           </div>
         );

@@ -1,4 +1,4 @@
-import { from64 } from '@/util/common';
+import { from64, isValidBase64 } from '@/util/common';
 import { ResourceInfo } from '@/types/explore-section/application';
 import { Project } from '@/types/explore-section/es-common';
 
@@ -17,6 +17,8 @@ export function pathToResource(
   if (!path) throw error;
   try {
     const parts = path.split('/');
+
+    if (!isValidBase64(parts[parts.length - 1])) throw error;
 
     const key = from64(parts[parts.length - 1]);
 
