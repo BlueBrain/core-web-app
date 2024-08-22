@@ -5,10 +5,10 @@ import { Modal, Form, Input, Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
 import { useSetAtom } from 'jotai';
-import CloneIcon from '@/components/icons/Clone';
 import { createSingleNeuronSimulationAtom } from '@/state/simulate/single-neuron-setter';
-import useNotification from '@/hooks/notifications';
 import { SimulationType } from '@/types/simulation/common';
+import CloneIcon from '@/components/icons/Clone';
+import useNotification from '@/hooks/notifications';
 
 type Props = {
   onClose: () => void;
@@ -22,16 +22,21 @@ function ModalContent({ onClose, modelSelfUrl, projectId, vLabId, type }: Props)
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
   const [formValid, setFormValid] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { success: successNotify } = useNotification();
+  const { success: successNotify, error: errorNotify } = useNotification();
 
   const saveSimulation = async () => {
-    setIsSaving(true);
-    const title = form.getFieldValue('name');
-    const description = form.getFieldValue('description');
-    await createSingleNeuronSimulation(title, description, modelSelfUrl, vLabId, projectId, type);
-    successNotify('Simulation saved!');
-    setIsSaving(false);
-    onClose();
+    try {
+      setIsSaving(true);
+      const title = form.getFieldValue('name');
+      const description = form.getFieldValue('description');
+      await createSingleNeuronSimulation(title, description, modelSelfUrl, vLabId, projectId, type);
+      successNotify('Simulation results saved successfully.', undefined, 'topRight');
+    } catch (error) {
+      errorNotify('Un error encountered when saving simulation', undefined, 'topRight');
+    } finally {
+      setIsSaving(false);
+      onClose();
+    }
   };
 
   const [form] = Form.useForm();
@@ -54,7 +59,10 @@ function ModalContent({ onClose, modelSelfUrl, projectId, vLabId, type }: Props)
           <CloneIcon className="text-primary-8" />
           <h2 className="text-2xl font-bold text-primary-8">Save simulation experiment</h2>
         </div>
-        <p className="text-primary-8">Save simulation experiment.</p>
+        <p className="font-light text-primary-8">
+          Store the current state of your simulation, including input parameters, <br /> simulation
+          results, and any generated plots or data.
+        </p>
       </div>
       <Form
         className="mt-8"
@@ -90,12 +98,14 @@ function ModalContent({ onClose, modelSelfUrl, projectId, vLabId, type }: Props)
 
         <div className="mr-[-34px] mt-8 text-right">
           <Button
+            htmlType="button"
             onClick={onClose}
             className="inline-flex items-center justify-center rounded-none border-none px-5 py-6 shadow-none"
           >
             Cancel
           </Button>
           <Button
+            htmlType="submit"
             type="primary"
             className="ml-2 inline-flex items-center justify-center rounded-none bg-primary-8 px-8 py-6"
             disabled={!formValid}

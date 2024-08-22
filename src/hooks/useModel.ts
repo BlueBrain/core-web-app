@@ -28,11 +28,16 @@ export function useModel<T>({
         const session = await getSession();
         if (!session) throw new Error('no session');
 
-        const resourceObject = await fetchResourceById<T>(modelId, session,
-          modelId.startsWith(nexus.defaultIdBaseUrl) ? {} : {
-            org,
-            project,
-          });
+        const resourceObject = await fetchResourceById<T>(
+          modelId,
+          session,
+          modelId.startsWith(nexus.defaultIdBaseUrl)
+            ? {}
+            : {
+                org,
+                project,
+              }
+        );
         if (!isAborted) {
           setResource(resourceObject);
           callbackRef.current?.(resourceObject);

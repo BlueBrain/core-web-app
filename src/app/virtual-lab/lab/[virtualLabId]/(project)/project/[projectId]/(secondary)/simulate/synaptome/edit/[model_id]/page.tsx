@@ -14,7 +14,6 @@ import { SynaptomeConfigDistribution } from '@/types/synaptome';
 
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import useSynaptomeSimulationConfig from '@/state/simulate/categories/synaptome-simulation-config';
-import ModelWithSynapseConfig from '@/components/simulate/single-neuron/parameters/ModelWithSynapseConfig';
 import Wrapper from '@/components/simulate/single-neuron/Wrapper';
 import NeuronViewerContainer from '@/components/neuron-viewer/NeuronViewerWithActions';
 

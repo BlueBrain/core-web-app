@@ -33,7 +33,7 @@ import { createSegMarkerMesh, createSegmentMesh } from './renderer-utils';
 import { sendSegmentDetailsEvent } from './events';
 
 import { basePath } from '@/config';
-import { SynapsesMesh } from '@/components/build-section/virtual-lab/synaptome/events';
+import { SynapsesMesh } from '@/components/neuron-viewer/events';
 
 const FOG_COLOR = 0xffffff;
 const FOG_NEAR = 1;
@@ -430,7 +430,7 @@ export default class NeuronViewerRenderer {
   };
 
   cleanSynapses = () => {
-    this.synapses.forEach(o => {
+    this.synapses.forEach((o) => {
       this.scene.remove(o);
     });
     this.synapses = [];

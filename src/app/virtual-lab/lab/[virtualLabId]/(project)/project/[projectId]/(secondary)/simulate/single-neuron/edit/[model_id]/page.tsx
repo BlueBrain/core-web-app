@@ -20,7 +20,11 @@ type Props = {
 
 export default function SingleNeuronSimulation({ params: { projectId, virtualLabId } }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { resource, loading } = useModel<ModelResource>({ modelId: id, org: virtualLabId, project: projectId });
+  const { resource, loading } = useModel<ModelResource>({
+    modelId: id,
+    org: virtualLabId,
+    project: projectId,
+  });
 
   if (loading || !resource) {
     return (

@@ -18,7 +18,7 @@ type Props = {
   selectedSynapseGroupPlacementConfig?: SingleSynaptomeConfig;
 };
 
-export default function SynapseSimulationForm({
+export default function SynapticInputItem({
   index,
   formName,
   onChange,
@@ -56,7 +56,7 @@ export default function SynapseSimulationForm({
       )}
       title={`Synapse Configuration  ${index + 1}`}
       headStyle={{ background: '#e4e4e4' }}
-      key={formName}
+      key={index}
       extra={
         <div className="flex items-center gap-1">
           <VisualizeSynaptomePerSimulationConfig
@@ -64,7 +64,7 @@ export default function SynapseSimulationForm({
             modelSelf={synaptomeModelConfig.meModelSelf}
             onError={onVisualizationError}
             onSuccess={onVisualizationSuccess}
-            id={formName}
+            id={`${index}`}
           />
           <Button
             aria-label="Delete synapse configuration"
@@ -87,14 +87,13 @@ export default function SynapseSimulationForm({
           <Select
             showSearch
             placeholder="Select synapse set"
-            onChange={(newValue) =>{
+            onChange={(newValue) => {
               onChange({
                 id: index,
                 key: 'id',
                 newValue,
               });
-            }
-            }
+            }}
             options={
               synaptomeModelConfig.synapses.map((synapse) => ({
                 value: synapse.id,

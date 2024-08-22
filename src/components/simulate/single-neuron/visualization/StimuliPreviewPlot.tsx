@@ -28,17 +28,16 @@ export default function StimuliPreviewPlot({ modelSelfUrl, amplitudes }: Props) 
   const config = currentInjectionConfig.at(0);
   const stimulusProtocol = config?.stimulus.stimulusProtocol;
 
-
   const updateStimuliPreview = useCallback(async () => {
     try {
       setLoading(true);
       const session = await getSession();
       if (!session) {
-        throw new Error("No user session found")
+        throw new Error('No user session found');
       }
 
       if (!amplitudes || !stimulusProtocol) {
-        throw new Error("No Stimulus protocol found")
+        throw new Error('No Stimulus protocol found');
       }
 
       const rawPlotData = await getDirectCurrentGraph(modelSelfUrl, session.accessToken, {
@@ -60,7 +59,6 @@ export default function StimuliPreviewPlot({ modelSelfUrl, amplitudes }: Props) 
       setLoading(false);
     }
   }, [amplitudes, stimulusProtocol, modelSelfUrl, notifyError, setStimuliPreviewPlotData]);
-
 
   useEffect(() => {
     updateStimuliPreview();

@@ -14,7 +14,10 @@ import { SingleSynaptomeConfig } from '@/types/synaptome';
 import { getSynaptomePlacement } from '@/api/bluenaas';
 import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
 import { getSession } from '@/authFetch';
-import { sendDisplaySynapses3DEvent, sendRemoveSynapses3DEvent } from '@/components/neuron-viewer/events';
+import {
+  sendDisplaySynapses3DEvent,
+  sendRemoveSynapses3DEvent,
+} from '@/components/neuron-viewer/events';
 
 type Props = {
   config: SingleSynaptomeConfig;

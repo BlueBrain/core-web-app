@@ -45,8 +45,7 @@ export class RemoveSynapses3DEvent extends Event {
   };
 }
 
-export class ResetSynapses3DEvent extends Event { }
-
+export class ResetSynapses3DEvent extends Event {}
 
 export function sendDisplaySynapses3DEvent(id: string, mesh: SynapsesMesh) {
   if (mesh) {
@@ -67,7 +66,6 @@ export function sendRemoveSynapses3DEvent(id: string, meshId: string) {
     window.dispatchEvent(event);
   }
 }
-
 
 export function sendResetSynapses3DEvent() {
   const event = new ResetSynapses3DEvent(RESET_SYNAPSES_3D_EVENT);

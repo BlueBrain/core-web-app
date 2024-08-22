@@ -50,14 +50,14 @@ export const items: Array<Item> = [
     description:
       'Introduce spikes into the synapses of Hodgkin-Huxley cell models and carry out a virtual experiment by setting up a stimulation and reporting protocol.',
     key: SimulationType.Synaptome,
-    scope: 'circuit',
+    scope: 'cellular',
     title: 'Synaptome',
   },
   {
     description:
       'Retrieve interconnected Hodgkin-Huxley cell models from a circuit and conduct a simulated experiment by establishing a stimulation and reporting protocol.',
     key: SimulationType.PairedNeuron,
-    scope: 'cellular',
+    scope: 'circuit',
     title: 'Paired Neurons',
   },
   {

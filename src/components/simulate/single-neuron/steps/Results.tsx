@@ -16,7 +16,9 @@ const PlotRenderer = dynamic(
 );
 
 export default function Results() {
-  const [recordingPlotData, setRecordingPlotData] = useAtom(genericSingleNeuronSimulationPlotDataAtom);
+  const [recordingPlotData, setRecordingPlotData] = useAtom(
+    genericSingleNeuronSimulationPlotDataAtom
+  );
   const simulationStatus = useAtomValue(simulationStatusAtom);
 
   useEffect(() => {
@@ -40,38 +42,26 @@ export default function Results() {
   // in the plot when we launched simulation but still processing
   const isLoading = simulationStatus?.status === 'launched';
   return (
-    <div className='flex flex-col gap-2 w-full'>
-      {Object.entries(recordingPlotData).map(([key, value], index) => {
+    <div className="flex w-full flex-col gap-2">
+      {Object.entries(recordingPlotData).map(([key, value]) => {
         return (
-          <div key={key} className='flex flex-col items-start justify-start w-full'>
-            <div className='px-4 py-2 text-white text-base bg-primary-8 flex items-center justify-center'>{index+1}</div>
-            <div className="flex flex-col border border-gray-300 w-full p-2">
-              <h2 className='font-bold text-lg text-left text-primary-8'>{key}</h2>
+          <div key={key} className="flex w-full flex-col items-start justify-start">
+            <div className="flex items-center justify-center bg-primary-8 px-4 py-2 text-base text-white">
+              {key}
+            </div>
+            <div className="flex w-full flex-col border border-gray-300 p-2">
               <PlotRenderer
                 className="mt-8"
                 data={value}
                 isLoading={isLoading}
                 plotConfig={{
-                  yAxisTitle: 'Voltage, mV',
+                  yAxisTitle: 'Voltage [mv]',
                 }}
               />
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
-
-  // return (
-  //   plotData && (
-  //     <PlotRenderer
-  //       className="mt-8"
-  //       data={plotData}
-  //       isLoading={isLoading}
-  //       plotConfig={{
-  //         yAxisTitle: 'Voltage, mV',
-  //       }}
-  //     />
-  //   )
-  // );
+  );
 }

@@ -5,7 +5,7 @@ import { SimulationType } from '@/types/simulation/common';
 type Props = {
   viewer: JSX.Element | null;
   children: React.ReactNode;
-  type: SimulationType
+  type: SimulationType;
 };
 
 export default function Wrapper({ viewer, type, children }: Props) {

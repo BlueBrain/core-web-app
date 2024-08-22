@@ -564,7 +564,7 @@ export const getSimulationsPerMEModelQuery = (modelId: string) => ({
           bool: {
             must: [
               { term: { _deprecated: false } },
-              { term: { '@type': 'SynaptomeSimulation' } },
+              { term: { '@type': 'SingleNeuronSimulation' } },
               { term: { 'used.@id.keyword': modelId } },
             ],
           },

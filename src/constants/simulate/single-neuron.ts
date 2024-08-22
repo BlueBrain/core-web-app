@@ -137,7 +137,7 @@ export const getDefaultSynapseConfig = (
 ): SynapseConfig | null => {
   if (synapsePlacementConfig) {
     return {
-      id: '0',
+      key: 0,
       id: synapsePlacementConfig[0].id,
       delay: 100,
       duration: 2000,

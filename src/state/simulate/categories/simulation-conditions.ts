@@ -10,7 +10,6 @@ simulationConditionsAtom.debugLabel = 'simulationConditionsAtom';
 export default function useSimulationConditions() {
   const [state, update] = useAtom(simulationConditionsAtom);
 
-
   function setProperty({
     key,
     newValue,
@@ -18,17 +17,14 @@ export default function useSimulationConditions() {
     key: keyof SimulationConditions;
     newValue: number | null;
   }) {
-
-    return update(
-      {
-        ...state,
-        [key]: newValue
-      }
-    );
+    return update({
+      ...state,
+      [key]: newValue,
+    });
   }
 
   return {
     state,
-    setProperty
+    setProperty,
   };
 }
