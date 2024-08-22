@@ -6,22 +6,32 @@ import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { useRecordingSourceForSimulation } from '@/state/simulate/categories';
 
 export default function Recording() {
-  const { setSource, add: addRecordLocation, remove: removeRecordLocation, state } = useRecordingSourceForSimulation();
+  const {
+    setSource,
+    add: addRecordLocation,
+    remove: removeRecordLocation,
+    state,
+  } = useRecordingSourceForSimulation();
   const sectionNames = useAtomValue(secNamesAtom);
 
   return (
     <Form.List name="recordFrom">
       {(fields, { add, remove }) => {
         return (
-          <div className='w-full'>
-            {!!state.length && <div className='grid items-start justify-start grid-cols-[1fr_1fr_80px] w-full'>
-              <div className='font-normal text-primary-8 text-base mb-2 text-left'>Section</div>
-              <div className='font-normal text-primary-8 text-base mb-2 text-left'>Offset</div>
-              <div />
-            </div>}
+          <div className="w-full">
+            {!!state.length && (
+              <div className="grid w-full grid-cols-[1fr_1fr_80px] items-start justify-start">
+                <div className="mb-2 text-left text-base font-normal text-primary-8">Section</div>
+                <div className="mb-2 text-left text-base font-normal text-primary-8">Offset</div>
+                <div />
+              </div>
+            )}
             {fields.map((f, indx) => {
               return (
-                <div key={f.key} className="grid grid-cols-[1fr_1fr_80px] gap-x-2 items-center justify-center w-full">
+                <div
+                  key={f.key}
+                  className="grid w-full grid-cols-[1fr_1fr_80px] items-center justify-center gap-x-2"
+                >
                   <Form.Item
                     className="mb-2"
                     name={[f.name, 'section']}
@@ -48,6 +58,9 @@ export default function Recording() {
                     ]}
                   >
                     <InputNumber<number>
+                      min={0}
+                      max={1}
+                      step={0.05}
                       className="w-full"
                       onChange={(v) => {
                         if (v) {
@@ -56,24 +69,26 @@ export default function Recording() {
                       }}
                     />
                   </Form.Item>
-                  <div className='flex items-center gap-2'>
-                    {state.length > 1 && <Button
-                      title='Remove Record Location'
-                      disabled={state.length <= 1}
-                      onClick={() => {
-                        removeRecordLocation(indx);
-                        remove(indx);
-                      }}
-                      icon={<MinusOutlined />}
-                      type="text"
-                      htmlType="button"
-                    />}
+                  <div className="flex items-center gap-2">
+                    {state.length > 1 && (
+                      <Button
+                        title="Remove Record Location"
+                        disabled={state.length <= 1}
+                        onClick={() => {
+                          removeRecordLocation(indx);
+                          remove(indx);
+                        }}
+                        icon={<MinusOutlined />}
+                        type="text"
+                        htmlType="button"
+                      />
+                    )}
                     <Button
-                      title='Add new Record Location'
+                      title="Add new Record Location"
                       onClick={() => {
                         addRecordLocation({
                           section: sectionNames[0],
-                          offset: .5,
+                          offset: 0.5,
                         });
                         add();
                       }}
@@ -86,7 +101,7 @@ export default function Recording() {
               );
             })}
           </div>
-        )
+        );
       }}
     </Form.List>
   );

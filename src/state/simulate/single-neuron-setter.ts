@@ -6,7 +6,8 @@ import groupBy from 'lodash/groupBy';
 import uniqBy from 'lodash/uniqBy';
 import pick from 'lodash/pick';
 import values from 'lodash/values';
-
+import mapValues from 'lodash/mapValues';
+import sortBy from 'lodash/sortBy';
 
 import {
   genericSingleNeuronSimulationPlotDataAtom,
@@ -24,13 +25,9 @@ import {
   SingleNeuronSimulationResource,
   SynaptomeSimulation,
 } from '@/types/nexus';
-import {
-  createJsonFileOnVlabProject,
-  createResource,
-  fetchResourceById,
-} from '@/api/nexus';
+import { createJsonFileOnVlabProject, createResource, fetchResourceById } from '@/api/nexus';
 import { composeUrl, createDistribution, getIdFromSelfUrl } from '@/util/nexus';
-import { PlotData, TraceData } from '@/services/bluenaas-single-cell/types';
+import { PlotData } from '@/services/bluenaas-single-cell/types';
 import { EModel } from '@/types/e-model';
 import { MEModel } from '@/types/me-model';
 import {
@@ -43,8 +40,6 @@ import { getSession } from '@/authFetch';
 import { SimulationPlotResponse } from '@/types/simulation/graph';
 import { nexus } from '@/config';
 import { runGenericSingleNeuronSimulation } from '@/api/bluenaas/runSimulation';
-
-
 
 export const SIMULATION_CONFIG_FILE_NAME_BASE = 'simulation-config';
 export const STIMULUS_PLOT_NAME = 'stimulus-plot';
@@ -71,7 +66,11 @@ export const createSingleNeuronSimulationAtom = atom<
 
   if (!simulationResult || !singleNeuronId) return null;
 
-  const recordFromUniq = uniqBy(recordFromConfig, (item) => values(pick(item, ["section", "offset"])).map(String).join());
+  const recordFromUniq = uniqBy(recordFromConfig, (item) =>
+    values(pick(item, ['section', 'offset']))
+      .map(String)
+      .join()
+  );
   // TODO: Remove `singleNeuronSimulationConfig` and use `simulationConfig` directly once backend is updated to accept this type
   const singleNeuronSimulationConfig: SingleNeuronModelSimulationConfig = {
     recordFrom: recordFromUniq,
@@ -80,13 +79,17 @@ export const createSingleNeuronSimulationAtom = atom<
     synaptome: simulationType === 'synaptome-simulation' ? synaptomeConfig : undefined,
   };
 
-
-  const resource = await fetchResourceById<EModel | MEModel>(singleNeuronId, session,
+  const resource = await fetchResourceById<EModel | MEModel>(
+    singleNeuronId,
+    session,
     singleNeuronId.startsWith(nexus.defaultIdBaseUrl) ? {} : { org: vLabId, project: projectId }
   );
 
-  if (!resource || resource['@context'] === 'https://bluebrain.github.io/nexus/contexts/error.json') {
-    throw new Error("Model not found");
+  if (
+    !resource ||
+    resource['@context'] === 'https://bluebrain.github.io/nexus/contexts/error.json'
+  ) {
+    throw new Error('Model not found');
   }
 
   const payload: SimulationPayload = {
@@ -133,7 +136,7 @@ export const createSingleNeuronSimulationAtom = atom<
     entity = {
       ...commonProperties,
       '@type': ['Entity', 'SingleNeuronSimulation'],
-      "used": {
+      used: {
         '@type': 'MEModel',
         '@id': singleNeuronId,
       },
@@ -141,11 +144,11 @@ export const createSingleNeuronSimulationAtom = atom<
   } else if (simulationType === 'synaptome-simulation') {
     entity = {
       ...commonProperties,
-      "@type": ['Entity', 'SynaptomeSimulation'],
-      "used": {
-        "@id": resource['@id'],
-        "@type": resource['@type'],
-      }
+      '@type': ['Entity', 'SynaptomeSimulation'],
+      used: {
+        '@id': resource['@id'],
+        '@type': resource['@type'],
+      },
     } as EntityCreation<SynaptomeSimulation>;
   }
 
@@ -175,26 +178,25 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
 
     if (simulationType === 'single-neuron-simulation') {
       if (!currentInjectionConfig) {
-        throw new Error(
-          'Cannot run simulation without valid configuration for current injection'
-        );
+        throw new Error('Cannot run simulation without valid configuration for current injection');
       }
     } else if (simulationType === 'synaptome-simulation') {
-      if ((!currentInjectionConfig || !currentInjectionConfig.length) && (!synapsesConfig || !synapsesConfig.length)) {
-        throw new Error(
-          'Cannot run simulation without valid configuration'
-        );
+      if (
+        (!currentInjectionConfig || !currentInjectionConfig.length) &&
+        (!synapsesConfig || !synapsesConfig.length)
+      ) {
+        throw new Error('Cannot run simulation without valid configuration');
       }
     }
 
     set(simulationStatusAtom, { status: 'launched' });
     set(simulateStepTrackerAtom, {
       steps: get(simulateStepTrackerAtom).steps,
-      current: { title: "Results" },
+      current: { title: 'Results' },
     });
 
-    const initialPlotData: Record<string, PlotData> = {}
-    recordFromConfig.forEach(o => {
+    const initialPlotData: Record<string, PlotData> = {};
+    recordFromConfig.forEach((o) => {
       const key = `${o.section}_${o.offset}`;
       initialPlotData[key] = [
         {
@@ -203,51 +205,52 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
           type: 'scatter',
           name: '',
         },
-      ]
+      ];
     });
 
-    set(genericSingleNeuronSimulationPlotDataAtom, initialPlotData);
-
-    const onTraceData = (data: TraceData) => {
-      const updatedPlotData: PlotData = data.map((entry) => ({
-        x: entry.t,
-        y: entry.v,
-        type: 'scatter',
-        name: entry.label,
-        recording: entry.recording
-      }));
-      const groupedRecording = groupBy(updatedPlotData, (p) => p.recording);
-      set(genericSingleNeuronSimulationPlotDataAtom, groupedRecording);
-    }
-
-    const recordFromUniq = uniqBy(recordFromConfig, (item) => values(pick(item, ["section", "offset"])).map(String).join());
+    set(
+      genericSingleNeuronSimulationPlotDataAtom,
+      recordFromConfig.reduce((acc: Record<string, PlotData>, o) => {
+        const key = `${o.section}_${o.offset}`;
+        acc[key] = [
+          {
+            x: [0],
+            y: [0],
+            type: 'scatter',
+            name: '',
+          },
+        ];
+        return acc;
+      }, {})
+    );
+    const recordFromUniq = uniqBy(recordFromConfig, (item) =>
+      values(pick(item, ['section', 'offset']))
+        .map(String)
+        .join()
+    );
 
     try {
-      const response = await runGenericSingleNeuronSimulation(
-        {
-          modelUrl: modelSelfUrl,
-          token: session.accessToken,
-          config: {
-            recordFrom: recordFromUniq,
-            conditions: conditionsConfig,
-            currentInjection: currentInjectionConfig.length > 0 ? currentInjectionConfig[0] : undefined,
-            synapses: simulationType === "synaptome-simulation" ? synapsesConfig : undefined,
-            type: simulationType
-          }
-        }
-      )
-
-
+      const response = await runGenericSingleNeuronSimulation({
+        modelUrl: modelSelfUrl,
+        token: session.accessToken,
+        config: {
+          recordFrom: recordFromUniq,
+          conditions: conditionsConfig,
+          currentInjection:
+            currentInjectionConfig.length > 0 ? currentInjectionConfig[0] : undefined,
+          synapses: simulationType === 'synaptome-simulation' ? synapsesConfig : undefined,
+          type: simulationType,
+        },
+      });
 
       if (!response.ok) {
-        const error = await response.json();
         set(simulationStatusAtom, {
           status: 'error',
-          description: JSON.stringify(error),
+          description: 'Simulation encountered an error, please try again',
         });
         set(simulateStepTrackerAtom, {
           steps: get(simulateStepTrackerAtom).steps,
-          current: { title: "Experimental setup" },
+          current: { title: 'Experimental setup' },
         });
         return;
       }
@@ -256,7 +259,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
       const decoder = new TextDecoder('utf-8');
       if (reader) {
         let plotData: PlotData = [];
-        let data = "";
+        let data = '';
         // eslint-disable-next-line no-constant-condition
         while (true) {
           const { done, value } = await reader.read();
@@ -264,7 +267,10 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
           const decodedValue = decoder.decode(value, { stream: true });
           data += decodedValue;
         }
-        const result = data.split('\n').filter((o) => isJSON(o)).map(o => JSON.parse(o) as SimulationPlotResponse)
+        const result = data
+          .split('\n')
+          .filter((o) => isJSON(o))
+          .map((o) => JSON.parse(o) as SimulationPlotResponse);
 
         if (isJSON(JSON.stringify(result))) {
           plotData = result.map((p) => ({
@@ -273,19 +279,28 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
             type: 'scatter',
             name: p.stimulus_name,
             recording: p.recording_name,
-          }))
-          const groupedRecording = groupBy(plotData, (p) => p.recording);
+          }));
+          const groupedRecording = mapValues(
+            groupBy(plotData, (p) => p.recording),
+            (o) => sortBy(o, ['name', 'recording'])
+          );
           set(genericSingleNeuronSimulationPlotDataAtom, groupedRecording);
           set(simulationStatusAtom, { status: 'finished' });
           return;
         }
-        set(simulationStatusAtom, { status: 'error', description: "Parsing plot data failed" });
+        set(simulationStatusAtom, {
+          status: 'error',
+          description: 'Plot data generation failed. Please try again',
+        });
       }
     } catch (error) {
-      set(simulationStatusAtom, { status: 'error', description: JSON.stringify(error) });
+      set(simulationStatusAtom, {
+        status: 'error',
+        description: 'Simulation encountered an error, please try again',
+      });
       set(simulateStepTrackerAtom, {
         steps: get(simulateStepTrackerAtom).steps,
-        current: { title: "Experimental setup" },
+        current: { title: 'Experimental setup' },
       });
     }
   }

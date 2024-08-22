@@ -1,7 +1,8 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { Button, Form } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
-import SynapseSimulationForm from './SynapseSimulationForm';
+import SynapseSimulationForm from './SynapticInputItem';
 import { useSynaptomeSimulationConfig } from '@/state/simulate/categories';
 import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
@@ -20,9 +21,7 @@ export default function SynapseSimulationFormsGroup() {
     const simConfigForForm = synapseSimulationAtomState.find(
       (config: SynapseConfig) => config.key === simFormIndex
     );
-    const placementConfig = synaptomeModel?.synapses.find(
-      (s) => s.id === simConfigForForm?.id
-    );
+    const placementConfig = synaptomeModel?.synapses.find((s) => s.id === simConfigForForm?.id);
     return placementConfig;
   };
 
@@ -64,6 +63,7 @@ export default function SynapseSimulationFormsGroup() {
           <Button
             className="m-2 ml-auto w-max bg-green-600 text-white"
             type="primary"
+            icon={<PlusOutlined />}
             onClick={() => {
               add();
               if (synaptomeModel?.synapses) {
@@ -71,7 +71,7 @@ export default function SynapseSimulationFormsGroup() {
               }
             }}
           >
-            + Add Synapses Configuration
+            Add Synapses Configuration
           </Button>
         </div>
       )}

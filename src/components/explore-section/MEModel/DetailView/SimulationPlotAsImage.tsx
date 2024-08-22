@@ -6,8 +6,6 @@ import Image from 'next/image';
 
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 
-
-
 const makePlotLayout = ({
   title,
   xTitle = 'Time [ms]',
@@ -51,12 +49,13 @@ const makePlotLayout = ({
   };
 };
 
-
-
 export default function SimulationPlotAsImage({
   title,
   plotData,
-}: { title: string; plotData: PlotData }) {
+}: {
+  title: string;
+  plotData: PlotData;
+}) {
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { ref, inView } = useInView({
@@ -68,11 +67,14 @@ export default function SimulationPlotAsImage({
       (async () => {
         setLoading(true);
         const Plotly = await import('plotly.js-dist-min');
-        const url = await Plotly.toImage({ data: plotData, layout: makePlotLayout({ title }) }, { format: "webp", width: 700, height: 500 });
+        const url = await Plotly.toImage(
+          { data: plotData, layout: makePlotLayout({ title, yTitle: 'Voltage [mv]' }) },
+          { format: 'webp', width: 700, height: 500 }
+        );
         setImage(url);
       })();
     }
-  }, [plotData, inView]);
+  }, [plotData, title, inView]);
 
   if (image) {
     return (

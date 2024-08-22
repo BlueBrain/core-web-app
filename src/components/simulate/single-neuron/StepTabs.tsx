@@ -8,7 +8,10 @@ import { SimulationType } from '@/types/simulation/common';
 
 export default function StepTabs({ type }: { type: SimulationType }) {
   const [{ steps, current: currentStep }, updateSimulationStep] = useAtom(simulateStepTrackerAtom);
-  const items = type === "single-neuron-simulation" ? steps.filter(o => o.title !== "Synaptic inputs") : steps;
+  const items =
+    type === 'single-neuron-simulation'
+      ? steps.filter((o) => o.title !== 'Synaptic inputs')
+      : steps;
   const newCurrentStep = items.findIndex((o) => o.title === currentStep?.title);
 
   const onChange = (index: number) => {

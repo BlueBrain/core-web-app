@@ -52,12 +52,12 @@ export interface CurrentInjectionSimulationConfig {
   stimulus: StimulusConfig;
 }
 
-export type SimulationConditions =  {
+export type SimulationConditions = {
   celsius: number;
   vinit: number;
   hypamp: number;
   max_time: number;
-}
+};
 
 export type RecordLocation = {
   section: string;
@@ -101,7 +101,7 @@ export type StimulusConfig = {
 
 export interface SingleNeuronModelSimulationConfig {
   recordFrom: RecordLocation[];
-  conditions: SimulationConditions,
+  conditions: SimulationConditions;
   currentInjection: CurrentInjectionSimulationConfig;
   synaptome?: Array<SynapseConfig>;
 }
@@ -132,7 +132,6 @@ export const isSynaptomModel = (model: ModelResource | null): model is Synaptome
   const type = Array.isArray(model['@type']) ? model['@type'] : [model['@type']];
   return type.includes(DataType.SingleNeuronSynaptome) && 'distribution' in model;
 };
-
 
 export type UpdateSynapseSimulationProperty = {
   id: number;

@@ -1,25 +1,27 @@
 import { blueNaasUrl } from '@/config';
 import { SimulationType } from '@/types/simulation/common';
-import { CurrentInjectionSimulationConfig, RecordLocation, SimulationConditions, SynapsesConfig } from '@/types/simulation/single-neuron';
-
+import {
+  CurrentInjectionSimulationConfig,
+  RecordLocation,
+  SimulationConditions,
+  SynapsesConfig,
+} from '@/types/simulation/single-neuron';
 
 export const runGenericSingleNeuronSimulation = async ({
   modelUrl,
   token,
   config,
-}:
-  {
-    modelUrl: string,
-    token: string,
-    config: {
-      recordFrom: Array<RecordLocation>;
-      conditions: SimulationConditions;
-      currentInjection?: CurrentInjectionSimulationConfig;
-      synapses?: SynapsesConfig;
-      type: SimulationType
-    }
-  }
-) => {
+}: {
+  modelUrl: string;
+  token: string;
+  config: {
+    recordFrom: Array<RecordLocation>;
+    conditions: SimulationConditions;
+    currentInjection?: CurrentInjectionSimulationConfig;
+    synapses?: SynapsesConfig;
+    type: SimulationType;
+  };
+}) => {
   return await fetch(
     `${blueNaasUrl}/simulation/single-neuron/run?model_id=${encodeURIComponent(modelUrl)}`,
     {

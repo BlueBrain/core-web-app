@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 
 import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 
-const StimuliPreviewPlot = dynamic(() => import('../visualization/StimuliPreviewPlot'), {
+const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPreviewPlot'), {
   ssr: false,
 });
 
@@ -82,11 +82,7 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   return newState;
 }
 
-export default function AmperageRange({
-  amplitudes,
-  stimulationId,
-  modelSelfUrl,
-}: Props) {
+export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl }: Props) {
   const [amperageState, dispatch] = useReducer(rangeReducer, { ...amperageInitialState });
   const { setAmplitudes } = useCurrentInjectionSimulationConfig();
 
@@ -174,10 +170,7 @@ export default function AmperageRange({
           </span>
         ))}
       </div>
-      <StimuliPreviewPlot
-        amplitudes={amperageState.computed}
-        modelSelfUrl={modelSelfUrl}
-      />
+      <StimuliPreviewPlot amplitudes={amperageState.computed} modelSelfUrl={modelSelfUrl} />
     </>
   );
 }

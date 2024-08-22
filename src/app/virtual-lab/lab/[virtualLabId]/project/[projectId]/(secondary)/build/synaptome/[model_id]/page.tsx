@@ -24,7 +24,11 @@ type Props = {
 
 function Synaptome({ params: { virtualLabId, projectId } }: Props) {
   const { id } = useResourceInfoFromPath();
-  const { loading, resource } = useModel<MEModelResource>({ modelId: id, org: virtualLabId, project: projectId });
+  const { loading, resource } = useModel<MEModelResource>({
+    modelId: id,
+    org: virtualLabId,
+    project: projectId,
+  });
   const labUrl = generateLabUrl(virtualLabId);
 
   const labProjectUrl = `${labUrl}/project/${projectId}`;

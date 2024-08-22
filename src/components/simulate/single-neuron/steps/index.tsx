@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, ReactNode, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { Form } from 'antd';
 
+import SimulationButton from '../molecules/SimulationButton';
 import Recording from './Recording';
-import ExperimentSetup from './Conditions';
+import ExperimentSetup from './ExperimentSetup';
 import Results from './Results';
-import LaunchButton from './LaunchButton';
-import Stimulation from './Stimulation';
-import SynapseSimulationFormsGroup from './SynapseSimulationFormsGroup';
+import Stimulation from './stimulation-protocol/Stimulation';
+import SynapticInputs from './synaptic-input/SynapticInputs';
 
 import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
 import { SimulationConfiguration } from '@/types/simulation/single-neuron';
@@ -36,19 +36,8 @@ type ErrorField = {
 function checkStepError(errorFields: Array<ErrorField>): Array<SimulationStepTitle> {
   const conditions = ['celsius', 'vinit', 'hypamp'];
   const recoding = ['recordFrom'];
-  const stimulation = [
-    'injectTo',
-    'stimulusType',
-    'stimulusProtocol',
-    'paramValues',
-  ];
-  const synapticInputs = [
-    'id',
-    'delay',
-    'duration',
-    'frequency',
-    'weightScalar',
-  ]
+  const stimulation = ['injectTo', 'stimulusType', 'stimulusProtocol', 'paramValues'];
+  const synapticInputs = ['id', 'delay', 'duration', 'frequency', 'weightScalar'];
   const stepsHasErrors: Array<SimulationStepTitle> = [];
   errorFields.forEach((elt) => {
     const hasErrors = elt.errors.length > 0;
@@ -138,15 +127,21 @@ export default function ParameterView({
         onValuesChange={onValuesChange}
       >
         <div className="flex h-full w-full flex-col items-center text-center text-2xl">
-          <div className={currentSimulationStep.title === 'Experimental setup' ? 'w-full' : 'hidden'}>
+          <div
+            className={currentSimulationStep.title === 'Experimental setup' ? 'w-full' : 'hidden'}
+          >
             <ExperimentSetup />
           </div>
-          {type === "synaptome-simulation" && (
-            <div className={currentSimulationStep.title === 'Synaptic inputs' ? 'w-full' : 'hidden'}>
-              <SynapseSimulationFormsGroup />
+          {type === 'synaptome-simulation' && (
+            <div
+              className={currentSimulationStep.title === 'Synaptic inputs' ? 'w-full' : 'hidden'}
+            >
+              <SynapticInputs />
             </div>
           )}
-          <div className={currentSimulationStep.title === 'Stimulation protocol' ? 'w-full' : 'hidden'}>
+          <div
+            className={currentSimulationStep.title === 'Stimulation protocol' ? 'w-full' : 'hidden'}
+          >
             <Stimulation modelSelfUrl={modelSelf} />
           </div>
           <div className={currentSimulationStep.title === 'Recording' ? 'w-full' : 'hidden'}>
@@ -155,8 +150,8 @@ export default function ParameterView({
           <div className={currentSimulationStep.title === 'Results' ? 'w-full' : 'hidden'}>
             <Results />
           </div>
-          <div className="fixed bottom-4 left-[calc(50%-125px)] mt-auto">
-            <LaunchButton
+          <div className="fixed bottom-4 right-4 z-20 mt-auto">
+            <SimulationButton
               modelSelfUrl={simResourceSelf}
               vLabId={vlabId}
               projectId={projectId}

@@ -7,11 +7,7 @@ export default function ExperimentSetup() {
 
   return (
     <div className="flex gap-6">
-      <Form.Item
-        name={['conditions', 'celsius']}
-        label="Temperature"
-        rules={[{ required: true }]}
-      >
+      <Form.Item name={['conditions', 'celsius']} label="Temperature" rules={[{ required: true }]}>
         <InputNumber
           addonAfter="°C"
           className="w-full"

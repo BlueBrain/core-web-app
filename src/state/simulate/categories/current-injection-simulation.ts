@@ -15,19 +15,16 @@ import {
   stimulusParams,
 } from '@/constants/simulate/single-neuron';
 
-export const currentInjectionSimulationConfigAtom = atom<
-  Array<CurrentInjectionSimulationConfig>
->([DEFAULT_DIRECT_STIM_CONFIG]);
-currentInjectionSimulationConfigAtom.debugLabel =
-  'directCurrentInjectionSimulationConfigAtom';
+export const currentInjectionSimulationConfigAtom = atom<Array<CurrentInjectionSimulationConfig>>([
+  DEFAULT_DIRECT_STIM_CONFIG,
+]);
+currentInjectionSimulationConfigAtom.debugLabel = 'directCurrentInjectionSimulationConfigAtom';
 
 export default function useCurrentInjectionSimulationConfig() {
   const [state, update] = useAtom(currentInjectionSimulationConfigAtom);
 
   function findConfig(id: number) {
-    const stimConfig = state.find(
-      (config: CurrentInjectionSimulationConfig) => config.id === id
-    );
+    const stimConfig = state.find((config: CurrentInjectionSimulationConfig) => config.id === id);
     if (!stimConfig) {
       throw new Error(`No stimulation config for id ${id} exists`);
     }
@@ -177,7 +174,7 @@ export default function useCurrentInjectionSimulationConfig() {
     update([DEFAULT_DIRECT_STIM_CONFIG]);
   }
 
-  function empty(){
+  function empty() {
     update([]);
   }
 

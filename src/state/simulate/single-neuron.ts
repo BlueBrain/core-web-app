@@ -33,12 +33,12 @@ export const simulationStatusAtom = atomWithReset<{
   description?: string;
 } | null>(null);
 
-
-
 export const stimulusPreviewPlotDataAtom = atomWithReset<PlotData | null>(null);
 
-export const genericSingleNeuronSimulationPlotDataAtom = atomWithReset<Record<string, PlotData> | null>(null);
-
+export const genericSingleNeuronSimulationPlotDataAtom = atomWithReset<Record<
+  string,
+  PlotData
+> | null>(null);
 
 // {"soma": [{
 //   x: [0],

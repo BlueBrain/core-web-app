@@ -45,7 +45,7 @@ export default function useNeuronViewerEvents({
 
     function resetSynapses3DEventHandler() {
       if (renderer.current) {
-          renderer.current.cleanSynapses();
+        renderer.current.cleanSynapses();
       }
     }
 

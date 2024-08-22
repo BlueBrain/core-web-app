@@ -22,7 +22,10 @@ import {
 import { getSession } from '@/authFetch';
 import { synapsesPlacementAtom } from '@/state/synaptome';
 import { MEModelResource } from '@/types/me-model';
-import { sendRemoveSynapses3DEvent, sendResetSynapses3DEvent } from '@/components/neuron-viewer/events';
+import {
+  sendRemoveSynapses3DEvent,
+  sendResetSynapses3DEvent,
+} from '@/components/neuron-viewer/events';
 import useNotification from '@/hooks/notifications';
 
 const CONFIG_FILE_NAME = 'synaptome_config.json';
@@ -128,18 +131,18 @@ export default function SynaptomeConfigurationForm({
       });
 
       const sanitizedResource = {
-        "@context": 'https://bbp.neuroshapes.org',
-        "@type": NEXUS_SYNAPTOME_TYPE,
+        '@context': 'https://bbp.neuroshapes.org',
+        '@type': NEXUS_SYNAPTOME_TYPE,
         objectOfStudy: SYNAPTOME_OBJECT_OF_STUDY,
         name: values.name,
         description: values.description,
         seed: values.seed,
         distribution: [createDistribution(fileMetadata, fileMetadata._self)],
         used: {
-          "@id": resource['@id'],
-          "@type": resource['@type'],
+          '@id': resource['@id'],
+          '@type': resource['@type'],
         },
-        brainLocation: resource.brainLocation
+        brainLocation: resource.brainLocation,
       };
 
       const resp = await fetch(resourceUrl, {
