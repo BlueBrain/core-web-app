@@ -11,7 +11,7 @@ import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToDataType } from '@/types/virtual-lab/lab';
-import { ExploreDataScope } from '@/types/explore-section/application';
+import { ExploreDataScope, StatusAttribute } from '@/types/explore-section/application';
 import { DataType } from '@/constants/explore-section/list-views';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 
@@ -79,6 +79,7 @@ export default function VirtualLabProjectSimulatePage({
               style={{ background: 'bg-white' }}
               containerClass="flex flex-col grow"
               tableClass="overflow-y-auto grow"
+              statusAttribute={StatusAttribute.Validated}
             />
           </div>
           {selectedRows.length > 0 && (
