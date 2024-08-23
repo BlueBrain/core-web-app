@@ -3,40 +3,28 @@
 import { CalendarOutlined, UserOutlined } from '@ant-design/icons';
 
 import VirtualLabStatistic from '../VirtualLabStatistic';
-import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
-import Brain from '@/components/icons/Brain';
+import { MembersGroupIcon } from '@/components/icons';
 import { formatDate } from '@/util/utils';
 
 type Props = {
   admin?: string;
   createdAt?: string;
-  sessions?: string;
   userCount?: number | string;
 };
 
-export default function VirtualLabMainStatistics({ admin, createdAt, sessions, userCount }: Props) {
+export default function VirtualLabMainStatistics({ admin, createdAt, userCount }: Props) {
   const iconStyle = { color: '#69C0FF' };
 
   return (
     <div className="flex flex-wrap gap-5">
-      {!!sessions && (
+      {!!userCount && (
         <VirtualLabStatistic
-          icon={<EyeTargetIcon style={iconStyle} />}
-          title="Explore sessions"
-          detail={sessions}
+          icon={<UserOutlined style={iconStyle} />}
+          title="Members"
+          detail={userCount}
         />
       )}
-      <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail="N/A" />
-      <VirtualLabStatistic
-        icon={<StatsEditIcon style={iconStyle} />}
-        title="Simulation experiments"
-        detail="N/A"
-      />
-      <VirtualLabStatistic
-        icon={<UserOutlined style={iconStyle} />}
-        title="Members"
-        detail={userCount}
-      />
+
       {!!admin && (
         <VirtualLabStatistic
           icon={<MembersGroupIcon style={iconStyle} />}

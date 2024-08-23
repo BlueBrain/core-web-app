@@ -14,7 +14,6 @@ import { VirtualLab } from '@/types/virtual-lab/lab';
 import useUpdateProject from '@/hooks/useUpdateVirtualLabProject';
 import { useDebouncedCallback, useUnwrappedValue } from '@/hooks/hooks';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
-import { virtualLabTotalUsersAtom } from '@/state/virtual-lab/users';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 import { classNames } from '@/util/utils';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
@@ -34,7 +33,7 @@ function BackgroundImg({
   style?: CSSProperties;
 }) {
   return (
-    <div className={classNames('relative min-h-[320px] overflow-hidden bg-primary-8', className)}>
+    <div className={classNames('relative min-h-[250px] overflow-hidden bg-primary-8', className)}>
       <div
         className={styles.bannerImg}
         style={{
@@ -150,14 +149,12 @@ function BannerWrapper({
   children,
   createdAt,
   label,
-  sessions,
   userCount,
 }: {
   admin?: string;
   children?: ReactNode;
   createdAt?: string;
   label: string;
-  sessions?: string;
   userCount?: number;
 }) {
   return (
@@ -167,12 +164,7 @@ function BannerWrapper({
         {children}
       </div>
       <div className="mt-auto">
-        <VirtualLabMainStatistics
-          admin={admin}
-          createdAt={createdAt}
-          sessions={sessions}
-          userCount={userCount}
-        />
+        <VirtualLabMainStatistics admin={admin} createdAt={createdAt} userCount={userCount} />
       </div>
     </div>
   );
@@ -207,12 +199,10 @@ export function DashboardBanner({ createdAt, description, id, name }: Props & { 
 }
 
 export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
-  const totalUsers = useUnwrappedValue(virtualLabTotalUsersAtom);
-
   return (
     <BackgroundImg backgroundImage={hippocampusImg}>
       <div className={linkClassName}>
-        <BannerWrapper label="Virtual lab Name" userCount={totalUsers}>
+        <BannerWrapper label="Virtual lab Name">
           <StaticValues description={description} name={name} dataTestid="sandbox-banner" />
         </BannerWrapper>
       </div>
@@ -328,7 +318,6 @@ export function ProjectDetailBanner({
           admin={users?.find((user) => user.role === 'admin')?.name || '-'}
           createdAt={createdAt}
           label="Project Name"
-          sessions="N/A"
           userCount={users?.length || 0}
         >
           {isEditable ? (

@@ -9,7 +9,7 @@ import NewProjectCTABanner from '@/components/VirtualLab/VirtualLabCTABanner/New
 export default function VirtualLab({ params }: ServerSideComponentProp<{ virtualLabId: string }>) {
   const { virtualLabId } = params;
   return (
-    <div className="pb-5">
+    <div className="flex flex-col gap-2 pb-5">
       <VirtualLabHome id={virtualLabId} />
 
       <NewProjectCTABanner
@@ -18,7 +18,7 @@ export default function VirtualLab({ params }: ServerSideComponentProp<{ virtual
         subtitle="In order to start exploring brain regions, building models and simulate neuron, create a project"
       />
 
-      <DiscoverObpPanel />
+      <DiscoverObpPanel withTitle />
       <Suspense fallback={null}>
         <VirtualLabUsers id={virtualLabId} />
       </Suspense>

@@ -80,10 +80,14 @@ const items: {
   },
 ];
 
-export default function DiscoverObpPanel() {
+type DiscoverObpPanelProps = {
+  withTitle?: boolean;
+};
+
+export default function DiscoverObpPanel({ withTitle = false }: DiscoverObpPanelProps) {
   return (
     <div className="mt-10 flex flex-col gap-5">
-      <div className="font-bold uppercase">Discover BBOP</div>
+      {withTitle && <div className="font-bold uppercase">Discover BBOP</div>}
       <div className="flex w-full flex-row gap-3">
         {items.map((obpItem) => (
           <DiscoverObpItem
