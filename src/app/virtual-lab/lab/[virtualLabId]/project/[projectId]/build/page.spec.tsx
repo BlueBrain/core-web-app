@@ -63,7 +63,7 @@ describe('VirtualLabProjectBuildPage', () => {
   test('takes user to memodel build page when user clicks on ME-Model -> New model', async () => {
     const { user } = renderComponent();
     await waitFor(() => expect(fetchEsResourcesByType).toHaveBeenCalledTimes(1));
-    await user.click(screen.getByText('New model +'));
+    await user.click(screen.getByText('New model'));
     const url = navigateTo.mock.calls[0][0];
     expect(url).toContain(buildMEModelLink);
   });
@@ -74,7 +74,7 @@ describe('VirtualLabProjectBuildPage', () => {
 
     await user.click(screen.getByLabelText('Cellular'));
     await user.click(screen.getByLabelText('Synaptome'));
-    await user.click(screen.getByText('New synaptome model +'));
+    await user.click(screen.getByText('New synaptome model'));
   });
 
   const renderComponent = () => {

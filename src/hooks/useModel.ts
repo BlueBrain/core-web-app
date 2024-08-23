@@ -33,9 +33,9 @@ export function useModel<T>({
           modelId.startsWith(nexus.defaultIdBaseUrl)
             ? {}
             : {
-              org,
-              project,
-            }
+                org,
+                project,
+              }
         );
 
         if (!isAborted) {
