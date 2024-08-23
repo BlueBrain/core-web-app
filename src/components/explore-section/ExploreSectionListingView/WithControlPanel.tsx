@@ -8,7 +8,7 @@ import {
   aggregationsAtom,
   filtersAtom,
 } from '@/state/explore-section/list-view-atoms';
-import { ExploreDataScope } from '@/types/explore-section/application';
+import { ExploreDataScope, StatusAttribute } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
 import { classNames } from '@/util/utils';
@@ -20,6 +20,7 @@ export default function WithControlPanel({
   virtualLabInfo,
   dataScope,
   className,
+  statusAttribute,
 }: {
   children: (props: {
     activeColumns?: string[];
@@ -30,6 +31,7 @@ export default function WithControlPanel({
   dataType: DataType;
   dataScope: ExploreDataScope;
   virtualLabInfo?: VirtualLabInfo;
+  statusAttribute?: StatusAttribute;
   className?: string;
 }) {
   const activeColumns = useAtomValue(
@@ -44,8 +46,8 @@ export default function WithControlPanel({
 
   const aggregations = useAtomValue(
     useMemo(
-      () => unwrap(aggregationsAtom({ dataType, dataScope, virtualLabInfo })),
-      [dataType, dataScope, virtualLabInfo]
+      () => unwrap(aggregationsAtom({ dataType, dataScope, virtualLabInfo, statusAttribute })),
+      [dataType, dataScope, virtualLabInfo, statusAttribute]
     )
   );
 

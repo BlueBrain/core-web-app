@@ -11,7 +11,7 @@ import { Btn } from '@/components/Btn';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
-import { ExploreDataScope } from '@/types/explore-section/application';
+import { ExploreDataScope, StatusAttribute } from '@/types/explore-section/application';
 import { meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
 
 export default function ReconstrucedMorphologyPage() {
@@ -64,6 +64,7 @@ export default function ReconstrucedMorphologyPage() {
             Select morphology
           </Btn>
         )}
+        statusAttribute={StatusAttribute.SimulationReady}
       />
     </div>
   );

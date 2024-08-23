@@ -121,7 +121,7 @@ export default function buildFilters(
   statusAttribute?: StatusAttribute
 ) {
   const filtersQuery = new esb.BoolQuery();
-
+  console.log(statusAttribute);
   // Adding filters about the type of the resource
   if (dataType) {
     const dataConfig = DATA_TYPES_TO_CONFIGS[dataType];

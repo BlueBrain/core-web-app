@@ -2,7 +2,7 @@ import { HTMLProps } from 'react';
 import { useAtom } from 'jotai';
 import { totalAtom, pageSizeAtom } from '@/state/explore-section/list-view-atoms';
 import { classNames } from '@/util/utils';
-import { ExploreDataScope } from '@/types/explore-section/application';
+import { ExploreDataScope, StatusAttribute } from '@/types/explore-section/application';
 import { DataType, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import { useLoadableValue } from '@/hooks/hooks';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
@@ -29,6 +29,7 @@ export default function LoadMoreButton({
     virtualLabInfo?: VirtualLabInfo;
     dataScope: ExploreDataScope;
     dataType: DataType;
+    statusAttribute?: StatusAttribute;
   };
   hide: () => void;
 }) {

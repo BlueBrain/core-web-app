@@ -1,7 +1,7 @@
 import { Skeleton } from 'antd';
 
 import { totalAtom } from '@/state/explore-section/list-view-atoms';
-import { ExploreDataScope } from '@/types/explore-section/application';
+import { ExploreDataScope, StatusAttribute } from '@/types/explore-section/application';
 import { useLoadableValue } from '@/hooks/hooks';
 import { DataType } from '@/constants/explore-section/list-views';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
@@ -10,12 +10,16 @@ function NumericResultsInfo({
   dataType,
   dataScope,
   virtualLabInfo,
+  statusAttribute,
 }: {
   dataType: DataType;
   dataScope: ExploreDataScope;
   virtualLabInfo?: VirtualLabInfo;
+  statusAttribute?: StatusAttribute;
 }) {
-  const total = useLoadableValue(totalAtom({ dataType, dataScope, virtualLabInfo }));
+  const total = useLoadableValue(
+    totalAtom({ dataType, dataScope, virtualLabInfo, statusAttribute })
+  );
 
   return (
     <div className="flex w-full justify-start">

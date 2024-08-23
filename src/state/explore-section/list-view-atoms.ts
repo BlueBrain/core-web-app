@@ -170,9 +170,9 @@ export const queryAtom = atomFamily(
 );
 
 export const queryResponseAtom = atomFamily(
-  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo, statusAttribute }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource> | null>>(async (get) => {
-      const query = await get(queryAtom({ dataType, dataScope, virtualLabInfo }));
+      const query = await get(queryAtom({ dataType, dataScope, virtualLabInfo, statusAttribute }));
       const result = query && (await fetchEsResourcesByType(query, undefined, virtualLabInfo));
 
       return result;
@@ -184,9 +184,11 @@ export const dataAtom = atomFamily<
   DataAtomFamilyScopeType,
   Atom<Promise<ExploreESHit<ExploreSectionResource>[]>>
 >(
-  ({ dataType, dataScope, virtualLabInfo }) =>
+  ({ dataType, dataScope, virtualLabInfo, statusAttribute }) =>
     atom(async (get) => {
-      const response = await get(queryResponseAtom({ dataType, dataScope, virtualLabInfo }));
+      const response = await get(
+        queryResponseAtom({ dataType, dataScope, virtualLabInfo, statusAttribute })
+      );
 
       if (response?.hits) {
         return response.hits;
@@ -198,9 +200,11 @@ export const dataAtom = atomFamily<
 );
 
 export const totalAtom = atomFamily(
-  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo, statusAttribute }: DataAtomFamilyScopeType) =>
     atom(async (get) => {
-      const response = await get(queryResponseAtom({ dataType, dataScope, virtualLabInfo }));
+      const response = await get(
+        queryResponseAtom({ dataType, dataScope, virtualLabInfo, statusAttribute })
+      );
       const { total } = response ?? {
         total: { value: 0 },
       };
@@ -210,10 +214,12 @@ export const totalAtom = atomFamily(
 );
 
 export const aggregationsAtom = atomFamily(
-  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo, statusAttribute }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['aggs'] | undefined>>(
       async (get) => {
-        const response = await get(queryResponseAtom({ dataType, dataScope, virtualLabInfo }));
+        const response = await get(
+          queryResponseAtom({ dataType, dataScope, virtualLabInfo, statusAttribute })
+        );
         return response?.aggs;
       }
     ),

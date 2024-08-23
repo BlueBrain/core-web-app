@@ -12,7 +12,7 @@ import WithControlPanel from '@/components/explore-section/ExploreSectionListing
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom, dataAtom } from '@/state/explore-section/list-view-atoms';
-import { ExploreDataScope } from '@/types/explore-section/application';
+import { ExploreDataScope, StatusAttribute } from '@/types/explore-section/application';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { DataType } from '@/constants/explore-section/list-views';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
@@ -32,6 +32,7 @@ export default function DefaultListView({
   style = { background: 'bg-[#d1d1d1]' },
   containerClass = 'h-full',
   tableClass = 'h-full overflow-y-hidden',
+  statusAttribute,
 }: {
   containerClass?: string;
   tableClass?: string;
@@ -45,9 +46,9 @@ export default function DefaultListView({
   tableScrollable?: boolean;
   controlsVisible?: boolean;
   style?: Record<'background', string>;
+  statusAttribute?: StatusAttribute;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
-
   const [dataSource, setDataSource] = useState<ExploreESHit<ExploreSectionResource>[]>();
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
   const data = useLoadableValue(
@@ -55,6 +56,7 @@ export default function DefaultListView({
       dataType,
       dataScope,
       virtualLabInfo,
+      statusAttribute,
     })
   );
 
@@ -81,6 +83,7 @@ export default function DefaultListView({
           dataScope={dataScope}
           virtualLabInfo={virtualLabInfo}
           className="relative"
+          statusAttribute={statusAttribute}
         >
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
             <>
@@ -95,6 +98,7 @@ export default function DefaultListView({
                   dataType={dataType}
                   dataScope={dataScope}
                   virtualLabInfo={virtualLabInfo}
+                  statusAttribute={statusAttribute}
                 />
               </FilterControls>
               <ExploreSectionTable
