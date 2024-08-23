@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { fetchResourceById } from '@/api/nexus';
 import { getSession } from '@/authFetch';
-import useNotification from '@/hooks/notifications';
 import { nexus } from '@/config';
+import useNotification from '@/hooks/notifications';
 
 export function useModel<T>({
   modelId,
@@ -27,7 +27,6 @@ export function useModel<T>({
         setLoading(true);
         const session = await getSession();
         if (!session) throw new Error('no session');
-
         const resourceObject = await fetchResourceById<T>(
           modelId,
           session,
@@ -38,6 +37,7 @@ export function useModel<T>({
                 project,
               }
         );
+
         if (!isAborted) {
           setResource(resourceObject);
           callbackRef.current?.(resourceObject);

@@ -119,6 +119,7 @@ module.exports = {
         'scale-down': 'scale-down .6s cubic-bezier(.55,-0.04,.91,.94) forwards',
         'fade-in': 'fade-in 1.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both',
         'fade-out': 'fade-out 1.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both',
+        rotate: 'rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
       },
       keyframes: {
         'slide-out': {
@@ -176,6 +177,14 @@ module.exports = {
           },
           '100%': {
             opacity: 0,
+          },
+        },
+        rotate: {
+          '0%': {
+            transform: 'rotate(0deg)',
+          },
+          '100%': {
+            transform: 'rotate(360deg)',
           },
         },
       },

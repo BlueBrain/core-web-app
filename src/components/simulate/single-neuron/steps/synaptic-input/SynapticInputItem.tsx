@@ -7,7 +7,7 @@ import { SingleSynaptomeConfig, SynaptomeConfigDistribution } from '@/types/syna
 import { UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import { classNames } from '@/util/utils';
 import useNotification from '@/hooks/notifications';
-import VisualizeSynaptomeButton from '@/components/build-section/virtual-lab/synaptome/ShowHideSynaptomeButton';
+import VisualizeSynaptomeButton from '@/components/build-section/virtual-lab/synaptome/molecules/ShowHideSynaptomeButton';
 
 type Props = {
   index: number;

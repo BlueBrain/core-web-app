@@ -20,9 +20,11 @@ export type RenderButtonProps = {
 export default function useRowSelection({
   dataType,
   selectionType = 'checkbox',
+  onRowsSelected,
 }: {
   dataType: DataType;
   selectionType?: RowSelectionType;
+  onRowsSelected?: (rows: ExploreESHit<ExploreSectionResource>[]) => void;
 }): {
   rowSelection: RowSelection;
   selectedRows: ExploreESHit<ExploreSectionResource>[];
@@ -36,8 +38,10 @@ export default function useRowSelection({
       selectedRowKeys: selectedRows.map(
         ({ _source }: ExploreESHit<ExploreSectionResource>) => _source._self
       ),
-      onChange: (_keys: Key[], rows: ExploreESHit<ExploreSectionResource>[]) =>
-        setSelectedRows(() => rows),
+      onChange: (_keys: Key[], rows: ExploreESHit<ExploreSectionResource>[]) => {
+        setSelectedRows(() => rows);
+        onRowsSelected?.(rows);
+      },
       type: selectionType,
     },
     selectedRows,

@@ -3,8 +3,10 @@ import { useSetAtom } from 'jotai';
 
 import useNeuronViewerEvents from './events-hook';
 import useNeuronViewerActions from './actions-hook';
+import NeuronLoader from './NeuronLoader';
 import Renderer, { NeuronViewerConfig } from '@/services/bluenaas-single-cell/renderer';
 import useMorphology from '@/hooks/useMorphology';
+
 import { Morphology } from '@/services/bluenaas-single-cell/types';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { DEFAULT_DIRECT_STIM_CONFIG } from '@/constants/simulate/single-neuron';
@@ -59,7 +61,7 @@ export default function NeuronViewer({
     }
   }, []);
 
-  useMorphology({
+  const { loading } = useMorphology({
     modelSelfUrl,
     callback: runRenderer,
   });
@@ -80,7 +82,12 @@ export default function NeuronViewer({
 
   return (
     <div className="relative h-full w-full">
-      <div className="h-screen" ref={containerRef} />
+      {loading && (
+        <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
+          <NeuronLoader text="Loading Neuron" />
+        </div>
+      )}
+      <div className="h-full" ref={containerRef} />
       <div
         className="absolute bottom-4 right-4 hidden h-max rounded-sm border bg-white px-2 py-2 text-primary-8 shadow-lg"
         ref={cursorHoverRef}

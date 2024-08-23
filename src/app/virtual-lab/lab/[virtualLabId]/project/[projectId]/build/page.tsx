@@ -1,10 +1,11 @@
 'use client';
 
 import { HTMLProps, useEffect, useState } from 'react';
-
+import { PlusOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
+
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
@@ -33,18 +34,19 @@ type Params = {
 type TabDetails = {
   title: string;
   buildModelLabel: string;
+  url: string;
 };
-
-const buildMEModelLink = 'build/me-model/new';
 
 const SupportedTypeToTabDetails: Record<string, TabDetails> = {
   [DataType.CircuitMEModel]: {
     title: 'Single neuron model',
-    buildModelLabel: 'New model +',
+    buildModelLabel: 'New model',
+    url: 'build/me-model/new',
   },
   [DataType.SingleNeuronSynaptome]: {
     title: 'Single neuron synaptome',
-    buildModelLabel: 'New synaptome model +',
+    buildModelLabel: 'New synaptome model',
+    url: 'build/synaptome/new',
   },
 };
 
@@ -79,6 +81,25 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
     selectedRowsAtom({ dataType: selectedModelType ?? DataType.CircuitMEModel })
   );
 
+  const onNewModel = () => {
+    switch (selectedSimulationScope) {
+      case SimulationType.SingleNeuron: {
+        if (tabDetails) {
+          return router.push(tabDetails.url);
+        }
+        break;
+      }
+      case SimulationType.Synaptome: {
+        if (tabDetails) {
+          return router.push(tabDetails.url);
+        }
+        break;
+      }
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="flex min-h-full w-full flex-col gap-5 pr-5 pt-8">
       <VirtualLabTopMenu />
@@ -92,13 +113,8 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
             />
             <Button
               className="h-12 rounded-none border-none bg-primary-6 px-8 text-white shadow-none"
-              onClick={() => {
-                if (selectedSimulationScope === SimulationType.SingleNeuron) {
-                  router.push(buildMEModelLink);
-                } else if (selectedSimulationScope === SimulationType.Synaptome) {
-                  setSelectedModelType(DataType.CircuitMEModel);
-                }
-              }}
+              onClick={onNewModel}
+              icon={<PlusOutlined />}
             >
               {tabDetails.buildModelLabel}
             </Button>

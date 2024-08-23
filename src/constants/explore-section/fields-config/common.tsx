@@ -184,6 +184,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
     title: 'Description',
     filter: FilterTypeEnum.Text,
     render: {
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.description),
       deltaResourceViewFn: (resource) => resource.description,
     },
     esTerms: {
