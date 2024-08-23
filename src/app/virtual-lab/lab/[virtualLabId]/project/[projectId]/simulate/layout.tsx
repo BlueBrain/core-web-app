@@ -37,7 +37,7 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
   return (
     <div className="flex bg-primary-9 pr-5 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="fixed left-0 top-0 flex h-screen w-1/4 flex-row gap-4">
+        <div className="top-0 flex h-screen w-1/4 flex-row gap-4">
           <SideMenu
             links={links}
             lab={{
