@@ -26,6 +26,7 @@ export default function DefaultListView({
   onCellClick,
   selectionType,
   virtualLabInfo,
+  onRowsSelected,
   tableScrollable = true,
   controlsVisible = true,
   style = { background: 'bg-[#d1d1d1]' },
@@ -33,6 +34,7 @@ export default function DefaultListView({
   dataType: DataType;
   dataScope: ExploreDataScope;
   renderButton?: (props: RenderButtonProps) => ReactNode;
+  onRowsSelected?: (rows: ExploreESHit<ExploreSectionResource>[]) => void;
   onCellClick?: OnCellClick;
   selectionType?: RowSelectionType;
   virtualLabInfo?: VirtualLabInfo;
@@ -54,7 +56,7 @@ export default function DefaultListView({
 
   useEffect(() => {
     if (data.state === 'hasData') {
-      setDataSource(data.data);
+      setDataSource(data.data as ExploreESHit<ExploreSectionResource>[]);
     }
   }, [data, setDataSource]);
 
@@ -100,6 +102,7 @@ export default function DefaultListView({
                 selectionType={selectionType}
                 scrollable={tableScrollable}
                 controlsVisible={controlsVisible}
+                onRowsSelected={onRowsSelected}
               />
             </>
           )}

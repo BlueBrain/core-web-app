@@ -26,11 +26,11 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 
-export default function VirtualLabProjectSimulateNewPage({
+export default function NewSimulation({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
-  const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
   const router = useRouter();
+  const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
 
   const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;
 
@@ -54,7 +54,7 @@ export default function VirtualLabProjectSimulateNewPage({
   };
 
   return (
-    <div className="flex flex-col pt-14">
+    <div className="flex flex-col pt-8">
       <VirtualLabTopMenu />
       <ScopeSelector />
       <div className="flex justify-between align-middle">
@@ -64,7 +64,7 @@ export default function VirtualLabProjectSimulateNewPage({
         <GenericButton text="Cancel" className="text-white hover:text-white" href={simulatePage} />
       </div>
       {/* TODO: replace this list with items saved in Model Library */}
-      <div className="h-[70vh]" id="explore-table-container-for-observable">
+      <div className="h-[calc(100vh-290px)]" id="explore-table-container-for-observable">
         <ExploreSectionListingView
           dataType={modelType ?? DataType.CircuitMEModel}
           dataScope={ExploreDataScope.SelectedBrainRegion}

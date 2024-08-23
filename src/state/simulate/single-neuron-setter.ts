@@ -6,7 +6,6 @@ import groupBy from 'lodash/groupBy';
 import uniqBy from 'lodash/uniqBy';
 import pick from 'lodash/pick';
 import values from 'lodash/values';
-import mapValues from 'lodash/mapValues';
 import sortBy from 'lodash/sortBy';
 
 import {
@@ -273,17 +272,18 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
           .map((o) => JSON.parse(o) as SimulationPlotResponse);
 
         if (isJSON(JSON.stringify(result))) {
-          plotData = result.map((p) => ({
-            x: p.t,
-            y: p.v,
-            type: 'scatter',
-            name: p.stimulus_name,
-            recording: p.recording_name,
-          }));
-          const groupedRecording = mapValues(
-            groupBy(plotData, (p) => p.recording),
-            (o) => sortBy(o, ['name', 'recording'])
+          plotData = sortBy(
+            result.map((p) => ({
+              x: p.t,
+              y: p.v,
+              type: 'scatter',
+              name: p.stimulus_name,
+              recording: p.recording_name,
+            })),
+            ['recording', 'name']
           );
+
+          const groupedRecording = groupBy(plotData, (p) => p.recording);
           set(genericSingleNeuronSimulationPlotDataAtom, groupedRecording);
           set(simulationStatusAtom, { status: 'finished' });
           return;

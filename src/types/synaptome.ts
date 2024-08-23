@@ -30,10 +30,11 @@ export type SingleSynaptomeConfig = {
   exclusion_rules: Array<ExclusionRule> | null;
 };
 
-export type SynaptomeConfiguration = {
+export type SynaptomeModelConfiguration = {
   name: string;
   description: string;
   seed: number;
+  modelUrl: string;
   synapses: Array<SingleSynaptomeConfig>;
 };
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { Morphology } from '@/services/bluenaas-single-cell/types';
@@ -14,6 +14,8 @@ export default function useMorphology({
   callback: (morphology: Morphology) => void;
 }) {
   const mountedRef = useRef(false);
+  const [loading, setLoading] = useState(false);
+
   const readMorphology = useCallback(async (): Promise<Morphology> => {
     const session = await getSession();
     if (isNil(session)) {
@@ -45,9 +47,11 @@ export default function useMorphology({
 
     async function start() {
       if (mountedRef.current) {
+        setLoading(true);
         const morphology = await readMorphology();
         mountedRef.current = false;
         callback(morphology);
+        setLoading(false);
       }
     }
 
@@ -57,4 +61,6 @@ export default function useMorphology({
       mountedRef.current = false;
     };
   }, [callback, readMorphology, mountedRef]);
+
+  return { loading };
 }

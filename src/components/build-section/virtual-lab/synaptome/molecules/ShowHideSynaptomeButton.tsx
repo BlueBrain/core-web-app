@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { EyeInvisibleOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useAtom } from 'jotai';
 import isEqual from 'lodash/isEqual';
 
@@ -18,6 +17,7 @@ import {
   sendDisplaySynapses3DEvent,
   sendRemoveSynapses3DEvent,
 } from '@/components/neuron-viewer/events';
+import { classNames } from '@/util/utils';
 
 type Props = {
   config: SingleSynaptomeConfig;
@@ -126,25 +126,42 @@ export default function VisualizeSynaptomeButton({
       setLoadingVisualize(false);
     }
   };
+
   return (
-    <div className="flex items-center gap-2">
-      <Button
-        type="default"
-        htmlType="button"
-        icon={<EyeOutlined />}
+    <div className="flex items-center rounded-xl border-[.5px] border-primary-8">
+      <button
+        type="button"
         onClick={onVisualize}
         disabled={visualizeLoading || isAlreadyVisualized || disable}
-        loading={visualizeLoading}
         title="Show synapses"
-      />
-      {synapseVis && (
-        <Button
-          type="default"
-          icon={<EyeInvisibleOutlined />}
-          onClick={onHideSynapse}
-          title="Hide synapses"
+        className={classNames(
+          'cursor-pointer rounded-l-xl',
+          visualizeLoading || isAlreadyVisualized || disable ? 'bg-gray-100' : 'bg-primary-8'
+        )}
+      >
+        {visualizeLoading ? (
+          <LoadingOutlined className="px-2 text-primary-8" />
+        ) : (
+          <EyeOutlined
+            className={classNames(
+              'px-2',
+              visualizeLoading || isAlreadyVisualized || disable ? 'text-gray-500' : 'text-white'
+            )}
+          />
+        )}
+      </button>
+      <button
+        type="button"
+        aria-label="Hide synapses"
+        onClick={onHideSynapse}
+        disabled={!synapseVis}
+        title="Show synapses"
+        className="cursor-pointer rounded-r-xl"
+      >
+        <EyeInvisibleOutlined
+          className={classNames('px-2', synapseVis ? 'text-primary-8' : 'text-gray-500')}
         />
-      )}
+      </button>
     </div>
   );
 }

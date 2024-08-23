@@ -154,7 +154,6 @@ export function BaseTable({
   if (hasError) return <div>Something went wrong</div>;
 
   if (!columns?.length) return null;
-
   return (
     <ConfigProvider theme={{ hashed: false }}>
       <Table
@@ -264,6 +263,7 @@ export default function ExploreSectionTable({
   onCellClick,
   renderButton,
   selectionType,
+  onRowsSelected,
   scrollable = true,
   controlsVisible = true,
 }: TableProps<ExploreESHit<ExploreSectionResource>> &
@@ -272,10 +272,12 @@ export default function ExploreSectionTable({
     selectionType?: RowSelectionType;
     scrollable?: boolean;
     controlsVisible?: boolean;
+    onRowsSelected?: (rows: ExploreESHit<ExploreSectionResource>[]) => void;
   }) {
   const { rowSelection, selectedRows, clearSelectedRows } = useRowSelection({
     dataType: dataContext.dataType,
     selectionType,
+    onRowsSelected,
   });
 
   const { displayLoadMoreBtn, toggleDisplayMore } = useShowMore();

@@ -9,7 +9,7 @@ import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 
 export default function VirtualLabProjectLayout({ children, params }: LabProjectLayoutProps) {
   return (
-    <div className="flex overflow-scroll bg-primary-9 pr-5 text-white">
+    <div className="flex bg-primary-9 pr-5 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="fixed left-0 top-0 flex h-screen w-1/4 flex-row gap-4">
           <Nav params={params} />

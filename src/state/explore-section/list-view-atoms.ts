@@ -55,7 +55,6 @@ export const activeColumnsAtom = atomFamily(
     atomWithDefault<Promise<string[]> | string[]>(async (get) => {
       const dimensionColumns = await get(dimensionColumnsAtom({ dataType }));
       const { columns } = DATA_TYPES_TO_CONFIGS[dataType];
-
       return ['index', ...(dimensionColumns || []), ...columns];
     }),
   isListAtomEqual
@@ -169,6 +168,8 @@ export const queryResponseAtom = atomFamily(
   isListAtomEqual
 );
 
+// if move to atomWithRefresh,
+// ref: https://github.com/pmndrs/jotai/discussions/1162#discussioncomment-2756148
 export const dataAtom = atomFamily<
   DataAtomFamilyScopeType,
   Atom<Promise<ExploreESHit<ExploreSectionResource>[]>>

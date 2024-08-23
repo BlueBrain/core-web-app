@@ -221,7 +221,7 @@ export default function useExploreColumns(
 
   const columns = [...main, ...dimensions];
 
-  if (dataType && dataType) {
+  if (dataType) {
     return columns.sort((a, b) =>
       a.key && b.key
         ? DATA_TYPES_TO_CONFIGS[dataType].columns.indexOf(a.key as Field) -
