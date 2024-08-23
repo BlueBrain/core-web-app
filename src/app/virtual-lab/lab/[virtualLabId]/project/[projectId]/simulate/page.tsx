@@ -70,6 +70,7 @@ export default function VirtualLabProjectSimulatePage({
               renderButton={() => null}
               tableScrollable={false}
               controlsVisible={false}
+              style={{ background: 'bg-white' }}
             />
           </div>
           {selectedRows.length > 0 && (

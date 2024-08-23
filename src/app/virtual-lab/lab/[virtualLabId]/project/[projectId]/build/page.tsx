@@ -110,6 +110,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               selectionType="radio"
               tableScrollable={false}
               controlsVisible={false}
+              style={{ background: 'bg-white' }}
             />
 
             {selectedRows.length > 0 && (

@@ -28,6 +28,7 @@ export default function DefaultListView({
   virtualLabInfo,
   tableScrollable = true,
   controlsVisible = true,
+  style = { background: 'bg-[#d1d1d1]' },
 }: {
   dataType: DataType;
   dataScope: ExploreDataScope;
@@ -37,6 +38,7 @@ export default function DefaultListView({
   virtualLabInfo?: VirtualLabInfo;
   tableScrollable?: boolean;
   controlsVisible?: boolean;
+  style?: Record<'background', string>;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
@@ -57,7 +59,10 @@ export default function DefaultListView({
   }, [data, setDataSource]);
 
   return (
-    <div className="h-full bg-[#d1d1d1]" data-testid="explore-section-listing-view">
+    <div
+      className={classNames('h-full', style.background)}
+      data-testid="explore-section-listing-view"
+    >
       <div
         className={classNames(
           'relative grid w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden',
