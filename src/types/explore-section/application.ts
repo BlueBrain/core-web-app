@@ -17,6 +17,10 @@ export enum ExploreDataScope {
   BookmarkedResources = 'BookmarkedResources',
 }
 
+// defines the status of the resource and dictates what filters will be applied based on the status
+// SimulationReady: applied in some morphology listing
+// AnalysisSuitable applied in some e-model listing views
+// Validated: applied in some me-model listing views
 export enum StatusAttribute {
   SimulationReady = 'SimulationReady',
   AnalysisSuitable = 'AnalysisSuitable',
