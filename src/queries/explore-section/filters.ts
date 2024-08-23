@@ -121,7 +121,6 @@ export default function buildFilters(
   statusAttribute?: StatusAttribute
 ) {
   const filtersQuery = new esb.BoolQuery();
-  console.log(statusAttribute);
   // Adding filters about the type of the resource
   if (dataType) {
     const dataConfig = DATA_TYPES_TO_CONFIGS[dataType];
@@ -139,7 +138,7 @@ export default function buildFilters(
       filtersQuery.must(esb.termQuery('simulationReady', true));
     }
     if (statusAttribute === StatusAttribute.Validated) {
-      filtersQuery.must(esb.termQuery('validated', true));
+      filtersQuery.must(esb.termQuery('memodel.validated', true));
     }
   }
 
