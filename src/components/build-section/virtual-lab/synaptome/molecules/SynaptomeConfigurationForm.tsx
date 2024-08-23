@@ -248,7 +248,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
         className="border-primary-8 text-primary-8"
         size="large"
       >
-        Add new synapses
+        Add new synapses set
       </Button>
       <Form.Item className="fixed bottom-4 right-10 my-6">
         <Space className="w-full justify-end">
