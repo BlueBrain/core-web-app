@@ -1,7 +1,6 @@
 import { Button, ConfigProvider, Form, Input } from 'antd';
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { Step, VirtualLabWithOptionalId } from './types';
-import { EMPTY_VIRTUAL_LAB } from './constants';
 import { useAtom } from '@/state/state';
 
 import styles from './InformationForm.module.css';
@@ -29,13 +28,22 @@ export default function InformationForm({
   setVirtualLabFn,
 }: InformationFormProps) {
   const initialValues = {
-    name: currentVirtualLab.name,
-    description: currentVirtualLab.description,
-    email: currentVirtualLab.reference_email,
-    entity: currentVirtualLab.entity,
+    name: '',
+    description: '',
+    email: '',
+    entity: '',
   };
   const [form] = Form.useForm<typeof initialValues>();
   const [isFormValid, setIsFormValid] = useAtom<boolean>('new-vlab-modal-form-valid');
+
+  useEffect(() => {
+    form.setFieldsValue({
+      name: currentVirtualLab.name,
+      description: currentVirtualLab.description,
+      email: currentVirtualLab.reference_email,
+      entity: currentVirtualLab.entity,
+    });
+  }, [form, currentVirtualLab]);
 
   const onValuesChange = () => {
     form
@@ -153,7 +161,7 @@ export default function InformationForm({
             type="text"
             className="min-w-36 text-primary-8"
             onClick={() => {
-              form.setFieldsValue(EMPTY_VIRTUAL_LAB);
+              form.resetFields();
               closeModalFn();
             }}
           >
