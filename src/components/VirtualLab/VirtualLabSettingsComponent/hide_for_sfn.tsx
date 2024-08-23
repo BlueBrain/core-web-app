@@ -145,9 +145,9 @@ export function Settings({
             className: 'col-span-2',
             children: renderTextArea,
             label: 'Description',
-            maxLength: 450,
+            maxLength: 288,
             name: 'description',
-            rules: [{ max: 450 }],
+            rules: [{ max: 288 }],
           },
           {
             children: renderInput,

@@ -57,13 +57,16 @@ export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
     <Input.Group className="flex items-center">
       <Form.Item name={name} noStyle>
         <Input.TextArea
-          className={classNames('!h-auto !bg-transparent', disabled ? '' : 'font-bold')}
+          className={classNames(
+            'grow resize-none overflow-hidden !bg-transparent',
+            disabled ? '' : 'font-bold'
+          )}
           disabled={disabled}
           maxLength={maxLength}
           placeholder={placeholder}
           required
-          rows={2}
-          style={{ ...style, height: 'auto' }}
+          rows={5}
+          style={style}
           title={title}
           variant="borderless"
         />

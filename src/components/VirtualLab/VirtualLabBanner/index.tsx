@@ -102,7 +102,7 @@ function EditableInputs({
         className="text-5xl font-bold"
         data-testid={`${dataTestid}-name-input`}
         defaultValue={name}
-        maxLength={80}
+        maxLength={250}
         name="name"
         onChange={onChange}
         required
@@ -110,12 +110,12 @@ function EditableInputs({
         variant="borderless"
       />
       <Input.TextArea
+        className="grow"
         data-testid={`${dataTestid}-description-input`}
         defaultValue={description}
-        maxLength={600}
+        maxLength={288}
         name="description"
         onChange={onChange}
-        rows={4}
         style={{ background: 'rgba(255, 255, 255, 0.2)', resize: 'none' }}
         variant="borderless"
       />
@@ -158,7 +158,7 @@ function BannerWrapper({
   userCount?: number;
 }) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
       <div className="flex grow flex-col gap-2">
         <div className="text-primary-2">{label}</div>
         {children}
