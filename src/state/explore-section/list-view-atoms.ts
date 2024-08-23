@@ -7,7 +7,7 @@ import { bookmarksForProjectAtomFamily } from '../virtual-lab/bookmark';
 import columnKeyToFilter from './column-key-to-filter';
 
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
-import { ExploreDataScope, SortState } from '@/types/explore-section/application';
+import { ExploreDataScope, SortState, StatusAttribute } from '@/types/explore-section/application';
 import fetchDataQuery from '@/queries/explore-section/data';
 import {
   DataQuery,
@@ -28,6 +28,7 @@ type DataAtomFamilyScopeType = {
   dataScope?: ExploreDataScope;
   resourceId?: string;
   virtualLabInfo?: VirtualLabInfo;
+  statusAttribute?: StatusAttribute;
 };
 
 const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType): boolean =>
@@ -35,6 +36,7 @@ const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType)
   a.dataType === b.dataType &&
   a.dataScope === b.dataScope &&
   a.resourceId === b.resourceId &&
+  a.statusAttribute === b.statusAttribute &&
   isEqual(a.virtualLabInfo, b.virtualLabInfo);
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
@@ -101,7 +103,7 @@ export const filtersAtom = atomFamily(
 );
 
 export const totalByExperimentAndRegionsAtom = atomFamily(
-  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo, statusAttribute }: DataAtomFamilyScopeType) =>
     atom<Promise<number | undefined | null>>(async (get) => {
       const sortState = get(sortStateAtom);
       let descendantIds: string[] = [];
@@ -109,7 +111,17 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
       if (dataScope === ExploreDataScope.SelectedBrainRegion)
         descendantIds = (await get(selectedBrainRegionWithChildrenAtom)) || [];
 
-      const query = fetchDataQuery(0, 1, [], dataType, sortState, '', descendantIds);
+      const query = fetchDataQuery(
+        0,
+        1,
+        [],
+        dataType,
+        sortState,
+        '',
+        descendantIds,
+        undefined,
+        statusAttribute
+      );
       const result =
         query && (await fetchTotalByExperimentAndRegions(query, undefined, virtualLabInfo));
 
@@ -119,7 +131,7 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
 );
 
 export const queryAtom = atomFamily(
-  ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
+  ({ dataType, dataScope, virtualLabInfo, statusAttribute }: DataAtomFamilyScopeType) =>
     atomWithRefresh<Promise<DataQuery | null>>(async (get) => {
       const searchString = get(searchStringAtom({ dataType }));
       const pageNumber = get(pageNumberAtom({ dataType }));
@@ -150,7 +162,8 @@ export const queryAtom = atomFamily(
         sortState,
         searchString,
         descendantIds,
-        bookmarkResourceIds
+        bookmarkResourceIds,
+        statusAttribute
       );
     }),
   isListAtomEqual

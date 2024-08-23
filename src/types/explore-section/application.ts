@@ -17,6 +17,12 @@ export enum ExploreDataScope {
   BookmarkedResources = 'BookmarkedResources',
 }
 
+export enum StatusAttribute {
+  SimulationReady = 'SimulationReady',
+  AnalysisSuitable = 'AnalysisSuitable',
+  Validated = 'Validated',
+}
+
 export interface SortState {
   field: string;
   order: 'asc' | 'desc';

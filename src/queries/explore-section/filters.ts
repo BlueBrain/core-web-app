@@ -6,6 +6,7 @@ import { getFieldEsConfig } from '@/api/explore-section/fields';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { DataType, DataTypeToNexusType } from '@/constants/explore-section/list-views';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
+import { StatusAttribute } from '@/types/explore-section/application';
 
 function buildRangeQuery(filter: ValueFilter, esTerm: string) {
   const filterESBuilder = esb.rangeQuery(esTerm);
@@ -116,10 +117,12 @@ export default function buildFilters(
   searchString?: string,
   descendantIds?: string[],
   dataType?: DataType,
-  resourceIds?: string[]
+  resourceIds?: string[],
+  statusAttribute?: StatusAttribute
 ) {
   const filtersQuery = new esb.BoolQuery();
 
+  // Adding filters about the type of the resource
   if (dataType) {
     const dataConfig = DATA_TYPES_TO_CONFIGS[dataType];
     filtersQuery.must(esb.termQuery('@type.keyword', DataTypeToNexusType[dataType]));
@@ -127,8 +130,23 @@ export default function buildFilters(
     if (dataConfig.curated) filtersQuery.must(esb.termQuery('curated', true));
   }
 
+  // Adding filters about the status of the resource, if any
+  if (statusAttribute) {
+    if (statusAttribute === StatusAttribute.AnalysisSuitable) {
+      filtersQuery.must(esb.termQuery('analysisSuitable', true));
+    }
+    if (statusAttribute === StatusAttribute.SimulationReady) {
+      filtersQuery.must(esb.termQuery('simulationReady', true));
+    }
+    if (statusAttribute === StatusAttribute.Validated) {
+      filtersQuery.must(esb.termQuery('validated', true));
+    }
+  }
+
+  // All resources need not to be deprecated
   filtersQuery.must(esb.termQuery('deprecated', false));
 
+  // If there are descendants, adding them in the query
   if (descendantIds && descendantIds.length > 0) {
     filtersQuery.must(esb.termsQuery('brainRegion.@id.keyword', descendantIds));
   }

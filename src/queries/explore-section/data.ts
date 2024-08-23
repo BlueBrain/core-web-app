@@ -2,7 +2,7 @@ import esb, { boolQuery, TermsQuery } from 'elastic-builder';
 import buildESSort from './sorters';
 import { DataQuery } from '@/api/explore-section/resources';
 import { Filter } from '@/components/Filter/types';
-import { SortState } from '@/types/explore-section/application';
+import { SortState, StatusAttribute } from '@/types/explore-section/application';
 import buildFilters from '@/queries/explore-section/filters';
 import buildAggs from '@/queries/explore-section/aggs';
 import { DataType } from '@/constants/explore-section/list-views';
@@ -15,7 +15,8 @@ export default function fetchDataQuery(
   sortState?: SortState,
   searchString: string = '',
   descendantIds?: string[],
-  bookmarkResourceIds?: string[]
+  bookmarkResourceIds?: string[],
+  statusAttribute?: StatusAttribute
 ): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
   return {
@@ -28,7 +29,8 @@ export default function fetchDataQuery(
       searchString,
       descendantIds,
       dataType,
-      bookmarkResourceIds
+      bookmarkResourceIds,
+      statusAttribute
     ).toJSON(),
     ...buildAggs(filters).toJSON(),
   };
