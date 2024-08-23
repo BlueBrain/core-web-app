@@ -158,7 +158,7 @@ export const selectorFnSynaptic = (
   const synapticList =
     preOrPost === SynapticPosition.Pre ? source.preSynapticPathway : source.postSynapticPathway;
   const preSynaptic = synapticList.find((synaptic) => synaptic.about === type);
-  return preSynaptic?.label ?? '';
+  return preSynaptic?.label ?? DisplayMessages.NO_DATA_STRING;
 };
 
 /**

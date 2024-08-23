@@ -37,6 +37,7 @@ import {
 import { SynapticPosition, SynapticType } from '@/types/explore-section/misc';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import { DisplayMessages } from '@/constants/display-messages';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExperiment> = {
   [Field.License]: {
@@ -353,6 +354,34 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
       singular: 'Value',
     },
   },
+  [Field.NumberOfConnections]: {
+    esTerms: {
+      nested: {
+        nestedPath: 'series',
+        filterTerm: 'series.statistic.keyword',
+        filterValue: 'N',
+        aggregationName: 'N',
+        aggregationField: 'series.value',
+      },
+    },
+    title: 'N° of Connections',
+    filter: FilterTypeEnum.ValueRange,
+    render: {
+      esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'N synapses'),
+      deltaResourceViewFn: (resource) =>
+        selectorFnStatisticDetail(
+          resource as
+            | ExperimentalBoutonDensity
+            | ExperimentalLayerThickness
+            | ExperimentalSynapsesPerConnection,
+          'N synapses'
+        ),
+    },
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
+  },
   [Field.Length]: {
     title: 'length',
     filter: null,
@@ -459,7 +488,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
       deltaResourceViewFn: (resource) =>
         (resource as ExperimentalSynapsesPerConnection).synapticPathway?.preSynaptic.find(
           (synapse) => synapse.about === 'BrainCell:Type'
-        )?.label,
+        )?.label || DisplayMessages.NO_DATA_STRING,
     },
     filter: FilterTypeEnum.CheckList,
     esTerms: {
@@ -484,7 +513,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
       deltaResourceViewFn: (resource) =>
         (resource as ExperimentalSynapsesPerConnection).synapticPathway?.postSynaptic.find(
           (synapse) => synapse.about === 'BrainCell:Type'
-        )?.label,
+        )?.label || DisplayMessages.NO_DATA_STRING,
     },
     filter: FilterTypeEnum.CheckList,
     esTerms: {

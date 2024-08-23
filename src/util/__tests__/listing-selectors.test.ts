@@ -414,7 +414,7 @@ describe('Selectors', () => {
         SynapticPosition.Pre,
         SynapticType.BrainRegion
       );
-      expect(result).toBe('');
+      expect(result).toBe(DisplayMessages.NO_DATA_STRING);
     });
 
     it('returns correct value for presynaptic cell type', () => {
@@ -460,7 +460,7 @@ describe('Selectors', () => {
         SynapticPosition.Pre,
         SynapticType.CellType
       );
-      expect(result).toBe('');
+      expect(result).toBe(DisplayMessages.NO_DATA_STRING);
     });
 
     it('returns correct value for postsynaptic brain region', () => {
@@ -505,7 +505,7 @@ describe('Selectors', () => {
         SynapticPosition.Post,
         SynapticType.BrainRegion
       );
-      expect(result).toBe('');
+      expect(result).toBe(DisplayMessages.NO_DATA_STRING);
     });
 
     it('returns correct value for postsynaptic cell type', () => {
@@ -551,7 +551,7 @@ describe('Selectors', () => {
         SynapticPosition.Post,
         SynapticType.CellType
       );
-      expect(result).toBe('');
+      expect(result).toBe(DisplayMessages.NO_DATA_STRING);
     });
   });
 

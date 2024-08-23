@@ -21,6 +21,7 @@ export enum Field {
   Conditions = 'conditions',
   MeanSTD = 'meanstd',
   NumberOfMeasurements = 'numberOfMeasurements',
+  NumberOfConnections = 'numberOfConnections',
   Length = 'length',
   MaximumLength = 'maximumLength',
   TotalLength = 'totalLength',

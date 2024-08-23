@@ -37,19 +37,32 @@ export const BOUTON_DENSITY_FIELDS = [
     field: Field.BrainRegion,
   },
   {
-    field: Field.MeanSTD,
+    field: Field.SubjectSpecies,
   },
   {
-    field: Field.SubjectSpecies,
+    field: Field.License,
   },
   {
     field: Field.MType,
   },
   {
-    field: Field.Sem,
+    field: Field.SubjectAge,
+    className: 'col-span-2',
+  },
+  {
+    field: Field.MeanSTD,
   },
   {
     field: Field.Weight,
+    className: 'col-span-2',
+  },
+  {
+    field: Field.Sem,
+    className: 'col-span-3',
+  },
+  {
+    field: Field.NumberOfMeasurements,
+    className: 'col-span-3',
   },
 ] as DetailProps[];
 
@@ -79,22 +92,26 @@ export const NEURON_DENSITY_FIELDS = [
     field: Field.SubjectSpecies,
   },
   {
-    field: Field.NumberOfMeasurements,
-  },
-  {
-    field: Field.SubjectAge,
+    field: Field.License,
   },
   {
     field: Field.MType,
   },
   {
+    field: Field.SubjectAge,
+    className: 'col-span-2',
+  },
+  {
     field: Field.EType,
+    className: 'col-span-3',
   },
   {
     field: Field.NeuronDensity,
+    className: 'col-span-3',
   },
   {
-    field: Field.License,
+    field: Field.NumberOfMeasurements,
+    className: 'col-span-3',
   },
 ] as DetailProps[];
 
@@ -135,7 +152,7 @@ export const SYNAPSE_PER_CONNECTION_FIELDS = [
     className: 'col-span-3',
   },
   {
-    field: Field.NumberOfMeasurements,
+    field: Field.NumberOfConnections,
   },
 ] as DetailProps[];
 
