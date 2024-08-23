@@ -119,14 +119,17 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               {tabDetails.buildModelLabel}
             </Button>
           </div>
-          <div id="explore-table-container-for-observable" className="h-full w-full pb-5">
+          <div
+            id="explore-table-container-for-observable"
+            className="h-[calc(100vh-320px)] w-full pb-5"
+          >
             <ExploreSectionListingView
+              tableScrollable
+              controlsVisible={false}
               dataType={selectedModelType ?? DataType.CircuitMEModel}
               dataScope={ExploreDataScope.SelectedBrainRegion}
               virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
               selectionType="radio"
-              tableScrollable={false}
-              controlsVisible={false}
               style={{ background: 'bg-white' }}
             />
 

@@ -198,8 +198,8 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
   };
 
   return (
-    <div className="mb-20 h-full w-full">
-      <div className="mb-5 flex items-center justify-between gap-2">
+    <div className="relative mb-20 h-full w-full">
+      <div className="sticky top-0 mb-5 flex items-center justify-between gap-2">
         <h2 className="my-3 text-2xl font-bold text-primary-8">
           <span>
             Synaptses sets
@@ -224,32 +224,34 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
           </div>
         </Form.Item>
       </div>
-      <Form.List name="synapses">
-        {(fields, { remove: removeGroup }) => {
-          return fields.map((field, index) => {
-            return (
-              <SynapseSet
-                key={field.key}
-                {...{
-                  field,
-                  index,
-                  removeGroup,
-                  modelId: resource._self,
-                }}
-              />
-            );
-          });
-        }}
-      </Form.List>
-      <Button
-        htmlType="button"
-        aria-label="Add Synapse"
-        onClick={addNewSynapse}
-        className="border-primary-8 text-primary-8"
-        size="large"
-      >
-        Add new synapses set
-      </Button>
+      <div className="secondary-scrollbar mb-2 h-full max-h-[calc(100vh-255px)] overflow-y-auto pr-4">
+        <Form.List name="synapses">
+          {(fields, { remove: removeGroup }) => {
+            return fields.map((field, index) => {
+              return (
+                <SynapseSet
+                  key={field.key}
+                  {...{
+                    field,
+                    index,
+                    removeGroup,
+                    modelId: resource._self,
+                  }}
+                />
+              );
+            });
+          }}
+        </Form.List>
+        <Button
+          htmlType="button"
+          aria-label="Add Synapse"
+          onClick={addNewSynapse}
+          className="border-primary-8 text-primary-8"
+          size="large"
+        >
+          Add new synapses set
+        </Button>
+      </div>
       <Form.Item className="fixed bottom-4 right-10 my-6">
         <Space className="w-full justify-end">
           <button

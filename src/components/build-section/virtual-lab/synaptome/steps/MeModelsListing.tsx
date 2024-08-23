@@ -77,12 +77,12 @@ export default function MeModelsListing({
       </div>
       <div id="explore-table-container-for-observable" className="h-full w-full overflow-auto pb-5">
         <ExploreSectionListingView
+          tableScrollable
+          controlsVisible={false}
           dataType={DataType.CircuitMEModel}
           dataScope={ExploreDataScope.SelectedBrainRegion}
           virtualLabInfo={{ virtualLabId, projectId }}
           selectionType="radio"
-          tableScrollable={false}
-          controlsVisible={false}
           onRowsSelected={(rows) => {
             setModelNotSelectedError(false);
             setSelectedRows(rows);

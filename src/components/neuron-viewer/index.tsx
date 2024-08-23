@@ -10,6 +10,7 @@ import useMorphology from '@/hooks/useMorphology';
 import { Morphology } from '@/services/bluenaas-single-cell/types';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { DEFAULT_DIRECT_STIM_CONFIG } from '@/constants/simulate/single-neuron';
+import { basePath } from '@/config';
 
 type Props = {
   modelSelfUrl: string;
@@ -87,7 +88,13 @@ export default function NeuronViewer({
           <NeuronLoader text="Loading Neuron" />
         </div>
       )}
-      <div className="h-full" ref={containerRef} />
+      <div
+        className="h-full"
+        ref={containerRef}
+        style={{
+          cursor: `url(${basePath}/images/HandCursor.webp), pointer`,
+        }}
+      />
       <div
         className="absolute bottom-4 right-4 hidden h-max rounded-sm border bg-white px-2 py-2 text-primary-8 shadow-lg"
         ref={cursorHoverRef}

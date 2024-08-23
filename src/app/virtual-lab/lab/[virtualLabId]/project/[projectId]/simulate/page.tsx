@@ -1,15 +1,18 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
+import { PlusOutlined } from '@ant-design/icons';
+
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import GenericButton from '@/components/Global/GenericButton';
+import Link from '@/components/Link';
+import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
+import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
+
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToDataType } from '@/types/virtual-lab/lab';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { DataType } from '@/constants/explore-section/list-views';
-import Link from '@/components/Link';
-import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
-import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 
 type TabDetails = {
@@ -55,10 +58,10 @@ export default function VirtualLabProjectSimulatePage({
               className="bg-white text-2xl font-bold text-primary-8"
             />
             <Link
-              className="flex h-12 items-center rounded-none bg-primary-6 px-8 text-white shadow-none"
+              className="flex h-12 items-center gap-2 rounded-none bg-primary-6 px-8 text-white shadow-none"
               href="simulate/new"
             >
-              New simulation +
+              <span>New simulation</span> <PlusOutlined />
             </Link>
           </div>
           <div id="explore-table-container-for-observable" className="h-full w-full pb-5">

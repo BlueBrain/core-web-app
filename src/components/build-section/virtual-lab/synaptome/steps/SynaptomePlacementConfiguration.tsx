@@ -42,7 +42,7 @@ function SynaptomeConfiguration({ virtualLabId, projectId }: Props) {
           <NeuronViewer useEvents useActions modelSelfUrl={resource._self} />
         </DefaultLoadingSuspense>
       </div>
-      <div className="secondary-scrollbar h-[calc(100%-100px)] w-full overflow-y-auto p-8">
+      <div className="secondary-scrollbar h-[calc(100%-100px)] w-full p-8">
         <SynaptomeConfigurationForm
           {...{
             resource,
