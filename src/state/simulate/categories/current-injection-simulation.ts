@@ -33,20 +33,22 @@ export default function useCurrentInjectionSimulationConfig() {
 
   function setMode({ id, newValue }: { id: number; newValue: StimulusType }) {
     const stimConfig = findConfig(id);
-
     const options = stimulusModuleParams.options.filter((option) =>
       option.usedBy.includes(newValue)
     );
     const paramInfo = stimulusParams[options?.[0]?.value] || {};
 
-    const updatedStimulus = {
-      ...stimConfig.stimulus,
-      stimulusType: state,
-      stimulusProtocolOptions: options || [],
-      stimulusProtocolInfo: options?.[0] || null,
-      stimulusProtocol: options?.[0]?.value || null,
-      paramValues: getParamValues(paramInfo),
-      paramInfo,
+    const updatedStimulus: CurrentInjectionSimulationConfig = {
+      ...stimConfig,
+      stimulus: {
+        ...stimConfig.stimulus,
+        stimulusType: newValue,
+        stimulusProtocolOptions: options || [],
+        stimulusProtocolInfo: options?.[0] || null,
+        stimulusProtocol: options?.[0]?.value || null,
+        paramValues: getParamValues(paramInfo),
+        paramInfo,
+      },
     };
 
     return update(
@@ -70,12 +72,15 @@ export default function useCurrentInjectionSimulationConfig() {
     if (!paramInfo) throw new Error(`Parameters for protocol ${newValue} not found`);
     paramInfo.stop_time.defaultValue = protocolInfo.duration;
 
-    const updatedStimulus = {
-      ...stimConfig.stimulus,
-      stimulusProtocolInfo: protocolInfo || null,
-      stimulusProtocol: protocolInfo?.value || null,
-      paramValues: getParamValues(paramInfo),
-      paramInfo,
+    const updatedStimulus: CurrentInjectionSimulationConfig = {
+      ...stimConfig,
+      stimulus: {
+        ...stimConfig.stimulus,
+        stimulusProtocolInfo: protocolInfo || null,
+        stimulusProtocol: protocolInfo?.value || null,
+        paramValues: getParamValues(paramInfo),
+        paramInfo,
+      },
     };
 
     return update(
