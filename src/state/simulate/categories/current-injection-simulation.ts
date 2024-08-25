@@ -127,13 +127,14 @@ export default function useCurrentInjectionSimulationConfig() {
   }: {
     id: number;
     key: keyof CurrentInjectionSimulationConfig;
-    newValue: number | null;
+    newValue: number | string | null;
   }) {
     const stimConfig = findConfig(id);
-    const updatedStimulus = {
-      ...stimConfig.stimulus,
+    const updatedStimulus: CurrentInjectionSimulationConfig = {
+      ...stimConfig,
       [key]: newValue,
     };
+
     return update(
       updateArray({
         array: state,
@@ -146,9 +147,12 @@ export default function useCurrentInjectionSimulationConfig() {
   function setAmplitudes({ id, newValue }: { id: number; newValue: Array<number> }) {
     const stimConfig = findConfig(id);
 
-    const updatedStimulus = {
-      ...stimConfig.stimulus,
-      amplitudes: newValue,
+    const updatedStimulus: CurrentInjectionSimulationConfig = {
+      ...stimConfig,
+      stimulus: {
+        ...stimConfig.stimulus,
+        amplitudes: newValue,
+      },
     };
 
     return update(

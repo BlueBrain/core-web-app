@@ -1,6 +1,6 @@
 import { Select, Form, InputNumber, Card, Button } from 'antd';
 import { useAtomValue } from 'jotai';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
 import AmperageRange from './AmperageRange';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
@@ -64,8 +64,9 @@ export default function Stimulation({ modelSelfUrl }: Props) {
               add();
               addNewDirectConfig();
             }}
+            icon={<PlusOutlined />}
           >
-            + Add Direct Current Configuration
+            Add Current Injection Configuration
           </Button>
         </div>
       )}
@@ -74,9 +75,10 @@ export default function Stimulation({ modelSelfUrl }: Props) {
 }
 
 function StimulusLocation({ stimulationId }: FormItemProps) {
+  const secNames = useAtomValue(secNamesAtom);
+  const state = useAtomValue(currentInjectionSimulationConfigAtom);
   const { setProperty } = useCurrentInjectionSimulationConfig();
 
-  const secNames = useAtomValue(secNamesAtom);
   return (
     <Form.Item
       name={[stimulationId, 'injectTo']}
@@ -95,6 +97,7 @@ function StimulusLocation({ stimulationId }: FormItemProps) {
             newValue,
           })
         }
+        value={state[stimulationId].injectTo}
         options={secNames.map((secName) => ({ value: secName, label: secName }))}
         className="text-left"
       />
