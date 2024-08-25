@@ -14,20 +14,20 @@ import {
   Color,
   ShaderMaterial,
 } from 'three';
-import { MorphSection } from './types';
+import { NeuronSectionInfo } from './types';
 
-type MeshUserData = {
+export type NeuronSegementInfo = {
   segIdx: number;
   section: string;
   section_nseg: number;
   offset: number;
-  distance_from_soma: number;
+  distance_from_soma: string;
 } & {
   [key: string]: any;
 };
 
 export function createSegmentMesh(
-  sec: MorphSection,
+  sec: NeuronSectionInfo,
   segIdx: number,
   openEnded: boolean,
   color: number
@@ -59,8 +59,8 @@ export function createSegmentMesh(
     section: sec.name,
     section_nseg: sec.nseg,
     offset: sec.neuron_segments_offset[segIdx],
-    distance_from_soma: sec.segment_distance_from_soma[segIdx],
-  } as MeshUserData;
+    distance_from_soma: sec.segment_distance_from_soma[segIdx].toFixed(2),
+  } as NeuronSegementInfo;
 
   mesh.scale.setY(scaleLength);
   mesh.setRotationFromQuaternion(rotQuat);
