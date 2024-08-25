@@ -8,7 +8,7 @@ import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/sim
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import { synapsesPlacementAtom } from '@/state/synaptome';
-import { sendRemoveSynapses3DEvent } from '@/components/neuron-viewer/events';
+import { sendRemoveSynapses3DEvent } from '@/components/neuron-viewer/hooks/events';
 
 export default function SynapseSimulationFormsGroup() {
   const { newConfig, remove: removeSynapseConfig } = useSynaptomeSimulationConfig();

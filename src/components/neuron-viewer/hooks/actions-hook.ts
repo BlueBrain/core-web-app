@@ -1,5 +1,8 @@
 import { MutableRefObject, useEffect } from 'react';
-import Renderer, { ClickData, HoverData } from '@/services/bluenaas-single-cell/renderer';
+import Renderer, {
+  NeuronViewerClickData,
+  NeuronViewerHoverHoverData,
+} from '@/services/bluenaas-single-cell/renderer';
 
 export default function useNeuronViewerActions({
   renderer,
@@ -9,9 +12,10 @@ export default function useNeuronViewerActions({
   useActions?: boolean;
   renderer: MutableRefObject<Renderer | null>;
   actions?: {
-    onClick?: (data: ClickData) => void;
-    onHover?: (data: HoverData) => void;
-    onHoverEnd?: () => void;
+    onClick?: (data: NeuronViewerClickData) => void;
+    onHover?: (data: NeuronViewerHoverHoverData) => void;
+    onHoverEnd?: (data: NeuronViewerHoverHoverData) => void;
+    onZoom?: (data: NeuronViewerHoverHoverData) => void;
   };
 }) {
   useEffect(() => {
@@ -24,6 +28,10 @@ export default function useNeuronViewerActions({
       if (actions?.onHover) {
         // eslint-disable-next-line no-param-reassign
         renderer.current.configOnHover = actions.onHover;
+      }
+      if (actions?.onHoverEnd) {
+        // eslint-disable-next-line no-param-reassign
+        renderer.current.configOnHoverEnd = actions.onHoverEnd;
       }
       if (actions?.onHoverEnd) {
         // eslint-disable-next-line no-param-reassign

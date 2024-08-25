@@ -28,12 +28,14 @@ import { MEModelResource } from '@/types/me-model';
 import {
   sendRemoveSynapses3DEvent,
   sendResetSynapses3DEvent,
-} from '@/components/neuron-viewer/events';
-import useNotification from '@/hooks/notifications';
+} from '@/components/neuron-viewer/hooks/events';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
-import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
+import { dataAtom, selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationType } from '@/types/virtual-lab/lab';
+import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreDataScope } from '@/types/explore-section/application';
+import useNotification from '@/hooks/notifications';
 
 const label = (text: string) => (
   <span className="text-base font-semibold text-primary-8">{text}</span>
@@ -49,10 +51,10 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
   const { push: navigate } = useRouter();
   const [loading, setLoading] = useState(false);
   const { error: notifyError, success: notifySuccess } = useNotification();
-  const form = Form.useFormInstance<SynaptomeModelConfiguration>();
-  const seed = Form.useWatch<number>('seed', form);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
   const setSimulationScope = useSetAtom(selectedSimulationScopeAtom);
+  const form = Form.useFormInstance<SynaptomeModelConfiguration>();
+  const seed = Form.useWatch<number>('seed', form);
 
   const generateSynaptomeUrl = () => {
     const vlProjectUrl = generateVlProjectUrl(org, project);
@@ -188,6 +190,16 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
       // will not face a disabled form because the hidden input was not set
       selectedRowsAtom.setShouldRemove(() => true); // set function to remove all
       selectedRowsAtom.setShouldRemove(null); // clear function
+      // TODO: fix: remove is not reactive
+      dataAtom.remove({
+        dataType: DataType.SingleNeuronSynaptome,
+        dataScope: ExploreDataScope.SelectedBrainRegion,
+        virtualLabInfo: {
+          virtualLabId: org,
+          projectId: project,
+        },
+      });
+
       sendResetSynapses3DEvent();
       notifySuccess(CREATE_SYNAPTOME_SUCCESS, undefined, 'topRight');
       navigate(generateSynaptomeUrl());

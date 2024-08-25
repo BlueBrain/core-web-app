@@ -1,8 +1,10 @@
 import { useRef } from 'react';
 import { Button, Divider } from 'antd';
+import { useAtom } from 'jotai';
 
 import { useRecordingSourceForSimulation } from '@/state/simulate/categories';
 import { classNames } from '@/util/utils';
+import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 
 export default function NeuronMeshInjectionRecordingPopover({
@@ -21,9 +23,20 @@ export default function NeuronMeshInjectionRecordingPopover({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { add } = useRecordingSourceForSimulation();
+  const [state, update] = useAtom(currentInjectionSimulationConfigAtom);
 
-  // TODO: add multiple injecton to the config
   const onInject = () => {
+    update(
+      state.map((o, i) => {
+        if (i === 0) {
+          return {
+            ...o,
+            injectTo: section,
+          };
+        }
+        return o;
+      })
+    );
     onClose();
   };
 
