@@ -65,7 +65,7 @@ export default function DefaultListView({
     >
       <div
         className={classNames(
-          'relative grid w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden h-full',
+          'relative grid h-full w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden',
           tableScrollable === true ? 'max-h-[calc(100vh-3.3rem)]' : 'mb-5'
         )}
       >
