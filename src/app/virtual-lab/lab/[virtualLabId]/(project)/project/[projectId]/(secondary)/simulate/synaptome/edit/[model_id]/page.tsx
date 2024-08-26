@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { useSetAtom } from 'jotai';
+import dynamic from 'next/dynamic';
 
 import { ParameterView } from '@/components/simulate/single-neuron';
 import { useModel } from '@/hooks/useModel';
@@ -15,7 +16,13 @@ import { SynaptomeConfigDistribution } from '@/types/synaptome';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import useSynaptomeSimulationConfig from '@/state/simulate/categories/synaptome-simulation-config';
 import Wrapper from '@/components/simulate/single-neuron/Wrapper';
-import NeuronViewerContainer from '@/components/neuron-viewer/NeuronViewerWithActions';
+
+const NeuronViewerContainer = dynamic(
+  () => import('@/components/neuron-viewer/NeuronViewerWithActions'),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   params: {

@@ -27,7 +27,7 @@ import {
 import {
   sendDisplaySynapses3DEvent,
   sendRemoveSynapses3DEvent,
-} from '@/components/neuron-viewer/events';
+} from '@/components/neuron-viewer/hooks/events';
 
 import useNotification from '@/hooks/notifications';
 import { getSession } from '@/authFetch';

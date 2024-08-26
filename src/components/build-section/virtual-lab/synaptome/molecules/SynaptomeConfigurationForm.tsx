@@ -28,7 +28,7 @@ import { MEModelResource } from '@/types/me-model';
 import {
   sendRemoveSynapses3DEvent,
   sendResetSynapses3DEvent,
-} from '@/components/neuron-viewer/events';
+} from '@/components/neuron-viewer/hooks/events';
 import useNotification from '@/hooks/notifications';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';

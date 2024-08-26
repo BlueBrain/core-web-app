@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
 import { useSetAtom } from 'jotai';
 
-import useNeuronViewerEvents from './events-hook';
-import useNeuronViewerActions from './actions-hook';
-import NeuronLoader from './NeuronLoader';
+import useNeuronViewerEvents from './hooks/events-hook';
+import useNeuronViewerActions from './hooks/actions-hook';
+import NeuronLoader from './plugins/NeuronLoader';
 import Renderer, { NeuronViewerConfig } from '@/services/bluenaas-single-cell/renderer';
 import useMorphology from '@/hooks/useMorphology';
 
@@ -16,8 +16,20 @@ type Props = {
   modelSelfUrl: string;
   useEvents?: boolean;
   useActions?: boolean;
+  useZoomer?: boolean;
+  useCursor?: boolean;
   actions?: NeuronViewerConfig;
-  children?: React.ReactNode;
+  children?: ({
+    renderer,
+    useZoomer,
+    useCursor,
+    useActions,
+  }: {
+    renderer: MutableRefObject<Renderer | null>;
+    useZoomer?: boolean;
+    useCursor?: boolean;
+    useActions?: boolean;
+  }) => React.ReactNode;
 };
 
 export default function NeuronViewer({
@@ -25,11 +37,12 @@ export default function NeuronViewer({
   modelSelfUrl,
   useEvents,
   useActions,
+  useZoomer,
+  useCursor,
   actions,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
-  const cursorHoverRef = useRef<HTMLDivElement | null>(null);
   const setSecNames = useSetAtom(secNamesAtom);
 
   const setSectionsAndSegments = useCallback(
@@ -69,16 +82,13 @@ export default function NeuronViewer({
 
   useNeuronViewerEvents({
     useEvents,
-    cursor: cursorHoverRef,
     renderer: rendererRef,
   });
 
   useNeuronViewerActions({
     useActions,
+    actions,
     renderer: rendererRef,
-    actions: {
-      onClick: actions?.onClick,
-    },
   });
 
   return (
@@ -95,11 +105,12 @@ export default function NeuronViewer({
           cursor: `url(${basePath}/images/HandCursor.webp), pointer`,
         }}
       />
-      <div
-        className="absolute bottom-4 right-4 hidden h-max rounded-sm border bg-white px-2 py-2 text-primary-8 shadow-lg"
-        ref={cursorHoverRef}
-      />
-      {children}
+      {children?.({
+        useZoomer,
+        useCursor,
+        useActions,
+        renderer: rendererRef,
+      })}
     </div>
   );
 }

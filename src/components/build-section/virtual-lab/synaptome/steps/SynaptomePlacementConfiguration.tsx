@@ -2,13 +2,20 @@
 
 import { Form, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import dynamic from 'next/dynamic';
 
 import { SynaptomeConfigurationForm } from '../molecules';
 import { MEModelResource } from '@/types/me-model';
 import { useModel } from '@/hooks/useModel';
 
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
-import NeuronViewer from '@/components/neuron-viewer';
+
+const NeuronViewerContainer = dynamic(
+  () => import('@/components/neuron-viewer/NeuronViewerWithActions'),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   projectId: string;
@@ -39,7 +46,7 @@ function SynaptomeConfiguration({ virtualLabId, projectId }: Props) {
     <div className="grid h-[calc(100vh-51px)] w-full grid-cols-2">
       <div className="flex items-center justify-center bg-black">
         <DefaultLoadingSuspense>
-          <NeuronViewer useEvents useActions modelSelfUrl={resource._self} />
+          <NeuronViewerContainer modelUrl={resource._self} zoomPlacement="right" />
         </DefaultLoadingSuspense>
       </div>
       <div className="secondary-scrollbar h-[calc(100%-100px)] w-full p-8">
