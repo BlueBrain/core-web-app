@@ -125,10 +125,6 @@ export default function buildFilters(
     filtersQuery.must(esb.termQuery('@type.keyword', DataTypeToNexusType[dataType]));
 
     if (dataConfig.curated) filtersQuery.must(esb.termQuery('curated', true));
-
-    if (dataType === DataType.CircuitMEModel) {
-      filtersQuery.must(esb.termQuery('memodel.validated', true));
-    }
   }
 
   filtersQuery.must(esb.termQuery('deprecated', false));

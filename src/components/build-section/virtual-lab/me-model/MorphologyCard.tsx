@@ -56,7 +56,7 @@ export default function MorphologyCard() {
   return (
     <div className="w-full rounded-lg border p-10">
       <div className="flex justify-between">
-        <div className={classNames('text-2xl', subtitleStyle)}>M-Model</div>
+        <div className={classNames('text-2xl', subtitleStyle)}>Morphology</div>
         <Link href={generateDetailUrl()} target="_blank" className="font-bold text-primary-8">
           More details
         </Link>

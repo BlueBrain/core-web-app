@@ -127,7 +127,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               tableScrollable
               controlsVisible={false}
               dataType={selectedModelType ?? DataType.CircuitMEModel}
-              dataScope={ExploreDataScope.SelectedBrainRegion}
+              dataScope={ExploreDataScope.NoScope}
               virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
               selectionType="radio"
               style={{ background: 'bg-white' }}

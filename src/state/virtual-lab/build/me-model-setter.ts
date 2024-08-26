@@ -48,10 +48,12 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
         {
           '@type': 'EModel',
           '@id': selectedEModel['@id'],
+          name: selectedEModel.name,
         },
         {
           '@type': 'NeuronMorphology',
           '@id': selectedMModel['@id'],
+          name: selectedMModel.name,
         },
       ],
       // 'image' will be added after me-model validation

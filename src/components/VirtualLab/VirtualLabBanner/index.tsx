@@ -154,7 +154,7 @@ function BannerWrapper({
   admin?: string;
   children?: ReactNode;
   createdAt?: string;
-  label: string;
+  label?: string;
   userCount?: number;
 }) {
   return (
@@ -202,7 +202,7 @@ export function SandboxBanner({ description, name }: Omit<Props, 'createdAt'>) {
   return (
     <BackgroundImg backgroundImage={hippocampusImg}>
       <div className={linkClassName}>
-        <BannerWrapper label="Virtual lab Name">
+        <BannerWrapper>
           <StaticValues description={description} name={name} dataTestid="sandbox-banner" />
         </BannerWrapper>
       </div>

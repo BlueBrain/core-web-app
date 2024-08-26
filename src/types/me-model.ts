@@ -68,10 +68,12 @@ export interface MEModel extends Entity {
     {
       '@type': 'EModel';
       '@id': string;
+      name?: string;
     },
     {
       '@type': 'NeuronMorphology';
       '@id': string;
+      name?: string;
     },
   ];
   image?: ESeModel['image'];

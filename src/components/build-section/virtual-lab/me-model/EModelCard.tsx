@@ -48,7 +48,7 @@ export default function EModelCard() {
         }}
         className="flex h-48 w-full items-center rounded-lg border border-neutral-2 pl-32 text-4xl text-neutral-4 hover:bg-primary-7 hover:text-white"
       >
-        Select electrophysiology
+        Select e-model
       </button>
     );
 
