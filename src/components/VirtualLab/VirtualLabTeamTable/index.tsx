@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { ConfigProvider, Select, Table } from 'antd';
 
+import { ModalInviteProjectMember } from '../projects/ModalInviteProjectMember';
 import VirtualLabMemberIcon from '../VirtualLabMemberIcon';
 import { MockRole, Role, VirtualLabMember } from '@/types/virtual-lab/members';
 
@@ -11,6 +13,7 @@ type Props = {
 };
 
 export default function VirtualLabTeamTable({ users }: Props) {
+  const [openInviteProjectMemberModal, setOpenInviteProjectMemberModal] = useState(false);
   const roleOptions: { value: Role; label: string }[] = [
     { value: 'admin', label: 'Administrator' },
     { value: 'member', label: 'Member' },
@@ -77,10 +80,14 @@ export default function VirtualLabTeamTable({ users }: Props) {
           <span>Total members</span>
           <span className="font-bold">{users.length}</span>
         </div>
-        <div role="button" className="flex w-[220px] justify-between border border-primary-7 p-3">
+        <button
+          type="button"
+          className="flex w-[220px] justify-between border border-primary-7 p-3"
+          onClick={() => setOpenInviteProjectMemberModal(true)}
+        >
           <span className="font-bold">Invite member</span>
           <PlusOutlined />
-        </div>
+        </button>
       </div>
       <ConfigProvider
         theme={{
@@ -102,6 +109,10 @@ export default function VirtualLabTeamTable({ users }: Props) {
           showHeader={false}
         />
       </ConfigProvider>
+      <ModalInviteProjectMember
+        open={openInviteProjectMemberModal}
+        onChange={() => setOpenInviteProjectMemberModal(false)}
+      />
     </div>
   );
 }

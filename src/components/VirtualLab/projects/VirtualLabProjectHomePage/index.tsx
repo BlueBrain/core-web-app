@@ -13,12 +13,15 @@ import {
 import useNotification from '@/hooks/notifications';
 import { useLoadableValue, useUnwrappedValue } from '@/hooks/hooks';
 
-type Props = {
+export type VirtualLabUsersHorizontalListProps = {
   virtualLabId: string;
   projectId: string;
 };
 
-function VirtualLabUsersHorizontalList({ virtualLabId, projectId }: Props) {
+export function VirtualLabUsersHorizontalList({
+  virtualLabId,
+  projectId,
+}: VirtualLabUsersHorizontalListProps) {
   const notification = useNotification();
 
   const projectUsers = useLoadableValue(
@@ -52,7 +55,10 @@ function VirtualLabUsersHorizontalList({ virtualLabId, projectId }: Props) {
   return null;
 }
 
-export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: Props) {
+export default function VirtualLabProjectHomePage({
+  virtualLabId,
+  projectId,
+}: VirtualLabUsersHorizontalListProps) {
   const projectDetails = useUnwrappedValue(
     virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId })
   );
