@@ -1,10 +1,7 @@
-'use client';
-
 import { useRouter } from 'next/navigation';
 import { useSetAtom, useAtomValue } from 'jotai';
 
 import GenericButton from '@/components/Global/GenericButton';
-import { ServerSideComponentProp } from '@/types/common';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
@@ -17,13 +14,17 @@ import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
 
 export default function VirtualLabProjectSimulateNewPage({
-  params: { virtualLabId, projectId },
-}: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
+  virtualLabId,
+  projectId,
+  handleCancel,
+}: {
+  virtualLabId: string;
+  projectId: string;
+  handleCancel: () => void;
+}) {
   const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
   const setSingleNeuron = useSetAtom(singleNeuronAtom);
   const router = useRouter();
-
-  const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;
 
   const modelType =
     selectedSimulationScope && selectedSimulationScope in SimulationScopeToModelType
@@ -45,15 +46,18 @@ export default function VirtualLabProjectSimulateNewPage({
   };
 
   return (
-    <div className="flex flex-col pt-14 pr-10">
+    <div className="flex flex-col">
       <div className="flex justify-between align-middle">
         <div className="text-2xl font-bold text-white">Create a new simulation</div>
-        <GenericButton text="Cancel" className="text-white hover:text-white" href={simulatePage} />
+        <GenericButton
+          text="Cancel"
+          className="text-white hover:text-white"
+          onClick={handleCancel}
+        />
       </div>
       {/* TODO: replace this list with items saved in Model Library */}
-      <div id="explore-table-container-for-observable" className="h-full mb-5 overflow-hidden">
+      <div id="explore-table-container-for-observable" className="mb-5 h-full overflow-hidden">
         <div className="bg-white pl-5 pt-5 text-lg text-primary-8">
-          
           Select a single neuron model to simulate{' '}
         </div>
         <ExploreSectionListingView
