@@ -11,7 +11,7 @@ export enum DataType {
   CircuitMEModel = 'CircuitMEModel',
   SingleNeuronSimulation = 'SingleNeuronSimulation',
   SingleNeuronSynaptome = 'SingleNeuronSynaptome',
-  SingleNeuronSynaptomeSimulation = 'SingleNeuronSynaptomeSimulation',
+  SingleNeuronSynaptomeSimulation = 'SynaptomeSimulation',
 }
 
 export const DataTypeToNexusType = {
@@ -24,8 +24,14 @@ export const DataTypeToNexusType = {
   [DataType.CircuitEModel]: `${neuroShapesBaseUrl}/EModel`,
   [DataType.CircuitMEModel]: `${neuroShapesBaseUrl}/MEModel`,
   [DataType.SingleNeuronSimulation]: `${ontologyBaseUrl}/SingleNeuronSimulation`,
-  [DataType.SingleNeuronSynaptome]: `${neuroShapesBaseUrl}/SingleNeuronSynaptome`,
-  [DataType.SingleNeuronSynaptomeSimulation]: `${ontologyBaseUrl}/SingleNeuronSynaptomeSimulation`,
+  [DataType.SingleNeuronSynaptome]: `${ontologyBaseUrl}/SingleNeuronSynaptome`,
+  [DataType.SingleNeuronSynaptomeSimulation]: `${ontologyBaseUrl}/SynaptomeSimulation`,
+};
+
+export const DataTypeToNewSimulationPage: Record<string, string> = {
+  [DataTypeToNexusType.SingleNeuronSynaptome]: 'synaptome',
+  [DataTypeToNexusType.CircuitEModel]: 'single-neuron',
+  [DataTypeToNexusType.CircuitMEModel]: 'single-neuron',
 };
 
 export const DEFAULT_CHECKLIST_RENDER_LENGTH = 8;

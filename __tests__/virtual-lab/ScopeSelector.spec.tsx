@@ -134,7 +134,7 @@ describe('the ScopeSelector component', () => {
   });
 
   it("'selects' the desired scope when clicking on a scope selector", async () => {
-    const circuitFilterControl = renderer.getByLabelText('Circuit');
+    const circuitFilterControl = renderer.getByLabelText('Cellular');
 
     await act(async () => {
       fireEvent.click(circuitFilterControl);

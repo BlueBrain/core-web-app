@@ -72,7 +72,7 @@ export default function SideMenu({ lab, project, links }: SideMenuProps) {
           {!!virtualLab && (
             <div className="mt-2 flex w-full flex-col items-center gap-2 overflow-hidden text-primary-3">
               <Link
-                key={lab.id}
+                key={`${lab.href}/${lab.id}`}
                 href={lab.href}
                 className="overflow-hidden text-ellipsis whitespace-nowrap text-center capitalize"
                 style={{

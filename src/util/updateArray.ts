@@ -15,11 +15,17 @@ const updateArray = <T>({
 }: {
   array?: T[];
   keyfn: (item: T, index: number) => boolean;
-  newVal: T;
+  newVal: T | ((value: T) => T);
 }) => {
   if (array) {
     const match = find(array, keyfn);
-    if (match) merge(match, newVal);
+    if (match) {
+      if (newVal instanceof Function) {
+        merge(match, newVal(match));
+      } else {
+        merge(match, newVal);
+      }
+    }
     return array;
   }
   return [];

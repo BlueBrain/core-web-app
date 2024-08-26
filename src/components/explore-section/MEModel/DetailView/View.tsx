@@ -17,12 +17,18 @@ import GenericButton from '@/components/Global/GenericButton';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter';
 
+type Params = {
+  projectId: string;
+  virtualLabId: string;
+};
+
 type Props = {
   vlProjectUrl: string;
+  params: Params;
   showViewMode?: boolean;
 };
 
-export default function MEModelDetailView({ vlProjectUrl, showViewMode = false }: Props) {
+export default function MEModelDetailView({ vlProjectUrl, params, showViewMode = false }: Props) {
   const [activeTab] = useQueryState(
     'tab',
     parseAsString.withDefault(EMODEL_TABS.at(0)!.key)
@@ -54,7 +60,7 @@ export default function MEModelDetailView({ vlProjectUrl, showViewMode = false }
                   <Analysis />
                 </If>
                 <If id="simulation" condition={activeTab === 'simulation'}>
-                  <Simulation />
+                  <Simulation {...{ params }} />
                 </If>
               </Suspense>
             </div>

@@ -1,27 +1,36 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useSetAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
+import find from 'lodash/find';
+import flatMap from 'lodash/flatMap';
 
-import GenericButton from '@/components/Global/GenericButton';
 import { ServerSideComponentProp } from '@/types/common';
-import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import { DataType } from '@/constants/explore-section/list-views';
+import {
+  DataType,
+  DataTypeToNewSimulationPage,
+  DataTypeToNexusType,
+} from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
-import { singleNeuronAtom } from '@/state/simulate/single-neuron';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
+import { detailUrlBuilder } from '@/util/common';
+import { ensureArray } from '@/util/nexus';
 
-export default function VirtualLabProjectSimulateNewPage({
+import GenericButton from '@/components/Global/GenericButton';
+import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
+import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
+import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
+
+export default function NewSimulation({
   params: { virtualLabId, projectId },
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
-  const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
-  const setSingleNeuron = useSetAtom(singleNeuronAtom);
   const router = useRouter();
+  const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
 
   const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;
 
@@ -31,21 +40,23 @@ export default function VirtualLabProjectSimulateNewPage({
       : null;
 
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
-    setSingleNeuron({
-      self: model._source._self,
-      type: modelType ?? DataType.CircuitMEModel,
-      source: {
-        ...model._source,
-        ...(modelType === DataType.SingleNeuronSynaptome && {
-          synapses: [{ id: '1' }, { id: '2' }], // TODO: When synaptome model is ready synapses should be correctly populated.
-        }),
-      },
-    });
-    router.push(`${generateVlProjectUrl(virtualLabId, projectId)}/simulate/single-neuron/edit`);
+    const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
+    const simulateType = flatMap(ensureArray(model._source['@type']), (type) =>
+      find(DataTypeToNexusType, (value) => value === type)
+    ).at(0);
+    if (simulateType) {
+      const simulatePagePath = DataTypeToNewSimulationPage[simulateType];
+      if (simulatePagePath) {
+        const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePagePath}/edit`;
+        router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
+      }
+    }
   };
 
   return (
-    <div className="flex flex-col pt-14">
+    <div className="flex flex-col pt-8">
+      <VirtualLabTopMenu />
+      <ScopeSelector />
       <div className="flex justify-between align-middle">
         <div className="text-2xl font-bold text-white">
           Select a single neuron model to simulate
@@ -53,7 +64,7 @@ export default function VirtualLabProjectSimulateNewPage({
         <GenericButton text="Cancel" className="text-white hover:text-white" href={simulatePage} />
       </div>
       {/* TODO: replace this list with items saved in Model Library */}
-      <div className="h-[70vh]" id="explore-table-container-for-observable">
+      <div className="h-[calc(100vh-290px)]" id="explore-table-container-for-observable">
         <ExploreSectionListingView
           dataType={modelType ?? DataType.CircuitMEModel}
           dataScope={ExploreDataScope.SelectedBrainRegion}

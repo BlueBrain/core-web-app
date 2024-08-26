@@ -1,7 +1,7 @@
 export default function Title() {
   return (
-    <div className="flex h-[36px] items-center justify-between">
-      <span className="flex-grow pl-2 uppercase text-neutral-4">Simulation experiment setup</span>
+    <div className="flex items-center justify-between bg-primary-8 p-4">
+      <h1 className="flex-grow font-bold uppercase text-white">Simulation experiment setup</h1>
     </div>
   );
 }

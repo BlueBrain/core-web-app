@@ -182,9 +182,17 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
   },
   [Field.Description]: {
     title: 'Description',
-    filter: FilterTypeEnum.CheckList,
+    filter: FilterTypeEnum.Text,
     render: {
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.description),
       deltaResourceViewFn: (resource) => resource.description,
+    },
+    esTerms: {
+      flat: {
+        filter: 'description',
+        aggregation: 'description',
+        sort: 'description',
+      },
     },
     vocabulary: {
       plural: 'Descriptions',

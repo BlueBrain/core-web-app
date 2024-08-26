@@ -1,4 +1,5 @@
 const fetch = require('whatwg-fetch');
+const { randomUUID } = require('node:crypto');
 
 global.structuredClone = (v) => JSON.parse(JSON.stringify(v));
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
@@ -55,3 +56,5 @@ jest.mock('nuqs', () => ({
   __esModule: true,
   useQueryState: () => [null, jest.fn()],
 }));
+
+window.crypto.randomUUID = randomUUID;

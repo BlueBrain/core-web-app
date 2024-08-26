@@ -1,8 +1,6 @@
 import throttle from 'lodash/throttle';
-import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
-
 import {
   AmbientLight,
   Color,
@@ -10,26 +8,32 @@ import {
   DoubleSide,
   EdgesGeometry,
   Fog,
+  InstancedBufferGeometry,
   LineBasicMaterial,
   LineSegments,
   Mesh,
   MeshLambertMaterial,
+  MeshPhongMaterial,
   Object3D,
   PerspectiveCamera,
   PointLight,
   Raycaster,
   Scene,
+  SphereGeometry,
   TextureLoader,
   Vector2,
   Vector3,
   WebGLRenderer,
 } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import RendererCtrl from './renderer-ctrl';
 import type { Morphology, SecMarkerConfig } from './types';
 import { createSegMarkerMesh, createSegmentMesh } from './renderer-utils';
+import { sendSegmentDetailsEvent } from './events';
 
 import { basePath } from '@/config';
+import { SynapsesMesh } from '@/components/neuron-viewer/events';
 
 const FOG_COLOR = 0xffffff;
 const FOG_NEAR = 1;
@@ -43,11 +47,13 @@ const CLICK_DELAY_TOLERANCE = 500; // ms
 const CLICK_POS_TOLERANCE = 5; // px
 
 const TEXTURE_BASE_URL = `${basePath}/images/e-model-interactive`;
+export type SynapseBubble = Mesh<SphereGeometry, MeshPhongMaterial>;
+export type SynapseBubblesMesh = Mesh<InstancedBufferGeometry, MeshPhongMaterial>;
 
 export type ClickData = {
   type: string;
   data: any;
-  clickPosition: {
+  position: {
     x: number;
     y: number;
   };
@@ -58,7 +64,7 @@ export type HoverData = {
   data: any;
 };
 
-type BlueNaasRendererConfig = {
+export type NeuronViewerConfig = {
   onClick?: (data: ClickData) => void;
   onHover?: (data: HoverData) => void;
   onHoverEnd?: (data: HoverData) => void;
@@ -114,8 +120,7 @@ function getElementOffset(element: HTMLElement): { x: number; y: number } {
 
 type MorphMesh = Mesh<CylinderGeometry, MeshLambertMaterial>;
 type HoverBox = LineSegments<EdgesGeometry, LineBasicMaterial>;
-
-export default class BlueNaasRenderer {
+export default class NeuronViewerRenderer {
   private container: HTMLDivElement;
 
   private containerOffset: { x: number; y: number };
@@ -130,9 +135,9 @@ export default class BlueNaasRenderer {
 
   private camera: PerspectiveCamera;
 
-  private controls: TrackballControls;
+  private controls: OrbitControls;
 
-  private config: BlueNaasRendererConfig;
+  private config: NeuronViewerConfig;
 
   private pointerDownTimestamp: number | null = null;
 
@@ -158,7 +163,9 @@ export default class BlueNaasRenderer {
 
   private animationFrameHandle: number | null = null;
 
-  constructor(container: HTMLDivElement, config: BlueNaasRendererConfig) {
+  private synapses: Array<SynapsesMesh> = [];
+
+  constructor(container: HTMLDivElement, config: NeuronViewerConfig) {
     this.config = config;
 
     this.container = container;
@@ -176,7 +183,6 @@ export default class BlueNaasRenderer {
 
     this.renderer.setSize(clientWidth, clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio || 1);
-
     this.scene = new Scene();
     this.scene.background = new Color(BACKGROUND_COLOR);
     this.scene.fog = new Fog(FOG_COLOR, FOG_NEAR, FOG_FAR);
@@ -207,17 +213,14 @@ export default class BlueNaasRenderer {
       depthWrite: false,
     });
 
-    this.camera = new PerspectiveCamera(45, clientWidth / clientHeight, 1, 100000);
+    this.camera = new PerspectiveCamera(45, clientWidth / clientHeight, 0.01, 100000);
     this.scene.add(this.camera);
     this.camera.add(new PointLight(CAMERA_LIGHT_COLOR, 0.9));
 
-    this.camera.position.setZ(-500);
+    this.camera.position.setZ(-400);
     this.camera.lookAt(new Vector3());
-
-    this.controls = new TrackballControls(this.camera, this.renderer.domElement);
-    this.controls.zoomSpeed = 0.4;
-    this.controls.rotateSpeed = 0.8;
-
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.screenSpacePanning = true;
     this.initEventHandlers();
     this.startRenderLoop();
   }
@@ -259,11 +262,10 @@ export default class BlueNaasRenderer {
 
     const clickedMesh = this.getMeshByNativeCoordinates(e.clientX, e.clientY);
     if (!clickedMesh) return;
-
     this.config.onClick({
       type: clickedMesh.name,
       data: clickedMesh.userData,
-      clickPosition: {
+      position: {
         x: e.clientX,
         y: e.clientY,
       },
@@ -301,6 +303,7 @@ export default class BlueNaasRenderer {
     mesh.getWorldPosition(this.hoverBox.position);
     mesh.getWorldQuaternion(this.hoverBox.quaternion);
     this.hoverBox.name = mesh.name;
+
     this.hoverBox.userData = { ...mesh.userData, skipHoverDetection: true };
     this.scene.add(this.hoverBox);
 
@@ -308,11 +311,12 @@ export default class BlueNaasRenderer {
       type: 'morphSection',
       data: mesh.userData,
     });
-
+    sendSegmentDetailsEvent({ show: true, data: mesh.userData });
     this.ctrl.renderOnce();
   }
 
   private onHoverEnd(mesh: MorphMesh) {
+    sendSegmentDetailsEvent({ show: false });
     this.scene.remove(this.hoverBox as HoverBox);
     disposeMesh(this.hoverBox as HoverBox);
     this.hoverBox = null;
@@ -358,6 +362,18 @@ export default class BlueNaasRenderer {
     this.animationFrameHandle = requestAnimationFrame(this.startRenderLoop);
   };
 
+  public set configOnClick(onClick: (data: ClickData) => void) {
+    this.config.onClick = onClick;
+  }
+
+  public set configOnHover(onHover: (data: HoverData) => void) {
+    this.config.onHover = onHover;
+  }
+
+  public set configOnHoverEnd(onHoverEnd: (data: HoverData) => void) {
+    this.config.onHoverEnd = onHoverEnd;
+  }
+
   removeNoDiameterSection(morphology: Morphology) {
     // workaround sinde the implementation of stub axon in hoc files
     const pruned = Object.entries(morphology).reduce((acc: Morphology, [secName, sec]) => {
@@ -395,6 +411,29 @@ export default class BlueNaasRenderer {
       }
     });
 
+    this.ctrl.renderOnce();
+  };
+
+  addSynapses = (mesh: SynapsesMesh) => {
+    this.scene.add(mesh);
+    this.synapses.push(mesh);
+    this.ctrl.renderOnce();
+  };
+
+  removeSynapses = (meshId: string) => {
+    const object = this.scene.getObjectByProperty('uuid', meshId);
+    if (object) {
+      this.scene.remove(object);
+      this.synapses = this.synapses.filter((s) => s.uuid !== meshId);
+      this.ctrl.renderOnce();
+    }
+  };
+
+  cleanSynapses = () => {
+    this.synapses.forEach((o) => {
+      this.scene.remove(o);
+    });
+    this.synapses = [];
     this.ctrl.renderOnce();
   };
 

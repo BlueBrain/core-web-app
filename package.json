@@ -65,7 +65,7 @@
     "elastic-builder": "^2.20.0",
     "file-saver": "^2.0.5",
     "jotai": "^2.7.2",
-    "jotai-devtools": "^0.9.0",
+    "jotai-devtools": "^0.10.0",
     "jotai-optics": "^0.3.0",
     "jszip": "^3.10.1",
     "lexical": "0.16.0",

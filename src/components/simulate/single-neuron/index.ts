@@ -1,6 +1,5 @@
 import Title from './Title';
 import StepTabs from './StepTabs';
-import Visualization from './Visualization';
-import ParameterView from './parameters';
+import ParameterView from './steps';
 
-export { Title, StepTabs, Visualization, ParameterView };
+export { Title, StepTabs, ParameterView };

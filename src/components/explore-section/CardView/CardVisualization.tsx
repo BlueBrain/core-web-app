@@ -71,7 +71,7 @@ export default function CardVisualization({
     return renderSwc();
   }
   return (
-    <div className="flex flex h-full w-full items-center justify-center gap-2 text-primary-7">
+    <div className="flex h-full w-full items-center justify-center gap-2 text-primary-7">
       <WarningOutlined /> Visualization is not available in this type
     </div>
   );

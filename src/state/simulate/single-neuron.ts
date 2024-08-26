@@ -1,29 +1,25 @@
 import { atom } from 'jotai';
-import { atomWithReducer, atomWithReset } from 'jotai/utils';
-import { MutableRefObject } from 'react';
+import { atomWithReset } from 'jotai/utils';
 
-import { simReducer } from './redurcers';
-import {
-  SelectedSingleNeuronModel,
-  SimAction,
-  SimConfig,
-  SimulateStep,
-} from '@/types/simulate/single-neuron';
-import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
+import { SelectedSingleNeuronModel } from '@/types/simulation/single-neuron';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
-import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { getIdFromSelfUrl } from '@/util/nexus';
+import { SimulationStep, SimulationStepsTraker } from '@/types/simulation/common';
 
-export const simulateStepAtom = atom<SimulateStep>('stimulation');
+export const steps: Array<SimulationStep> = [
+  { title: 'Experimental setup', status: undefined },
+  { title: 'Synaptic inputs', status: undefined },
+  { title: 'Stimulation protocol', status: undefined },
+  { title: 'Recording', status: undefined },
+  { title: 'Results', status: undefined },
+];
 
-export const simulationConfigAtom = atomWithReducer<SimConfig, SimAction>(
-  { ...DEFAULT_SIM_CONFIG },
-  simReducer
-);
+export const simulateStepTrackerAtom = atom<SimulationStepsTraker>({
+  steps,
+  current: { title: 'Experimental setup', status: undefined },
+});
 
 export const secNamesAtom = atomWithReset<string[]>([]);
-
-export const segNamesAtom = atom<string[]>(['soma[0]', 'axon[1]']);
 
 export const singleNeuronAtom = atom<SelectedSingleNeuronModel | null>(null);
 
@@ -32,18 +28,34 @@ export const singleNeuronIdAtom = atom<string | null>((get) => {
   return getIdFromSelfUrl(singleNeuronSelfUrl?.self ?? null);
 });
 
-export const simulationStatusAtom = atomWithReset({
-  launched: false,
-  finished: false,
-});
+export const simulationStatusAtom = atomWithReset<{
+  status: null | 'launched' | 'finished' | 'error';
+  description?: string;
+} | null>(null);
 
-export const simulationFormIsFilledAtom = atomWithReset(false);
+export const stimulusPreviewPlotDataAtom = atomWithReset<PlotData | null>(null);
 
-export const blueNaasInstanceRefAtom = atom<MutableRefObject<BlueNaasCls | null> | null>(null);
+export const genericSingleNeuronSimulationPlotDataAtom = atomWithReset<Record<
+  string,
+  PlotData
+> | null>(null);
 
-export const simulationPlotDataAtom = atomWithReset<PlotData | null>(null);
-
-export const protocolNameAtom = atom<string | null>((get) => {
-  const simulationConfig = get(simulationConfigAtom);
-  return simulationConfig.directStimulation?.[0].stimulus.stimulusProtocol ?? null; // TODO: The index here should not be hardcoded when synaptome rendering is done.
-});
+// {"soma": [{
+//   x: [0],
+//   y: [0],
+//   type: 'scatter',
+//   name: '',
+// }],
+// "dend": [{
+//   x: [0],
+//   y: [0],
+//   type: 'scatter',
+//   name: '',
+// }],
+// "api": [{
+//   x: [0],
+//   y: [0],
+//   type: 'scatter',
+//   name: '',
+// }]
+// }

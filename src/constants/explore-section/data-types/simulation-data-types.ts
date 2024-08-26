@@ -30,7 +30,7 @@ export const SIMULATION_DATA_TYPES: { [key: string]: DataTypeConfig } = {
     title: 'Single Neuron Synaptome Simulation',
     group: DataTypeGroup.SimulationData,
     name: 'single-neuron-synaptome-simulation',
-    columns: [Field.Name, Field.Description],
+    columns: [Field.Name, Field.Description, Field.BrainRegion, Field.MType, Field.EType],
     curated: false,
   },
 };

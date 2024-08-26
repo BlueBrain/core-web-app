@@ -8,6 +8,17 @@ export const SYNAPTOME_OBJECT_OF_STUDY = {
 } as const;
 type SynaptomeObjectOfStudy = typeof SYNAPTOME_OBJECT_OF_STUDY;
 
+export type SynaptomeConfigDistribution = {
+  synapses: SingleSynaptomeConfig[];
+  meModelSelf: string;
+};
+
+type ExclusionRule = {
+  id: string;
+  distance_soma_gte: number | undefined;
+  distance_soma_lte: number | undefined;
+};
+
 export type SingleSynaptomeConfig = {
   id: string;
   name: string;
@@ -15,12 +26,15 @@ export type SingleSynaptomeConfig = {
   type: number | undefined;
   distribution: string | undefined;
   formula: string | undefined;
+  seed: number | undefined;
+  exclusion_rules: Array<ExclusionRule> | null;
 };
 
-export type SynaptomeConfiguration = {
+export type SynaptomeModelConfiguration = {
   name: string;
   description: string;
   seed: number;
+  modelUrl: string;
   synapses: Array<SingleSynaptomeConfig>;
 };
 

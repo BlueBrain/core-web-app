@@ -1,6 +1,6 @@
 import { IdWithLabel, IdWithType } from './common';
 import { Annotation, BrainLocation, Contribution, FileDistribution } from './delta-properties';
-import { EntityResource } from '@/types/nexus/common';
+import { Distribution, EntityResource } from '@/types/nexus/common';
 
 export type ModelResource = EntityResource & {
   brainLocation: BrainLocation;
@@ -35,6 +35,10 @@ export type EModelResource = ModelResource & {
   seed: number;
   subject: ModelSubject;
   score?: number;
+};
+
+export type SynaptomeModelResource = EntityResource & {
+  distribution: Distribution;
 };
 
 export type Model = EModelResource;

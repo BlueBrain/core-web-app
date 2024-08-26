@@ -7,10 +7,13 @@ import { createHeaders } from '@/util/utils';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { thumbnailGenerationBaseUrl } from '@/config';
 import { DataType } from '@/constants/explore-section/list-views';
+import buildQueryString from '@/util/query-params-builder';
 
 export const dataTypeToEndpoint = {
   [DataType.ExperimentalNeuronMorphology]: 'morphology-image',
   [DataType.ExperimentalElectroPhysiology]: 'trace-image',
+  [DataType.SingleNeuronSimulation]: 'simulation-plot',
+  [DataType.SingleNeuronSynaptomeSimulation]: 'simulation-plot',
 };
 
 export default function PreviewThumbnail({
@@ -20,6 +23,8 @@ export default function PreviewThumbnail({
   height,
   type: experimentType,
   width,
+  target,
+  alt = 'img preview',
 }: {
   className?: string;
   contentUrl: string;
@@ -27,6 +32,8 @@ export default function PreviewThumbnail({
   height: number;
   type: keyof typeof dataTypeToEndpoint;
   width: number;
+  target?: string;
+  alt?: string;
 }) {
   const session = useSessionAtomValue();
   const { ref, inView } = useInView({
@@ -45,9 +52,12 @@ export default function PreviewThumbnail({
       setLoading(true);
 
       const encodedContentUrl = encodeURIComponent(contentUrl);
-      const requestUrl = `${thumbnailGenerationBaseUrl}/generate/${endpoint}?content_url=${encodedContentUrl}${
-        dpi ? `&dpi=${dpi}` : ''
-      }`;
+      const queryParams = buildQueryString({
+        dpi,
+        target,
+      });
+
+      const requestUrl = `${thumbnailGenerationBaseUrl}/generate/${endpoint}?content_url=${encodedContentUrl}&${queryParams}`;
 
       fetch(requestUrl, {
         method: 'GET',
@@ -64,18 +74,10 @@ export default function PreviewThumbnail({
         })
         .catch(() => setLoading(false));
     }
-  }, [contentUrl, dpi, endpoint, inView, session]);
+  }, [contentUrl, dpi, target, endpoint, inView, session]);
 
   if (thumbnail) {
-    return (
-      <Image
-        alt={`Morphology preview: ${contentUrl}`}
-        className={className}
-        height={height}
-        src={thumbnail}
-        width={width}
-      />
-    );
+    return <Image alt={alt} className={className} height={height} src={thumbnail} width={width} />;
   }
 
   return (

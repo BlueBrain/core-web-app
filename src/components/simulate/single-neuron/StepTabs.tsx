@@ -1,49 +1,36 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { Steps } from 'antd';
 
-import { simulateStepAtom } from '@/state/simulate/single-neuron';
-import { SimulateStep } from '@/types/simulate/single-neuron';
-import { classNames } from '@/util/utils';
+import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
+import { SimulationType } from '@/types/simulation/common';
 
-const steps: SimulateStep[] = [
-  'stimulation',
-  'recording',
-  'conditions',
-  'analysis',
-  'visualization',
-  'results',
-];
+export default function StepTabs({ type }: { type: SimulationType }) {
+  const [{ steps, current: currentStep }, updateSimulationStep] = useAtom(simulateStepTrackerAtom);
+  const items =
+    type === 'single-neuron-simulation'
+      ? steps.filter((o) => o.title !== 'Synaptic inputs')
+      : steps;
+  const newCurrentStep = items.findIndex((o) => o.title === currentStep?.title);
 
-export default function StepTabs() {
-  const [simulateStep, setSimulateStep] = useAtom(simulateStepAtom);
-
-  const handleClick = (step: SimulateStep) => {
-    setSimulateStep(step);
-  };
-
-  const getStyle = (step: SimulateStep) => {
-    const selectedOrNotStyle =
-      step === simulateStep
-        ? 'bg-primary-8 text-white font-bold'
-        : 'bg-white text-neutral-4 font-light';
-
-    const commonTabStyle = 'flex-grow border border-l-0 border-neural-2 capitalize';
-    return classNames(selectedOrNotStyle, commonTabStyle);
+  const onChange = (index: number) => {
+    const current = items.find((o, i) => i === index)!;
+    updateSimulationStep({
+      steps,
+      current,
+    });
   };
 
   return (
-    <div className="flex h-[36px]">
-      {steps.map((step) => (
-        <button
-          type="button"
-          onClick={() => handleClick(step)}
-          key={step}
-          className={getStyle(step)}
-        >
-          {step}
-        </button>
-      ))}
-    </div>
+    <Steps
+      responsive
+      type="navigation"
+      className="my-1 px-1 [&_.ant-steps-item-active]:before:!hidden [&_.ant-steps-item-title]:capitalize"
+      size="small"
+      items={items}
+      current={newCurrentStep}
+      onChange={onChange}
+    />
   );
 }

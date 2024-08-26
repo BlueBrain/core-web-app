@@ -1,20 +1,21 @@
-import { DataType } from '../explore-section/list-views';
 import {
   ConditionalStimulusParamsTypes,
   FunctionParameterNumber,
   StimulusDropdownInfo,
-  StimulusTypeDropdownOptionType,
-  StimulusModuleDropdownOptionType,
-  SimConfig,
+  StimulusTypeOption,
+  StimulusModuleOption,
+  SimulationConfiguration,
   StimulusConfig,
-  SelectedSingleNeuronModel,
-  SynapsesConfig,
-  DirectSimulationConfig,
-} from '@/types/simulate/single-neuron';
+  CurrentInjectionSimulationConfig,
+  SynapseConfig,
+  RecordLocation,
+  SimulationConditions,
+} from '@/types/simulation/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
+import { SingleSynaptomeConfig } from '@/types/synaptome';
 
 export const stimulusTypeParams: StimulusDropdownInfo & {
-  options: StimulusTypeDropdownOptionType[];
+  options: StimulusTypeOption[];
 } = {
   name: 'Type',
   value: 'current_clamp',
@@ -27,7 +28,7 @@ export const stimulusTypeParams: StimulusDropdownInfo & {
 
 // taken from https://github.com/BlueBrain/BlueCelluLab/blob/main/bluecellulab/stimulus/factory.py#L311
 export const stimulusModuleParams: StimulusDropdownInfo & {
-  options: StimulusModuleDropdownOptionType[];
+  options: StimulusModuleOption[];
 } = {
   name: 'Protocol',
   value: 'step',
@@ -90,6 +91,20 @@ export const stimulusParams: ConditionalStimulusParamsTypes = {
   },
 };
 
+const DEFAULT_SECTION = 'soma[0]';
+
+export const DEFAULT_RECORDING_LOCATION: RecordLocation = {
+  section: DEFAULT_SECTION,
+  offset: 0.5,
+};
+
+export const DEFAULT_SIMULATION_CONDITIONS: SimulationConditions = {
+  celsius: 34,
+  vinit: -73,
+  hypamp: 0,
+  max_time: 2000,
+};
+
 export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   stimulusType: 'current_clamp',
   stimulusProtocol: 'iv',
@@ -103,40 +118,32 @@ export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   amplitudes: [40, 80, 120],
 };
 
-export const DEFAULT_DIRECT_STIM_CONFIG: DirectSimulationConfig = {
-  id: '0',
-  celsius: 34,
-  hypamp: 0,
-  vinit: -73,
-  injectTo: 'soma[0]',
+export const DEFAULT_DIRECT_STIM_CONFIG: CurrentInjectionSimulationConfig = {
+  id: 0,
+  configId: crypto.randomUUID(),
+  injectTo: DEFAULT_SECTION,
   stimulus: DEFAULT_STIM_CONFIG,
 };
 
-export const DEFAULT_SIM_CONFIG: SimConfig = {
-  recordFrom: ['soma[0]_0'],
-  directStimulation: [DEFAULT_DIRECT_STIM_CONFIG],
-  synapses: null,
+export const DEFAULT_SIM_CONFIG: SimulationConfiguration = {
+  conditions: DEFAULT_SIMULATION_CONDITIONS,
+  recordFrom: [{ ...DEFAULT_RECORDING_LOCATION }],
+  currentInjection: [DEFAULT_DIRECT_STIM_CONFIG],
+  synapses: undefined,
 };
 
-export const getDefaultSynapsesConfig = (
-  model: SelectedSingleNeuronModel
-): SynapsesConfig | null => {
-  if (
-    model.type === DataType.SingleNeuronSynaptome &&
-    'synapses' in model.source &&
-    model.source.synapses.length > 0
-  ) {
-    return [
-      {
-        id: '0',
-        synapseId: model.source.synapses[0].id,
-        delay: 100,
-        duration: 2000,
-        frequency: 20,
-        weightScalar: 2,
-      },
-    ];
+export const getDefaultSynapseConfig = (
+  synapsePlacementConfig?: SingleSynaptomeConfig[]
+): SynapseConfig | null => {
+  if (synapsePlacementConfig) {
+    return {
+      key: 0,
+      id: synapsePlacementConfig[0].id,
+      delay: 100,
+      duration: 2000,
+      frequency: 20,
+      weightScalar: 2,
+    };
   }
-
   return null;
 };

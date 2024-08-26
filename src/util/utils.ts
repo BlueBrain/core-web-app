@@ -240,7 +240,8 @@ export const getZodErrorPath = ({ issues }: ZodError) => {
  */
 export function isJSON(str: any) {
   try {
-    return JSON.parse(JSON.stringify(str)) && !!str;
+    JSON.parse(str);
+    return true;
   } catch (e) {
     return false;
   }
@@ -267,4 +268,10 @@ export async function assertVLApiResponse(res: Response) {
 export function assertErrorMessage(e: any) {
   if (e instanceof Error) return e.message;
   return 'Something went wrong...';
+}
+
+export function getRandomIntInclusive(min: number, max: number) {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
 }
