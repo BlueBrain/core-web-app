@@ -45,20 +45,23 @@ export default function VirtualLabProjectSimulateNewPage({
   };
 
   return (
-    <div className="flex flex-col pt-14">
+    <div className="flex flex-col pt-14 pr-10">
       <div className="flex justify-between align-middle">
-        <div className="text-2xl font-bold text-white">
-          Select a single neuron model to simulate
-        </div>
+        <div className="text-2xl font-bold text-white">Create a new simulation</div>
         <GenericButton text="Cancel" className="text-white hover:text-white" href={simulatePage} />
       </div>
       {/* TODO: replace this list with items saved in Model Library */}
-      <div className="h-[70vh]" id="explore-table-container-for-observable">
+      <div id="explore-table-container-for-observable" className="h-full mb-5 overflow-hidden">
+        <div className="bg-white pl-5 pt-5 text-lg text-primary-8">
+          
+          Select a single neuron model to simulate{' '}
+        </div>
         <ExploreSectionListingView
           dataType={modelType ?? DataType.CircuitMEModel}
           dataScope={ExploreDataScope.SelectedBrainRegion}
           virtualLabInfo={{ virtualLabId, projectId }}
           selectionType="radio"
+          tableScrollable={false}
           renderButton={({ selectedRows }) => (
             <Btn
               className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2"
