@@ -29,7 +29,6 @@ import {
   Group,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { DragControls } from 'three/examples/jsm/controls/DragControls';
 
 import RendererCtrl from './renderer-ctrl';
 import type { Morphology, SecMarkerConfig } from './types';
@@ -177,8 +176,6 @@ export default class NeuronViewerRenderer {
 
   private objectsGroup = new Group();
 
-  private enableDragDrop = false;
-
   constructor(container: HTMLDivElement, config: NeuronViewerConfig) {
     this.config = config;
 
@@ -246,8 +243,6 @@ export default class NeuronViewerRenderer {
     const eventListenerCfg = { capture: false, passive: true };
 
     this.renderer.domElement.addEventListener('click', this.onClick, eventListenerCfg);
-    this.renderer.domElement.addEventListener('keydown', this.onKeyDown, eventListenerCfg);
-    this.renderer.domElement.addEventListener('keyup', this.onKeyUp, eventListenerCfg);
     this.renderer.domElement.addEventListener('pointerdown', this.onPointerDown, eventListenerCfg);
     this.renderer.domElement.addEventListener('wheel', this.onMouseWheel, eventListenerCfg);
     this.renderer.domElement.addEventListener('pointermove', this.onPointerMove, eventListenerCfg);
@@ -269,47 +264,26 @@ export default class NeuronViewerRenderer {
     this.ctrl.renderOnce();
   };
 
-  private onKeyDown(event: KeyboardEvent) {
-    this.enableDragDrop = event.key === 'Shift';
-  }
-
-  private onKeyUp() {
-    this.enableDragDrop = false;
-  }
-
   private onClick = (e: MouseEvent) => {
-    if (this.enableDragDrop) {
-      this.objects.forEach((p) => this.objectsGroup.attach(p));
-      const draggleControl = new DragControls(
-        [this.objectsGroup],
-        this.camera,
-        this.renderer.domElement
-      );
-      draggleControl.addEventListener('drag', this.render);
-      draggleControl.transformGroup = true;
+    if (!this.config.onClick) return;
 
-      this.render();
-    } else {
-      if (!this.config.onClick) return;
+    if (
+      Math.abs(Date.now() - (this.pointerDownTimestamp as number)) > CLICK_DELAY_TOLERANCE ||
+      Math.abs(this.mouseNative.x - e.clientX) > CLICK_POS_TOLERANCE ||
+      Math.abs(this.mouseNative.y - e.clientY) > CLICK_POS_TOLERANCE
+    )
+      return;
 
-      if (
-        Math.abs(Date.now() - (this.pointerDownTimestamp as number)) > CLICK_DELAY_TOLERANCE ||
-        Math.abs(this.mouseNative.x - e.clientX) > CLICK_POS_TOLERANCE ||
-        Math.abs(this.mouseNative.y - e.clientY) > CLICK_POS_TOLERANCE
-      )
-        return;
-
-      const clickedMesh = this.getMeshByNativeCoordinates(e.clientX, e.clientY);
-      if (!clickedMesh) return;
-      this.config.onClick({
-        type: clickedMesh.name,
-        data: clickedMesh.userData as NeuronSegementInfo,
-        position: {
-          x: e.clientX,
-          y: e.clientY,
-        },
-      });
-    }
+    const clickedMesh = this.getMeshByNativeCoordinates(e.clientX, e.clientY);
+    if (!clickedMesh) return;
+    this.config.onClick({
+      type: clickedMesh.name,
+      data: clickedMesh.userData as NeuronSegementInfo,
+      position: {
+        x: e.clientX,
+        y: e.clientY,
+      },
+    });
   };
 
   private onPointerMove = throttle((e: PointerEvent) => {
@@ -553,6 +527,15 @@ export default class NeuronViewerRenderer {
   removeSingleSynapseSet = (meshId: string) => {
     const object = this.scene.getObjectByProperty('uuid', meshId);
     if (object) {
+      object.removeFromParent();
+      if (object instanceof Object3D) {
+        Array.from(object.children as Mesh[]).forEach((mesh) => {
+          mesh.removeFromParent();
+          disposeMesh(mesh);
+        });
+      } else {
+        disposeMesh(object);
+      }
       this.scene.remove(object);
       this.synapses = this.synapses.filter((s) => s.uuid !== meshId);
       this.objects = this.objects.filter((o) => o.uuid === meshId);
@@ -562,11 +545,8 @@ export default class NeuronViewerRenderer {
 
   deleteAllSynapseSets = () => {
     this.synapses.forEach((o) => {
-      this.scene.remove(o);
-      this.objects = this.objects.filter((k) => k.uuid === o.uuid);
+      this.removeSingleSynapseSet(o.uuid);
     });
-    this.synapses = [];
-    this.ctrl.renderOnce();
   };
 
   ensureSecMarkers = (configs: SecMarkerConfig[]) => {

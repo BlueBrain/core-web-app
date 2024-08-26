@@ -2,10 +2,10 @@ import { Fragment, useRef } from 'react';
 
 import { NeuronSegementInfo } from '@/services/bluenaas-single-cell/renderer-utils';
 
-const DataMappoing = {
+const dataMapping = {
   segIdx: 'Segment index',
   section: 'Section',
-  section_nseg: 'Number of segmetns',
+  section_nseg: 'Number of segments',
   offset: 'Offset',
   distance_from_soma: 'Distance from soma',
 };
@@ -36,7 +36,7 @@ export default function NeuronMeshInjectionRecordingPopover({
       <div className="grid w-full grid-cols-[1fr_max-content] gap-x-5 gap-y-1">
         {Object.keys(data).map((o) => (
           <Fragment key={o}>
-            <div className="font-light">{DataMappoing[o as keyof typeof DataMappoing]}</div>
+            <div className="font-light">{dataMapping[o as keyof typeof dataMapping]}</div>
             <div className="font-bold">{data[o]}</div>
           </Fragment>
         ))}
