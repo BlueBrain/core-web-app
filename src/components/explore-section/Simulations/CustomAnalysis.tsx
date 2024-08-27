@@ -135,10 +135,7 @@ export function useCumulativeAnalysisReports(
       });
 
       const foundReport = cumulativeAnalysisReports.find((r) => {
-        if (Array.isArray(r.contribution))
-          return r.contribution.find((c) => c.agent['@id'] === analysisId);
-
-        return r.contribution.agent['@id'] === analysisId;
+        return r.generation.activity.wasAssociatedWith['@id'] == analysisId;
       });
 
       const multiAnalysis =
