@@ -1,17 +1,24 @@
-import { ReactNode, useEffect, useReducer } from 'react';
+import { ReactNode,  useMemo, useRef, useState } from 'react';
 import { Select, InputNumber } from 'antd';
 import range from 'lodash/range';
 import round from 'lodash/round';
-import isEqual from 'lodash/isEqual';
 import dynamic from 'next/dynamic';
 
-import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 
 const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPreviewPlot'), {
   ssr: false,
 });
 
-const amperageInitialState = {
+type AmperageStateType = {
+  start: number;
+  end: number;
+  stepValue: number;
+  stepType: StepType;
+  computed: number[];
+  isConsistent: boolean;
+}
+
+const amperageInitialState: AmperageStateType = {
   start: 40,
   end: 120,
   stepValue: 40,
@@ -20,92 +27,94 @@ const amperageInitialState = {
   isConsistent: true,
 };
 
-type AmperageActionType = {
-  type: 'start' | 'end' | 'stepValue' | 'stepType' | 'checkConsistency';
-  payload: any;
-};
-
-type AmperageStateType = typeof amperageInitialState;
-
 type Props = {
   stimulationId: number;
-  amplitudes: number[];
   modelSelfUrl: string;
 };
 
 type StepType = 'stepSize' | 'stepNumber';
 
-function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
-  const newState = { ...state } satisfies AmperageStateType;
-  const newVal = action.payload;
-  newState.isConsistent = false;
+export default function AmperageRange({ modelSelfUrl, stimulationId }: Props) {
+  const [state, update] = useState<AmperageStateType>(() => amperageInitialState);
+  const [error, setError] = useState<string | null>(null);
+  const calculatedAmplitudesRef = useRef<Array<number>>([]);
 
-  switch (action.type) {
-    case 'start':
-      newState.start = newVal;
-      break;
-    case 'end':
-      newState.end = newVal;
-      break;
-    case 'stepType':
-      newState.stepType = newVal;
-      break;
-    case 'stepValue':
-      if (newVal < 0) {
-        newState.stepValue = 0;
-        break;
+  const updateStart = (value: number | null) => {
+    setError(null);
+    if (value && value < state.end) {
+      return update(prev => ({
+        ...prev,
+        start: value
+      }))
+    }
+    setError("Start value should less then the end value.");
+  }
+  const updateEnd = (value: number | null) => {
+    setError(null);
+    if (value && state.start < value) {
+      return update(prev => ({
+        ...prev,
+        start: value
+      }))
+    }
+    setError("End value should be greater then the start value.");
+  }
+  const updateStepType = (value: StepType) => {
+    setError(null);
+    update(prev => ({
+      ...prev,
+      stepType: value
+    }))
+  }
+  const updateStepValue = (value: number | null) => {
+    setError(null);
+    if (value) {
+      const computed = calculateRangeOutput(state.start, state.end, {
+        type: state.stepType,
+        value,
+      })
+      if(computed.length > 15){
+        setError("The result amplitudes list should not be greater than 15.");
+        return;
       }
-      newState.stepValue = newVal;
-      break;
-    case 'checkConsistency':
-      if (state.start > state.end) {
-        newState.start = state.end;
-      } else if (state.end < state.start) {
-        newState.end = state.start;
+      if (state.stepType === 'stepNumber' && value === 0) {
+        update(prev => ({
+          ...prev,
+          stepValue: 1
+        }))
       }
-      if (state.stepType === 'stepNumber' && state.stepValue === 0) {
-        newState.stepValue = 1;
+      else if (state.stepType === 'stepSize' && value === 0) {
+        update(prev => ({
+          ...prev,
+          stepValue: .1
+        }))
       }
-      if (state.stepType === 'stepSize' && state.stepValue === 0) {
-        newState.stepValue = 0.1;
-      }
-      newState.isConsistent = true;
-      break;
-    default:
-      throw new Error('Action not found', action.type);
+      update(prev => ({
+        ...prev,
+        stepValue: value,
+      }));
+    }
   }
 
-  newState.computed = calculateRangeOutput(newState.start, newState.end, {
-    type: newState.stepType,
-    value: newState.stepValue,
-  });
-  return newState;
-}
-
-export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl }: Props) {
-  const [amperageState, dispatch] = useReducer(rangeReducer, { ...amperageInitialState });
-  const { setAmplitudes } = useCurrentInjectionSimulationConfig();
-
-  useEffect(() => {
-    if (!amperageState.isConsistent) return;
-    if (isEqual(amperageState.computed, amplitudes)) return;
-    setAmplitudes({
-      id: stimulationId,
-      newValue: amperageState.computed,
-    });
-  }, [
-    amperageState.computed,
-    amperageState.isConsistent,
-    amplitudes,
-    setAmplitudes,
-    stimulationId,
-  ]);
+  const calculatedAmplitudes = useMemo(() => {
+    if (!error) {
+      calculatedAmplitudesRef.current = calculateRangeOutput(state.start, state.end, {
+        type: state.stepType,
+        value: state.stepValue,
+      });
+      return calculatedAmplitudesRef.current;
+    }
+    return calculatedAmplitudesRef.current;
+  }, [state, error]);
 
   return (
     <>
-      <div className="mb-3 text-left text-base">
-        <span className="mr-1 font-bold text-red-400">*</span>
-        <span>Amperage [nA]</span>
+      <div className='flex flex-col items-start gap-1 mb-3'>
+        <div className="text-left text-base">
+          <span className="mr-1 font-bold text-red-400">*</span>
+          <span>Amperage [nA]</span>
+        </div>
+        {error && <i className='font-light text-base text-pink-700'>{error}</i>}
       </div>
       <div className="flex gap-6 text-base">
         <InputNumber
@@ -115,9 +124,8 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
           max={100}
           size="small"
           className="w-[60px]"
-          value={amperageState.start}
-          onChange={(newVal) => dispatch({ type: 'start', payload: newVal })}
-          onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
+          value={state.start}
+          onChange={updateStart}
         />
 
         <span>⇨</span>
@@ -130,8 +138,8 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
             ] satisfies { value: StepType; label: ReactNode }[]
           }
           size="small"
-          value={amperageState.stepType}
-          onChange={(newVal: StepType) => dispatch({ type: 'stepType', payload: newVal })}
+          value={state.stepType}
+          onChange={updateStepType}
           className="w-[140px]"
         />
 
@@ -142,9 +150,8 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
           max={500}
           size="small"
           className="w-[60px]"
-          value={amperageState.stepValue}
-          onChange={(newVal) => dispatch({ type: 'stepValue', payload: newVal })}
-          onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
+          value={state.stepValue}
+          onChange={updateStepValue}
         />
 
         <span>⇨</span>
@@ -156,21 +163,24 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
           max={1000}
           size="small"
           className="w-[60px]"
-          value={amperageState.end}
-          onChange={(newVal) => dispatch({ type: 'end', payload: newVal })}
-          onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
+          value={state.end}
+          onChange={updateEnd}
         />
       </div>
 
       <div className="mb-2 mt-4 text-left text-sm text-gray-400">Output amperages</div>
       <div className="mb-4 flex flex-wrap gap-4 text-base font-bold text-gray-400">
-        {amperageState.computed.map((value) => (
+        {calculatedAmplitudes.map((value) => (
           <span key={value} className="">
             {value}
           </span>
         ))}
       </div>
-      <StimuliPreviewPlot amplitudes={amperageState.computed} modelSelfUrl={modelSelfUrl} />
+      <StimuliPreviewPlot
+        stimulationId={stimulationId}
+        amplitudes={calculatedAmplitudes}
+        modelSelfUrl={modelSelfUrl}
+      />
     </>
   );
 }

@@ -7,7 +7,8 @@ import {
 export default async function getStimuliPlot(
   modelSelfUrl: string,
   token: string,
-  config: DirectCurrentInjectionGraphRequest
+  config: DirectCurrentInjectionGraphRequest,
+  signal?: AbortSignal
 ): Promise<DirectCurrentInjectionGraphPlotResponse[]> {
   const response = await fetch(
     `${blueNaasUrl}/graph/direct-current-plot?model_id=${encodeURIComponent(modelSelfUrl)}`,
@@ -21,7 +22,8 @@ export default async function getStimuliPlot(
       body: JSON.stringify({
         ...config,
       }),
-    }
+      signal
+    },
   );
   if (response.ok) {
     return await response.json();
