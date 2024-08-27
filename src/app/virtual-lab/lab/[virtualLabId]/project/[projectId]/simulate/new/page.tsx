@@ -58,13 +58,14 @@ export default function NewSimulation({
       <VirtualLabTopMenu />
       <ScopeSelector />
       <div className="flex justify-between align-middle">
-        <div className="text-2xl font-bold text-white">
-          Select a single neuron model to simulate
-        </div>
+        <div className="text-2xl font-bold text-white">Create a simulation</div>
         <GenericButton text="Cancel" className="text-white hover:text-white" href={simulatePage} />
       </div>
       {/* TODO: replace this list with items saved in Model Library */}
       <div className="h-[calc(100vh-290px)]" id="explore-table-container-for-observable">
+        <div className="bg-white pl-5 pt-5 text-lg text-primary-8">
+          Select a single neuron model to simulate
+        </div>
         <ExploreSectionListingView
           dataType={modelType ?? DataType.CircuitMEModel}
           dataScope={ExploreDataScope.SelectedBrainRegion}
