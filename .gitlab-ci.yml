@@ -150,6 +150,7 @@ deploy-aws-prod:
     NEXT_PUBLIC_BBS_ML_PRIVATE_BASE_URL: http://internal-sbo-poc-private-alb-1398645643.us-east-1.elb.amazonaws.com:3000/api/literature
     NEXT_PUBLIC_CELL_SVC_BASE_URL: https://sbo-cell-svc.shapes-registry.org
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
+    NEXT_PUBLIC_BLUE_NAAS_URL: https://openbluebrain.com/api/bluenaas
     KANIKO_EXTRA_ARGS: >
       --build-arg=NEXT_PUBLIC_BASE_PATH
       --build-arg=NEXT_PUBLIC_ENVIRONMENT
@@ -165,6 +166,7 @@ deploy-aws-prod:
       --build-arg=NEXT_PUBLIC_CELL_COMPOSITION_TAG
       --build-arg=NEXT_PUBLIC_BBS_ML_PRIVATE_BASE_URL
       --build-arg=NEXT_PUBLIC_CELL_SVC_BASE_URL
+      --build-arg=NEXT_PUBLIC_BLUE_NAAS_URL
       --build-arg=NODE_OPTIONS
   only:
     - develop
