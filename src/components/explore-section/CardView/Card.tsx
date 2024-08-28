@@ -1,18 +1,18 @@
 import { useInView } from 'react-intersection-observer';
 import { Tooltip, Collapse } from 'antd';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
   MorphoMetricCompartment,
 } from '@/types/explore-section/es-experiment';
-import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { DataType } from '@/constants/explore-section/list-views';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { detailUrlBuilder } from '@/util/common';
 import { Field } from '@/constants/explore-section/fields-config/enums';
-import { BASE_EXPERIMENTAL_EXPLORE_PATH } from '@/constants/explore-section/paths';
 import { useMorphometrics } from '@/hooks/useMorphoMetrics';
 import styles from './styles.module.scss';
 
@@ -32,8 +32,9 @@ const { Panel } = Collapse;
 
 export default function Card({ resource, dataType, activeKeys, metrics, score }: CardProps) {
   const { ref, inView } = useInView();
-
-  const resourceUrl = detailUrlBuilder(BASE_EXPERIMENTAL_EXPLORE_PATH, resource);
+  const path = usePathname();
+  const basePath = path.split('/').slice(0, -1).join('/');
+  const resourceUrl = detailUrlBuilder(basePath, resource);
 
   const { groupedCardFields, renderMetric } = useMorphometrics(dataType, metrics);
 

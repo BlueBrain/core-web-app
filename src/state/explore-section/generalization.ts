@@ -238,8 +238,7 @@ export const resourceBasedResponseMorphoMetricsAtom = atomFamily<
       const ids = map(resourceBasedResponseHits, '_id');
       if (!ids) return null;
 
-      const filters = await get(filtersAtom({ dataType, resourceId }));
-      const query = fetchMorphoMetricsUsingIds(DEFAULT_CARDS_NUMBER * 5, PAGE_NUMBER, filters, ids);
+      const query = fetchMorphoMetricsUsingIds(DEFAULT_CARDS_NUMBER * 5, PAGE_NUMBER, ids);
 
       const esResponse = query && (await fetchEsResourcesByType(query));
       if (!esResponse) return null; // Error
@@ -262,7 +261,7 @@ export const resourceBasedResponseMorphoMetricsAtom = atomFamily<
 export const sourceMorphoMetricsAtom = atomFamily(
   (resourceId: string) =>
     atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['hits'] | null>>(async () => {
-      const query = fetchMorphoMetricsUsingIds(5, PAGE_NUMBER, [], [resourceId]);
+      const query = fetchMorphoMetricsUsingIds(5, PAGE_NUMBER, [resourceId]);
 
       const esResponse = query && (await fetchEsResourcesByType(query));
 
