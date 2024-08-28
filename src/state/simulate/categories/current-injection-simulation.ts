@@ -39,14 +39,17 @@ export default function useCurrentInjectionSimulationConfig() {
     );
     const paramInfo = stimulusParams[options?.[0]?.value] || {};
 
-    const updatedStimulus = {
-      ...stimConfig.stimulus,
-      stimulusType: state,
-      stimulusProtocolOptions: options || [],
-      stimulusProtocolInfo: options?.[0] || null,
-      stimulusProtocol: options?.[0]?.value || null,
-      paramValues: getParamValues(paramInfo),
-      paramInfo,
+    const updatedStimulus: CurrentInjectionSimulationConfig = {
+      ...stimConfig,
+      stimulus: {
+        ...stimConfig.stimulus,
+        stimulusType: newValue,
+        stimulusProtocolOptions: options || [],
+        stimulusProtocolInfo: options?.[0] || null,
+        stimulusProtocol: options?.[0]?.value || null,
+        paramValues: getParamValues(paramInfo),
+        paramInfo,
+      },
     };
 
     return update(
@@ -70,12 +73,15 @@ export default function useCurrentInjectionSimulationConfig() {
     if (!paramInfo) throw new Error(`Parameters for protocol ${newValue} not found`);
     paramInfo.stop_time.defaultValue = protocolInfo.duration;
 
-    const updatedStimulus = {
-      ...stimConfig.stimulus,
-      stimulusProtocolInfo: protocolInfo || null,
-      stimulusProtocol: protocolInfo?.value || null,
-      paramValues: getParamValues(paramInfo),
-      paramInfo,
+    const updatedStimulus: CurrentInjectionSimulationConfig = {
+      ...stimConfig,
+      stimulus: {
+        ...stimConfig.stimulus,
+        stimulusProtocolInfo: protocolInfo || null,
+        stimulusProtocol: protocolInfo?.value || null,
+        paramValues: getParamValues(paramInfo),
+        paramInfo,
+      },
     };
 
     return update(
@@ -98,11 +104,14 @@ export default function useCurrentInjectionSimulationConfig() {
   }) {
     const stimConfig = findConfig(id);
 
-    const updatedStimulus = {
-      ...stimConfig.stimulus,
-      paramValues: {
-        ...stimConfig.stimulus.paramValues,
-        [key]: newValue,
+    const updatedStimulus: CurrentInjectionSimulationConfig = {
+      ...stimConfig,
+      stimulus: {
+        ...stimConfig.stimulus,
+        paramValues: {
+          ...stimConfig.stimulus.paramValues,
+          [key]: newValue,
+        },
       },
     };
 
@@ -122,11 +131,11 @@ export default function useCurrentInjectionSimulationConfig() {
   }: {
     id: number;
     key: keyof CurrentInjectionSimulationConfig;
-    newValue: number | null;
+    newValue: number | string | null;
   }) {
     const stimConfig = findConfig(id);
     const updatedStimulus = {
-      ...stimConfig.stimulus,
+      ...stimConfig,
       [key]: newValue,
     };
     return update(
@@ -141,9 +150,12 @@ export default function useCurrentInjectionSimulationConfig() {
   function setAmplitudes({ id, newValue }: { id: number; newValue: Array<number> }) {
     const stimConfig = findConfig(id);
 
-    const updatedStimulus = {
-      ...stimConfig.stimulus,
-      amplitudes: newValue,
+    const updatedStimulus: CurrentInjectionSimulationConfig = {
+      ...stimConfig,
+      stimulus: {
+        ...stimConfig.stimulus,
+        amplitudes: newValue,
+      },
     };
 
     return update(

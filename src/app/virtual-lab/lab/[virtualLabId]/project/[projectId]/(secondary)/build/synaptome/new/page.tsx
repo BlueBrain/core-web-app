@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ConfigProvider, Form } from 'antd';
+
 import { Content, Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 import { SynaptomeModelConfiguration } from '@/types/synaptome';

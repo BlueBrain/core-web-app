@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { Form, Input, Select, Button, FormListFieldData, InputNumber } from 'antd';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import {
   DeleteOutlined,
   EyeInvisibleOutlined,
@@ -14,6 +14,8 @@ import {
 import { z } from 'zod';
 import delay from 'lodash/delay';
 import isEqual from 'lodash/isEqual';
+import groupBy from 'lodash/groupBy';
+import findIndex from 'lodash/findIndex';
 
 import { GENERATE_SYNAPSES_FAIL } from './constants';
 import { classNames } from '@/util/utils';
@@ -27,12 +29,13 @@ import {
 import {
   sendDisplaySynapses3DEvent,
   sendRemoveSynapses3DEvent,
-} from '@/components/neuron-viewer/events';
+} from '@/components/neuron-viewer/hooks/events';
 
 import useNotification from '@/hooks/notifications';
 import { getSession } from '@/authFetch';
 import { getSynaptomePlacement } from '@/api/bluenaas';
 import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
+import { secNamesAtom } from '@/state/simulate/single-neuron';
 
 type Props = {
   modelId: string;
@@ -82,12 +85,32 @@ const SynapseGroupValidationSchema = z
     }
   });
 
+const sectionTargetMapping = {
+  dend: 'Dendrite',
+  soma: 'Soma',
+  apic: 'Apical',
+  basal: 'Basal',
+};
+
 export default function SynapseSet({ modelId, index, field, removeGroup }: Props) {
   const [generateError, setGenerateError] = useState(false);
   const [generateSuccess, setGenerateSuccess] = useState(false);
   const [synapseVis, setSynapseVis] = useState(false);
   const [visualizeLoading, setLoadingVisualize] = useState(false);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
+  const secNames = useAtomValue(secNamesAtom);
+
+  const groupedSections = Object.keys(
+    groupBy(secNames, (str) => {
+      const bracketIndex = findIndex(str, (char) => char === '[');
+      return bracketIndex !== -1 ? str.slice(0, bracketIndex) : str;
+    })
+  ).filter((o) => o !== 'soma');
+
+  const targetOptions = groupedSections.map((value) => ({
+    value,
+    label: sectionTargetMapping[value as keyof typeof sectionTargetMapping],
+  }));
 
   const { error: notifyError } = useNotification();
   const form = Form.useFormInstance();
@@ -293,11 +316,8 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
               placeholder="Select a target"
               size="large"
               className="[&_.ant-select-selection-item]:font-bold [&_.ant-select-selection-item]:text-primary-8"
-              options={[
-                { value: 'apic', label: 'Apical' },
-                { value: 'basal', label: 'Basal' },
-                { value: 'dend', label: 'Dendrite' },
-              ]}
+              disabled={!targetOptions.length}
+              options={targetOptions}
             />
           </Form.Item>
           <Form.Item

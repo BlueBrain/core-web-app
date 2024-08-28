@@ -28,7 +28,7 @@ import { MEModelResource } from '@/types/me-model';
 import {
   sendRemoveSynapses3DEvent,
   sendResetSynapses3DEvent,
-} from '@/components/neuron-viewer/events';
+} from '@/components/neuron-viewer/hooks/events';
 import useNotification from '@/hooks/notifications';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
@@ -202,7 +202,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
       <div className="sticky top-0 mb-5 flex items-center justify-between gap-2">
         <h2 className="my-3 text-2xl font-bold text-primary-8">
           <span>
-            Synaptses sets
+            Synapses sets
             <span className="ml-2 text-base font-light">
               {form.getFieldValue('synapses')?.length
                 ? `(${form.getFieldValue('synapses').length})`

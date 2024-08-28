@@ -2,6 +2,7 @@
 
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import dynamic from 'next/dynamic';
 
 import { ParameterView } from '@/components/simulate/single-neuron';
 import { useModel } from '@/hooks/useModel';
@@ -9,7 +10,13 @@ import { ModelResource } from '@/types/simulation/single-neuron';
 
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import Wrapper from '@/components/simulate/single-neuron/Wrapper';
-import NeuronViewerContainer from '@/components/neuron-viewer/NeuronViewerWithActions';
+
+const NeuronViewerContainer = dynamic(
+  () => import('@/components/neuron-viewer/NeuronViewerWithActions'),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   params: {

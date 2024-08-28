@@ -1,5 +1,8 @@
 import { MutableRefObject, useEffect } from 'react';
-import Renderer, { ClickData, HoverData } from '@/services/bluenaas-single-cell/renderer';
+import Renderer, {
+  NeuronViewerClickData,
+  NeuronViewerHoverData,
+} from '@/services/bluenaas-single-cell/renderer';
 
 export default function useNeuronViewerActions({
   renderer,
@@ -9,9 +12,10 @@ export default function useNeuronViewerActions({
   useActions?: boolean;
   renderer: MutableRefObject<Renderer | null>;
   actions?: {
-    onClick?: (data: ClickData) => void;
-    onHover?: (data: HoverData) => void;
-    onHoverEnd?: () => void;
+    onClick?: (data: NeuronViewerClickData) => void;
+    onHover?: (data: NeuronViewerHoverData) => void;
+    onHoverEnd?: (data: NeuronViewerHoverData) => void;
+    onZoom?: (data: NeuronViewerHoverData) => void;
   };
 }) {
   useEffect(() => {

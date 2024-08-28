@@ -29,11 +29,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import RendererCtrl from './renderer-ctrl';
 import type { Morphology, SecMarkerConfig } from './types';
-import { createSegMarkerMesh, createSegmentMesh } from './renderer-utils';
+import { createSegMarkerMesh, createSegmentMesh, NeuronSegementInfo } from './renderer-utils';
 import { sendSegmentDetailsEvent } from './events';
 
 import { basePath } from '@/config';
-import { SynapsesMesh } from '@/components/neuron-viewer/events';
+import { SynapsesMesh } from '@/components/neuron-viewer/hooks/events';
 
 const FOG_COLOR = 0xffffff;
 const FOG_NEAR = 1;
@@ -50,24 +50,29 @@ const TEXTURE_BASE_URL = `${basePath}/images/e-model-interactive`;
 export type SynapseBubble = Mesh<SphereGeometry, MeshPhongMaterial>;
 export type SynapseBubblesMesh = Mesh<InstancedBufferGeometry, MeshPhongMaterial>;
 
-export type ClickData = {
+export type NeuronViewerClickData = {
   type: string;
-  data: any;
+  data: NeuronSegementInfo;
   position: {
     x: number;
     y: number;
   };
 };
 
-export type HoverData = {
+export type NeuronViewerHoverData = {
   type: string;
-  data: any;
+  data: NeuronSegementInfo;
+  position: {
+    x: number;
+    y: number;
+  };
 };
 
 export type NeuronViewerConfig = {
-  onClick?: (data: ClickData) => void;
-  onHover?: (data: HoverData) => void;
-  onHoverEnd?: (data: HoverData) => void;
+  onClick?: (data: NeuronViewerClickData) => void;
+  onHover?: (data: NeuronViewerHoverData) => void;
+  onHoverEnd?: (data: NeuronViewerHoverData) => void;
+  onZoom?: (data: NeuronViewerHoverData) => void;
 };
 
 function disposeMesh(mesh: Mesh | LineSegments) {
@@ -216,6 +221,7 @@ export default class NeuronViewerRenderer {
     this.camera = new PerspectiveCamera(45, clientWidth / clientHeight, 0.01, 100000);
     this.scene.add(this.camera);
     this.camera.add(new PointLight(CAMERA_LIGHT_COLOR, 0.9));
+    this.camera.zoom = 1;
 
     this.camera.position.setZ(-400);
     this.camera.lookAt(new Vector3());
@@ -264,7 +270,7 @@ export default class NeuronViewerRenderer {
     if (!clickedMesh) return;
     this.config.onClick({
       type: clickedMesh.name,
-      data: clickedMesh.userData,
+      data: clickedMesh.userData as NeuronSegementInfo,
       position: {
         x: e.clientX,
         y: e.clientY,
@@ -282,40 +288,54 @@ export default class NeuronViewerRenderer {
     if (mesh && this.hoveredMesh && mesh.uuid === this.hoveredMesh.uuid) return;
 
     if (this.hoveredMesh) {
-      this.onHoverEnd(this.hoveredMesh);
+      this.onHoverEnd({
+        mesh: this.hoveredMesh,
+        position: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      });
+
       this.hoveredMesh = null;
     }
 
     if (mesh) {
-      this.onHover(mesh);
+      this.onHover({
+        mesh,
+        position: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      });
       this.hoveredMesh = mesh;
     }
   }, 100);
 
-  private onHover(mesh: MorphMesh) {
-    const geometry = new EdgesGeometry(mesh.geometry);
+  private onHover(hoverData: { mesh: MorphMesh; position: { x: number; y: number } }) {
+    const geometry = new EdgesGeometry(hoverData.mesh.geometry);
     const material = new LineBasicMaterial({
       color: HOVER_BOX_COLOR,
       linewidth: 2,
     });
     this.hoverBox = new LineSegments(geometry, material);
 
-    mesh.getWorldPosition(this.hoverBox.position);
-    mesh.getWorldQuaternion(this.hoverBox.quaternion);
-    this.hoverBox.name = mesh.name;
+    hoverData.mesh.getWorldPosition(this.hoverBox.position);
+    hoverData.mesh.getWorldQuaternion(this.hoverBox.quaternion);
+    this.hoverBox.name = hoverData.mesh.name;
 
-    this.hoverBox.userData = { ...mesh.userData, skipHoverDetection: true };
+    this.hoverBox.userData = { ...hoverData.mesh.userData, skipHoverDetection: true };
     this.scene.add(this.hoverBox);
 
     this.config.onHover?.({
       type: 'morphSection',
-      data: mesh.userData,
+      data: hoverData.mesh?.userData as NeuronSegementInfo,
+      position: hoverData.position ?? null,
     });
-    sendSegmentDetailsEvent({ show: true, data: mesh.userData });
+
     this.ctrl.renderOnce();
   }
 
-  private onHoverEnd(mesh: MorphMesh) {
+  private onHoverEnd({ mesh, position }: { mesh: MorphMesh; position: { x: number; y: number } }) {
     sendSegmentDetailsEvent({ show: false });
     this.scene.remove(this.hoverBox as HoverBox);
     disposeMesh(this.hoverBox as HoverBox);
@@ -323,7 +343,8 @@ export default class NeuronViewerRenderer {
 
     this.config.onHoverEnd?.({
       type: 'morphSection',
-      data: mesh.userData,
+      data: mesh.userData as NeuronSegementInfo,
+      position,
     });
 
     this.ctrl.renderOnce();
@@ -353,25 +374,48 @@ export default class NeuronViewerRenderer {
     return intersections.find((mesh) => !mesh.object.userData.skipHoverDetection)?.object;
   }
 
+  private render() {
+    this.renderer.render(this.scene, this.camera);
+  }
+
   private startRenderLoop = () => {
     if (this.ctrl.needsRender) {
       this.controls.update();
-      this.renderer.render(this.scene, this.camera);
+      if (this.controls.enabled) {
+        this.controls.update();
+      }
+      this.render();
     }
 
     this.animationFrameHandle = requestAnimationFrame(this.startRenderLoop);
   };
 
-  public set configOnClick(onClick: (data: ClickData) => void) {
+  public set configOnClick(onClick: (data: NeuronViewerClickData) => void) {
     this.config.onClick = onClick;
   }
 
-  public set configOnHover(onHover: (data: HoverData) => void) {
+  public set configOnHover(onHover: (data: NeuronViewerHoverData) => void) {
     this.config.onHover = onHover;
   }
 
-  public set configOnHoverEnd(onHoverEnd: (data: HoverData) => void) {
+  public set configOnHoverEnd(onHoverEnd: (data: NeuronViewerHoverData) => void) {
     this.config.onHoverEnd = onHoverEnd;
+  }
+
+  public set configOnZoom(onZoom: (data: NeuronViewerHoverData) => void) {
+    this.config.onZoom = onZoom;
+  }
+
+  public get _orbitControl() {
+    return this.controls;
+  }
+
+  public get _camera() {
+    return this.camera;
+  }
+
+  public get _renderer() {
+    return this.renderer;
   }
 
   removeNoDiameterSection(morphology: Morphology) {
@@ -420,21 +464,28 @@ export default class NeuronViewerRenderer {
     this.ctrl.renderOnce();
   };
 
-  removeSynapses = (meshId: string) => {
+  removeSingleSynapseSet = (meshId: string) => {
     const object = this.scene.getObjectByProperty('uuid', meshId);
     if (object) {
+      object.removeFromParent();
+      if (object instanceof Object3D) {
+        Array.from(object.children as Mesh[]).forEach((mesh) => {
+          mesh.removeFromParent();
+          disposeMesh(mesh);
+        });
+      } else {
+        disposeMesh(object);
+      }
       this.scene.remove(object);
       this.synapses = this.synapses.filter((s) => s.uuid !== meshId);
       this.ctrl.renderOnce();
     }
   };
 
-  cleanSynapses = () => {
+  deleteAllSynapseSets = () => {
     this.synapses.forEach((o) => {
-      this.scene.remove(o);
+      this.removeSingleSynapseSet(o.uuid);
     });
-    this.synapses = [];
-    this.ctrl.renderOnce();
   };
 
   private addSecMarker = (config: SecMarkerConfig) => {

@@ -279,8 +279,9 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
               type: 'scatter',
               name: p.stimulus_name,
               recording: p.recording_name,
+              protocolValue: Number(p.stimulus_name.split('_').at(-1)),
             })),
-            ['recording', 'name']
+            ['protocolValue']
           );
 
           const groupedRecording = groupBy(plotData, (p) => p.recording);

@@ -58,7 +58,7 @@ export default function ConfigStepHeader({ configStep }: Props) {
           )}
         </div>
       </div>
-      {openBasicConfig && <BasicConfigurationHeader />}
+      <BasicConfigurationHeader show={openBasicConfig} />
     </div>
   );
 }

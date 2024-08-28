@@ -13,7 +13,7 @@ interface StimulusSecMarkerConfig extends SecMarkerConfigCommon {
 
 export type SecMarkerConfig = RecordingSecMarkerConfig | StimulusSecMarkerConfig;
 
-export type MorphSection = {
+export type NeuronSectionInfo = {
   index: number;
   name: string;
   nseg: number;
@@ -41,7 +41,7 @@ export type MorphSection = {
 };
 
 export type Morphology = {
-  [secName: string]: MorphSection;
+  [secName: string]: NeuronSectionInfo;
 };
 
 type SegTrace = {

@@ -16,7 +16,7 @@ import { getSession } from '@/authFetch';
 import {
   sendDisplaySynapses3DEvent,
   sendRemoveSynapses3DEvent,
-} from '@/components/neuron-viewer/events';
+} from '@/components/neuron-viewer/hooks/events';
 import { classNames } from '@/util/utils';
 
 type Props = {

@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { Morphology } from '@/services/bluenaas-single-cell/types';
-import getMorphology from '@/api/bluenaas/getMorphology';
 import { getSession } from '@/authFetch';
 import { isJSON } from '@/util/utils';
+import getMorphology from '@/api/bluenaas/getMorphology';
 
 export default function useMorphology({
   modelSelfUrl,
@@ -16,7 +16,7 @@ export default function useMorphology({
   const mountedRef = useRef(false);
   const [loading, setLoading] = useState(false);
 
-  const readMorphology = useCallback(async (): Promise<Morphology> => {
+  const readMorphology = useCallback(async (): Promise<Morphology | null> => {
     const session = await getSession();
     if (isNil(session)) {
       throw new Error('No session found');
@@ -38,6 +38,7 @@ export default function useMorphology({
           return JSON.parse(data);
         }
       }
+      return null;
     }
     throw new Error('Neuron morphology could not be constructed');
   }, [modelSelfUrl]);
@@ -50,7 +51,9 @@ export default function useMorphology({
         setLoading(true);
         const morphology = await readMorphology();
         mountedRef.current = false;
-        callback(morphology);
+        if (morphology) {
+          callback(morphology);
+        }
         setLoading(false);
       }
     }
