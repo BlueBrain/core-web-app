@@ -103,6 +103,8 @@ export const DEFAULT_SIMULATION_CONDITIONS: SimulationConditions = {
   vinit: -73,
   hypamp: 0,
   max_time: 2000,
+  time_step: 0.05,
+  seed: 100,
 };
 
 export const DEFAULT_STIM_CONFIG: StimulusConfig = {

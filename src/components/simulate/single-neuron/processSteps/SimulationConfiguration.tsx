@@ -12,7 +12,10 @@ type Props = {
 
 export default function SimulationConfiguration({ meModelUrl, type }: Props) {
   return (
-    <Wrapper viewer={<NeuronViewerContainer modelUrl={meModelUrl} />} type={type}>
+    <Wrapper
+      viewer={<NeuronViewerContainer modelUrl={meModelUrl} zoomPlacement="right" />}
+      type={type}
+    >
       <ParameterView meModelSelf={meModelUrl} type={type} />
     </Wrapper>
   );

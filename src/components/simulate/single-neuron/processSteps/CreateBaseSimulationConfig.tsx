@@ -18,7 +18,7 @@ const configStepValidationSchema = z.object({
   description: z.string().nullish(),
 });
 
-export default function CreateBaseSynaptome({ configStep, onConfigStep }: Props) {
+export default function CreateBaseSimulationConfig({ configStep, onConfigStep }: Props) {
   const form = Form.useFormInstance();
   const session = useSessionAtomValue();
   const proceed = async () => {
@@ -50,7 +50,7 @@ export default function CreateBaseSynaptome({ configStep, onConfigStep }: Props)
             <Input
               placeholder="Your model name"
               size="large"
-              className="rounded-none border-0 !border-b-[1.5px]  !border-primary-8"
+              className="rounded-none border-0 !border-b-[1.5px] !border-primary-8 !font-bold  !text-primary-8"
             />
           </Form.Item>
         </div>

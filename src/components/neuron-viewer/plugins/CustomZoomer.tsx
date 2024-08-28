@@ -78,7 +78,7 @@ export default function CustomZoomer({ renderer, placement = 'left' }: Props) {
 
   return (
     <div
-      className={classNames('absolute bottom-4 z-50', placement === 'left' ? 'left-4' : 'right-4')}
+      className={classNames('absolute bottom-4 z-50', placement === 'left' ? 'left-6' : 'right-6')}
     >
       <ConfigProvider
         theme={{

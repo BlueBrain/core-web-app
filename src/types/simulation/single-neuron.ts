@@ -57,6 +57,8 @@ export type SimulationConditions = {
   vinit: number;
   hypamp: number;
   max_time: number;
+  time_step: number;
+  seed: number;
 };
 
 export type RecordLocation = {

@@ -49,7 +49,7 @@ export default function CreateBaseSynaptome({ configStep, onConfigStep }: Props)
             <Input
               placeholder="Your model name"
               size="large"
-              className="rounded-none border-0 !border-b-[1.5px]  !border-primary-8"
+              className="rounded-none border-0 !border-b-[1.5px]  !border-primary-8 !font-bold !text-primary-8"
             />
           </Form.Item>
         </div>
