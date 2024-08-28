@@ -47,11 +47,11 @@ export default function VirtualLabProjectSimulatePage({
   );
 
   return (
-    <div className="flex min-h-full w-full flex-col gap-5 pr-5 pt-8">
+    <div className="flex h-full w-full flex-col gap-5 pr-5 pt-8">
       <VirtualLabTopMenu />
       <ScopeSelector />
       {simulationType && tabDetails ? (
-        <div className="flex h-full flex-col">
+        <div className="flex h-full w-full flex-col">
           <div className="flex justify-between">
             <GenericButton
               text={tabDetails.title}
@@ -64,7 +64,10 @@ export default function VirtualLabProjectSimulatePage({
               <span>New simulation</span> <PlusOutlined />
             </Link>
           </div>
-          <div id="explore-table-container-for-observable" className="h-full w-full pb-5">
+          <div
+            id="explore-table-container-for-observable"
+            className="mb-5 h-full w-full overflow-x-auto"
+          >
             <ExploreSectionListingView
               dataType={simulationType}
               dataScope={ExploreDataScope.SelectedBrainRegion}

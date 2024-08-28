@@ -30,7 +30,9 @@ export default function DefaultListView({
   tableScrollable = true,
   controlsVisible = true,
   style = { background: 'bg-[#d1d1d1]' },
+  heightClass = 'h-full',
 }: {
+  heightClass?: string;
   dataType: DataType;
   dataScope: ExploreDataScope;
   renderButton?: (props: RenderButtonProps) => ReactNode;
@@ -62,13 +64,14 @@ export default function DefaultListView({
 
   return (
     <div
-      className={classNames('h-full', style.background)}
+      className={classNames(heightClass, style.background)}
       data-testid="explore-section-listing-view"
     >
       <div
         className={classNames(
+          heightClass,
           'relative grid w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden',
-          tableScrollable === true ? 'h-full max-h-[calc(100vh-3.3rem)]' : 'mb-5'
+          tableScrollable && 'max-h-[calc(100vh-3.3rem)]'
         )}
       >
         <WithControlPanel

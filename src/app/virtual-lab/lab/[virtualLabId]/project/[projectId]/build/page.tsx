@@ -121,10 +121,10 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
           </div>
           <div
             id="explore-table-container-for-observable"
-            className="h-[calc(100vh-320px)] w-full pb-5"
+            className="mb-5 h-full w-full overflow-hidden"
           >
             <ExploreSectionListingView
-              tableScrollable
+              tableScrollable={false}
               controlsVisible={false}
               dataType={selectedModelType ?? DataType.CircuitMEModel}
               dataScope={ExploreDataScope.NoScope}

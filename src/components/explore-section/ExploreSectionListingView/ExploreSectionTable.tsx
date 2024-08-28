@@ -111,6 +111,7 @@ export function BaseTable({
   rowSelection,
   showLoadMore,
   scrollable = true,
+  sticky,
 }: TableProps<ExploreESHit<ExploreSectionResource>> &
   AdditionalTableProps & {
     showLoadMore?: (value?: boolean) => void;
@@ -158,7 +159,7 @@ export function BaseTable({
     <ConfigProvider theme={{ hashed: false }}>
       <Table
         ref={tableRef}
-        sticky={{ offsetHeader: 50 }}
+        sticky={sticky}
         aria-label="listing-view-table"
         className={classNames(styles.table, 'grow [&_.ant-table-sticky-holder]:shadow-md')}
         columns={

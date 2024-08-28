@@ -27,8 +27,8 @@ type SlideProps = {
   className?: string;
   description: string;
   id: SimulationType;
-  selectedSimulationScope: SimulationType | null;
-  setSelectedSimulationScope: Dispatch<SetStateAction<SimulationType | null>>;
+  selectedSimulationScope: SimulationType;
+  setSelectedSimulationScope: Dispatch<SetStateAction<SimulationType>>;
   title: string;
 };
 
@@ -183,7 +183,7 @@ function ScopeOption(props: SlideProps) {
         checked={currentScopeIsSelected}
         className="sr-only"
         id={`scope-${key}`}
-        onChange={() => setSelectedSimulationScope(selectedSimulationScope !== key ? key : null)}
+        onChange={() => setSelectedSimulationScope(key)}
         type="radio"
       />
       <h2 className="text-3xl">{title}</h2>

@@ -25,6 +25,8 @@ import GenericButton from '@/components/Global/GenericButton';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
+import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
+import { classNames } from '@/util/utils';
 
 export default function NewSimulation({
   params: { virtualLabId, projectId },
@@ -33,11 +35,7 @@ export default function NewSimulation({
   const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
 
   const simulatePage = `${generateVlProjectUrl(virtualLabId, projectId)}/simulate`;
-
-  const modelType =
-    selectedSimulationScope && selectedSimulationScope in SimulationScopeToModelType
-      ? SimulationScopeToModelType[selectedSimulationScope]
-      : null;
+  const modelType = SimulationScopeToModelType[selectedSimulationScope];
 
   const onModelSelected = (model: ExploreESHit<ExploreSectionResource>) => {
     const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
@@ -53,35 +51,62 @@ export default function NewSimulation({
     }
   };
 
+  const selectedRows = useAtomValue(
+    selectedRowsAtom({ dataType: modelType ?? DataType.SingleNeuronSimulation })
+  );
+
   return (
-    <div className="flex flex-col pt-8">
-      <VirtualLabTopMenu />
-      <ScopeSelector />
-      <div className="flex justify-between align-middle">
-        <div className="text-2xl font-bold text-white">Create a simulation</div>
-        <GenericButton text="Cancel" className="text-white hover:text-white" href={simulatePage} />
+    <div className={classNames('flex w-full flex-col pr-5 pt-8', !modelType && 'h-full')}>
+      <div className="mb-5 flex flex-col gap-5">
+        <VirtualLabTopMenu />
+        <ScopeSelector />
       </div>
-      {/* TODO: replace this list with items saved in Model Library */}
-      <div className="h-[calc(100vh-290px)]" id="explore-table-container-for-observable">
-        <div className="bg-white pl-5 pt-5 text-lg text-primary-8">
-          Select a single neuron model to simulate
-        </div>
-        <ExploreSectionListingView
-          dataType={modelType ?? DataType.CircuitMEModel}
-          dataScope={ExploreDataScope.NoScope}
-          virtualLabInfo={{ virtualLabId, projectId }}
-          selectionType="radio"
-          renderButton={({ selectedRows }) => (
-            <Btn
-              className="fit-content sticky bottom-0 ml-auto w-fit bg-secondary-2"
-              // as we use radio button instead of checkbox, we have a single model to pass
-              onClick={() => onModelSelected(selectedRows[0])}
-            >
-              New Simulation
-            </Btn>
-          )}
-        />
-      </div>
+
+      {modelType ? (
+        <>
+          <div className="flex justify-between align-middle">
+            <div className="bg-white px-5 py-2 text-2xl font-bold text-primary-8 ">
+              Create a simulation
+            </div>
+            <GenericButton
+              text="Cancel"
+              className="text-white hover:text-white"
+              href={simulatePage}
+            />
+          </div>
+          <div className="mb-5 min-h-[calc(100vh-340px)] bg-white">
+            {/* TODO: replace this list with items saved in Model Library */}
+            <div className="w-full overflow-x-auto" id="explore-table-container-for-observable">
+              <div className="bg-white pl-5 pt-5 text-lg text-primary-8">
+                Select a single neuron model to simulate
+              </div>
+              <ExploreSectionListingView
+                heightClass=""
+                tableScrollable={false}
+                controlsVisible={false}
+                dataType={modelType}
+                dataScope={ExploreDataScope.NoScope}
+                virtualLabInfo={{ virtualLabId, projectId }}
+                selectionType="radio"
+                renderButton={() => null}
+              />
+            </div>
+
+            {selectedRows.length > 0 && (
+              <div className="fixed bottom-3 right-[60px] mb-6 flex items-center justify-end gap-2">
+                <Btn
+                  className="bg-primary-9  text-white hover:!bg-primary-7"
+                  onClick={() => onModelSelected(selectedRows[0])}
+                >
+                  New Simulation
+                </Btn>
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="m-auto w-fit border p-6">Coming Soon</div>
+      )}
     </div>
   );
 }
