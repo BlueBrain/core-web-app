@@ -731,7 +731,7 @@ export interface SynaptomeSimulation extends Entity {
 export interface SingleNeuronSimulationResource extends ResourceMetadata, SingleNeuronSimulation {}
 
 export interface Paper extends Entity {
-  '@type': ['Paper', 'Entity'];
+  '@type': ['ScholarlyArticle', 'Entity'];
   name: string;
   description: string;
   tags: string[];

@@ -152,7 +152,7 @@ export default async function initializePaperEntry(
         name: title,
         description: summary,
         '@context': ['https://bbp.neuroshapes.org'],
-        '@type': ['Paper', 'Entity'],
+        '@type': ['ScholarlyArticle', 'Entity'],
         distribution: createDistribution(
           fileMetadata,
           composeUrl('file', fileMetadata['@id'], {

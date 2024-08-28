@@ -503,7 +503,7 @@ export const getPaperListQuery = (searchString: string = '') => ({
         },
         {
           bool: {
-            must: { term: { '@type': 'Paper' } },
+            must: { term: { '@type': 'ScholarlyArticle' } },
           },
         },
         idExistsFilter,
@@ -540,7 +540,7 @@ export const getPaperCountQuery = () => ({
       filter: [
         {
           bool: {
-            must: [{ term: { _deprecated: false } }, { term: { '@type': 'Paper' } }],
+            must: [{ term: { _deprecated: false } }, { term: { '@type': 'ScholarlyArticle' } }],
           },
         },
       ],
