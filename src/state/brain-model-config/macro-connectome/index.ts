@@ -12,7 +12,7 @@ import {
   GeneratorTaskActivityResource,
   MacroConnectomeConfigPayload,
   MacroConnectomeConfigResource,
-  WholeBrainConnectomeStrengthResource,
+  BrainConnectomeStrengthResource,
 } from '@/types/nexus';
 import {
   fetchResourceById,
@@ -75,7 +75,7 @@ export const configPayloadAtom = atom<Promise<MacroConnectomeConfigPayload | nul
 });
 
 export const initialConnectivityStrengthEntityAtom = atom<
-  Promise<WholeBrainConnectomeStrengthResource | null>
+  Promise<BrainConnectomeStrengthResource | null>
 >(async (get) => {
   const session = get(sessionAtom);
   const remoteConfigPayload = await get(remoteConfigPayloadAtom);
@@ -99,7 +99,7 @@ export const initialConnectivityStrengthTableAtom = atom<Promise<Table | null>>(
 });
 
 export const connectivityStrengthOverridesEntityAtom = atom<
-  Promise<WholeBrainConnectomeStrengthResource | null>
+  Promise<BrainConnectomeStrengthResource | null>
 >(async (get) => {
   const session = get(sessionAtom);
   const configPayload = await get(remoteConfigPayloadAtom);
@@ -120,7 +120,7 @@ export const connectivityStrengthOverridesEntityRevAtom = atom<Promise<number | 
 
     if (!session || !connectivityStrengthOverridesEntity) return null;
 
-    const metadata = await fetchResourceById<WholeBrainConnectomeStrengthResource>(
+    const metadata = await fetchResourceById<BrainConnectomeStrengthResource>(
       connectivityStrengthOverridesEntity['@id'],
       session
     );
@@ -130,7 +130,7 @@ export const connectivityStrengthOverridesEntityRevAtom = atom<Promise<number | 
 );
 
 export const connectivityStrengthOverridesEntitySourceAtom = atom<
-  Promise<WholeBrainConnectomeStrengthResource | null>
+  Promise<BrainConnectomeStrengthResource | null>
 >(async (get) => {
   const session = get(sessionAtom);
   const configPayload = await get(remoteConfigPayloadAtom);

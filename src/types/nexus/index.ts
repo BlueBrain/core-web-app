@@ -461,14 +461,14 @@ export interface MacroConnectomeConfigPayload {
   initial: {
     connection_strength: {
       id: string;
-      type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
+      type: ['Entity', 'Dataset', 'BrainConnectomeStrength'];
       rev: number;
     };
   };
   overrides: {
     connection_strength: {
       id: string;
-      type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
+      type: ['Entity', 'Dataset', 'BrainConnectomeStrength'];
       rev: number;
     };
   };
@@ -511,15 +511,15 @@ export interface VariantTaskConfig extends Entity {
 
 export interface VariantTaskConfigResource extends ResourceMetadata, VariantTaskConfig {}
 
-export interface WholeBrainConnectomeStrength extends Entity {
-  '@type': ['WholeBrainConnectomeStrength', 'Dataset', 'Entity'];
+export interface BrainConnectomeStrength extends Entity {
+  '@type': ['BrainConnectomeStrength', 'Dataset', 'Entity'];
   name: string;
   distribution: Distribution;
 }
 
-export interface WholeBrainConnectomeStrengthResource
+export interface BrainConnectomeStrengthResource
   extends ResourceMetadata,
-    WholeBrainConnectomeStrength {}
+    BrainConnectomeStrength {}
 
 export type GeneratorConfig =
   | CellCompositionConfig

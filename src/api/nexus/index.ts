@@ -26,7 +26,7 @@ import {
   SynapseConfig,
   MacroConnectomeConfig,
   MacroConnectomeConfigPayload,
-  WholeBrainConnectomeStrength,
+  BrainConnectomeStrength,
   SimulationCampaignUIConfigResource,
   SimulationCampaignUIConfig,
   SupportedConfigListTypes,
@@ -455,7 +455,7 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
     session
   );
 
-  const overridesEntity = await fetchResourceById<WholeBrainConnectomeStrength>(
+  const overridesEntity = await fetchResourceById<BrainConnectomeStrength>(
     payload.overrides.connection_strength.id,
     session,
     { rev: payload.overrides.connection_strength.rev }
@@ -472,7 +472,7 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
     session
   );
 
-  const clonedOverridesEntity: WholeBrainConnectomeStrength = {
+  const clonedOverridesEntity: BrainConnectomeStrength = {
     ...overridesEntity,
     distribution: createDistribution(clonedOverridesPayloadMeta),
   };
