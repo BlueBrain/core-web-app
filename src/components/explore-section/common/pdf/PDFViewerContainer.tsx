@@ -147,7 +147,7 @@ export function PDFViewerContainer({ distributions }: Props) {
           )}
         </div>
         <Link
-          className="ml-2 inline-flex items-center"
+          className="ml-2 inline-flex items-center text-primary-9"
           href="/simulate/experiment-analysis?targetEntity=EModel"
           aria-label="Add analysis"
         >
