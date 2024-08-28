@@ -47,7 +47,7 @@ export default function NewSimulation({
     if (simulateType) {
       const simulatePagePath = DataTypeToNewSimulationPage[simulateType];
       if (simulatePagePath) {
-        const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePagePath}/edit`;
+        const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePagePath}/new`;
         router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
       }
     }

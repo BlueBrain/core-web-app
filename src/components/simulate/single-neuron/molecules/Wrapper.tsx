@@ -1,5 +1,5 @@
+import StepTabs from './StepTabs';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
-import { Title, StepTabs } from '@/components/simulate/single-neuron';
 import { SimulationType } from '@/types/simulation/common';
 
 type Props = {
@@ -11,7 +11,6 @@ type Props = {
 export default function Wrapper({ viewer, type, children }: Props) {
   return (
     <div className="h-screen w-full overflow-hidden">
-      <Title />
       <StepTabs type={type} />
       <div className="flex h-[calc(100vh-105px)]">
         <div className="secondary-scrollbar mb-20 flex w-1/2 flex-col overflow-y-auto">

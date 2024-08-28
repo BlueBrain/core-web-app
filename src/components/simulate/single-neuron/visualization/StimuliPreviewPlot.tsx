@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { captureException } from '@sentry/nextjs';
 
@@ -19,7 +19,6 @@ type Props = {
 };
 
 export default function StimuliPreviewPlot({ modelSelfUrl, amplitudes }: Props) {
-  const firstRenderRef = useRef(false);
   const currentInjectionConfig = useAtomValue(currentInjectionSimulationConfigAtom);
   const [stimuliPreviewPlotData, setStimuliPreviewPlotData] = useAtom(stimulusPreviewPlotDataAtom);
   const [loading, setLoading] = useState(false);
@@ -51,7 +50,6 @@ export default function StimuliPreviewPlot({ modelSelfUrl, amplitudes }: Props) 
       }));
 
       setStimuliPreviewPlotData(plotData);
-      firstRenderRef.current = true;
     } catch {
       captureException(new Error('Preview plot could not be retrived for model'));
       notifyError('Error while loading stimulus plot data', undefined, 'topRight');

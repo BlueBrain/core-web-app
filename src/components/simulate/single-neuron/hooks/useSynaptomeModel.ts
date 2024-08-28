@@ -1,12 +1,6 @@
-'use client';
-
 import { useEffect, useRef } from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import { useSetAtom } from 'jotai';
-import dynamic from 'next/dynamic';
 
-import { ParameterView } from '@/components/simulate/single-neuron';
 import { useModel } from '@/hooks/useModel';
 import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
 import { useModelConfiguration } from '@/hooks/useModelConfiguration';
@@ -15,23 +9,8 @@ import { SynaptomeConfigDistribution } from '@/types/synaptome';
 
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import useSynaptomeSimulationConfig from '@/state/simulate/categories/synaptome-simulation-config';
-import Wrapper from '@/components/simulate/single-neuron/Wrapper';
 
-const NeuronViewerContainer = dynamic(
-  () => import('@/components/neuron-viewer/NeuronViewerWithActions'),
-  {
-    ssr: false,
-  }
-);
-
-type Props = {
-  params: {
-    projectId: string;
-    virtualLabId: string;
-  };
-};
-
-function useSynaptomeModel({
+export default function useSynaptomeModel({
   virtualLabId,
   projectId,
 }: {
@@ -65,35 +44,4 @@ function useSynaptomeModel({
     model,
     configuration,
   };
-}
-
-export default function SynaptomeSimulation({ params: { virtualLabId, projectId } }: Props) {
-  const { model, configuration } = useSynaptomeModel({
-    projectId,
-    virtualLabId,
-  });
-
-  if (!model || !configuration) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-3">
-        <Spin indicator={<LoadingOutlined />} size="large" />
-        <h2 className="font-light text-primary-9">Loading Configuration ...</h2>
-      </div>
-    );
-  }
-
-  return (
-    <Wrapper
-      viewer={<NeuronViewerContainer modelUrl={configuration.meModelSelf} />}
-      type="synaptome-simulation"
-    >
-      <ParameterView
-        vlabId={virtualLabId}
-        projectId={projectId}
-        simResourceSelf={model._self}
-        modelSelf={configuration.meModelSelf}
-        type="synaptome-simulation"
-      />
-    </Wrapper>
-  );
 }
