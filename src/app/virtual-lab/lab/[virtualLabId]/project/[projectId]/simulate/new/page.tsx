@@ -68,7 +68,7 @@ export default function NewSimulation({
         </div>
         <ExploreSectionListingView
           dataType={modelType ?? DataType.CircuitMEModel}
-          dataScope={ExploreDataScope.SelectedBrainRegion}
+          dataScope={ExploreDataScope.NoScope}
           virtualLabInfo={{ virtualLabId, projectId }}
           selectionType="radio"
           renderButton={({ selectedRows }) => (

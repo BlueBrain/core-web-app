@@ -31,9 +31,11 @@ import {
 } from '@/components/neuron-viewer/hooks/events';
 import useNotification from '@/hooks/notifications';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
-import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
+import { queryAtom, selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationType } from '@/types/virtual-lab/lab';
+import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 const label = (text: string) => (
   <span className="text-base font-semibold text-primary-8">{text}</span>
@@ -52,7 +54,15 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
   const form = Form.useFormInstance<SynaptomeModelConfiguration>();
   const seed = Form.useWatch<number>('seed', form);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
+
   const setSimulationScope = useSetAtom(selectedSimulationScopeAtom);
+  const refreshSynaptomeModels = useSetAtom(
+    queryAtom({
+      dataType: DataType.SingleNeuronSynaptome,
+      dataScope: ExploreDataScope.NoScope,
+      virtualLabInfo: { virtualLabId: org, projectId: project },
+    })
+  );
 
   const generateSynaptomeUrl = () => {
     const vlProjectUrl = generateVlProjectUrl(org, project);
@@ -168,6 +178,8 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
         headers: createHeaders(session.accessToken),
         body: JSON.stringify(sanitizedResource),
       });
+
+      refreshSynaptomeModels();
 
       if (!resp.ok) {
         return notifyError(

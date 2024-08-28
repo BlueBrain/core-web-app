@@ -1,5 +1,5 @@
 import { Atom, atom } from 'jotai';
-import { atomFamily, atomWithDefault } from 'jotai/utils';
+import { atomFamily, atomWithDefault, atomWithRefresh } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import isEqual from 'lodash/isEqual';
 
@@ -120,12 +120,11 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
 
 export const queryAtom = atomFamily(
   ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
-    atom<Promise<DataQuery | null>>(async (get) => {
+    atomWithRefresh<Promise<DataQuery | null>>(async (get) => {
       const searchString = get(searchStringAtom({ dataType }));
       const pageNumber = get(pageNumberAtom({ dataType }));
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
-
       const bookmarkResourceIds = (
         dataScope === ExploreDataScope.BookmarkedResources && virtualLabInfo
           ? (await get(bookmarksForProjectAtomFamily(virtualLabInfo)))[dataType]
@@ -168,8 +167,6 @@ export const queryResponseAtom = atomFamily(
   isListAtomEqual
 );
 
-// if move to atomWithRefresh,
-// ref: https://github.com/pmndrs/jotai/discussions/1162#discussioncomment-2756148
 export const dataAtom = atomFamily<
   DataAtomFamilyScopeType,
   Atom<Promise<ExploreESHit<ExploreSectionResource>[]>>
