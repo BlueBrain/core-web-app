@@ -1,6 +1,6 @@
 'use client';
 
-import { useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -12,9 +12,12 @@ import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
 import { ExploreDataScope } from '@/types/explore-section/application';
+import { meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
 
 export default function ReconstrucedMorphologyPage() {
   const setMorphologyType = useSetAtom(morphologyTypeAtom);
+  const [meModelDetails, setMEModelDetails] = useAtom(meModelDetailsAtom);
+
   const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
   const router = useRouter();
 
@@ -27,12 +30,24 @@ export default function ReconstrucedMorphologyPage() {
           'Multiple morphologies selected for ME-Model building. Only one is allowed'
         );
       }
-
       const morph = selectedRows[0]._source as ReconstructedNeuronMorphology;
+      // if a brain region is not already set for the me-model, setting the brain region of the morphology selected
+      if (!meModelDetails.brainRegion) {
+        setMEModelDetails(
+          Promise.resolve({
+            ...meModelDetails,
+            brainRegion: {
+              id: morph.brainRegion['@id'],
+              title: morph.brainRegion.label,
+            },
+          })
+        );
+      }
+
       setSelectedMModelId(morph['@id']);
-      router.push('../new');
+      router.push('../configure');
     },
-    [setSelectedMModelId, router]
+    [setSelectedMModelId, router, meModelDetails, setMEModelDetails]
   );
 
   return (

@@ -45,7 +45,7 @@ export default function MorphologyCard() {
       <button
         type="button"
         onClick={() => {
-          router.push('new/morphology');
+          router.push('configure/morphology');
         }}
         className="flex h-48 w-full items-center rounded-lg border border-neutral-2 pl-32 text-4xl text-neutral-4 hover:bg-primary-7 hover:text-white"
       >

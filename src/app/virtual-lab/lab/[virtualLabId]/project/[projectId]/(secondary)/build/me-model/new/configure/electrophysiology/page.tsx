@@ -37,7 +37,7 @@ export default function ElectrophysiologyPage({ params }: Params) {
     const emodel = selectedRows[0]._source as ESeModel;
     setSelectedEModelId(emodel['@id']);
 
-    router.push('../new');
+    router.push('../configure');
   };
 
   return (

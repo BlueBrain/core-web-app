@@ -10,23 +10,24 @@ import {
   meModelResourceAtom,
 } from './me-model';
 import sessionAtom from '@/state/session';
-import { EntityCreation } from '@/types/nexus';
+import { BrainLocation, EntityCreation } from '@/types/nexus';
 import { MEModel, MEModelResource } from '@/types/me-model';
 import { createResource, fetchResourceById, updateResource } from '@/api/nexus';
 import { composeUrl } from '@/util/nexus';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
-export const meModelDetailsAtom = atomWithDefault<Promise<{ description: string; name: string }>>(
-  async (get) => {
-    const selectedMModel = await get(selectedMModelAtom);
+export const meModelDetailsAtom = atomWithDefault<
+  Promise<{ description: string; name: string; brainRegion?: { id: string; title: string } }>
+>(async (get) => {
+  const selectedMModel = await get(selectedMModelAtom);
 
-    return {
-      name: `WIP ME-Model - ${selectedMModel?.name}`,
-      description:
-        'Nunc mi ipsum faucibus vitae aliquet nec ullamcorper sit amet. Tincidunt vitae semper quis lectus nulla at. Volutpat ac tincidunt vitae semper. Adipiscing commodo elit at imperdiet dui accumsan',
-    };
-  }
-);
+  return {
+    name: `WIP ME-Model - ${selectedMModel?.name}`,
+    description:
+      'Nunc mi ipsum faucibus vitae aliquet nec ullamcorper sit amet. Tincidunt vitae semper quis lectus nulla at. Volutpat ac tincidunt vitae semper. Adipiscing commodo elit at imperdiet dui accumsan',
+    brainRegion: { id: 'http://api.brain-map.org/api/v2/data/Structure/315', title: 'Isocortex' },
+  };
+});
 
 export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelResource | null>>(
   null,
@@ -37,6 +38,17 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
     const meModelDetails = await get(meModelDetailsAtom);
 
     if (!session || !selectedMModel || !selectedEModel) return null;
+
+    let brainLocation: BrainLocation | undefined;
+    if (meModelDetails.brainRegion) {
+      brainLocation = {
+        '@type': 'BrainLocation',
+        brainRegion: {
+          '@id': meModelDetails.brainRegion.id,
+          label: meModelDetails.brainRegion.title,
+        },
+      };
+    }
 
     const entity: EntityCreation<MEModel> = {
       '@type': ['Entity', 'MEModel'],
@@ -56,6 +68,7 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
           name: selectedMModel.name,
         },
       ],
+      brainLocation,
       // 'image' will be added after me-model validation
       validated: false,
       status: 'initalized',
