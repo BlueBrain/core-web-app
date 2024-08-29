@@ -6,6 +6,8 @@ import isEqual from 'lodash/isEqual';
 import dynamic from 'next/dynamic';
 
 import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
+import { StimulusModule } from '@/types/simulation/single-neuron';
+import { DEFAULT_PROTOCOL, stimulusParams } from '@/constants/simulate/single-neuron';
 
 const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPreviewPlot'), {
   ssr: false,
@@ -14,26 +16,37 @@ const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPrev
 // Each amperage starts a new simulation process in the server. To limit resource consumption, we put a maximum threshold on number of amperages a simulation can have.
 const MAX_AMPERAGE_STEPS = 15;
 
-const amperageInitialState = {
-  start: 40,
-  end: 120,
-  stepValue: 40,
-  stepType: 'stepSize' as StepType,
-  computed: [40, 80, 120] as number[],
-  error: null as string | null,
+const getInitialAmperageState = (protocol: StimulusModule) => {
+  const { min: start, max: end, step } = stimulusParams[protocol].params;
+  return {
+    start,
+    end,
+    stepValue: step,
+    stepType: 'stepSize' as StepType,
+    computed: calculateRangeOutput(start, end, { type: 'stepSize', value: step }),
+    error: null as string | null,
+  };
 };
 
 type AmperageActionType = {
-  type: 'start' | 'end' | 'stepValue' | 'stepType' | 'checkConsistency';
+  type: 'start' | 'end' | 'stepValue' | 'stepType' | 'checkConsistency' | 'reset-for-protocol';
   payload: any;
 };
 
-type AmperageStateType = typeof amperageInitialState;
+type AmperageStateType = {
+  start: number;
+  end: number;
+  stepValue: number;
+  stepType: StepType;
+  computed: number[];
+  error: null | string;
+};
 
 type Props = {
   stimulationId: number;
   amplitudes: number[];
   modelSelfUrl: string;
+  protocol: StimulusModule;
 };
 
 type StepType = 'stepSize' | 'stepNumber';
@@ -41,7 +54,6 @@ type StepType = 'stepSize' | 'stepNumber';
 function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   const newState = { ...state } satisfies AmperageStateType;
   const newVal = action.payload;
-
   switch (action.type) {
     case 'start':
       newState.start = newVal;
@@ -58,6 +70,9 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
         break;
       }
       newState.stepValue = newVal;
+      break;
+    case 'reset-for-protocol':
+      Object.assign(newState, { ...getInitialAmperageState(newVal) });
       break;
     case 'checkConsistency':
       if (state.start > state.end) {
@@ -93,10 +108,17 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   return newState;
 }
 
-export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl }: Props) {
-  const [amperageState, dispatch] = useReducer(rangeReducer, { ...amperageInitialState });
-  const { setAmplitudes } = useCurrentInjectionSimulationConfig();
+export default function AmperageRange({
+  amplitudes,
+  stimulationId,
+  modelSelfUrl,
+  protocol,
+}: Props) {
+  const [amperageState, dispatch] = useReducer(rangeReducer, {
+    ...getInitialAmperageState(DEFAULT_PROTOCOL),
+  });
 
+  const { setAmplitudes } = useCurrentInjectionSimulationConfig();
   useEffect(() => {
     if (isEqual(amperageState.computed, amplitudes)) return;
     setAmplitudes({
@@ -104,6 +126,10 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
       newValue: amperageState.computed,
     });
   }, [amperageState.computed, amperageState.error, amplitudes, setAmplitudes, stimulationId]);
+
+  useEffect(() => {
+    dispatch({ type: 'reset-for-protocol', payload: protocol });
+  }, [protocol]);
 
   return (
     <>

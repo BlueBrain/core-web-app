@@ -1,22 +1,23 @@
-import { Select, Form, InputNumber, Card, Button } from 'antd';
+import { Select, Form, Card, Button } from 'antd';
 import { useAtomValue } from 'jotai';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
 import AmperageRange from './AmperageRange';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
-import { stimulusTypeParams } from '@/constants/simulate/single-neuron';
+import {
+  DEFAULT_STIM_CONFIG,
+  stimulusModuleParams,
+  stimulusTypeParams,
+} from '@/constants/simulate/single-neuron';
 import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
+import { StimulusModule } from '@/types/simulation/single-neuron';
 
 type Props = {
   modelSelfUrl: string;
 };
 
 type FormItemProps = {
-  stimulationId: number;
-};
-
-type FormItemPropsWithConfig = {
   stimulationId: number;
 };
 
@@ -48,11 +49,20 @@ export default function Stimulation({ modelSelfUrl }: Props) {
               <StimulusLocation stimulationId={field.name} />
               <StimulationMode stimulationId={field.name} />
               <StimulationProtocol stimulationId={field.name} />
-              <Parameters stimulationId={field.name} />
+              <Parameters
+                protocol={
+                  state[field.name].stimulus.stimulusProtocol ??
+                  DEFAULT_STIM_CONFIG.stimulusProtocol!
+                }
+              />
               <AmperageRange
                 stimulationId={field.name}
                 amplitudes={state[field.name].stimulus.amplitudes}
                 modelSelfUrl={modelSelfUrl}
+                protocol={
+                  state[field.name].stimulus.stimulusProtocol ??
+                  DEFAULT_STIM_CONFIG.stimulusProtocol!
+                }
               />
             </Card>
           ))}
@@ -155,37 +165,32 @@ function StimulationProtocol({ stimulationId }: FormItemProps) {
   );
 }
 
-function Parameters({ stimulationId }: FormItemPropsWithConfig) {
-  const { setParamValue, state } = useCurrentInjectionSimulationConfig();
+function Parameters({ protocol }: { protocol: StimulusModule }) {
+  const protocolDescription = stimulusModuleParams.options.find((p) => p.value === protocol);
+
+  if (!protocolDescription) {
+    return null;
+  }
+
   return (
-    <div className="flex gap-6">
-      {Object.entries(state[stimulationId].stimulus.paramInfo).map(([key, info]) => (
-        <Form.Item
-          key={key}
-          name={[stimulationId, 'stimulus', 'paramValues', key]}
-          label={info.name}
-          rules={[{ required: true }]}
-          tooltip={info.description}
-          labelAlign="left"
-          className="mb-2"
-        >
-          <InputNumber
-            disabled
-            addonAfter={info.unit}
-            className="w-full text-right"
-            step={info.step}
-            min={info.min}
-            max={info.max}
-            onChange={(newValue) =>
-              setParamValue({
-                id: stimulationId,
-                key,
-                newValue,
-              })
-            }
-          />
-        </Form.Item>
-      ))}
+    <div className="m-4 bg-[#FAFAFA] p-4">
+      <h3>Description</h3>
+      <div className="flex justify-between">
+        <div className="flex flex-col">
+          <span>STOP TIME</span>
+          <span>{protocolDescription.stopTime} [ms]</span>
+        </div>
+
+        <div className="flex flex-col">
+          <span>DELAY</span>
+          <span>{protocolDescription.delay} [ms]</span>
+        </div>
+
+        <div className="flex flex-col">
+          <span>STOP TIME</span>
+          <span>{protocolDescription.duration} [ms]</span>
+        </div>
+      </div>
     </div>
   );
 }

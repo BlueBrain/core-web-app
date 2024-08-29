@@ -1,6 +1,5 @@
 import {
   ConditionalStimulusParamsTypes,
-  FunctionParameterNumber,
   StimulusDropdownInfo,
   StimulusTypeOption,
   StimulusModuleOption,
@@ -38,56 +37,79 @@ export const stimulusModuleParams: StimulusDropdownInfo & {
       value: 'ap_waveform',
       usedBy: ['current_clamp'],
       description: '',
-      duration: 550,
+      delay: 250,
+      duration: 50,
+      stopTime: 0, // TODO: Update
     },
     {
       label: 'IDREST',
       value: 'idrest',
       usedBy: ['current_clamp'],
       description: '',
-      duration: 1850,
+
+      delay: 250,
+      duration: 1350,
+      stopTime: 1850,
     },
     {
       label: 'IV',
       value: 'iv',
       usedBy: ['current_clamp'],
       description: '',
-      duration: 3500,
+
+      delay: 250,
+      duration: 3000,
+      stopTime: 0, // TODO: Update
     },
     {
       label: 'FIRE_PATTERN',
       value: 'fire_pattern',
       usedBy: ['current_clamp'],
       description: '',
-      duration: 4100,
+
+      delay: 250,
+      duration: 3600,
+      stopTime: 0, // TODO: Update
     },
   ],
 };
 
-const commonParams: { [key: string]: FunctionParameterNumber } = {
-  stop_time: {
-    name: 'Stop time',
-    description: 'time to stop the stimulus.',
-    defaultValue: 3500,
-    min: 0,
-    max: 10000,
-    step: 1,
-    unit: 'ms',
-  },
-};
-
 export const stimulusParams: ConditionalStimulusParamsTypes = {
   ap_waveform: {
-    ...commonParams,
+    params: {
+      defaultValue: 250,
+      min: 40,
+      max: 120,
+      step: 40,
+      unit: 'ms',
+    },
   },
   idrest: {
-    ...commonParams,
+    params: {
+      defaultValue: 1350,
+      min: 0.05,
+      max: 0.5,
+      step: 10,
+      unit: 'ms',
+    },
   },
   iv: {
-    ...commonParams,
+    params: {
+      defaultValue: 3000,
+      min: 40,
+      max: 120,
+      step: 40,
+      unit: 'ms',
+    },
   },
   fire_pattern: {
-    ...commonParams,
+    params: {
+      defaultValue: 3600,
+      min: 40,
+      max: 120,
+      step: 40,
+      unit: 'ms',
+    },
   },
 };
 
@@ -107,16 +129,18 @@ export const DEFAULT_SIMULATION_CONDITIONS: SimulationConditions = {
   seed: 100,
 };
 
+export const DEFAULT_PROTOCOL = 'idrest';
+
 export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   stimulusType: 'current_clamp',
-  stimulusProtocol: 'iv',
+  stimulusProtocol: DEFAULT_PROTOCOL,
   stimulusProtocolOptions: stimulusModuleParams.options.filter((option) =>
     option.usedBy.includes('current_clamp')
   ),
   stimulusProtocolInfo:
-    stimulusModuleParams.options.find((option) => option.value === 'iv') || null,
-  paramInfo: stimulusParams.iv,
-  paramValues: getParamValues(stimulusParams.iv),
+    stimulusModuleParams.options.find((option) => option.value === DEFAULT_PROTOCOL) || null,
+  paramInfo: stimulusParams.idrest,
+  paramValues: getParamValues(stimulusParams.idrest),
   amplitudes: [40, 80, 120],
 };
 

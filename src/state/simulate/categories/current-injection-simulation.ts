@@ -71,7 +71,7 @@ export default function useCurrentInjectionSimulationConfig() {
 
     const paramInfo = stimulusParams[newValue];
     if (!paramInfo) throw new Error(`Parameters for protocol ${newValue} not found`);
-    paramInfo.stop_time.defaultValue = protocolInfo.duration;
+    // paramInfo.parmas.defaultValue = protocolInfo.duration; TODO: Remove
 
     const updatedStimulus: CurrentInjectionSimulationConfig = {
       ...stimConfig,
