@@ -52,24 +52,39 @@ describe('the ScopeSelector component', () => {
   });
 
   it('renders the "cellular" scope buttons, and displays them by default', () => {
-    const cellularScopes = items.filter(({ scope }) => scope === 'cellular');
-
-    const filteredScopeControls = renderer.getAllByLabelText((accessibleName) =>
-      cellularScopes.some(({ title }) => accessibleName.match(title))
-    );
-
-    // Make sure that they are rendered
-    filteredScopeControls.forEach((control) => {
-      expect(control).toBeInTheDocument();
+    const checkedScopeFilter = renderer.getByRole('radio', {
+      checked: true,
+      name: (accessibleName) => Object.keys(SimulationScope).includes(accessibleName),
     });
 
-    // Check that they are NOT yet hidden by the collapse feature
-    filteredScopeControls.forEach((control) => {
-      expect(control).toBeVisible();
+    act(async () => {
+      fireEvent.click(checkedScopeFilter);
+    }).then(() => {
+      const cellularScopes = items.filter(({ scope }) => scope === 'cellular');
+
+      const filteredScopeControls = renderer.getAllByLabelText((accessibleName) =>
+        cellularScopes.some(({ title }) => accessibleName.match(title))
+      );
+
+      // Make sure that they are rendered
+      filteredScopeControls.forEach((control) => {
+        expect(control).toBeInTheDocument();
+      });
+
+      // Check that they are NOT yet hidden by the collapse feature
+      filteredScopeControls.forEach((control) => {
+        expect(control).toBeVisible();
+      });
     });
   });
 
-  it("'selects' the 'Single Neuron' scope by default", () => {
+  it("'selects' the 'Single Neuron' scope by default", async () => {
+    const cellularScopesFilter = renderer.getByLabelText('Cellular');
+
+    await act(async () => {
+      fireEvent.click(cellularScopesFilter);
+    });
+
     const singleNeuronSelector = renderer.getByLabelText('Single Neuron');
 
     expect(singleNeuronSelector).toBeChecked();
@@ -95,41 +110,41 @@ describe('the ScopeSelector component', () => {
     });
   });
 
-  it('toggles the visibility of the available scope buttons when clicking on the "checked" scope filter', async () => {
+  it('toggles the visibility of the available scope buttons when clicking on the "checked" scope filter', () => {
     const checkedScopeFilter = renderer.getByRole('radio', {
       checked: true,
       name: (accessibleName) => Object.keys(SimulationScope).includes(accessibleName),
     });
 
-    await act(async () => {
+    act(async () => {
       fireEvent.click(checkedScopeFilter);
-    });
+    }).then(() => {
+      const cellularScopes = items.filter(({ scope }) => scope === 'cellular');
 
-    const cellularScopes = items.filter(({ scope }) => scope === 'cellular');
+      const cellularScopeButtons = renderer.getAllByLabelText((accessibleName) =>
+        cellularScopes.some(({ title }) => {
+          return accessibleName.match(title);
+        })
+      );
 
-    const cellularScopeButtons = renderer.getAllByLabelText((accessibleName) =>
-      cellularScopes.some(({ title }) => {
-        return accessibleName.match(title);
-      })
-    );
+      // Make sure that they are rendered
+      cellularScopeButtons.forEach((scopeButton) => {
+        expect(scopeButton).toBeInTheDocument();
+      });
 
-    // Make sure that they are rendered
-    cellularScopeButtons.forEach((scopeButton) => {
-      expect(scopeButton).toBeInTheDocument();
-    });
+      // Check that they are visible
+      cellularScopeButtons.forEach((scopeButton) => {
+        expect(scopeButton).toBeVisible();
+      });
 
-    // Check that they are HIDDEN by the collapse feature
-    cellularScopeButtons.forEach((scopeButton) => {
-      expect(scopeButton).not.toBeVisible(); // NOT!
-    });
-
-    await act(async () => {
-      fireEvent.click(checkedScopeFilter);
-    });
-
-    // Check that the available scopes are visible again
-    cellularScopeButtons.forEach((scopeButton) => {
-      expect(scopeButton).toBeVisible();
+      act(async () => {
+        fireEvent.click(checkedScopeFilter);
+      }).then(() => {
+        // Check that the available scopes are HIDDEN (again)
+        cellularScopeButtons.forEach((scopeButton) => {
+          expect(scopeButton).not.toBeVisible(); // NOT!
+        });
+      });
     });
   });
 

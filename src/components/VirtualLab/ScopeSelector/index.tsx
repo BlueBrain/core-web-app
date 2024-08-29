@@ -1,4 +1,4 @@
-import { Dispatch, useState, SetStateAction } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { ConfigProvider, Collapse } from 'antd';
@@ -27,8 +27,8 @@ type SlideProps = {
   className?: string;
   description: string;
   id: SimulationType;
+  onChange: () => void;
   selectedSimulationScope: SimulationType;
-  setSelectedSimulationScope: Dispatch<SetStateAction<SimulationType>>;
   title: string;
 };
 
@@ -94,14 +94,14 @@ export const items: Array<Item> = [
 
 function ScopeFilter({
   contentIsVisible,
+  onClick,
+  onChange,
   selectedScope,
-  setSelectedScope,
-  toggleContent,
 }: {
   contentIsVisible: boolean;
+  onChange: (scope: SimulationScope) => void;
+  onClick: (scope: SimulationScope) => void;
   selectedScope: SimulationScope | null;
-  setSelectedScope: Dispatch<SetStateAction<SimulationScope | null>>;
-  toggleContent: () => void;
 }) {
   const projectTopMenuRef = useAtomValue(projectTopMenuRefAtom);
 
@@ -124,8 +124,8 @@ function ScopeFilter({
               checked={isSelectedScope}
               className="sr-only"
               id={`scope-filter-${scope}`}
-              onChange={() => setSelectedScope(scope)}
-              onClick={() => (isSelectedScope ? toggleContent() : {})}
+              onChange={() => onChange(scope)}
+              onClick={() => onClick(scope)}
               type="radio"
             />
             {isSelectedScope ? (
@@ -153,14 +153,7 @@ function ScopeFilter({
 }
 
 function ScopeOption(props: SlideProps) {
-  const {
-    className,
-    description,
-    id: key,
-    selectedSimulationScope,
-    setSelectedSimulationScope,
-    title,
-  } = props;
+  const { className, description, id: key, onChange, selectedSimulationScope, title } = props;
 
   const currentScopeIsSelected = selectedSimulationScope === key; // This particular scope is selected.
 
@@ -183,7 +176,7 @@ function ScopeOption(props: SlideProps) {
         checked={currentScopeIsSelected}
         className="sr-only"
         id={`scope-${key}`}
-        onChange={() => setSelectedSimulationScope(key)}
+        onChange={onChange}
         type="radio"
       />
       <h2 className="text-3xl">{title}</h2>
@@ -195,15 +188,13 @@ function ScopeOption(props: SlideProps) {
 }
 
 export default function ScopeSelector() {
-  const [selectedScope, setSelectedScope] = useState<SimulationScope | null>(
-    SimulationScope.Cellular
-  );
+  const [selectedScope, setSelectedScope] = useState<SimulationScope>(SimulationScope.Cellular);
 
   const [selectedSimulationScope, setSelectedSimulationScope] = useAtom(
     selectedSimulationScopeAtom
   );
 
-  const [contentIsVisible, setContentVisibility] = useState<boolean>(true);
+  const [contentIsVisible, setContentVisibility] = useState<boolean>(false);
 
   const availableScopes = items
     .filter(({ scope }) => !selectedScope || scope === selectedScope)
@@ -213,8 +204,11 @@ export default function ScopeSelector() {
         description={description}
         id={key}
         key={key}
+        onChange={() => {
+          setSelectedSimulationScope(key);
+          setContentVisibility(false);
+        }}
         selectedSimulationScope={selectedSimulationScope}
-        setSelectedSimulationScope={setSelectedSimulationScope}
         title={title}
       />
     ));
@@ -223,9 +217,13 @@ export default function ScopeSelector() {
     <>
       <ScopeFilter
         contentIsVisible={contentIsVisible}
+        onChange={(scope: SimulationScope) => setSelectedScope(scope)}
+        onClick={(scope: SimulationScope) =>
+          scope === selectedScope || !contentIsVisible
+            ? setContentVisibility((isVisible) => !isVisible)
+            : {}
+        }
         selectedScope={selectedScope}
-        setSelectedScope={setSelectedScope}
-        toggleContent={() => setContentVisibility((isVisible) => !isVisible)}
       />
       <ConfigProvider
         theme={{
