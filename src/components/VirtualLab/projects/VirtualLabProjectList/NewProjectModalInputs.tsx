@@ -1,10 +1,7 @@
 import { Form, Input } from 'antd';
-import { useAtom } from '@/state/state';
 import styles from './new-project-modal-inputs.module.scss';
 
 export default function NewProjectModalInputs() {
-  const [, setSubmitButtonDisabled] = useAtom<boolean>('new-project-submit-disabled');
-
   return (
     <>
       <Form.Item
@@ -12,15 +9,13 @@ export default function NewProjectModalInputs() {
         name="name"
         label="PROJECT NAME"
         style={{ borderBottom: 'solid 1px #69C0FF', position: 'relative' }}
-        rules={[{ required: true, message: 'Please input the project name!' }]}
+        rules={[
+          { required: true, message: 'Please input the project name!' },
+          { max: 80, message: 'Project name cannot exceed 80 characters' },
+        ]}
         required
       >
-        <Input
-          maxLength={80}
-          name="name"
-          placeholder="Type the project name here..."
-          onInput={(e) => setSubmitButtonDisabled(!e.currentTarget.value)}
-        />
+        <Input name="name" placeholder="Enter project name" />
       </Form.Item>
 
       <Form.Item
@@ -28,12 +23,9 @@ export default function NewProjectModalInputs() {
         name="description"
         label="PROJECT DESCRIPTION"
         style={{ borderBottom: 'solid 1px #69C0FF' }}
+        rules={[{ max: 280, message: 'Project description cannot exceed 280 characters' }]}
       >
-        <Input.TextArea
-          maxLength={288}
-          name="description"
-          placeholder="Type the project description here..."
-        />
+        <Input.TextArea name="description" placeholder="Enter project description" />
       </Form.Item>
     </>
   );

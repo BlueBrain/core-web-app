@@ -1,5 +1,5 @@
 import { Button, ConfigProvider, Modal, Spin, Form } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
@@ -11,20 +11,20 @@ import { notification } from '@/api/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
-import { useInitAtom, useAtom } from '@/state/state';
+import { useAtom } from '@/state/state';
 import { assertErrorMessage, classNames } from '@/util/utils';
 
 function NewProjectModalFooter({
   close,
   loading,
   onSubmit,
+  submitDisabled,
 }: {
   close: () => void;
   loading: boolean;
   onSubmit: () => void;
+  submitDisabled: boolean;
 }) {
-  const [submitDisabled] = useAtom<boolean>('new-project-submit-disabled');
-
   return loading ? (
     <Spin />
   ) : (
@@ -68,7 +68,7 @@ export function NewProjectModal({
   const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
   const includeMembers = useAtomValue(selectedMembersAtom);
 
-  useInitAtom('new-project-submit-disabled', true);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const [form] = Form.useForm<{ name: string; description: string }>();
 
@@ -89,6 +89,15 @@ export function NewProjectModal({
     }
   };
 
+  const values = Form.useWatch([], form);
+
+  useEffect(() => {
+    form
+      .validateFields({ validateOnly: true })
+      .then(() => setIsFormValid(true))
+      .catch(() => setIsFormValid(false));
+  }, [form, values]);
+
   return (
     <Modal
       className="m-w-[600px]"
@@ -96,10 +105,12 @@ export function NewProjectModal({
         <NewProjectModalFooter
           close={() => {
             form.resetFields();
+            setIsFormValid(false);
             setOpen(false);
           }}
           loading={loading}
           onSubmit={onSubmit}
+          submitDisabled={!isFormValid}
         />
       }
       open={!!open}
