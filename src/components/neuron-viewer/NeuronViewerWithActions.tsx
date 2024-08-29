@@ -11,13 +11,22 @@ import {
 } from '@/services/bluenaas-single-cell/renderer';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
+type Props = {
+  modelUrl: string;
+  zoomPlacement?: 'left' | 'right';
+  useZoomer?: boolean;
+  useCursor?: boolean;
+  useEvents?: boolean;
+  useActions?: boolean;
+};
 export default function NeuronViewerContainer({
   modelUrl,
   zoomPlacement,
-}: {
-  modelUrl: string;
-  zoomPlacement?: 'left' | 'right';
-}) {
+  useZoomer = false,
+  useCursor = false,
+  useEvents = false,
+  useActions = false,
+}: Props) {
   const [disbaleHovering, setDisableHovering] = useState(false);
   const [neuronViewerClickData, setNeuronViewerOnClickData] =
     useState<NeuronViewerClickData | null>(null);
@@ -27,10 +36,6 @@ export default function NeuronViewerContainer({
   return (
     <DefaultLoadingSuspense>
       <NeuronViewer
-        useZoomer
-        useCursor
-        useEvents
-        useActions
         modelSelfUrl={modelUrl}
         actions={{
           onClick: (data) => {
@@ -40,11 +45,22 @@ export default function NeuronViewerContainer({
           onHover: setNeuronViewerOnHoverData,
           onHoverEnd: () => setNeuronViewerOnHoverData(null),
         }}
+        {...{
+          useZoomer,
+          useCursor,
+          useEvents,
+          useActions,
+        }}
       >
-        {({ renderer, useActions, useCursor, useZoomer }) => {
+        {({
+          renderer,
+          useActions: enableActions,
+          useCursor: enableCursor,
+          useZoomer: enableZoom,
+        }) => {
           return (
             <>
-              {useActions && neuronViewerClickData && (
+              {enableActions && neuronViewerClickData && (
                 <InjectionRecordingPopover
                   show={!!neuronViewerClickData}
                   data={{
@@ -59,7 +75,7 @@ export default function NeuronViewerContainer({
                   }}
                 />
               )}
-              {useCursor && neuronViewerHoverData && !disbaleHovering && (
+              {enableCursor && neuronViewerHoverData && !disbaleHovering && (
                 <CursorPopover
                   show={!!neuronViewerHoverData}
                   x={neuronViewerHoverData.position.x}
@@ -67,7 +83,7 @@ export default function NeuronViewerContainer({
                   data={neuronViewerHoverData.data}
                 />
               )}
-              {useZoomer && <Zoomer renderer={renderer} placement={zoomPlacement} />}
+              {enableZoom && <Zoomer renderer={renderer} placement={zoomPlacement} />}
             </>
           );
         }}

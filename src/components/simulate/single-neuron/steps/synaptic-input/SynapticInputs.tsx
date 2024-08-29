@@ -1,34 +1,39 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { Button, Form } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Form } from 'antd';
 
-import SynapseSimulationForm from './SynapticInputItem';
+import SynapticInputItem from './SynapticInputItem';
 import { useSynaptomeSimulationConfig } from '@/state/simulate/categories';
+
 import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import { synapsesPlacementAtom } from '@/state/synaptome';
 import { sendRemoveSynapses3DEvent } from '@/components/neuron-viewer/hooks/events';
+import { classNames } from '@/util/utils';
+import { SingleSynaptomeConfig } from '@/types/synaptome';
 
-export default function SynapseSimulationFormsGroup() {
+export default function SynapticInputs() {
   const { newConfig, remove: removeSynapseConfig } = useSynaptomeSimulationConfig();
   const [synapseSimulationAtomState, setSynapseSimState] = useAtom(synaptomeSimulationConfigAtom);
+  const { configuration: synaptomeModel } = useAtomValue(SynaptomeSimulationInstanceAtom);
   const visualizedSynaptomes = useAtomValue(synapsesPlacementAtom);
 
-  const { configuration: synaptomeModel } = useAtomValue(SynaptomeSimulationInstanceAtom);
-
-  const placementConfigForForm = (simFormIndex: number) => {
+  const placementConfigForForm = (simFormIndex: number): SingleSynaptomeConfig | undefined => {
     const simConfigForForm = synapseSimulationAtomState.find(
-      (config: SynapseConfig) => config.key === simFormIndex
+      (_: SynapseConfig, ind) => ind === simFormIndex
     );
-    const placementConfig = synaptomeModel?.synapses.find((s) => s.id === simConfigForForm?.id);
-    return placementConfig;
+    return synaptomeModel?.synapses.find((s) => s.id === simConfigForForm?.id);
   };
 
-  const setAtomProperty = (change: UpdateSynapseSimulationProperty) => {
+  const setAtomProperty = ({ id, key, newValue }: UpdateSynapseSimulationProperty) => {
     setSynapseSimState(
-      synapseSimulationAtomState.map((s) =>
-        s.key === change.id ? { ...s, [change.key]: change.newValue } : s
+      synapseSimulationAtomState.map((s, ind) =>
+        ind === id
+          ? {
+              ...s,
+              [key]: newValue,
+            }
+          : s
       )
     );
   };
@@ -39,40 +44,43 @@ export default function SynapseSimulationFormsGroup() {
 
   return (
     <Form.List name="synapses">
-      {(fields, { add, remove }) => (
-        <div className="flex flex-col gap-4">
-          {fields.map((field) => (
-            <SynapseSimulationForm
-              key={`${field.name}`}
-              index={field.name}
-              synaptomeModelConfig={synaptomeModel}
-              formName={`${field.name}`}
-              selectedSynapseGroupPlacementConfig={placementConfigForForm(field.name)}
-              removeForm={() => {
-                remove(field.name);
-                removeSynapseConfig(field.name);
-                const formName = `${field.name}`;
-                const meshForForm = visualizedSynaptomes?.[formName]?.meshId;
-                if (meshForForm) {
-                  sendRemoveSynapses3DEvent(formName, meshForForm);
-                }
-              }}
-              onChange={setAtomProperty}
-            />
-          ))}
-          <Button
-            className="m-2 ml-auto w-max bg-green-600 text-white"
-            type="primary"
-            icon={<PlusOutlined />}
+      {(fields, { remove }) => (
+        <div className="flex flex-col items-start justify-start gap-4">
+          {fields.map((field) => {
+            return (
+              <SynapticInputItem
+                key={`${field.name}`}
+                index={field.name}
+                synaptomeModelConfig={synaptomeModel}
+                formName={`${field.name}`}
+                selectedSynapticInputPlacementConfig={placementConfigForForm(field.name)!}
+                removeForm={() => {
+                  remove(field.name);
+                  removeSynapseConfig(field.name);
+                  const formName = `${field.name}`;
+                  const meshForForm = visualizedSynaptomes?.[formName]?.meshId;
+                  if (meshForForm) {
+                    sendRemoveSynapses3DEvent(formName, meshForForm);
+                  }
+                }}
+                onChange={setAtomProperty}
+              />
+            );
+          })}
+          <button
+            className={classNames(
+              'mt-2 w-max border border-primary-8 px-6 py-4 text-lg font-bold text-primary-8',
+              'hover:border-neutral-4 hover:bg-neutral-4 hover:text-white'
+            )}
+            type="button"
             onClick={() => {
-              add();
-              if (synaptomeModel?.synapses) {
+              if (synaptomeModel?.synapses.length) {
                 newConfig(synaptomeModel.synapses);
               }
             }}
           >
-            Add Synapses Configuration
-          </Button>
+            Add synaptic input
+          </button>
         </div>
       )}
     </Form.List>

@@ -50,6 +50,7 @@ export default function useNeuronViewerEvents({
         signal: eventAborter.signal,
       }
     );
+
     window.addEventListener(
       REMOVE_SYNAPSES_3D_EVENT,
       removeSynapses3DEventHandler as EventListener,

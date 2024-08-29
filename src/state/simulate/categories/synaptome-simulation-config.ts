@@ -1,19 +1,23 @@
-import { atom, useAtom } from 'jotai';
-import { getDefaultSynapseConfig } from '@/constants/simulate/single-neuron';
+import { useAtom } from 'jotai';
+import { atomWithReset } from 'jotai/utils';
+import sample from 'lodash/sample';
+
+import { getDefaultSynapseConfig, SYNAPTIC_INPUT_COLORS } from '@/constants/simulate/single-neuron';
 import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
-import updateArray from '@/util/updateArray';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 
-export const synaptomeSimulationConfigAtom = atom<Array<SynapseConfig>>([]);
+import updateArray from '@/util/updateArray';
+
+export const synaptomeSimulationConfigAtom = atomWithReset<Array<SynapseConfig>>([]);
 synaptomeSimulationConfigAtom.debugLabel = 'synaptomeSimulationConfigAtom';
 
 export default function useSynaptomeSimulationConfig() {
   const [state, update] = useAtom(synaptomeSimulationConfigAtom);
 
-  function findConfig(key: number) {
-    const synapseConfig = state.find((config: SynapseConfig) => config.key === key);
+  function findConfig(index: number) {
+    const synapseConfig = state.find((config: SynapseConfig, indx) => indx === index);
     if (!synapseConfig) {
-      throw new Error(`No Synapse Config for id ${key} exists`);
+      throw new Error(`No Synapse Config for id ${index} exists`);
     }
     return synapseConfig;
   }
@@ -24,7 +28,6 @@ export default function useSynaptomeSimulationConfig() {
       update([
         {
           ...defaultSynapseConfig,
-          key: state.length,
         },
       ]);
     }
@@ -37,7 +40,7 @@ export default function useSynaptomeSimulationConfig() {
         ...(state || []),
         {
           ...defaultSynapseConfig,
-          key: state.length,
+          color: sample(SYNAPTIC_INPUT_COLORS) ?? SYNAPTIC_INPUT_COLORS[state.length],
         },
       ]);
     }
@@ -53,14 +56,15 @@ export default function useSynaptomeSimulationConfig() {
 
   function setProperty({ id, key, newValue }: UpdateSynapseSimulationProperty) {
     const config = findConfig(id);
-    const updateConfig = {
+    const updateConfig: SynapseConfig = {
       ...config,
       [key]: newValue,
     };
+
     return update(
       updateArray({
         array: state,
-        keyfn: (item) => item.key === id,
+        keyfn: (item, indx) => indx === id,
         newVal: (item) => Object.assign(item, { ...updateConfig }),
       })
     );

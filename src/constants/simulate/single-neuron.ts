@@ -12,6 +12,7 @@ import {
 } from '@/types/simulation/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
+import { SynapseType } from '@/components/neuron-viewer/hooks/events';
 
 export const stimulusTypeParams: StimulusDropdownInfo & {
   options: StimulusTypeOption[];
@@ -158,13 +159,19 @@ export const DEFAULT_SIM_CONFIG: SimulationConfiguration = {
   synapses: undefined,
 };
 
+export const SYNPASE_CODE_TO_TYPE: Record<number, SynapseType> = {
+  110: 'excitatory',
+  10: 'inhibitory',
+};
+
 export const getDefaultSynapseConfig = (
   synapsePlacementConfig?: SingleSynaptomeConfig[]
 ): SynapseConfig | null => {
   if (synapsePlacementConfig) {
     return {
-      key: 0,
       id: synapsePlacementConfig[0].id,
+      configId: crypto.randomUUID(),
+      color: '#ffffff',
       delay: 100,
       duration: 2000,
       frequency: 20,
@@ -173,3 +180,26 @@ export const getDefaultSynapseConfig = (
   }
   return null;
 };
+
+export const SYNAPTIC_INPUT_COLORS = [
+  '#FF8B2C',
+  '#32C14E',
+  '#8AB5FF',
+  '#DC51FF',
+  '#B3A26E',
+  '#F02124',
+  '#32D4C1',
+  '#814BFF',
+  '#E3F750',
+  '#D653C5',
+  '#AD7A14',
+  '#87BB74',
+  '#DFC6AE',
+  '#5778FF',
+  '#EE527C',
+  '#81ADE0',
+  '#99FF80',
+  '#FFCF30',
+  '#5193BA',
+  '#DD63CF',
+];

@@ -8,7 +8,7 @@ export const NEURITE_TYPES_EVENT = 'NEURITE_TYPES';
 export const RESET_SYNAPSES_3D_EVENT = 'RESET_SYNAPSES_3D';
 
 export type SynapsesMesh = Mesh<InstancedBufferGeometry, ShaderMaterial>;
-
+export type SynapseType = 'excitatory' | 'inhibitory';
 export class DisplaySynapses3DEvent extends Event {
   constructor(
     type: string,

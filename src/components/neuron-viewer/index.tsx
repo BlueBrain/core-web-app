@@ -10,7 +10,6 @@ import useMorphology from '@/hooks/useMorphology';
 import { Morphology } from '@/services/bluenaas-single-cell/types';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { DEFAULT_DIRECT_STIM_CONFIG } from '@/constants/simulate/single-neuron';
-import { basePath } from '@/config';
 
 type Props = {
   modelSelfUrl: string;
@@ -101,9 +100,10 @@ export default function NeuronViewer({
       <div
         className="h-full"
         ref={containerRef}
-        style={{
-          cursor: `url(${basePath}/images/HandCursor.webp), pointer`,
-        }}
+        // NOTE: this is removede because it does not getting the exact pointer position due the scale and nature of the custom cursor
+        // style={{
+        //   cursor: `url(${basePath}/images/HandCursor.webp), pointer`,
+        // }}
       />
       {children?.({
         useZoomer,

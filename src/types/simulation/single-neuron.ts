@@ -69,12 +69,13 @@ export interface SimulationConfiguration {
 }
 
 export type SynapseConfig = {
-  key: number;
   id: string;
+  configId: string;
   delay: number;
   duration: number;
   frequency: number;
   weightScalar: number;
+  color: string;
 };
 
 export type SingleModelSimConfig = SimulationConfiguration & {
@@ -134,5 +135,5 @@ export const isSynaptomModel = (model: ModelResource | null): model is Synaptome
 export type UpdateSynapseSimulationProperty = {
   id: number;
   key: keyof SynapseConfig;
-  newValue: number;
+  newValue: number | string;
 };

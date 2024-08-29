@@ -30,7 +30,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import RendererCtrl from './renderer-ctrl';
 import type { Morphology, SecMarkerConfig } from './types';
 import { createSegMarkerMesh, createSegmentMesh, NeuronSegementInfo } from './renderer-utils';
-import { sendSegmentDetailsEvent } from './events';
 
 import { basePath } from '@/config';
 import { SynapsesMesh } from '@/components/neuron-viewer/hooks/events';
@@ -336,7 +335,6 @@ export default class NeuronViewerRenderer {
   }
 
   private onHoverEnd({ mesh, position }: { mesh: MorphMesh; position: { x: number; y: number } }) {
-    sendSegmentDetailsEvent({ show: false });
     this.scene.remove(this.hoverBox as HoverBox);
     disposeMesh(this.hoverBox as HoverBox);
     this.hoverBox = null;

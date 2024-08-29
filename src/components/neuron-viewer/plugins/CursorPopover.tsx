@@ -3,11 +3,11 @@ import { Fragment, useRef } from 'react';
 import { NeuronSegementInfo } from '@/services/bluenaas-single-cell/renderer-utils';
 
 const dataMapping = {
-  segIdx: 'Segment index',
-  section: 'Section',
-  section_nseg: 'Number of segments',
-  offset: 'Offset',
-  distance_from_soma: 'Distance from soma',
+  segIdx: { title: 'Segment index', unit: '' },
+  section: { title: 'Section', unit: '' },
+  section_nseg: { title: 'Number of segments', unit: '' },
+  offset: { title: 'Offset', unit: '' },
+  distance_from_soma: { title: 'Distance from soma', unit: 'mM' },
 };
 
 export default function NeuronMeshInjectionRecordingPopover({
@@ -27,7 +27,7 @@ export default function NeuronMeshInjectionRecordingPopover({
   return (
     <div
       ref={ref}
-      className="fixed max-w-max border border-zinc-600 bg-black p-4 text-white opacity-70 shadow-lg backdrop-blur-sm"
+      className="fixed max-w-max border border-orange-400 bg-black p-4 text-white opacity-80 shadow-lg backdrop-blur-sm"
       style={{
         left: x - 113, // 113 is half of the container
         top: y + 8,
@@ -36,8 +36,12 @@ export default function NeuronMeshInjectionRecordingPopover({
       <div className="grid w-full grid-cols-[1fr_max-content] gap-x-5 gap-y-1">
         {Object.keys(data).map((o) => (
           <Fragment key={o}>
-            <div className="font-light">{dataMapping[o as keyof typeof dataMapping]}</div>
-            <div className="font-bold">{data[o]}</div>
+            <div className="font-light text-orange-400">
+              {dataMapping[o as keyof typeof dataMapping].title}
+            </div>
+            <div className="font-bold">
+              {data[o]} {dataMapping[o as keyof typeof dataMapping].unit}
+            </div>
           </Fragment>
         ))}
       </div>

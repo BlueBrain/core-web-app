@@ -23,7 +23,7 @@ export type SingleSynaptomeConfig = {
   id: string;
   name: string;
   target: string | undefined;
-  type: number | undefined;
+  type: 110 | 10 | undefined;
   distribution: string | undefined;
   formula: string | undefined;
   seed: number | undefined;

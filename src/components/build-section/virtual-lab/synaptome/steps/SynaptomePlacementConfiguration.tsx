@@ -46,7 +46,14 @@ function SynaptomeConfiguration({ virtualLabId, projectId }: Props) {
     <div className="grid h-[calc(100vh-51px)] w-full grid-cols-2">
       <div className="flex items-center justify-center bg-black">
         <DefaultLoadingSuspense>
-          <NeuronViewerContainer modelUrl={resource._self} zoomPlacement="right" />
+          <NeuronViewerContainer
+            useCursor
+            useEvents
+            useZoomer
+            useActions
+            modelUrl={resource._self}
+            zoomPlacement="right"
+          />
         </DefaultLoadingSuspense>
       </div>
       <div className="secondary-scrollbar h-[calc(100%-100px)] w-full p-8">

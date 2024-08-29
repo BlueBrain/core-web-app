@@ -12,12 +12,11 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { z } from 'zod';
-import delay from 'lodash/delay';
 import isEqual from 'lodash/isEqual';
 import groupBy from 'lodash/groupBy';
 import findIndex from 'lodash/findIndex';
 
-import { GENERATE_SYNAPSES_FAIL } from './constants';
+import { GENERATE_SYNAPSES_FAIL, sectionTargetMapping } from './constants';
 import { classNames } from '@/util/utils';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 import {
@@ -85,16 +84,7 @@ const SynapseGroupValidationSchema = z
     }
   });
 
-const sectionTargetMapping = {
-  dend: 'Dendrite',
-  soma: 'Soma',
-  apic: 'Apical',
-  basal: 'Basal',
-};
-
 export default function SynapseSet({ modelId, index, field, removeGroup }: Props) {
-  const [generateError, setGenerateError] = useState(false);
-  const [generateSuccess, setGenerateSuccess] = useState(false);
   const [synapseVis, setSynapseVis] = useState(false);
   const [visualizeLoading, setLoadingVisualize] = useState(false);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
@@ -173,19 +163,12 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
     }
   };
 
-  const onVisualizationSuccess = () => {
-    setGenerateSuccess(true);
-    return delay(() => setGenerateSuccess(false), 2000);
-  };
-
   const onVisualizationError = () => {
     notifyError(
       GENERATE_SYNAPSES_FAIL.replace('$$', (index + 1).toString()),
       undefined,
       'topRight'
     );
-    setGenerateError(true);
-    return delay(() => setGenerateError(false), 2000);
   };
 
   const onVisualizeSynapome = async () => {
@@ -236,7 +219,6 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
       });
       setSynapseVis(true);
       configRef.current = config;
-      return onVisualizationSuccess();
     } catch (error) {
       return onVisualizationError();
     } finally {
@@ -246,7 +228,10 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
 
   return (
     <div className="w-full">
-      <div className="flex min-w-max items-center justify-between gap-2 text-lg font-bold">
+      <div
+        id={`synaptic-input-${index}`}
+        className="flex min-w-max items-center justify-between gap-2 text-lg font-bold"
+      >
         <div className="flex items-center justify-center gap-2">
           <div className="bg-primary-8 px-6 py-3 font-bold text-white"> {index + 1}</div>
           {synapsesPlacement?.[config?.id]?.count && (
@@ -284,13 +269,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
           )}
         </div>
       </div>
-      <div
-        className={classNames(
-          'mb-4 border border-primary-8 p-6',
-          generateError && '!border-2 !border-rose-500',
-          generateSuccess && '!border-2 !border-teal-500'
-        )}
-      >
+      <div className="mb-4 border border-primary-8 p-6">
         <Form.Item
           name={[field.name, 'name']}
           rules={[{ required: true, message: 'Please provide a name!' }]}
@@ -434,7 +413,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             disabled={disableVisualizeBtn}
             className={classNames(
               'cursor-pointer self-end px-3  py-3 text-lg font-bold',
-              disableVisualizeBtn ? 'bg-gray-100 text-neutral-400' : 'bg-neutral-400 text-white'
+              disableVisualizeBtn ? 'bg-gray-100 text-neutral-400' : 'bg-primary-8 text-white'
             )}
           >
             {visualizeLoading && <LoadingOutlined className="mr-2 px-2 text-primary-8" />}

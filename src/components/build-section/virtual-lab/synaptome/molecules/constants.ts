@@ -20,3 +20,17 @@ export const DEFAULT_SYNAPSE_VALUE: SingleSynaptomeConfig = {
   seed: undefined,
   exclusion_rules: null,
 };
+
+export const sectionTargetMapping = {
+  dend: 'Dendrite',
+  soma: 'Soma',
+  apic: 'Apical',
+  basal: 'Basal',
+};
+
+export const synapseTypeMapping = {
+  110: 'Excitatory Synapses',
+  10: 'Inhibitory Synapses',
+};
+
+export type SynapseTypeMappingKeys = keyof typeof synapseTypeMapping;
