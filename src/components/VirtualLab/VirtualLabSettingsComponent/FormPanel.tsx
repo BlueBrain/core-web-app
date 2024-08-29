@@ -32,7 +32,7 @@ export const renderInput = ({
   return (
     <Input
       addonAfter={<Button ghost icon={<EditOutlined />} onClick={onClick} />}
-      className={classNames('!bg-transparent', disabled ? '' : 'font-bold')}
+      className={classNames('!bg-white px-4 pl-3 pr-2 text-primary-9', disabled ? '' : 'font-bold')}
       disabled={disabled}
       maxLength={maxLength} // Used in conjunction with "rules"
       placeholder={placeholder}
@@ -54,24 +54,24 @@ export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
   title,
 }) => {
   return (
-    <Input.Group className="flex items-center">
+    <Input.Group className="flex items-center gap-2 bg-white">
       <Form.Item name={name} noStyle>
         <Input.TextArea
+          autoSize
           className={classNames(
-            'grow resize-none overflow-hidden !bg-transparent',
+            'grow resize-none overflow-hidden !bg-transparent ps-3 text-primary-9',
             disabled ? '' : 'font-bold'
           )}
           disabled={disabled}
           maxLength={maxLength}
           placeholder={placeholder}
           required
-          rows={5}
           style={style}
           title={title}
           variant="borderless"
         />
       </Form.Item>
-      <Button ghost icon={<EditOutlined />} onClick={onClick} />
+      <Button className="mr-2 mt-2 self-baseline" ghost icon={<EditOutlined />} onClick={onClick} />
     </Input.Group>
   );
 };
@@ -103,7 +103,7 @@ function SettingsFormItem({
       theme={{
         components: {
           Button: {
-            defaultGhostColor: disabled ? '#69C0FF' : 'white',
+            defaultGhostColor: disabled ? '#434343' : '#434343',
             defaultGhostBorderColor: 'transparent',
           },
         },
@@ -175,8 +175,8 @@ function SettingsForm({
             activeBg: 'transparent',
             activeShadow: 'none',
             colorBgContainer: 'transparent',
-            colorText: '#fff',
-            colorTextDisabled: '#fff',
+            colorText: '#002766',
+            colorTextDisabled: '#002766',
             colorTextPlaceholder: '#8C8C8C',
             // Antd uses `fontSizeLG` when no suffix/prefix icons are shown, and `fontSize` when these icons are shown. In both these cases, we want the same font size for our UI.
             fontSize: 16,
