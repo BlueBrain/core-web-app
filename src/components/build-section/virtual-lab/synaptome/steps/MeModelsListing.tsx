@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Form } from 'antd';
 import { z } from 'zod';
 import { WarningOutlined } from '@ant-design/icons';
-import Link from 'next/link';
 
 import { SynaptomeModelConfigSteps } from '../molecules/types';
 import { DataType } from '@/constants/explore-section/list-views';
@@ -89,12 +88,6 @@ export default function MeModelsListing({
           }}
         />
       </div>
-      <Link
-        href="/"
-        className="fixed bottom-10 left-24 mt-10 w-max border border-primary-8 bg-white px-5 py-4 font-bold text-primary-8"
-      >
-        Create new ME-Model
-      </Link>
       <button
         type="button"
         className="fixed bottom-10 right-10 rounded-none bg-primary-8 px-5 py-4 text-white disabled:bg-neutral-400"

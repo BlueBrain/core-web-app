@@ -5,7 +5,6 @@ import sample from 'lodash/sample';
 import { getDefaultSynapseConfig, SYNAPTIC_INPUT_COLORS } from '@/constants/simulate/single-neuron';
 import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
-
 import updateArray from '@/util/updateArray';
 
 export const synaptomeSimulationConfigAtom = atomWithReset<Array<SynapseConfig>>([]);
