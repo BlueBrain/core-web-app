@@ -5,8 +5,7 @@ import { useAtomValue } from 'jotai';
 import { Spin } from 'antd';
 
 import VirtualLabStatistic from '../../VirtualLabStatistic';
-import Brain from '@/components/icons/Brain';
-import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
+import { MembersGroupIcon } from '@/components/icons';
 import { Project } from '@/types/virtual-lab/projects';
 import { formatDate } from '@/util/utils';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
@@ -43,24 +42,25 @@ function ProjectStats({ project }: { project: Project }) {
   return (
     <div className="flex flex-wrap gap-5">
       {[
-        {
-          detail: 'N/A',
-          icon: <EyeTargetIcon style={iconStyle} />,
-          key: 'explore-sessions',
-          title: 'Explore sessions',
-        },
-        {
-          detail: 'N/A',
-          icon: <Brain style={iconStyle} />,
-          key: 'builds',
-          title: 'Builds',
-        },
-        {
-          detail: 'N/A',
-          icon: <StatsEditIcon style={iconStyle} />,
-          key: 'simulation=experiments',
-          title: 'Simulation experiments',
-        },
+        // Temporarily removing it for SfN
+        // {
+        //   detail: 'N/A',
+        //   icon: <EyeTargetIcon style={iconStyle} />,
+        //   key: 'explore-sessions',
+        //   title: 'Explore sessions',
+        // },
+        // {
+        //   detail: 'N/A',
+        //   icon: <Brain style={iconStyle} />,
+        //   key: 'builds',
+        //   title: 'Builds',
+        // },
+        // {
+        //   detail: 'N/A',
+        //   icon: <StatsEditIcon style={iconStyle} />,
+        //   key: 'simulation=experiments',
+        //   title: 'Simulation experiments',
+        // },
         {
           detail: <MemberAmount virtualLabId={virtualLabId} projectId={projectId} />,
           icon: <UserOutlined style={iconStyle} />,
