@@ -189,7 +189,7 @@ export function BaseTable({
                 x: 'fit-content',
                 y: containerDimension.height - (headerHeight + 100), // 100 is to make space for load more button,
               }
-            : undefined
+            : { x: 'fit-content' }
         }
       />
     </ConfigProvider>

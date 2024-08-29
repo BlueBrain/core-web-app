@@ -47,11 +47,11 @@ export default function VirtualLabProjectSimulatePage({
   );
 
   return (
-    <div className="flex h-full w-full flex-col gap-5 pr-5 pt-8">
+    <div className="flex min-h-screen w-full flex-col gap-5 pr-5 pt-8">
       <VirtualLabTopMenu />
       <ScopeSelector />
       {simulationType && tabDetails ? (
-        <div className="flex h-full w-full flex-col">
+        <div className="flex w-full grow flex-col">
           <div className="flex justify-between">
             <GenericButton
               text={tabDetails.title}
@@ -66,7 +66,7 @@ export default function VirtualLabProjectSimulatePage({
           </div>
           <div
             id="explore-table-container-for-observable"
-            className="mb-5 h-full w-full overflow-x-auto"
+            className="mb-5 flex h-full w-full flex-col overflow-x-auto"
           >
             <ExploreSectionListingView
               dataType={simulationType}
@@ -77,6 +77,8 @@ export default function VirtualLabProjectSimulatePage({
               tableScrollable={false}
               controlsVisible={false}
               style={{ background: 'bg-white' }}
+              containerClass="flex flex-col grow"
+              tableClass="overflow-y-auto grow"
             />
           </div>
           {selectedRows.length > 0 && (

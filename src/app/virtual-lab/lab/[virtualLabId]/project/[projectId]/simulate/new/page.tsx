@@ -56,14 +56,16 @@ export default function NewSimulation({
   );
 
   return (
-    <div className={classNames('flex w-full flex-col pr-5 pt-8', !modelType && 'h-full')}>
+    <div
+      className={classNames('flex min-h-screen w-full flex-col pr-5 pt-8', !modelType && 'h-full')}
+    >
       <div className="mb-5 flex flex-col gap-5">
         <VirtualLabTopMenu />
         <ScopeSelector />
       </div>
 
       {modelType ? (
-        <>
+        <div className="flex grow flex-col">
           <div className="flex justify-between align-middle">
             <div className="bg-white px-5 py-2 text-2xl font-bold text-primary-8 ">
               Create a simulation
@@ -74,14 +76,15 @@ export default function NewSimulation({
               href={simulatePage}
             />
           </div>
-          <div className="mb-5 min-h-[calc(100vh-340px)] bg-white">
+          <div className="flex grow flex-col">
             {/* TODO: replace this list with items saved in Model Library */}
-            <div className="w-full overflow-x-auto" id="explore-table-container-for-observable">
+            <div className="flex w-full grow flex-col" id="explore-table-container-for-observable">
               <div className="bg-white pl-5 pt-5 text-lg text-primary-8">
-                Select a single neuron model to simulate
+                {`Select a ${selectedSimulationScope.replace('-', ' ')} model to simulate`}
               </div>
               <ExploreSectionListingView
-                heightClass=""
+                containerClass="grow bg-primary-9 flex flex-col"
+                tableClass="grow mb-5"
                 tableScrollable={false}
                 controlsVisible={false}
                 dataType={modelType}
@@ -103,7 +106,7 @@ export default function NewSimulation({
               </div>
             )}
           </div>
-        </>
+        </div>
       ) : (
         <div className="m-auto w-fit border p-6">Coming Soon</div>
       )}
