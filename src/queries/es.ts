@@ -206,10 +206,10 @@ export const getAtlasReleaseMeshesQuery = () => ({
     bool: {
       must: [
         {
-          match: { '@type': 'Mesh' },
+          term: { '@type': 'Mesh' },
         },
         {
-          match: { 'atlasRelease.@id': atlasReleaseResource.id },
+          term: { 'atlasRelease.@id': atlasReleaseResource.id },
         },
       ],
     },
