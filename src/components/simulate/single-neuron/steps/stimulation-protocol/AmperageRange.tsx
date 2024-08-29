@@ -11,13 +11,16 @@ const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPrev
   ssr: false,
 });
 
+// Each amperage starts a new simulation process in the server. To limit resource consumption, we put a maximum threshold on number of amperages a simulation can have.
+const MAX_AMPERAGE_STEPS = 15;
+
 const amperageInitialState = {
   start: 40,
   end: 120,
   stepValue: 40,
   stepType: 'stepSize' as StepType,
   computed: [40, 80, 120] as number[],
-  isConsistent: true,
+  error: null as string | null,
 };
 
 type AmperageActionType = {
@@ -38,7 +41,6 @@ type StepType = 'stepSize' | 'stepNumber';
 function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   const newState = { ...state } satisfies AmperageStateType;
   const newVal = action.payload;
-  newState.isConsistent = false;
 
   switch (action.type) {
     case 'start':
@@ -59,26 +61,35 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
       break;
     case 'checkConsistency':
       if (state.start > state.end) {
-        newState.start = state.end;
+        newState.error = 'Start should be less than end';
+        break;
       } else if (state.end < state.start) {
-        newState.end = state.start;
+        newState.error = 'End should be greater than start';
+        break;
       }
       if (state.stepType === 'stepNumber' && state.stepValue === 0) {
-        newState.stepValue = 1;
+        newState.error = `Step value should be at least 1 and atmost ${MAX_AMPERAGE_STEPS}`;
+        break;
       }
       if (state.stepType === 'stepSize' && state.stepValue === 0) {
-        newState.stepValue = 0.1;
+        newState.error = 'Step size cannot be 0';
+        break;
       }
-      newState.isConsistent = true;
+
+      newState.computed = calculateRangeOutput(newState.start, newState.end, {
+        type: newState.stepType,
+        value: newState.stepValue,
+      });
+
+      if (newState.computed.length > MAX_AMPERAGE_STEPS) {
+        newState.error = `There should be a maximum of ${MAX_AMPERAGE_STEPS} amperages in a simulation. Currently there are ${newState.computed.length}`;
+      } else {
+        newState.error = null;
+      }
       break;
     default:
       throw new Error('Action not found', action.type);
   }
-
-  newState.computed = calculateRangeOutput(newState.start, newState.end, {
-    type: newState.stepType,
-    value: newState.stepValue,
-  });
   return newState;
 }
 
@@ -87,25 +98,21 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
   const { setAmplitudes } = useCurrentInjectionSimulationConfig();
 
   useEffect(() => {
-    if (!amperageState.isConsistent) return;
     if (isEqual(amperageState.computed, amplitudes)) return;
     setAmplitudes({
       id: stimulationId,
       newValue: amperageState.computed,
     });
-  }, [
-    amperageState.computed,
-    amperageState.isConsistent,
-    amplitudes,
-    setAmplitudes,
-    stimulationId,
-  ]);
+  }, [amperageState.computed, amperageState.error, amplitudes, setAmplitudes, stimulationId]);
 
   return (
     <>
       <div className="mb-3 text-left text-base">
         <span className="mr-1 font-bold text-red-400">*</span>
         <span>Amperage [nA]</span>
+        {amperageState.error && (
+          <i className="ml-2 text-base font-light text-error">{amperageState.error}</i>
+        )}
       </div>
       <div className="flex gap-6 text-base">
         <InputNumber
@@ -132,6 +139,7 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
           size="small"
           value={amperageState.stepType}
           onChange={(newVal: StepType) => dispatch({ type: 'stepType', payload: newVal })}
+          onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
           className="w-[140px]"
         />
 
@@ -161,13 +169,11 @@ export default function AmperageRange({ amplitudes, stimulationId, modelSelfUrl 
           onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
         />
       </div>
-
       <div className="mb-2 mt-4 text-left text-sm text-gray-400">Output amperages</div>
+
       <div className="mb-4 flex flex-wrap gap-4 text-base font-bold text-gray-400">
         {amperageState.computed.map((value) => (
-          <span key={value} className="">
-            {value}
-          </span>
+          <span key={value}>{value}</span>
         ))}
       </div>
       <StimuliPreviewPlot amplitudes={amperageState.computed} modelSelfUrl={modelSelfUrl} />
