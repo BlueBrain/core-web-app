@@ -101,11 +101,11 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
   };
 
   return (
-    <div className="flex min-h-full w-full flex-col gap-5 pr-5 pt-8">
+    <div className="flex min-h-screen w-full flex-col gap-5 pr-5 pt-8">
       <VirtualLabTopMenu />
       <ScopeSelector />
       {selectedModelType && tabDetails ? (
-        <div className="flex h-full flex-col">
+        <div className="flex grow flex-col">
           <div className="flex justify-between">
             <GenericButton
               text={tabDetails.title}
@@ -121,7 +121,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
           </div>
           <div
             id="explore-table-container-for-observable"
-            className="mb-5 h-full w-full overflow-hidden"
+            className="mb-5 flex w-full grow flex-col"
           >
             <ExploreSectionListingView
               tableScrollable={false}
@@ -131,6 +131,8 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
               selectionType="radio"
               style={{ background: 'bg-white' }}
+              containerClass="grow bg-primary-9 flex flex-col"
+              tableClass="grow"
             />
 
             {selectedRows.length > 0 && (
