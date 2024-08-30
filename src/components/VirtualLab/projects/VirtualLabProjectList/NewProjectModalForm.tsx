@@ -174,6 +174,8 @@ export default function NewProjectModalForm({
         <Button
           className="mt-5 flex h-12 items-center rounded-none bg-white font-bold text-primary-8"
           onClick={() => setShowInvitation(true)}
+          // disabling it for SfN
+          disabled
         >
           <div className="relative -top-1">
             Add Member

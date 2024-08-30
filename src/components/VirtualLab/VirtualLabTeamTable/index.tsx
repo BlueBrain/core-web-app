@@ -82,8 +82,10 @@ export default function VirtualLabTeamTable({ users }: Props) {
         </div>
         <button
           type="button"
-          className="flex w-[220px] justify-between border border-primary-7 p-3"
+          className="flex w-[220px] cursor-not-allowed justify-between border border-primary-7 bg-neutral-3 p-3"
           onClick={() => setOpenInviteProjectMemberModal(true)}
+          // temporarily disabling it for SfN
+          disabled
         >
           <span className="font-bold">Invite member</span>
           <PlusOutlined />

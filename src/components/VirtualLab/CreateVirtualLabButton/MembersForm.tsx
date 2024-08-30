@@ -22,6 +22,8 @@ function NewMemberForm({
   setVirtualLabFn: Dispatch<SetStateAction<VirtualLabWithOptionalId>>;
 }) {
   const [form] = Form.useForm();
+  // Rule disabled for SfN since Member form is disabled
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isFormValid, setIsFormValid] = useState(false);
   const onValuesChange = () => {
     form
@@ -51,6 +53,9 @@ function NewMemberForm({
   return (
     <Form
       form={form}
+      // temporarily disabling this form for SfN. Invitation should be back afterwards
+      // this prop disables it for all nested form elements
+      disabled
       className="my-5"
       name="member_form"
       onFinish={onFinish}
