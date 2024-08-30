@@ -1,10 +1,10 @@
 import { Form, InputNumber } from 'antd';
 
 import { useSimulationConditions } from '@/state/simulate/categories';
-import { SimulationConditions } from '@/types/simulation/single-neuron';
+import { SimulationExperimentalSetup } from '@/types/simulation/single-neuron';
 
 type SetupInputProps = {
-  name: keyof SimulationConditions;
+  name: keyof SimulationExperimentalSetup;
   text: string;
   unit?: string;
   min: number;
@@ -13,7 +13,7 @@ type SetupInputProps = {
     key,
     newValue,
   }: {
-    key: keyof SimulationConditions;
+    key: keyof SimulationExperimentalSetup;
     newValue: number | null;
   }) => void;
 };

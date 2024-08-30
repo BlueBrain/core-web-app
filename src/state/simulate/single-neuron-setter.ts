@@ -14,7 +14,7 @@ import {
   simulationStatusAtom,
   stimulusPreviewPlotDataAtom,
 } from './single-neuron';
-import { simulationConditionsAtom } from './categories/simulation-conditions';
+import { simulationExperimentalSetupAtom } from './categories/simulation-conditions';
 import { currentInjectionSimulationConfigAtom } from './categories/current-injection-simulation';
 import { synaptomeSimulationConfigAtom } from './categories/synaptome-simulation-config';
 import { recordingSourceForSimulationAtom } from './categories/recording-source-for-simulation';
@@ -55,7 +55,7 @@ export const createSingleNeuronSimulationAtom = atom<
   }
 
   const recordFromConfig = get(recordingSourceForSimulationAtom);
-  const conditionsConfig = get(simulationConditionsAtom);
+  const experimentalSetupConfig = get(simulationExperimentalSetupAtom);
   const currentInjectionConfig = get(currentInjectionSimulationConfigAtom);
   const synaptomeConfig = get(synaptomeSimulationConfigAtom);
   const simulationResult = get(genericSingleNeuronSimulationPlotDataAtom);
@@ -73,7 +73,7 @@ export const createSingleNeuronSimulationAtom = atom<
   // TODO: Remove `singleNeuronSimulationConfig` and use `simulationConfig` directly once backend is updated to accept this type
   const singleNeuronSimulationConfig: SingleNeuronModelSimulationConfig = {
     recordFrom: recordFromUniq,
-    conditions: conditionsConfig,
+    conditions: experimentalSetupConfig,
     currentInjection: currentInjectionConfig[0],
     synaptome: simulationType === 'synaptome-simulation' ? synaptomeConfig : undefined,
   };
@@ -163,9 +163,15 @@ export const createSingleNeuronSimulationAtom = atom<
   return null;
 });
 
-export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
+export const launchSimulationAtom = atom<null, [string, SimulationType, number], void>(
   null,
-  async (get, set, modelSelfUrl: string, simulationType: SimulationType) => {
+  async (
+    get,
+    set,
+    modelSelfUrl: string,
+    simulationType: SimulationType,
+    simulationDuration: number
+  ) => {
     const session = await getSession();
     if (!session?.accessToken) {
       throw new Error('Session token should be valid');
@@ -173,7 +179,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
     const currentInjectionConfig = get(currentInjectionSimulationConfigAtom);
     const synapsesConfig = get(synaptomeSimulationConfigAtom);
     const recordFromConfig = get(recordingSourceForSimulationAtom);
-    const conditionsConfig = get(simulationConditionsAtom);
+    const conditionsConfig = get(simulationExperimentalSetupAtom);
 
     if (simulationType === 'single-neuron-simulation') {
       if (!currentInjectionConfig) {
@@ -242,6 +248,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
             currentInjectionConfig.length > 0 ? currentInjectionConfig[0] : undefined,
           synapses: simulationType === 'synaptome-simulation' ? synapsesConfig : undefined,
           type: simulationType,
+          simulationDuration,
         },
       });
 
@@ -285,9 +292,9 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
               type: 'scatter',
               name: p.stimulus_name,
               recording: p.recording_name,
-              protocolValue: Number(p.stimulus_name.split('_').at(-1)),
+              amplitude: p.amplitude,
             })),
-            ['protocolValue']
+            ['amplitude']
           );
 
           const groupedRecording = groupBy(plotData, (p) => p.recording);

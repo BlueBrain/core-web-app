@@ -59,6 +59,7 @@ export type PlotDataEntry = {
   type: 'scatter';
   name: string;
   recording?: string;
+  amplitude?: number;
 };
 
 export type PlotData = PlotDataEntry[];

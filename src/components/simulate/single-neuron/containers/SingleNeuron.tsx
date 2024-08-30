@@ -12,12 +12,11 @@ import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 type Props = {
   projectId: string;
   virtualLabId: string;
-  disableForm: boolean;
 };
 
 const SIMULATION_TYPE: SimulationType = 'single-neuron-simulation';
 
-function SingleNeuron({ projectId, virtualLabId, disableForm }: Props) {
+function SingleNeuron({ projectId, virtualLabId }: Props) {
   const { id: modelId } = useResourceInfoFromPath();
   const { resource, loading } = useModel<ModelResource>({
     modelId,
@@ -43,7 +42,6 @@ function SingleNeuron({ projectId, virtualLabId, disableForm }: Props) {
           vLabId={virtualLabId}
           projectId={projectId}
           simulationType={SIMULATION_TYPE}
-          disabled={disableForm}
         />
       </div>
     </>

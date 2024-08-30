@@ -1,20 +1,22 @@
 import { atom, useAtom } from 'jotai';
 
-import { SimulationConditions } from '@/types/simulation/single-neuron';
-import { DEFAULT_SIMULATION_CONDITIONS } from '@/constants/simulate/single-neuron';
+import { SimulationExperimentalSetup } from '@/types/simulation/single-neuron';
+import { DEFAULT_SIMULATION_EXPERIMENTAL_SETUP } from '@/constants/simulate/single-neuron';
 
-export const simulationConditionsAtom = atom<SimulationConditions>(DEFAULT_SIMULATION_CONDITIONS);
+export const simulationExperimentalSetupAtom = atom<SimulationExperimentalSetup>(
+  DEFAULT_SIMULATION_EXPERIMENTAL_SETUP
+);
 
-simulationConditionsAtom.debugLabel = 'simulationConditionsAtom';
+simulationExperimentalSetupAtom.debugLabel = 'simulationConditionsAtom';
 
 export default function useSimulationConditions() {
-  const [state, update] = useAtom(simulationConditionsAtom);
+  const [state, update] = useAtom(simulationExperimentalSetupAtom);
 
   function setProperty({
     key,
     newValue,
   }: {
-    key: keyof SimulationConditions;
+    key: keyof SimulationExperimentalSetup;
     newValue: number | null;
   }) {
     return update({

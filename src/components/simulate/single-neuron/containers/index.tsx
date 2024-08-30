@@ -15,7 +15,7 @@ import { SimulationStepTitle, SimulationType } from '@/types/simulation/common';
 import { recordingSourceForSimulationAtom } from '@/state/simulate/categories/recording-source-for-simulation';
 import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
-import { simulationConditionsAtom } from '@/state/simulate/categories/simulation-conditions';
+import { simulationExperimentalSetupAtom } from '@/state/simulate/categories/simulation-conditions';
 
 import ConfigStepHeader from '@/components/simulate/single-neuron/molecules/ConfigStepHeader';
 
@@ -68,7 +68,7 @@ export default function SingleNeuronSimulationGenericContainer({
   const recordFromConfig = useAtomValue(recordingSourceForSimulationAtom);
   const currentInjectionConfig = useAtomValue(currentInjectionSimulationConfigAtom);
   const synaptomeConfig = useAtomValue(synaptomeSimulationConfigAtom);
-  const conditionsConfig = useAtomValue(simulationConditionsAtom);
+  const conditionsConfig = useAtomValue(simulationExperimentalSetupAtom);
 
   const initialValues: SimulationConfiguration = useMemo(
     () => ({
@@ -80,7 +80,7 @@ export default function SingleNeuronSimulationGenericContainer({
     [currentInjectionConfig, recordFromConfig, synaptomeConfig, conditionsConfig, type]
   );
 
-  const [{ steps, current: currentSimulationStep }, upadteSimulationStepsStatus] =
+  const [{ steps, current: currentSimulationStep }, updateSimulationStepsStatus] =
     useAtom(simulateStepTrackerAtom);
 
   const onValuesChange = async () => {
@@ -91,7 +91,7 @@ export default function SingleNeuronSimulationGenericContainer({
       if (errorObject.errorFields.length) {
         const list = checkStepError(errorObject.errorFields);
         setDisableSubmit(true);
-        upadteSimulationStepsStatus({
+        updateSimulationStepsStatus({
           current: currentSimulationStep,
           steps: steps.map((s) => {
             if (list.includes(s.title)) {
@@ -108,7 +108,7 @@ export default function SingleNeuronSimulationGenericContainer({
         });
       } else {
         setDisableSubmit(false);
-        upadteSimulationStepsStatus({
+        updateSimulationStepsStatus({
           steps: defaultSteps,
           current: currentSimulationStep,
         });
@@ -135,6 +135,7 @@ export default function SingleNeuronSimulationGenericContainer({
             desctipion: undefined,
           }}
           onValuesChange={onValuesChange}
+          requiredMark={false}
         >
           {configStep !== 'basic-config' && <ConfigStepHeader {...{ configStep }} />}
           <CreateBaseSimulationConfig {...{ configStep, onConfigStep }} />

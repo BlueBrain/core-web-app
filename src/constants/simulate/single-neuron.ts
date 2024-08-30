@@ -8,7 +8,7 @@ import {
   CurrentInjectionSimulationConfig,
   SynapseConfig,
   RecordLocation,
-  SimulationConditions,
+  SimulationExperimentalSetup,
 } from '@/types/simulation/single-neuron';
 import { getParamValues } from '@/util/simulate/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
@@ -121,7 +121,7 @@ export const DEFAULT_RECORDING_LOCATION: RecordLocation = {
   offset: 0.5,
 };
 
-export const DEFAULT_SIMULATION_CONDITIONS: SimulationConditions = {
+export const DEFAULT_SIMULATION_EXPERIMENTAL_SETUP: SimulationExperimentalSetup = {
   celsius: 34,
   vinit: -73,
   hypamp: 0,
@@ -153,7 +153,7 @@ export const DEFAULT_DIRECT_STIM_CONFIG: CurrentInjectionSimulationConfig = {
 };
 
 export const DEFAULT_SIM_CONFIG: SimulationConfiguration = {
-  conditions: DEFAULT_SIMULATION_CONDITIONS,
+  conditions: DEFAULT_SIMULATION_EXPERIMENTAL_SETUP,
   recordFrom: [{ ...DEFAULT_RECORDING_LOCATION }],
   currentInjection: [DEFAULT_DIRECT_STIM_CONFIG],
   synapses: undefined,

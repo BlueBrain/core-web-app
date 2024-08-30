@@ -47,7 +47,7 @@ export interface CurrentInjectionSimulationConfig {
   stimulus: StimulusConfig;
 }
 
-export type SimulationConditions = {
+export type SimulationExperimentalSetup = {
   celsius: number;
   vinit: number;
   hypamp: number;
@@ -64,7 +64,7 @@ export type RecordLocation = {
 export interface SimulationConfiguration {
   recordFrom: RecordLocation[];
   currentInjection: CurrentInjectionSimulationConfig[];
-  conditions: SimulationConditions;
+  conditions: SimulationExperimentalSetup;
   synapses?: SynapsesConfig;
 }
 
@@ -100,7 +100,7 @@ export type StimulusConfig = {
 
 export interface SingleNeuronModelSimulationConfig {
   recordFrom: RecordLocation[];
-  conditions: SimulationConditions;
+  conditions: SimulationExperimentalSetup;
   currentInjection: CurrentInjectionSimulationConfig;
   synaptome?: Array<SynapseConfig>;
 }

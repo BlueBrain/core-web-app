@@ -9,12 +9,11 @@ import { SimulationType } from '@/types/simulation/common';
 type Props = {
   projectId: string;
   virtualLabId: string;
-  disableForm: boolean;
 };
 
 const SIMULATION_TYPE: SimulationType = 'synaptome-simulation';
 
-export default function Synaptome({ projectId, virtualLabId, disableForm }: Props) {
+export default function Synaptome({ projectId, virtualLabId }: Props) {
   const { model, configuration } = useSynaptomeModel({
     projectId,
     virtualLabId,
@@ -38,7 +37,6 @@ export default function Synaptome({ projectId, virtualLabId, disableForm }: Prop
           vLabId={virtualLabId}
           projectId={projectId}
           simulationType={SIMULATION_TYPE}
-          disabled={disableForm}
         />
       </div>
     </>

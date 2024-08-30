@@ -3,7 +3,7 @@ import { SimulationType } from '@/types/simulation/common';
 import {
   CurrentInjectionSimulationConfig,
   RecordLocation,
-  SimulationConditions,
+  SimulationExperimentalSetup,
   SynapsesConfig,
 } from '@/types/simulation/single-neuron';
 
@@ -16,10 +16,11 @@ export const runGenericSingleNeuronSimulation = async ({
   token: string;
   config: {
     recordFrom: Array<RecordLocation>;
-    conditions: SimulationConditions;
+    conditions: SimulationExperimentalSetup;
     currentInjection?: CurrentInjectionSimulationConfig;
     synapses?: SynapsesConfig;
     type: SimulationType;
+    simulationDuration: number;
   };
 }) => {
   return await fetch(

@@ -1,5 +1,5 @@
 import { UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import { z } from 'zod';
 
 import { label } from '../molecules/Label';
@@ -78,15 +78,13 @@ export default function CreateBaseSimulationConfig({ configStep, onConfigStep }:
           </div>
         </div>
       </div>
-      <Button
-        htmlType="button"
-        type="primary"
-        size="large"
-        className="fixed bottom-10 right-10 rounded-none bg-primary-8 text-white"
+      <button
+        type="button"
+        className="fixed bottom-10 right-10 rounded-none bg-primary-8 px-7 py-3 text-lg text-white"
         onClick={proceed}
       >
         Start Configuring
-      </Button>
+      </button>
     </div>
   );
 }
