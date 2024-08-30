@@ -7,6 +7,7 @@ import {
   genericSingleNeuronSimulationPlotDataAtom,
   simulationStatusAtom,
 } from '@/state/simulate/single-neuron';
+import { SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
 
 const PlotRenderer = dynamic(
   () => import('@/components/simulate/single-neuron/visualization/PlotRenderer'),
@@ -52,7 +53,7 @@ export default function Results() {
             <div className="flex w-full flex-col border border-gray-300 p-2">
               <PlotRenderer
                 className="mt-8"
-                data={value}
+                data={value.map((v, i) => ({ ...v, line: { color: SIMULATION_COLORS[i] } }))}
                 isLoading={isLoading}
                 plotConfig={{
                   yAxisTitle: 'Voltage [mv]',

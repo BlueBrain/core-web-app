@@ -37,17 +37,17 @@ export const stimulusModuleParams: StimulusDropdownInfo & {
       label: 'AP_WAVEFORM',
       value: 'ap_waveform',
       usedBy: ['current_clamp'],
-      description: '',
+      description:
+        'This protocol is used to check the precise AP waveform. The aim is to get 1-2 APs for higher currents to study the AP properties such as AP amplitude, AP duration, peak time, afterhyperpolarisation, rise-time, fall-time, etc.',
       delay: 250,
       duration: 50,
-      stopTime: 0, // TODO: Update
+      stopTime: 550,
     },
     {
       label: 'IDREST',
       value: 'idrest',
       usedBy: ['current_clamp'],
-      description: '',
-
+      description: `This protocol is a sequence of depolarizing square pulses. The aim is to get as many APs as possible and make cell firing up to saturation. The firing properties, such as mean AP frequency and interspike intervals, bursting number, etc., are calculated to determine the cell's e-type (electrical firing type).`,
       delay: 250,
       duration: 1350,
       stopTime: 1850,
@@ -56,32 +56,35 @@ export const stimulusModuleParams: StimulusDropdownInfo & {
       label: 'IV',
       value: 'iv',
       usedBy: ['current_clamp'],
-      description: '',
+      description:
+        'This protocol is used to check the passive properties and the voltage sag. A sequence of current steps, from hyperpolarization to small depolarization, is injected. It is mainly used to calculate the Input resistance of the cell.',
 
       delay: 250,
       duration: 3000,
-      stopTime: 0, // TODO: Update
+      stopTime: 3500,
     },
     {
       label: 'FIRE_PATTERN',
       value: 'fire_pattern',
       usedBy: ['current_clamp'],
-      description: '',
+      description: ` This protocol involves injecting a few long-duration, small and high suprathreshold currents. This protocol and IDREST are used to check cells' electrical firing type (e-type), e.g., continuous, bursting, stuttering and irregular firing.`,
 
       delay: 250,
       duration: 3600,
-      stopTime: 0, // TODO: Update
+      stopTime: 4100, // TODO: Update
     },
   ],
 };
 
+// These  values are based on discussions in this ticket - https://bbpteam.epfl.ch/project/issues/browse/BBPP134-2099
+// The default value for `step` is reduced for some protocols to reduce the number of simulation processes.
 export const stimulusParams: ConditionalStimulusParamsTypes = {
   ap_waveform: {
     params: {
       defaultValue: 250,
-      min: 40,
-      max: 120,
-      step: 40,
+      min: 0.05,
+      max: 0.5,
+      step: 5,
       unit: 'ms',
     },
   },
@@ -90,25 +93,25 @@ export const stimulusParams: ConditionalStimulusParamsTypes = {
       defaultValue: 1350,
       min: 0.05,
       max: 0.5,
-      step: 10,
+      step: 5,
       unit: 'ms',
     },
   },
   iv: {
     params: {
       defaultValue: 3000,
-      min: 40,
-      max: 120,
-      step: 40,
+      min: -0.5,
+      max: 0.1,
+      step: 5,
       unit: 'ms',
     },
   },
   fire_pattern: {
     params: {
       defaultValue: 3600,
-      min: 40,
-      max: 120,
-      step: 40,
+      min: 0.05,
+      max: 0.5,
+      step: 4,
       unit: 'ms',
     },
   },
@@ -203,3 +206,6 @@ export const SIMULATION_COLORS = [
   '#5193BA',
   '#DD63CF',
 ];
+
+// Each amperage starts a new simulation process in the server. To limit resource consumption, we put a maximum threshold on number of amperages a simulation can have.
+export const MAX_AMPERAGE_STEPS = 15;

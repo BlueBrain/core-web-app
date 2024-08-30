@@ -1,11 +1,11 @@
 import { StimulusModule } from './single-neuron';
 
-export type DirectCurrentInjectionGraphRequest = {
+export type CurrentInjectionGraphRequest = {
   stimulusProtocol: StimulusModule;
   amplitudes: number[];
 };
 
-export type DirectCurrentInjectionGraphPlotResponse = {
+export type CurrentInjectionGraphResponse = {
   x: number[];
   y: number[];
   name: string;

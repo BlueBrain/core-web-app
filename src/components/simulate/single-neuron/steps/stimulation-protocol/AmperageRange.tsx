@@ -1,5 +1,5 @@
-import { ReactNode, useEffect, useReducer } from 'react';
-import { Select, InputNumber } from 'antd';
+import { useEffect, useReducer } from 'react';
+import { InputNumber } from 'antd';
 import range from 'lodash/range';
 import round from 'lodash/round';
 import isEqual from 'lodash/isEqual';
@@ -7,37 +7,38 @@ import dynamic from 'next/dynamic';
 
 import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 import { StimulusModule } from '@/types/simulation/single-neuron';
-import { DEFAULT_PROTOCOL, stimulusParams } from '@/constants/simulate/single-neuron';
+import {
+  DEFAULT_PROTOCOL,
+  MAX_AMPERAGE_STEPS,
+  stimulusParams,
+} from '@/constants/simulate/single-neuron';
 
 const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPreviewPlot'), {
   ssr: false,
 });
 
-// Each amperage starts a new simulation process in the server. To limit resource consumption, we put a maximum threshold on number of amperages a simulation can have.
-const MAX_AMPERAGE_STEPS = 15;
-
 const getInitialAmperageState = (protocol: StimulusModule) => {
   const { min: start, max: end, step } = stimulusParams[protocol].params;
   return {
+    protocol,
     start,
     end,
     stepValue: step,
-    stepType: 'stepSize' as StepType,
-    computed: calculateRangeOutput(start, end, { type: 'stepSize', value: step }),
+    computed: calculateRangeOutput(start, end, step),
     error: null as string | null,
   };
 };
 
 type AmperageActionType = {
-  type: 'start' | 'end' | 'stepValue' | 'stepType' | 'checkConsistency' | 'reset-for-protocol';
+  type: 'start' | 'end' | 'stepValue' | 'checkConsistency' | 'reset-for-protocol';
   payload: any;
 };
 
 type AmperageStateType = {
+  protocol: StimulusModule;
   start: number;
   end: number;
   stepValue: number;
-  stepType: StepType;
   computed: number[];
   error: null | string;
 };
@@ -49,8 +50,6 @@ type Props = {
   protocol: StimulusModule;
 };
 
-type StepType = 'stepSize' | 'stepNumber';
-
 function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
   const newState = { ...state } satisfies AmperageStateType;
   const newVal = action.payload;
@@ -60,9 +59,6 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
       break;
     case 'end':
       newState.end = newVal;
-      break;
-    case 'stepType':
-      newState.stepType = newVal;
       break;
     case 'stepValue':
       if (newVal < 0) {
@@ -82,19 +78,8 @@ function rangeReducer(state: AmperageStateType, action: AmperageActionType) {
         newState.error = 'End should be greater than start';
         break;
       }
-      if (state.stepType === 'stepNumber' && state.stepValue === 0) {
-        newState.error = `Step value should be at least 1 and atmost ${MAX_AMPERAGE_STEPS}`;
-        break;
-      }
-      if (state.stepType === 'stepSize' && state.stepValue === 0) {
-        newState.error = 'Step size cannot be 0';
-        break;
-      }
 
-      newState.computed = calculateRangeOutput(newState.start, newState.end, {
-        type: newState.stepType,
-        value: newState.stepValue,
-      });
+      newState.computed = calculateRangeOutput(newState.start, newState.end, newState.stepValue);
 
       if (newState.computed.length > MAX_AMPERAGE_STEPS) {
         newState.error = `There should be a maximum of ${MAX_AMPERAGE_STEPS} amperages in a simulation. Currently there are ${newState.computed.length}`;
@@ -133,93 +118,89 @@ export default function AmperageRange({
 
   return (
     <>
-      <div className="mb-3 text-left text-base">
-        <span className="mr-1 font-bold text-red-400">*</span>
-        <span>Amperage [nA]</span>
+      <div className="mb-3 mt-8 text-left text-base">
+        <span className="ml-2 uppercase text-gray-400">Amperage</span>
         {amperageState.error && (
           <i className="ml-2 text-base font-light text-error">{amperageState.error}</i>
         )}
       </div>
-      <div className="flex gap-6 text-base">
-        <InputNumber
-          placeholder="start limit"
-          step={0.1}
-          min={-100}
-          max={100}
-          size="small"
-          className="w-[60px]"
-          value={amperageState.start}
-          onChange={(newVal) => dispatch({ type: 'start', payload: newVal })}
-          onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
-        />
+      <div className="ml-2 flex items-center justify-between gap-6 text-base">
+        <div className="flex items-center">
+          <div>
+            <span className="font-bold text-primary-8">Start</span>
+            <InputNumber
+              placeholder="start"
+              step={0.1}
+              min={-100}
+              max={100}
+              size="small"
+              className="min-w-18 mx-2 h-8 [&_.ant-input-number-input]:!pr-8 [&_.ant-input-number-input]:!text-right [&_.ant-input-number-input]:!font-bold [&_.ant-input-number-input]:!text-primary-8"
+              value={amperageState.start}
+              onChange={(newVal) => dispatch({ type: 'start', payload: newVal })}
+              onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
+              aria-label="start"
+            />
+            <span className="text-gray-400">[nA]</span>
+          </div>
+          <hr className="mx-4 w-8 border border-gray-200" />
+          <div>
+            <span className="font-bold text-primary-8">Stop</span>
+            <InputNumber
+              placeholder="end"
+              step={0.1}
+              min={-100}
+              max={1000}
+              size="small"
+              className="min-w-18 mx-2 h-8 [&_.ant-input-number-input]:!pr-8 [&_.ant-input-number-input]:!text-right [&_.ant-input-number-input]:!font-bold [&_.ant-input-number-input]:!text-primary-8"
+              value={amperageState.end}
+              onChange={(newVal) => dispatch({ type: 'end', payload: newVal })}
+              onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
+            />
+            <span className="text-gray-400">[nA]</span>
+          </div>
+        </div>
 
-        <span>⇨</span>
-
-        <Select
-          options={
-            [
-              { value: 'stepSize', label: <span>Step size</span> },
-              { value: 'stepNumber', label: <span>Number of steps</span> },
-            ] satisfies { value: StepType; label: ReactNode }[]
-          }
-          size="small"
-          value={amperageState.stepType}
-          onChange={(newVal: StepType) => dispatch({ type: 'stepType', payload: newVal })}
-          onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
-          className="w-[140px]"
-        />
-
-        <InputNumber
-          placeholder="step size"
-          step={1}
-          min={0}
-          max={500}
-          size="small"
-          className="w-[60px]"
-          value={amperageState.stepValue}
-          onChange={(newVal) => dispatch({ type: 'stepValue', payload: newVal })}
-          onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
-        />
-
-        <span>⇨</span>
-
-        <InputNumber
-          placeholder="end limit"
-          step={0.1}
-          min={-100}
-          max={1000}
-          size="small"
-          className="w-[60px]"
-          value={amperageState.end}
-          onChange={(newVal) => dispatch({ type: 'end', payload: newVal })}
-          onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
-        />
+        <div>
+          <span className="font-bold text-primary-8">N° of steps</span>
+          <InputNumber
+            placeholder="step size"
+            step={1}
+            min={0}
+            max={500}
+            size="small"
+            className="mx-2 h-8 min-w-10 [&_.ant-input-number-handler-wrap]:!opacity-100 [&_.ant-input-number-input]:!pr-8 [&_.ant-input-number-input]:!text-right [&_.ant-input-number-input]:!font-bold [&_.ant-input-number-input]:!text-primary-8"
+            value={amperageState.stepValue}
+            onChange={(newVal) => dispatch({ type: 'stepValue', payload: newVal })}
+            onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
+          />
+        </div>
       </div>
 
       {!amperageState.error && (
-        <StimuliPreviewPlot amplitudes={amperageState.computed} modelSelfUrl={modelSelfUrl} />
+        <StimuliPreviewPlot
+          amplitudes={amperageState.computed}
+          protocol={amperageState.protocol}
+          modelSelfUrl={modelSelfUrl}
+        />
       )}
     </>
   );
 }
 
-function calculateRangeOutput(start: number, end: number, step: { type: StepType; value: number }) {
-  if (step.value <= 0) return [];
+function calculateRangeOutput(start: number, end: number, step: number) {
+  if (step <= 0) return [];
   if (start === end) return [start];
 
   let values: number[];
 
-  if (step.type === 'stepNumber') {
-    if (step.value === 1) {
-      values = [(start + end) / 2];
-    } else if (step.value === 2) {
-      values = [start, end];
-    } else {
-      const steps = (end - start) / (step.value - 1);
-      values = [...range(start, end, steps), end];
-    }
+  if (step === 1) {
+    values = [(start + end) / 2];
+  } else if (step === 2) {
+    values = [start, end];
   } else {
-    values = [...range(start, end, step.value), end];
+    const steps = (end - start) / (step - 1);
+    values = [...range(start, end, steps), end];
   }
+
   return values.map((v) => round(v, 2));
 }

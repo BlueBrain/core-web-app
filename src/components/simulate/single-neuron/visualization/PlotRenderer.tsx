@@ -94,7 +94,9 @@ export default function PlotRenderer({ className, data, isLoading, plotConfig }:
         <>
           <div className="mb-4 mt-8 flex w-full justify-between px-2 text-gray-400">
             <span className="uppercase">Output Values</span>
-            <span>{visibleTracesCount} values displayed</span>
+            <span>
+              {visibleTracesCount} / {data.length} values displayed
+            </span>
           </div>
           <div className="flex flex-wrap">
             {data.map((trace, index) => (
