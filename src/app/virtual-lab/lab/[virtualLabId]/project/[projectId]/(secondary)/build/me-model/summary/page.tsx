@@ -12,7 +12,14 @@ import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter
 import { useSessionAtomValue } from '@/hooks/hooks';
 import AnalysisPreview from '@/components/build-section/virtual-lab/me-model/AnalysisPreview';
 
-export default function MEModelSummaryPage() {
+export default function MEModelSummaryPage({
+  params,
+}: {
+  params: {
+    projectId: string;
+    virtualLabId: string;
+  };
+}) {
   const selectedEModel = useAtomValue(selectedEModelAtom);
   const selectedMModel = useAtomValue(selectedMModelAtom);
   const initializeSummary = useSetAtom(initializeSummaryAtom);
@@ -24,8 +31,16 @@ export default function MEModelSummaryPage() {
     // info already set
     if (selectedEModel && selectedMModel) return;
 
-    initializeSummary(meModelId);
-  }, [meModelId, session, initializeSummary, selectedEModel, selectedMModel]);
+    initializeSummary(meModelId, params.virtualLabId, params.projectId);
+  }, [
+    meModelId,
+    session,
+    initializeSummary,
+    selectedEModel,
+    selectedMModel,
+    params.virtualLabId,
+    params.projectId,
+  ]);
 
   if (!meModelId)
     return (

@@ -105,21 +105,21 @@ export const saveMEModelAtom = atom<null, [string, string], void>(
   }
 );
 
-export const initializeSummaryAtom = atom<null, [string], void>(
+export const initializeSummaryAtom = atom<
   null,
-  async (get, set, meModelId) => {
-    const session = get(sessionAtom);
+  [string, string | undefined, string | undefined],
+  void
+>(null, async (get, set, meModelId, org, project) => {
+  const session = get(sessionAtom);
 
-    if (!session) return;
+  if (!session) return;
+  const meModel = await fetchResourceById<MEModelResource>(meModelId, session, { org, project });
+  const usedEModel = meModel.hasPart.find((r) => r['@type'] === 'EModel');
+  const usedMModel = meModel.hasPart.find((r) => r['@type'] === 'NeuronMorphology');
 
-    const meModel = await fetchResourceById<MEModelResource>(meModelId, session);
-    const usedEModel = meModel.hasPart.find((r) => r['@type'] === 'EModel');
-    const usedMModel = meModel.hasPart.find((r) => r['@type'] === 'NeuronMorphology');
+  if (!usedEModel || !usedMModel) throw new Error('No EModel or Morphology found for ME-Model');
 
-    if (!usedEModel || !usedMModel) throw new Error('No EModel or Morphology found for ME-Model');
-
-    set(selectedEModelIdAtom, usedEModel['@id']);
-    set(selectedMModelIdAtom, usedMModel['@id']);
-    set(meModelSelfUrlAtom, meModel._self);
-  }
-);
+  set(selectedEModelIdAtom, usedEModel['@id']);
+  set(selectedMModelIdAtom, usedMModel['@id']);
+  set(meModelSelfUrlAtom, meModel._self);
+});

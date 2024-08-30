@@ -37,13 +37,12 @@ export default function MEModelDetailView({ vlProjectUrl, params, showViewMode =
   // setup the e-model and m-model based on me-model resource
   const setInitializeSummary = useSetAtom(initializeSummaryAtom);
 
-  const { id } = useResourceInfoFromPath();
+  const { id, org, project } = useResourceInfoFromPath();
 
   useEffect(() => {
     if (!id) return;
-
-    setInitializeSummary(id);
-  }, [setInitializeSummary, id]);
+    setInitializeSummary(id, org, project);
+  }, [setInitializeSummary, id, org, project]);
 
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
@@ -67,7 +66,7 @@ export default function MEModelDetailView({ vlProjectUrl, params, showViewMode =
             <GenericButton
               text="New model"
               className="fixed bottom-10 right-10 w-[200px] bg-primary-9 font-bold text-white hover:!bg-primary-7"
-              href={`${vlProjectUrl}/build/me-model/new/morphology/reconstructed`}
+              href={`${vlProjectUrl}/build/me-model/new`}
             />
           </>
         )}
