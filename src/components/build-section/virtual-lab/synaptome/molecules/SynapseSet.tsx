@@ -1,15 +1,15 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useReducer, useRef, useState } from 'react';
 import { Form, Input, Select, Button, FormListFieldData, InputNumber } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import {
+  CloseOutlined,
   DeleteOutlined,
   EyeInvisibleOutlined,
-  FilterOutlined,
+  InfoCircleFilled,
   LoadingOutlined,
   PlusCircleOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
 import { z } from 'zod';
 import isEqual from 'lodash/isEqual';
@@ -35,6 +35,7 @@ import { getSession } from '@/authFetch';
 import { getSynaptomePlacement } from '@/api/bluenaas';
 import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
+import { SettingAdjustment } from '@/components/icons/SettingAdjustment';
 
 type Props = {
   modelId: string;
@@ -88,6 +89,9 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
   const [synapseVis, setSynapseVis] = useState(false);
   const [visualizeLoading, setLoadingVisualize] = useState(false);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
+  const [displayExclusionRules, toggleDisplayExclusionRules] = useReducer((val) => !val, false);
+  const [displayFormulaHelp, toggleFormulaHelp] = useReducer((val) => !val, false);
+
   const secNames = useAtomValue(secNamesAtom);
 
   const groupedSections = Object.keys(
@@ -161,6 +165,13 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
         ],
       });
     }
+  };
+
+  const showExclusionRules = () => {
+    if (config && !config.exclusion_rules?.length && !showExclusionRules) {
+      addNewExclusionRule();
+    }
+    toggleDisplayExclusionRules();
   };
 
   const onVisualizationError = () => {
@@ -269,7 +280,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
           )}
         </div>
       </div>
-      <div className="mb-4 border border-primary-8 p-6">
+      <div className="mb-4 border border-gray-300 p-6">
         <Form.Item
           name={[field.name, 'name']}
           rules={[{ required: true, message: 'Please provide a name!' }]}
@@ -318,7 +329,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             />
           </Form.Item>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 items-start gap-4">
           <Form.Item
             name={[field.name, 'distribution']}
             rules={[{ required: true, message: 'Please select a distribution!' }]}
@@ -338,75 +349,160 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
               ]}
             />
           </Form.Item>
-          <Form.Item
-            name={[field.name, 'formula']}
-            rules={[
-              {
-                required: true,
-                message: 'Please provide a valid formula!',
-                async validator(_, value) {
-                  if (synapses?.[index].distribution !== 'formula') {
-                    return Promise.resolve();
-                  }
-                  if (!value) return Promise.reject();
+          <div className="w-full">
+            <div className="flex w-full flex-col">
+              <div
+                className={classNames(
+                  'flex w-full items-center gap-2 pb-[8px]',
+                  displayFormulaHelp && 'justify-between'
+                )}
+              >
+                {label('Formula')}
+                {displayFormulaHelp ? (
+                  <CloseOutlined className="text-gray-300" onClick={toggleFormulaHelp} />
+                ) : (
+                  <InfoCircleFilled className="text-gray-300" onClick={toggleFormulaHelp} />
+                )}
+              </div>
+              <p
+                className={classNames(
+                  'font-light text-gray-400 transition-all',
+                  displayFormulaHelp ? 'mb-4 h-full opacity-100' : 'mb-0 h-0 opacity-0'
+                )}
+              >
+                Maecenas faucibus mollis interdum. Etiam porta sem malesuada magna mollis euismod.
+                Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras mattis
+                consectetur purus sit amet fermentum. Aenean eu leo quam. Pellentesque ornare sem
+                lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id
+                elit. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+              </p>
+            </div>
+            <Form.Item
+              name={[field.name, 'formula']}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please provide a valid formula!',
+                  async validator(_, value) {
+                    if (synapses?.[index].distribution !== 'formula') {
+                      return Promise.resolve();
+                    }
+                    if (!value) return Promise.reject();
+                  },
                 },
-              },
-            ]}
-            label={label('Formula')}
-            validateTrigger="onBlur"
-            className={synapses?.[index].distribution !== 'formula' ? 'hidden' : ''}
-          >
-            <Input
-              placeholder="00.3*x*x + 0.004"
-              size="large"
-              className="border border-neutral-2 text-base font-bold italic text-primary-8"
-            />
-          </Form.Item>
+              ]}
+              validateTrigger="onBlur"
+              className={classNames(
+                '[&_.ant-form-item-required]:w-full',
+                synapses?.[index].distribution !== 'formula' ? 'hidden' : ''
+              )}
+            >
+              <Input
+                placeholder="00.3*x*x + 0.004"
+                size="large"
+                className="border border-neutral-2 text-base font-bold italic text-primary-8"
+              />
+            </Form.Item>
+          </div>
         </div>
-        <div className="mb-4 flex w-full items-center justify-between gap-2">
-          <Button
-            type="default"
-            htmlType="button"
-            onClick={addNewExclusionRule}
-            className="flex items-center justify-center font-light text-primary-8"
+        <div
+          className={classNames(
+            'mt-5 border border-gray-300',
+            displayExclusionRules ? 'p-4 text-gray-400' : 'px-4 py-2 text-primary-8'
+          )}
+        >
+          <button
+            id="exclusion-rules-header"
+            className="flex w-full items-center justify-between gap-4"
+            onClick={showExclusionRules}
+            type="button"
           >
-            <span className="mr-2">Filter synapses</span>
-            <FilterOutlined />
-          </Button>
-        </div>
-
-        <Form.List name={[field.name, 'exclusion_rules']}>
-          {(fields, { remove: removeRule }) => {
-            return fields.map((f, indx) => {
-              return (
-                <div key={f.key} className="grid grid-cols-[1fr_1fr_40px_40px] gap-x-2">
-                  <Form.Item className="mb-2" name={[f.name, 'distance_soma_gte']}>
-                    <InputNumber addonBefore=">=" className="w-full" size="large" />
-                  </Form.Item>
-                  <Form.Item className="mb-2" name={[f.name, 'distance_soma_lte']}>
-                    <InputNumber addonBefore="<=" className="w-full" size="large" />
-                  </Form.Item>
-                  <Button
-                    aria-label="Delete rule"
-                    onClick={() => removeRule(indx)}
-                    icon={<DeleteOutlined />}
-                    type="text"
-                    className="h-[40px] w-[40px]"
-                  />
-                  <Button
-                    aria-label="Add new rule"
-                    onClick={addNewExclusionRule}
-                    icon={<PlusOutlined />}
-                    type="text"
-                    className="h-[40px] w-[40px]"
-                  />
+            <div className="text-lg font-medium">Filter synapses</div>
+            <div className="flex items-center justify-center rounded-md p-2 hover:bg-gray-200">
+              {displayExclusionRules ? (
+                <CloseOutlined />
+              ) : (
+                <SettingAdjustment className="h-5 w-5 text-primary-8" />
+              )}
+            </div>
+          </button>
+          <div
+            id="exclusion-rules-body"
+            className={classNames(
+              'w-full transition-all',
+              displayExclusionRules ? 'mt-4 flex h-full flex-col opacity-100' : 'h-0 opacity-0'
+            )}
+          >
+            <div className="mb-4 text-left text-xl font-bold text-primary-8">
+              Distance from soma
+            </div>
+            <Form.List name={[field.name, 'exclusion_rules']}>
+              {(fields, { remove: removeRule }) => (
+                <div className="flex w-full flex-col gap-3">
+                  {fields.map((f, indx) => {
+                    return (
+                      <div key={f.key} className="w-full border border-gray-400 p-4">
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="text-lg font-light capitalize text-gray-400">
+                            rule {indx + 1}
+                          </div>
+                          <Button
+                            aria-label="Delete rule"
+                            onClick={() => removeRule(indx)}
+                            icon={<DeleteOutlined className="h-5 w-5 text-primary-8" />}
+                            type="text"
+                            className="h-[40px] w-[40px] rounded-md"
+                          />
+                        </div>
+                        <div className="mb-4 text-lg font-bold text-primary-8">
+                          Exclude synapses that are:{' '}
+                        </div>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex items-start justify-center gap-2">
+                            <div className="font-lightw-full flex h-[40px] min-w-max max-w-max items-center justify-center text-primary-8">
+                              Greater or equal to
+                            </div>
+                            <Form.Item className="mb-2" name={[f.name, 'distance_soma_gte']}>
+                              <InputNumber
+                                placeholder="Enter a value..."
+                                className="w-full"
+                                size="large"
+                                min={0}
+                              />
+                            </Form.Item>
+                          </div>
+                          <div className="flex items-start justify-center gap-2">
+                            <div className="font-lightw-full flex h-[40px] min-w-max max-w-max items-center justify-center text-primary-8">
+                              Smaller or equal to
+                            </div>
+                            <Form.Item className="mb-2" name={[f.name, 'distance_soma_lte']}>
+                              <InputNumber
+                                placeholder="Enter a value..."
+                                className="w-full"
+                                size="large"
+                                min={0}
+                              />
+                            </Form.Item>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            });
-          }}
-        </Form.List>
+              )}
+            </Form.List>
+            <button
+              aria-label="Add new rule"
+              onClick={addNewExclusionRule}
+              type="button"
+              className="mt-4 w-max border border-primary-8 bg-white px-7 py-3 text-base font-bold text-primary-8"
+            >
+              Add rule
+            </button>
+          </div>
+        </div>
 
-        <div className="mt-4 flex items-center justify-end">
+        <div className="mt-4 flex items-center justify-start">
           <button
             type="button"
             onClick={onVisualizeSynapome}

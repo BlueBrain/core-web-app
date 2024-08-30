@@ -72,8 +72,7 @@ export default function LunchSimulationModal({ onClose, modelSelfUrl, simulation
               >
                 <div className="flex w-full items-center justify-between gap-5">
                   <div className="line-clamp-1 flex-[1_0_35%] font-bold text-primary-8">
-                    {' '}
-                    {o.label}{' '}
+                    {o.label}
                   </div>
                   <div className="ml-2 line-clamp-1 flex-[1_0_40%] font-light text-gray-400">
                     {o.note}

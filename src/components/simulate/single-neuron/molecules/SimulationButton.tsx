@@ -58,7 +58,7 @@ export default function SimulationButton({
         onClick={trySimulation}
         disabled={simulationStatus?.status === 'launched'}
       >
-        Simulate
+        {simulationStatus?.status === 'finished' ? 'Re-run Simulation' : 'Simulate'}
       </button>
       {simulationStatus?.status === 'finished' && (
         <button

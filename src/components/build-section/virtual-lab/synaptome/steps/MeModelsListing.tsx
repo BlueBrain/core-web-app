@@ -90,7 +90,7 @@ export default function MeModelsListing({
       </div>
       <button
         type="button"
-        className="fixed bottom-10 right-10 rounded-none bg-primary-8 px-5 py-4 text-white disabled:bg-neutral-400"
+        className="fixed bottom-10 right-10 rounded-none bg-primary-8 px-7 py-4 text-white disabled:bg-neutral-400"
         onClick={proceed}
         disabled={!selectedRows.length}
       >

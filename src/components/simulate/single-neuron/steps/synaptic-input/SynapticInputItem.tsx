@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   DeleteOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
-import { Button, Form, Select, SelectProps } from 'antd';
+import { Button, Form, Popover, Select, SelectProps } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import { Color } from 'three';
 
@@ -52,12 +52,12 @@ export default function SynapticInputItem({
   const [visualizeLoading, setLoadingVisualize] = useState(false);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
   const synapseSimulationAtomState = useAtomValue(synaptomeSimulationConfigAtom);
-
   const config = synapseSimulationAtomState[index];
+  const abortController = useRef(new AbortController());
 
   const onVisualizationError = () => {
     notifyError(
-      `There was an error when visualizing synaptic input ${index}.`,
+      `There was an error when visualizing synaptic input ${index + 1}.`,
       undefined,
       'topRight'
     );
@@ -74,6 +74,7 @@ export default function SynapticInputItem({
 
   const onHideSynapse = () => {
     setSynapseDisplayed(false);
+    // abortController.abort();
     const currentSynapsesPlacementConfig = synapsesPlacement?.[`${index}`];
     if (currentSynapsesPlacementConfig && currentSynapsesPlacementConfig.meshId) {
       sendRemoveSynapses3DEvent(`${index}`, currentSynapsesPlacementConfig.meshId);
@@ -96,11 +97,14 @@ export default function SynapticInputItem({
       if (!session?.accessToken) {
         throw new Error('No session found');
       }
+
+      abortController.current = new AbortController();
       const response = await getSynaptomePlacement({
         modelId: synaptomeModelConfig.meModelSelf,
         seed: selectedSynapticInputPlacementConfig?.seed!,
         config: selectedSynapticInputPlacementConfig!,
         token: session?.accessToken,
+        signal: abortController.current.signal,
       });
       if (!response.ok) {
         return onVisualizationError();
@@ -128,7 +132,9 @@ export default function SynapticInputItem({
       });
       setSynapseDisplayed(true);
     } catch (error) {
-      return onVisualizationError();
+      if (error instanceof Error && error.name !== 'AbortError') {
+        return onVisualizationError();
+      }
     } finally {
       setLoadingVisualize(false);
     }
@@ -143,6 +149,12 @@ export default function SynapticInputItem({
     });
   };
 
+  useEffect(() => {
+    return () => {
+      abortController.current.abort();
+    };
+  }, []);
+
   return (
     <div className="flex w-full flex-col items-start justify-start">
       <div
@@ -155,7 +167,6 @@ export default function SynapticInputItem({
               className="px-6 py-3 font-bold text-white"
               style={{ backgroundColor: config.color }}
             >
-              {' '}
               {index + 1}
             </div>
             <span className="font-light text-primary-8">Synaptic input</span>
@@ -183,13 +194,41 @@ export default function SynapticInputItem({
                 )}
               </div>
             </button>
-            <Button
-              aria-label={`Delete synaptic input ${index}`}
-              onClick={removeForm}
-              icon={<DeleteOutlined />}
-              type="text"
-              htmlType="button"
-            />
+            <Popover
+              placement="topRight"
+              getPopupContainer={(trigger) => trigger.parentElement!}
+              getTooltipContainer={(trigger) => trigger.parentElement!}
+              trigger={['click']}
+              overlayClassName={classNames(
+                '[&_.ant-popover-inner]:!p-0 [&_.ant-popover-inner]:!bg-primary-8 max-w-[260px]',
+                '[&_.ant-popover-arrow:before]:bg-primary-8'
+              )}
+              destroyTooltipOnHide
+              content={
+                <div className="flex flex-col items-center justify-center gap-4 bg-primary-8 p-8">
+                  <p className="text-center text-base font-light text-white">
+                    Are you really really sure you want to delete this precious synaptic input?
+                  </p>
+                  <button
+                    type="button"
+                    className="border border-white bg-primary-8 px-7 py-3 font-bold text-white"
+                    onClick={() => {
+                      removeForm();
+                      abortController.current.abort();
+                    }}
+                  >
+                    Confirm
+                  </button>
+                </div>
+              }
+            >
+              <Button
+                aria-label={`Delete synaptic input ${index}`}
+                icon={<DeleteOutlined />}
+                type="text"
+                htmlType="button"
+              />
+            </Popover>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import { z } from 'zod';
 
 import { label } from '../molecules/Label';
@@ -77,15 +77,13 @@ export default function CreateBaseSynaptome({ configStep, onConfigStep }: Props)
           </div>
         </div>
       </div>
-      <Button
-        htmlType="button"
-        type="primary"
-        size="large"
-        className="fixed bottom-10 right-10 rounded-none bg-primary-8 text-white"
+      <button
+        type="button"
+        className="fixed bottom-10 right-10 rounded-none bg-primary-8 px-7 py-4 text-white"
         onClick={proceed}
       >
         Start building
-      </Button>
+      </button>
     </div>
   );
 }

@@ -7,11 +7,13 @@ export default async function getSynapsesPlacement({
   seed,
   config,
   token,
+  signal,
 }: {
   token: string;
   modelId: string;
   seed: number;
   config: SingleSynaptomeConfig;
+  signal?: AbortSignal;
 }) {
   const response = await fetch(
     `${blueNaasUrl}/synaptome/generate-placement?model_id=${encodeURIComponent(modelId)}`,
@@ -22,6 +24,7 @@ export default async function getSynapsesPlacement({
         seed,
         config,
       }),
+      signal,
     }
   );
   return response;
