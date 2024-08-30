@@ -8,6 +8,7 @@ import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-con
 import {
   selectorFnBasic,
   selectorFnContributors,
+  selectorFnCreatedBy,
   selectorFnDate,
 } from '@/util/explore-section/listing-selectors';
 import Contributors from '@/components/explore-section/Contributors';
@@ -156,8 +157,9 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
   },
   [Field.CreatedBy]: {
     title: 'Created by',
-    filter: FilterTypeEnum.CheckList,
+    filter: FilterTypeEnum.Text,
     render: {
+      esResourceViewFn: (_t, r) => selectorFnCreatedBy(r._source?.createdBy),
       deltaResourceViewFn: (resource) => (
         <span className="capitalize">{resource?._createdBy.split('/').reverse()[0]}</span>
       ),

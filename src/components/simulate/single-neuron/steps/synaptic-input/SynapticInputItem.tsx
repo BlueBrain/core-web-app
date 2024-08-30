@@ -74,7 +74,6 @@ export default function SynapticInputItem({
 
   const onHideSynapse = () => {
     setSynapseDisplayed(false);
-    // abortController.abort();
     const currentSynapsesPlacementConfig = synapsesPlacement?.[`${index}`];
     if (currentSynapsesPlacementConfig && currentSynapsesPlacementConfig.meshId) {
       sendRemoveSynapses3DEvent(`${index}`, currentSynapsesPlacementConfig.meshId);

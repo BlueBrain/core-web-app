@@ -190,3 +190,7 @@ export const selectorFnMorphologyFeature = (
 
   return DisplayMessages.NO_DATA_STRING;
 };
+
+export const selectorFnCreatedBy = (str: string) => {
+  return str.split('/').at(-1) ?? DisplayMessages.NO_DATA_STRING;
+};
