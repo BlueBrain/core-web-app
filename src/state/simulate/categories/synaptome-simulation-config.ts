@@ -2,7 +2,7 @@ import { useAtom } from 'jotai';
 import { atomWithReset } from 'jotai/utils';
 import sample from 'lodash/sample';
 
-import { getDefaultSynapseConfig, SYNAPTIC_INPUT_COLORS } from '@/constants/simulate/single-neuron';
+import { getDefaultSynapseConfig, SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
 import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 import updateArray from '@/util/updateArray';
@@ -39,7 +39,7 @@ export default function useSynaptomeSimulationConfig() {
         ...(state || []),
         {
           ...defaultSynapseConfig,
-          color: sample(SYNAPTIC_INPUT_COLORS) ?? SYNAPTIC_INPUT_COLORS[state.length],
+          color: sample(SIMULATION_COLORS) ?? SIMULATION_COLORS[state.length],
         },
       ]);
     }

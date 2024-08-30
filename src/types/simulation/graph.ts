@@ -9,6 +9,7 @@ export type DirectCurrentInjectionGraphPlotResponse = {
   x: number[];
   y: number[];
   name: string;
+  amplitude: number;
 };
 
 export type SimulationPlotResponse = {

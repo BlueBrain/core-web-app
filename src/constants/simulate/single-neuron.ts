@@ -181,7 +181,7 @@ export const getDefaultSynapseConfig = (
   return null;
 };
 
-export const SYNAPTIC_INPUT_COLORS = [
+export const SIMULATION_COLORS = [
   '#FF8B2C',
   '#32C14E',
   '#8AB5FF',

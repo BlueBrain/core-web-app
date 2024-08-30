@@ -12,6 +12,7 @@ import { getSession } from '@/authFetch';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
 import { getDirectCurrentGraph } from '@/api/bluenaas';
+import { SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
 
 type Props = {
   modelSelfUrl: string;
@@ -44,8 +45,9 @@ export default function StimuliPreviewPlot({ modelSelfUrl, amplitudes }: Props) 
         stimulusProtocol,
       });
 
-      const plotData: PlotData = rawPlotData.map((d) => ({
+      const plotData: PlotData = rawPlotData.map((d, i) => ({
         type: 'scatter',
+        line: { color: SIMULATION_COLORS[i] }, // Since we limit the number of amperages to 15 these colors should be enought
         ...d,
       }));
 

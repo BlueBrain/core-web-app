@@ -195,14 +195,10 @@ export default function AmperageRange({
           onBlur={() => dispatch({ type: 'checkConsistency', payload: null })}
         />
       </div>
-      <div className="mb-2 mt-4 text-left text-sm text-gray-400">Output amperages</div>
 
-      <div className="mb-4 flex flex-wrap gap-4 text-base font-bold text-gray-400">
-        {amperageState.computed.map((value) => (
-          <span key={value}>{value}</span>
-        ))}
-      </div>
-      <StimuliPreviewPlot amplitudes={amperageState.computed} modelSelfUrl={modelSelfUrl} />
+      {!amperageState.error && (
+        <StimuliPreviewPlot amplitudes={amperageState.computed} modelSelfUrl={modelSelfUrl} />
+      )}
     </>
   );
 }

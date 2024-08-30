@@ -60,6 +60,8 @@ export type PlotDataEntry = {
   name: string;
   recording?: string;
   amplitude?: number;
+  line?: { color: string };
+  visible?: boolean;
 };
 
 export type PlotData = PlotDataEntry[];
