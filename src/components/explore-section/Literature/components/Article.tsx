@@ -10,7 +10,6 @@ import type { GArticle } from '@/types/literature';
 import PersonIcon from '@/components/icons/Person';
 import JournalIcon from '@/components/icons/Journal';
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
-import QuoteOutline from '@/components/icons/QuoteOutline';
 import CopyIcon from '@/components/icons/CopyIcon';
 import { classNames, formatDate } from '@/util/utils';
 import CalendarIcon from '@/components/icons/Calendar';
@@ -135,7 +134,6 @@ export default function Article({
                   </Tooltip>
                 </div>
               )}
-              <ArticleAction key="cite" onClick={() => {}} title="Cite" icon={<QuoteOutline />} />
             </div>
           )}
         </div>
