@@ -190,8 +190,11 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
 
     set(simulationStatusAtom, { status: 'launched' });
     set(simulateStepTrackerAtom, {
-      steps: get(simulateStepTrackerAtom).steps,
-      current: { title: 'Results' },
+      steps: get(simulateStepTrackerAtom).steps.map((p) => ({
+        ...p,
+        status: p.title === 'Results' ? 'process' : p.status,
+      })),
+      current: { title: 'Results', status: 'process' },
     });
 
     const initialPlotData: Record<string, PlotData> = {};
@@ -248,7 +251,10 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
           description: 'Simulation encountered an error, please try again',
         });
         set(simulateStepTrackerAtom, {
-          steps: get(simulateStepTrackerAtom).steps,
+          steps: get(simulateStepTrackerAtom).steps.map((p) => ({
+            ...p,
+            status: p.title === 'Results' ? 'wait' : p.status,
+          })),
           current: { title: 'Experimental setup' },
         });
         return;
@@ -287,6 +293,13 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
           const groupedRecording = groupBy(plotData, (p) => p.recording);
           set(genericSingleNeuronSimulationPlotDataAtom, groupedRecording);
           set(simulationStatusAtom, { status: 'finished' });
+          set(simulateStepTrackerAtom, {
+            steps: get(simulateStepTrackerAtom).steps.map((p) => ({
+              ...p,
+              status: p.title === 'Results' ? 'finish' : p.status,
+            })),
+            current: { title: 'Results', status: 'finish' },
+          });
           return;
         }
         set(simulationStatusAtom, {
@@ -300,7 +313,10 @@ export const launchSimulationAtom = atom<null, [string, SimulationType], void>(
         description: 'Simulation encountered an error, please try again',
       });
       set(simulateStepTrackerAtom, {
-        steps: get(simulateStepTrackerAtom).steps,
+        steps: get(simulateStepTrackerAtom).steps.map((p) => ({
+          ...p,
+          status: p.title === 'Results' ? 'wait' : p.status,
+        })),
         current: { title: 'Experimental setup' },
       });
     }

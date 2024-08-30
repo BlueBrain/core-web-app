@@ -135,5 +135,5 @@ export const isSynaptomModel = (model: ModelResource | null): model is Synaptome
 export type UpdateSynapseSimulationProperty = {
   id: number;
   key: keyof SynapseConfig;
-  newValue: number | string;
+  newValue: number | string | null;
 };

@@ -52,7 +52,13 @@ export default function StimuliPreviewPlot({ modelSelfUrl, amplitudes }: Props) 
       setStimuliPreviewPlotData(plotData);
     } catch {
       captureException(new Error('Preview plot could not be retrived for model'));
-      notifyError('Error while loading stimulus plot data', undefined, 'topRight');
+      notifyError(
+        'Error while loading stimulus plot data',
+        undefined,
+        'topRight',
+        true,
+        'plor-error'
+      );
     } finally {
       setLoading(false);
     }

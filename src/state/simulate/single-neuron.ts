@@ -6,16 +6,16 @@ import { PlotData } from '@/services/bluenaas-single-cell/types';
 import { getIdFromSelfUrl } from '@/util/nexus';
 import { SimulationStep, SimulationStepsTraker } from '@/types/simulation/common';
 
-export const steps: Array<SimulationStep> = [
+export const defaultSteps: Array<SimulationStep> = [
   { title: 'Experimental setup', status: undefined },
   { title: 'Synaptic inputs', status: undefined },
   { title: 'Stimulation protocol', status: undefined },
   { title: 'Recording', status: undefined },
-  { title: 'Results', status: undefined },
+  { title: 'Results', status: 'wait' },
 ];
 
 export const simulateStepTrackerAtom = atom<SimulationStepsTraker>({
-  steps,
+  steps: defaultSteps,
   current: { title: 'Experimental setup', status: undefined },
 });
 
@@ -39,23 +39,3 @@ export const genericSingleNeuronSimulationPlotDataAtom = atomWithReset<Record<
   string,
   PlotData
 > | null>(null);
-
-// {"soma": [{
-//   x: [0],
-//   y: [0],
-//   type: 'scatter',
-//   name: '',
-// }],
-// "dend": [{
-//   x: [0],
-//   y: [0],
-//   type: 'scatter',
-//   name: '',
-// }],
-// "api": [{
-//   x: [0],
-//   y: [0],
-//   type: 'scatter',
-//   name: '',
-// }]
-// }

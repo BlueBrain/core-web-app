@@ -30,9 +30,9 @@ function RecordItem({
     <div className="w-full [&:last-of-type_div.divider]:hidden">
       <div className="flex w-full flex-col items-start justify-start">
         <h3 className="mb-1 text-lg uppercase text-neutral-4">Recording {index + 1}</h3>
-        <div className="grid w-full grid-cols-[1fr_max-content_max-content_.5fr] items-center justify-center gap-2">
+        <div className="grid w-full grid-cols-[1fr_max-content_max-content_.5fr] items-start justify-center gap-2">
           <Form.Item className="mb-2 w-full" name={[name, 'section']} rules={[{ required: true }]}>
-            <Select<string>
+            <Select
               showSearch
               placeholder="Section name"
               onChange={(v) => onAddSource(index, { section: v })}
@@ -43,12 +43,14 @@ function RecordItem({
               size="large"
             />
           </Form.Item>
-          <div className="mb-2 text-base uppercase text-neutral-4">offset</div>
+          <div className="flex h-11 items-center justify-center align-middle text-base uppercase text-neutral-4">
+            offset
+          </div>
           <Form.Item
             className="mb-2"
             name={[name, 'offset']}
             rules={[
-              { required: true },
+              { required: true, message: 'Requireed field' },
               {
                 type: 'number',
                 min: 0,
@@ -60,7 +62,7 @@ function RecordItem({
             <InputNumber<number>
               min={0}
               max={1}
-              step={0.05}
+              step={0.01}
               className="w-full [&_.ant-input-number-input]:font-bold [&_.ant-input-number-input]:!text-primary-8"
               onChange={(v) => {
                 if (v) {
@@ -71,7 +73,7 @@ function RecordItem({
               disabled={disable}
             />
           </Form.Item>
-          <div className="mb-2 flex h-full  items-center justify-end">
+          <div className="mb-2 flex h-11  items-center justify-end">
             <Button
               type="text"
               icon={<DeleteOutlined />}

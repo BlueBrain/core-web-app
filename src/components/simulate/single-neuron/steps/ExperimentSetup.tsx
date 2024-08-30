@@ -69,7 +69,7 @@ function SetupInput({ name, text, unit, min, max, onChange }: SetupInputProps) {
       <div className="flex w-max max-w-[120px] flex-row flex-nowrap items-center justify-center gap-2">
         <Form.Item
           name={['conditions', name]}
-          rules={[{ required: true, message: `${text} is required field` }]}
+          rules={[{ required: true, message: 'Required field' }]}
         >
           <InputNumber
             className="w-full !rounded-sm border !border-neutral-4 font-bold [&_.ant-input-number-input]:!text-base [&_.ant-input-number-input]:!text-primary-8"

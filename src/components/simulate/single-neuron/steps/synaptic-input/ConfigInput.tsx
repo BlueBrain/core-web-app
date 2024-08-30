@@ -47,7 +47,7 @@ type ConfigInputProps = {
   }: {
     id: number;
     key: keyof SynapseConfig;
-    newValue: number;
+    newValue: number | null;
   }) => void;
 };
 
@@ -57,10 +57,7 @@ function ConfigInput({ formName, name, text, min, max, index, unit, onChange }: 
       <div className="mb-2 text-left text-base font-light uppercase text-neutral-4">
         {text} {unit && <span className="normal-case">[{unit}]</span>}
       </div>
-      <Form.Item
-        name={[formName, name]}
-        rules={[{ required: true, message: `${text} is required field` }]}
-      >
+      <Form.Item name={[formName, name]} rules={[{ required: true, message: 'Required field' }]}>
         <InputNumber
           className="w-full !rounded-sm border !border-neutral-4 font-bold [&_.ant-input-number-input]:!text-base [&_.ant-input-number-input]:!text-primary-8"
           min={min}
@@ -69,7 +66,7 @@ function ConfigInput({ formName, name, text, min, max, index, unit, onChange }: 
             onChange({
               id: index,
               key: name,
-              newValue: newValue ?? 0,
+              newValue,
             })
           }
         />
@@ -88,7 +85,7 @@ type Props = {
   }: {
     id: number;
     key: keyof SynapseConfig;
-    newValue: number;
+    newValue: number | null;
   }) => void;
 };
 

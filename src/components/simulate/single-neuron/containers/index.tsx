@@ -9,7 +9,7 @@ import Synaptome from './Synaptome';
 
 import { GenericSingleNeuronSimulationConfigSteps } from '@/components/simulate/single-neuron/molecules/types';
 import { CreateBaseSimulationConfig } from '@/components/simulate/single-neuron/processSteps';
-import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
+import { defaultSteps, simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
 import { SimulationConfiguration } from '@/types/simulation/single-neuron';
 import { SimulationStepTitle, SimulationType } from '@/types/simulation/common';
 import { recordingSourceForSimulationAtom } from '@/state/simulate/categories/recording-source-for-simulation';
@@ -88,23 +88,31 @@ export default function SingleNeuronSimulationGenericContainer({
       await form.validateFields({ recursive: true });
     } catch (error) {
       const errorObject = error as { errorFields: Array<any> };
-      const list = checkStepError(errorObject.errorFields);
-      setDisableSubmit(errorObject.errorFields.length > 0);
-      upadteSimulationStepsStatus({
-        current: currentSimulationStep,
-        steps: steps.map((s) => {
-          if (list.includes(s.title)) {
+      if (errorObject.errorFields.length) {
+        const list = checkStepError(errorObject.errorFields);
+        setDisableSubmit(true);
+        upadteSimulationStepsStatus({
+          current: currentSimulationStep,
+          steps: steps.map((s) => {
+            if (list.includes(s.title)) {
+              return {
+                title: s.title,
+                status: 'error',
+              };
+            }
             return {
               title: s.title,
-              status: 'error',
+              status: s.status,
             };
-          }
-          return {
-            title: s.title,
-            status: undefined,
-          };
-        }),
-      });
+          }),
+        });
+      } else {
+        setDisableSubmit(false);
+        upadteSimulationStepsStatus({
+          steps: defaultSteps,
+          current: currentSimulationStep,
+        });
+      }
     }
   };
 
