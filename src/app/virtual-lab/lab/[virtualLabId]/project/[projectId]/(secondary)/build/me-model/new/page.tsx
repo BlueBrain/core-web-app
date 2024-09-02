@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { brainRegionsWithRepresentationAtom } from '@/state/brain-regions';
 import { meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
+import { selectedEModelIdAtom, selectedMModelIdAtom } from '@/state/virtual-lab/build/me-model';
 
 type Params = {
   params: {
@@ -17,8 +18,9 @@ type Params = {
 
 export default function NewMEModelPage({ params: { projectId, virtualLabId } }: Params) {
   const setMEModelDetails = useSetAtom(meModelDetailsAtom);
+  const setSelectedMModel = useSetAtom(selectedMModelIdAtom);
+  const setSelectedEModel = useSetAtom(selectedEModelIdAtom);
   const contributors = useAtomValue(virtualLabProjectUsersAtomFamily({ projectId, virtualLabId }));
-
   const [isFormValid, setIsFormValid] = useState(false);
   const brainRegions = useAtomValue(brainRegionsWithRepresentationAtom);
   const [form] = Form.useForm();
@@ -52,6 +54,8 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
         brainRegion: brainRegion && { id: brainRegion.id, title: brainRegion.title },
       })
     );
+    setSelectedMModel(null);
+    setSelectedEModel(null);
     router.push('new/configure');
   };
 
