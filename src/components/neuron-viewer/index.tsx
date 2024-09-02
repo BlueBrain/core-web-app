@@ -9,7 +9,7 @@ import useMorphology from '@/hooks/useMorphology';
 
 import { Morphology } from '@/services/bluenaas-single-cell/types';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
-import { DEFAULT_DIRECT_STIM_CONFIG } from '@/constants/simulate/single-neuron';
+import { DEFAULT_CURRENT_INJECTION_CONFIG } from '@/constants/simulate/single-neuron';
 
 type Props = {
   modelSelfUrl: string;
@@ -49,7 +49,7 @@ export default function NeuronViewer({
       const sectionNames = Object.keys(morphology);
       setSecNames(sectionNames);
 
-      if (!sectionNames.includes(DEFAULT_DIRECT_STIM_CONFIG.injectTo)) {
+      if (!sectionNames.includes(DEFAULT_CURRENT_INJECTION_CONFIG.injectTo)) {
         throw new Error('No soma section present');
       }
     },

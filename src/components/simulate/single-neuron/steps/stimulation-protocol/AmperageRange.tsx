@@ -1,16 +1,16 @@
 import { useEffect, useReducer } from 'react';
 import { InputNumber } from 'antd';
-import range from 'lodash/range';
-import round from 'lodash/round';
+
 import isEqual from 'lodash/isEqual';
 import dynamic from 'next/dynamic';
 
 import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 import { StimulusModule } from '@/types/simulation/single-neuron';
 import {
+  calculateRangeOutput,
   DEFAULT_PROTOCOL,
   MAX_AMPERAGE_STEPS,
-  stimulusParams,
+  PROTOCOL_DETAILS,
 } from '@/constants/simulate/single-neuron';
 
 const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPreviewPlot'), {
@@ -18,7 +18,7 @@ const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPrev
 });
 
 const getInitialAmperageState = (protocol: StimulusModule) => {
-  const { min: start, max: end, step } = stimulusParams[protocol].params;
+  const { min: start, max: end, step } = PROTOCOL_DETAILS[protocol].defaults.current;
   return {
     protocol,
     start,
@@ -185,22 +185,4 @@ export default function AmperageRange({
       )}
     </>
   );
-}
-
-function calculateRangeOutput(start: number, end: number, step: number) {
-  if (step <= 0) return [];
-  if (start === end) return [start];
-
-  let values: number[];
-
-  if (step === 1) {
-    values = [(start + end) / 2];
-  } else if (step === 2) {
-    values = [start, end];
-  } else {
-    const steps = (end - start) / (step - 1);
-    values = [...range(start, end, steps), end];
-  }
-
-  return values.map((v) => round(v, 2));
 }

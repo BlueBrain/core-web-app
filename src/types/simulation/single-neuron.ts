@@ -12,16 +12,6 @@ export type StimulusTypeOption = {
   value: StimulusType;
 };
 
-export type StimulusModuleOption = {
-  label: string;
-  value: StimulusModule;
-  usedBy: StimulusType[];
-  description: string;
-  delay: number;
-  duration: number;
-  stopTime: number;
-};
-
 export type FunctionParameterNumber = {
   defaultValue: number;
   min: number;
@@ -91,11 +81,6 @@ export type StimulusConfig = {
   stimulusType: StimulusType;
   stimulusProtocol: StimulusModule | null;
   amplitudes: number[];
-
-  stimulusProtocolInfo: StimulusModuleOption | null;
-  stimulusProtocolOptions: StimulusModuleOption[];
-  paramInfo: StimulusParameter;
-  paramValues: Record<string, number | null>;
 };
 
 export interface SingleNeuronModelSimulationConfig {
@@ -136,4 +121,26 @@ export type UpdateSynapseSimulationProperty = {
   id: number;
   key: keyof SynapseConfig;
   newValue: number | string | null;
+};
+
+export type ProtocolDetails = {
+  description: string;
+  name: StimulusModule;
+  label: string;
+  usedBy: StimulusType[];
+
+  defaults: {
+    time: {
+      delay: number;
+      duration: number;
+      stopTime: number;
+    };
+
+    current: {
+      value: number;
+      min: number;
+      max: number;
+      step: number;
+    };
+  };
 };

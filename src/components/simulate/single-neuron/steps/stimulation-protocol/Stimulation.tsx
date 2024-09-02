@@ -6,8 +6,8 @@ import AmperageRange from './AmperageRange';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import {
   DEFAULT_STIM_CONFIG,
+  PROTOCOL_DETAILS,
   SIMULATION_COLORS,
-  stimulusModuleParams,
   stimulusTypeParams,
 } from '@/constants/simulate/single-neuron';
 import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
@@ -199,17 +199,11 @@ function StimulationProtocol({ stimulationId }: FormItemProps) {
             popupMatchSelectWidth={false}
             optionLabelProp="label"
           >
-            {currentInjectionConfig[stimulationId].stimulus.stimulusProtocolOptions.map(
-              (protocol) => (
-                <Select.Option
-                  key={protocol.value}
-                  value={protocol.value}
-                  label="Select other protocol"
-                >
-                  {protocol.label}
-                </Select.Option>
-              )
-            )}
+            {Object.entries(PROTOCOL_DETAILS).map(([_, details]) => (
+              <Select.Option key={details.name} value={details.name} label="Select other protocol">
+                {details.label}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
       </div>
@@ -218,7 +212,7 @@ function StimulationProtocol({ stimulationId }: FormItemProps) {
 }
 
 function Parameters({ protocol }: { protocol: StimulusModule }) {
-  const protocolDescription = stimulusModuleParams.options.find((p) => p.value === protocol);
+  const protocolDescription = PROTOCOL_DETAILS[protocol];
 
   if (!protocolDescription) {
     return null;
@@ -248,7 +242,7 @@ function Parameters({ protocol }: { protocol: StimulusModule }) {
           <span className="uppercase text-gray-400">Delay</span>
           <div className="text-gray-400">
             <div className="inline-block min-w-[80px] border border-gray-200 py-2 pr-2 text-right font-bold text-primary-8">
-              {protocolDescription.delay}
+              {protocolDescription.defaults.time.delay}
             </div>{' '}
             [ms]
           </div>
@@ -258,7 +252,7 @@ function Parameters({ protocol }: { protocol: StimulusModule }) {
           <span className="uppercase text-gray-400">Duration</span>
           <div className="text-gray-400">
             <div className="inline-block min-w-[80px] border border-gray-200 py-2 pr-2 text-right font-bold text-primary-8">
-              {protocolDescription.duration}
+              {protocolDescription.defaults.time.duration}
             </div>{' '}
             [ms]
           </div>
@@ -268,7 +262,7 @@ function Parameters({ protocol }: { protocol: StimulusModule }) {
           <span className="uppercase text-gray-400">Stop Time</span>
           <div className="text-gray-400">
             <div className="inline-block min-w-[80px] border border-gray-200 py-2 pr-2 text-right font-bold text-primary-8">
-              {protocolDescription.stopTime}
+              {protocolDescription.defaults.time.stopTime}
             </div>{' '}
             [ms]
           </div>

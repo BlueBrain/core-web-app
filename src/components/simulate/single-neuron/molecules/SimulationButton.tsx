@@ -4,8 +4,8 @@ import { useAtomValue } from 'jotai';
 import { Form } from 'antd';
 
 import useSimulationModal from '../hooks/useSimulationModal';
-import { LunchSimulation, SaveSimulation } from './modals';
-import type { LunchSimulationProps, SaveSimulationProps } from './modals';
+import { LaunchSimulation, SaveSimulation } from './modals';
+import type { LaunchSimulationProps, SaveSimulationProps } from './modals';
 import { simulationStatusAtom } from '@/state/simulate/single-neuron';
 import { SimulationType } from '@/types/simulation/common';
 
@@ -25,8 +25,8 @@ export default function SimulationButton({
   const form = Form.useFormInstance();
   const simulationStatus = useAtomValue(simulationStatusAtom);
 
-  const onTrySimulation = useSimulationModal<LunchSimulationProps>({
-    Content: LunchSimulation,
+  const onTrySimulation = useSimulationModal<LaunchSimulationProps>({
+    Content: LaunchSimulation,
   });
 
   const onCompleteSimulation = useSimulationModal<SaveSimulationProps>({

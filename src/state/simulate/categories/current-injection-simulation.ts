@@ -1,22 +1,18 @@
 import { atom, useAtom } from 'jotai';
 
-import { getParamValues } from '@/util/simulate/single-neuron';
 import updateArray from '@/util/updateArray';
 import {
-  StimulusModuleOption,
   CurrentInjectionSimulationConfig,
   StimulusType,
   StimulusModule,
-  StimulusParameter,
 } from '@/types/simulation/single-neuron';
 import {
-  DEFAULT_DIRECT_STIM_CONFIG,
-  stimulusModuleParams,
-  stimulusParams,
+  DEFAULT_CURRENT_INJECTION_CONFIG,
+  PROTOCOL_DETAILS,
 } from '@/constants/simulate/single-neuron';
 
 export const currentInjectionSimulationConfigAtom = atom<Array<CurrentInjectionSimulationConfig>>([
-  DEFAULT_DIRECT_STIM_CONFIG,
+  DEFAULT_CURRENT_INJECTION_CONFIG,
 ]);
 currentInjectionSimulationConfigAtom.debugLabel = 'directCurrentInjectionSimulationConfigAtom';
 
@@ -34,21 +30,16 @@ export default function useCurrentInjectionSimulationConfig() {
   function setMode({ id, newValue }: { id: number; newValue: StimulusType }) {
     const stimConfig = findConfig(id);
 
-    const options = stimulusModuleParams.options.filter((option) =>
-      option.usedBy.includes(newValue)
-    );
-    const paramInfo = stimulusParams[options?.[0]?.value] || {};
+    const protocolsForMode = Object.entries(PROTOCOL_DETAILS)
+      .filter(([_, details]) => details.usedBy.includes(newValue))
+      .map(([_, details]) => details);
 
     const updatedStimulus: CurrentInjectionSimulationConfig = {
       ...stimConfig,
       stimulus: {
         ...stimConfig.stimulus,
         stimulusType: newValue,
-        stimulusProtocolOptions: options || [],
-        stimulusProtocolInfo: options?.[0] || null,
-        stimulusProtocol: options?.[0]?.value || null,
-        paramValues: getParamValues(paramInfo),
-        paramInfo,
+        stimulusProtocol: protocolsForMode?.[0]?.name || null,
       },
     };
 
@@ -64,54 +55,14 @@ export default function useCurrentInjectionSimulationConfig() {
   function setProtocol({ id, newValue }: { id: number; newValue: StimulusModule }) {
     const stimConfig = findConfig(id);
 
-    const protocolInfo = stimulusModuleParams.options.find(
-      (option: StimulusModuleOption) => option.value === newValue
-    );
+    const protocolInfo = PROTOCOL_DETAILS[newValue].name;
     if (!protocolInfo) throw new Error(`Protocol info ${newValue} not found`);
 
-    const paramInfo = stimulusParams[newValue];
-    if (!paramInfo) throw new Error(`Parameters for protocol ${newValue} not found`);
-    // paramInfo.parmas.defaultValue = protocolInfo.duration; TODO: Remove
-
     const updatedStimulus: CurrentInjectionSimulationConfig = {
       ...stimConfig,
       stimulus: {
         ...stimConfig.stimulus,
-        stimulusProtocolInfo: protocolInfo || null,
-        stimulusProtocol: protocolInfo?.value || null,
-        paramValues: getParamValues(paramInfo),
-        paramInfo,
-      },
-    };
-
-    return update(
-      updateArray({
-        array: state,
-        keyfn: (item) => item.id === id,
-        newVal: (item) => Object.assign(item, { ...updatedStimulus }),
-      })
-    );
-  }
-
-  function setParamValue({
-    id,
-    key,
-    newValue,
-  }: {
-    id: number;
-    key: keyof StimulusParameter;
-    newValue: number | null;
-  }) {
-    const stimConfig = findConfig(id);
-
-    const updatedStimulus: CurrentInjectionSimulationConfig = {
-      ...stimConfig,
-      stimulus: {
-        ...stimConfig.stimulus,
-        paramValues: {
-          ...stimConfig.stimulus.paramValues,
-          [key]: newValue,
-        },
+        stimulusProtocol: protocolInfo,
       },
     };
 
@@ -171,7 +122,7 @@ export default function useCurrentInjectionSimulationConfig() {
     update([
       ...state,
       {
-        ...DEFAULT_DIRECT_STIM_CONFIG,
+        ...DEFAULT_CURRENT_INJECTION_CONFIG,
         configId: crypto.randomUUID(),
         id: state.length,
       },
@@ -183,7 +134,7 @@ export default function useCurrentInjectionSimulationConfig() {
   }
 
   function reset() {
-    update([DEFAULT_DIRECT_STIM_CONFIG]);
+    update([DEFAULT_CURRENT_INJECTION_CONFIG]);
   }
 
   function empty() {
@@ -195,7 +146,6 @@ export default function useCurrentInjectionSimulationConfig() {
     setMode,
     setProtocol,
     setProperty,
-    setParamValue,
     setAmplitudes,
     reset,
     remove,

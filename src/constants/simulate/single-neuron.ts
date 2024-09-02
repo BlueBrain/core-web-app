@@ -1,16 +1,18 @@
+import range from 'lodash/range';
+import round from 'lodash/round';
+
 import {
-  ConditionalStimulusParamsTypes,
   StimulusDropdownInfo,
   StimulusTypeOption,
-  StimulusModuleOption,
   SimulationConfiguration,
   StimulusConfig,
   CurrentInjectionSimulationConfig,
   SynapseConfig,
   RecordLocation,
   SimulationExperimentalSetup,
+  StimulusModule,
+  ProtocolDetails,
 } from '@/types/simulation/single-neuron';
-import { getParamValues } from '@/util/simulate/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 import { SynapseType } from '@/components/neuron-viewer/hooks/events';
 
@@ -26,93 +28,95 @@ export const stimulusTypeParams: StimulusDropdownInfo & {
   ],
 };
 
-// taken from https://github.com/BlueBrain/BlueCelluLab/blob/main/bluecellulab/stimulus/factory.py#L311
-export const stimulusModuleParams: StimulusDropdownInfo & {
-  options: StimulusModuleOption[];
-} = {
-  name: 'Protocol',
-  value: 'step',
-  options: [
-    {
-      label: 'AP_WAVEFORM',
-      value: 'ap_waveform',
-      usedBy: ['current_clamp'],
-      description:
-        'This protocol is used to check the precise AP waveform. The aim is to get 1-2 APs for higher currents to study the AP properties such as AP amplitude, AP duration, peak time, afterhyperpolarisation, rise-time, fall-time, etc.',
-      delay: 250,
-      duration: 50,
-      stopTime: 550,
-    },
-    {
-      label: 'IDREST',
-      value: 'idrest',
-      usedBy: ['current_clamp'],
-      description: `This protocol is a sequence of depolarizing square pulses. The aim is to get as many APs as possible and make cell firing up to saturation. The firing properties, such as mean AP frequency and interspike intervals, bursting number, etc., are calculated to determine the cell's e-type (electrical firing type).`,
-      delay: 250,
-      duration: 1350,
-      stopTime: 1850,
-    },
-    {
-      label: 'IV',
-      value: 'iv',
-      usedBy: ['current_clamp'],
-      description:
-        'This protocol is used to check the passive properties and the voltage sag. A sequence of current steps, from hyperpolarization to small depolarization, is injected. It is mainly used to calculate the Input resistance of the cell.',
-
-      delay: 250,
-      duration: 3000,
-      stopTime: 3500,
-    },
-    {
-      label: 'FIRE_PATTERN',
-      value: 'fire_pattern',
-      usedBy: ['current_clamp'],
-      description: ` This protocol involves injecting a few long-duration, small and high suprathreshold currents. This protocol and IDREST are used to check cells' electrical firing type (e-type), e.g., continuous, bursting, stuttering and irregular firing.`,
-
-      delay: 250,
-      duration: 3600,
-      stopTime: 4100, // TODO: Update
-    },
-  ],
-};
-
 // These  values are based on discussions in this ticket - https://bbpteam.epfl.ch/project/issues/browse/BBPP134-2099
 // The default value for `step` is reduced for some protocols to reduce the number of simulation processes.
-export const stimulusParams: ConditionalStimulusParamsTypes = {
-  ap_waveform: {
-    params: {
-      defaultValue: 250,
-      min: 0.05,
-      max: 0.5,
-      step: 5,
-      unit: 'ms',
-    },
-  },
+export const PROTOCOL_DETAILS: Record<StimulusModule, ProtocolDetails> = {
   idrest: {
-    params: {
-      defaultValue: 1350,
-      min: 0.05,
-      max: 0.5,
-      step: 5,
-      unit: 'ms',
+    name: 'idrest',
+    label: 'IDREST',
+    description: `This protocol is a sequence of depolarizing square pulses. The aim is to get as many APs as possible and make cell firing up to saturation. The firing properties, such as mean AP frequency and interspike intervals, bursting number, etc., are calculated to determine the cell's e-type (electrical firing type).`,
+    usedBy: ['current_clamp'],
+
+    defaults: {
+      time: {
+        delay: 250,
+        duration: 1350,
+        stopTime: 1850,
+      },
+
+      current: {
+        value: 1350,
+        min: 0.05,
+        max: 0.5,
+        step: 5,
+      },
     },
   },
+
+  ap_waveform: {
+    name: 'ap_waveform',
+    label: 'AP_WAVEFORM',
+    description:
+      'This protocol is used to check the precise AP waveform. The aim is to get 1-2 APs for higher currents to study the AP properties such as AP amplitude, AP duration, peak time, afterhyperpolarisation, rise-time, fall-time, etc.',
+    usedBy: ['current_clamp'],
+
+    defaults: {
+      time: {
+        delay: 250,
+        duration: 50,
+        stopTime: 550,
+      },
+
+      current: {
+        value: 250,
+        min: 0.05,
+        max: 0.5,
+        step: 5,
+      },
+    },
+  },
+
   iv: {
-    params: {
-      defaultValue: 3000,
-      min: -0.5,
-      max: 0.1,
-      step: 5,
-      unit: 'ms',
+    name: 'iv',
+    label: 'IV',
+    description:
+      'This protocol is used to check the passive properties and the voltage sag. A sequence of current steps, from hyperpolarization to small depolarization, is injected. It is mainly used to calculate the Input resistance of the cell.',
+    usedBy: ['current_clamp'],
+
+    defaults: {
+      time: {
+        delay: 250,
+        duration: 3000,
+        stopTime: 3500,
+      },
+
+      current: {
+        value: 3000,
+        min: -0.5,
+        max: 0.1,
+        step: 5,
+      },
     },
   },
+
   fire_pattern: {
-    params: {
-      defaultValue: 3600,
-      min: 0.05,
-      max: 0.5,
-      step: 4,
-      unit: 'ms',
+    name: 'fire_pattern',
+    label: 'FIRE_PATTERN',
+    description: `This protocol involves injecting a few long-duration, small and high suprathreshold currents. This protocol and IDREST are used to check cells' electrical firing type (e-type), e.g., continuous, bursting, stuttering and irregular firing.`,
+    usedBy: ['current_clamp'],
+    defaults: {
+      time: {
+        delay: 250,
+        duration: 3600,
+        stopTime: 4100,
+      },
+
+      current: {
+        value: 3600,
+        min: 0.05,
+        max: 0.5,
+        step: 4,
+      },
     },
   },
 };
@@ -138,17 +142,10 @@ export const DEFAULT_PROTOCOL = 'idrest';
 export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   stimulusType: 'current_clamp',
   stimulusProtocol: DEFAULT_PROTOCOL,
-  stimulusProtocolOptions: stimulusModuleParams.options.filter((option) =>
-    option.usedBy.includes('current_clamp')
-  ),
-  stimulusProtocolInfo:
-    stimulusModuleParams.options.find((option) => option.value === DEFAULT_PROTOCOL) || null,
-  paramInfo: stimulusParams.idrest,
-  paramValues: getParamValues(stimulusParams.idrest),
   amplitudes: [40, 80, 120],
 };
 
-export const DEFAULT_DIRECT_STIM_CONFIG: CurrentInjectionSimulationConfig = {
+export const DEFAULT_CURRENT_INJECTION_CONFIG: CurrentInjectionSimulationConfig = {
   id: 0,
   configId: crypto.randomUUID(),
   injectTo: DEFAULT_SECTION,
@@ -158,7 +155,7 @@ export const DEFAULT_DIRECT_STIM_CONFIG: CurrentInjectionSimulationConfig = {
 export const DEFAULT_SIM_CONFIG: SimulationConfiguration = {
   conditions: DEFAULT_SIMULATION_EXPERIMENTAL_SETUP,
   recordFrom: [{ ...DEFAULT_RECORDING_LOCATION }],
-  currentInjection: [DEFAULT_DIRECT_STIM_CONFIG],
+  currentInjection: [DEFAULT_CURRENT_INJECTION_CONFIG],
   synapses: undefined,
 };
 
@@ -209,3 +206,21 @@ export const SIMULATION_COLORS = [
 
 // Each amperage starts a new simulation process in the server. To limit resource consumption, we put a maximum threshold on number of amperages a simulation can have.
 export const MAX_AMPERAGE_STEPS = 15;
+
+export function calculateRangeOutput(start: number, end: number, step: number) {
+  if (step <= 0) return [];
+  if (start === end) return [start];
+
+  let values: number[];
+
+  if (step === 1) {
+    values = [(start + end) / 2];
+  } else if (step === 2) {
+    values = [start, end];
+  } else {
+    const steps = (end - start) / (step - 1);
+    values = [...range(start, end, steps), end];
+  }
+
+  return values.map((v) => round(v, 2));
+}

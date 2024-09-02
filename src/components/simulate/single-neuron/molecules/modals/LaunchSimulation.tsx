@@ -7,7 +7,7 @@ import { SimulationType } from '@/types/simulation/common';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
 import { simulationExperimentalSetupAtom } from '@/state/simulate/categories/simulation-conditions';
-import { stimulusModuleParams } from '@/constants/simulate/single-neuron';
+import { DEFAULT_PROTOCOL, PROTOCOL_DETAILS } from '@/constants/simulate/single-neuron';
 import { simulationStatusAtom } from '@/state/simulate/single-neuron';
 import { launchSimulationAtom } from '@/state/simulate/single-neuron-setter';
 
@@ -41,9 +41,9 @@ export default function LunchSimulationModal({ onClose, modelSelfUrl, simulation
     {
       label: 'Stimulation',
       note: 'in stimulation protocol',
-      value: stimulusModuleParams.options.find(
-        (option) => option.value === currentInjectionConfig[0].stimulus.stimulusProtocol
-      )?.stopTime!,
+      value:
+        PROTOCOL_DETAILS[currentInjectionConfig[0].stimulus.stimulusProtocol ?? DEFAULT_PROTOCOL]
+          .defaults.time.stopTime,
     },
     ...synaptomeConfig.map((p, ind) => ({
       label: `Synpatic input ${ind + 1}`,
