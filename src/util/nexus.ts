@@ -147,3 +147,13 @@ export function getIdFromSelfUrl(selfUrl: string | null) {
   const decodedId = decodeURIComponent(encodedId || '');
   return decodedId;
 }
+
+export function getOrgFromSelfUrl(selfUrl: string | null) {
+  if (!selfUrl) return null;
+  return selfUrl.replace(`${nexus.url}/resources/`, '').split('/')[0];
+}
+
+export function getProjectFromSelfUrl(selfUrl: string | null) {
+  if (!selfUrl) return null;
+  return selfUrl.replace(`${nexus.url}/resources/`, '').split('/')[1];
+}

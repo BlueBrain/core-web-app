@@ -5,7 +5,7 @@ import { EModel, NeuronMorphology } from '@/types/e-model';
 import sessionAtom from '@/state/session';
 import { fetchResourceById } from '@/api/nexus';
 import { MEModelResource } from '@/types/me-model';
-import { getIdFromSelfUrl } from '@/util/nexus';
+import { getIdFromSelfUrl, getOrgFromSelfUrl, getProjectFromSelfUrl } from '@/util/nexus';
 
 export const meModelSectionAtom = atom<MEModelSection>('morphology');
 
@@ -38,10 +38,21 @@ export const selectedMEModelIdAtom = atom<string | null>((get) => {
   return getIdFromSelfUrl(meModelSelfUrl);
 });
 
+export const selectedMEModelOrgAtom = atom<string | null>((get) => {
+  const meModelSelfUrl = get(meModelSelfUrlAtom);
+  return getOrgFromSelfUrl(meModelSelfUrl);
+});
+
+export const selectedMEModelProjectAtom = atom<string | null>((get) => {
+  const meModelSelfUrl = get(meModelSelfUrlAtom);
+  return getProjectFromSelfUrl(meModelSelfUrl);
+});
+
 export const meModelResourceAtom = atom<Promise<MEModelResource | undefined>>(async (get) => {
   const session = get(sessionAtom);
   const meModelId = get(selectedMEModelIdAtom);
-  if (!session || !meModelId) return;
-
-  return fetchResourceById<MEModelResource>(meModelId, session);
+  const org = get(selectedMEModelOrgAtom);
+  const project = get(selectedMEModelProjectAtom);
+  if (!session || !meModelId || !org || !project) return;
+  return fetchResourceById<MEModelResource>(meModelId, session, { org, project });
 });
