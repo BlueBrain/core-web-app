@@ -1,5 +1,7 @@
 import FileSaver from 'file-saver';
 import { Session } from 'next-auth';
+import uniqBy from 'lodash/uniqBy';
+
 import { EntityResource, Distribution, FileMetadata } from '@/types/nexus/common';
 import { fetchFileMetadataByUrl, fetchResourceByUrl } from '@/api/nexus';
 import { ensureArray } from '@/util/nexus';
@@ -48,7 +50,8 @@ function postNexusArchive(resources: FileMetadata[], session: Session) {
         'Content-Type': 'application/json',
       }),
       body: JSON.stringify({
-        resources: resources.map(formatArchiveResource),
+        // resources array should have unique 'path' field (Nexus limitation)
+        resources: uniqBy(resources.map(formatArchiveResource), 'path'),
       }),
     }
   );
