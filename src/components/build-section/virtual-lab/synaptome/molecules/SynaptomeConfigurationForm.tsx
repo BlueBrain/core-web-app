@@ -13,6 +13,7 @@ import {
   CREATE_SYNAPTOME_SUCCESS,
   DEFAULT_SYNAPSE_VALUE,
   CONFIG_FILE_NAME,
+  CREATE_SYNAPTOME_WARNING,
 } from './constants';
 import { classNames, createHeaders, getRandomIntInclusive } from '@/util/utils';
 import { composeUrl, createDistribution } from '@/util/nexus';
@@ -36,6 +37,8 @@ import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationType } from '@/types/virtual-lab/lab';
 import { DataType } from '@/constants/explore-section/list-views';
 import { ExploreDataScope } from '@/types/explore-section/application';
+import { to64 } from '@/util/common';
+import { Entity } from '@/types/nexus';
 
 const label = (text: string) => (
   <span className="text-base font-semibold text-primary-8">{text}</span>
@@ -50,7 +53,7 @@ type Props = {
 export default function SynaptomeConfigurationForm({ org, project, resource }: Props) {
   const { push: navigate } = useRouter();
   const [loading, setLoading] = useState(false);
-  const { error: notifyError, success: notifySuccess } = useNotification();
+  const { error: notifyError, success: notifySuccess, warning: notifyWarning } = useNotification();
   const form = Form.useFormInstance<SynaptomeModelConfiguration>();
   const seed = Form.useWatch<number>('seed', form);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
@@ -64,10 +67,10 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
     })
   );
 
-  const generateSynaptomeUrl = () => {
+  const generateSynaptomeUrl = (newSynaptome: Entity) => {
     const vlProjectUrl = generateVlProjectUrl(org, project);
-    const baseSimulateUrl = `${vlProjectUrl}/simulate/new`;
-    return baseSimulateUrl;
+    const baseBuildUrl = `${vlProjectUrl}/build/synaptome/view`;
+    return `${baseBuildUrl}/${to64(`${org}/${project}!/!${newSynaptome['@id']}`)}`;
   };
 
   const addNewSynapse = useCallback(() => {
@@ -179,6 +182,8 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
         body: JSON.stringify(sanitizedResource),
       });
 
+      const newSynaptomeModel: Entity = await resp.json();
+
       refreshSynaptomeModels();
 
       if (!resp.ok) {
@@ -201,8 +206,10 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
       selectedRowsAtom.setShouldRemove(() => true); // set function to remove all
       selectedRowsAtom.setShouldRemove(null); // clear function
       sendResetSynapses3DEvent();
+      notifyWarning(CREATE_SYNAPTOME_WARNING, 6, 'topRight', undefined, newSynaptomeModel['@id']);
       notifySuccess(CREATE_SYNAPTOME_SUCCESS, undefined, 'topRight');
-      navigate(generateSynaptomeUrl());
+
+      navigate(generateSynaptomeUrl(newSynaptomeModel));
     } catch (error) {
       notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight', undefined, 'synaptome-config');
       setLoading(false);
