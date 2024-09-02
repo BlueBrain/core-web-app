@@ -47,9 +47,18 @@ type Props = {
   className?: string;
   isLoading?: boolean;
   plotConfig?: PlotConfig;
+  showHeader?: boolean;
+  showLegend?: boolean;
 };
 
-export default function PlotRenderer({ className, data, isLoading, plotConfig }: Props) {
+export default function PlotRenderer({
+  className,
+  data,
+  isLoading,
+  plotConfig,
+  showHeader = true,
+  showLegend = false,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -63,6 +72,9 @@ export default function PlotRenderer({ className, data, isLoading, plotConfig }:
     if (plotConfig?.yAxisTitle) {
       lodashSet(PLOT_LAYOUT, 'yaxis.title.text', plotConfig.yAxisTitle);
     }
+    if (showLegend) {
+      lodashSet(PLOT_LAYOUT, 'showlegend', showLegend);
+    }
 
     if (!initialized) {
       Plotly.newPlot(container, data, PLOT_LAYOUT, PLOT_CONFIG);
@@ -74,7 +86,7 @@ export default function PlotRenderer({ className, data, isLoading, plotConfig }:
     return () => {
       Plotly.purge(container);
     };
-  }, [data, initialized, plotConfig]);
+  }, [data, initialized, plotConfig, showLegend]);
 
   const isTraceVisible = (trace: PlotDataEntry) => trace.visible === undefined || trace.visible;
 
@@ -90,7 +102,7 @@ export default function PlotRenderer({ className, data, isLoading, plotConfig }:
 
   return (
     <div className="relative w-full">
-      {!isLoading && data.length && (
+      {!isLoading && data.length && showHeader && (
         <>
           <div className="mb-4 mt-8 flex w-full justify-between px-2 text-gray-400">
             <span className="uppercase">Output Values</span>
