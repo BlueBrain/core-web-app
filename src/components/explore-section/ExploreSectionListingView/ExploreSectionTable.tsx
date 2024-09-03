@@ -267,6 +267,7 @@ export default function ExploreSectionTable({
   onRowsSelected,
   scrollable = true,
   controlsVisible = true,
+  autohideControls = false,
 }: TableProps<ExploreESHit<ExploreSectionResource>> &
   AdditionalTableProps & {
     renderButton?: (props: RenderButtonProps) => ReactNode;
@@ -274,6 +275,7 @@ export default function ExploreSectionTable({
     scrollable?: boolean;
     controlsVisible?: boolean;
     onRowsSelected?: (rows: ExploreESHit<ExploreSectionResource>[]) => void;
+    autohideControls?: boolean;
   }) {
   const { rowSelection, selectedRows, clearSelectedRows } = useRowSelection({
     dataType: dataContext.dataType,
@@ -297,16 +299,18 @@ export default function ExploreSectionTable({
         showLoadMore={toggleDisplayMore}
         scrollable={scrollable}
       />
-      <TableControls
-        renderButton={renderButton}
-        selectedRows={selectedRows}
-        clearSelectedRows={clearSelectedRows}
-        visible={controlsVisible}
-      >
-        {displayLoadMoreBtn && (
-          <LoadMoreButton dataContext={dataContext} hide={toggleDisplayMore} />
-        )}
-      </TableControls>
+      {(!autohideControls || (autohideControls && selectedRows.length > 0)) && (
+        <TableControls
+          renderButton={renderButton}
+          selectedRows={selectedRows}
+          clearSelectedRows={clearSelectedRows}
+          visible={controlsVisible}
+        >
+          {displayLoadMoreBtn && (
+            <LoadMoreButton dataContext={dataContext} hide={toggleDisplayMore} />
+          )}
+        </TableControls>
+      )}
     </>
   );
 }

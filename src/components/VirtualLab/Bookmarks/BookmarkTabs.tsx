@@ -48,8 +48,10 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
       const resourceTypes =
         tab === BookmarkTabsName.EXPERIMENTS ? EXPERIMENT_DATA_TYPES : MODEL_DATA_TYPES;
 
-      return Object.keys(resourceTypes)
-        .filter((t) => bookmarks.data[t as DataType]?.length)
+      const keys = Object.keys(resourceTypes) as DataType[];
+
+      return keys
+        .filter((t) => bookmarks.data[t]?.length)
         .map((t) => {
           return {
             key: resourceTypes[t].name,
@@ -60,14 +62,14 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
                   {resourceTypes[t].title}
                 </span>
                 <span className="ml-2 text-sm font-normal text-gray-600">
-                  {bookmarks.data[t as DataType]?.length ?? 0} pinned datasets
+                  {bookmarks.data[t]?.length ?? 0} pinned datasets
                 </span>
               </div>
             ),
             children:
-              bookmarks.data[t as DataType]?.length > 0 ? (
+              bookmarks.data[t]?.length > 0 ? (
                 <BookmarkedResourcesTable
-                  dataType={t as DataType}
+                  dataType={t}
                   bookmarkTabName={tab}
                   labId={labId}
                   projectId={projectId}
@@ -83,7 +85,7 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
 
   const tabContent = (tab: BookmarkTabsName) => {
     return (
-      <div className="max-h-[1000px] w-full overflow-scroll bg-white p-10">
+      <div className="mb-5 w-full bg-white p-8">
         {bookmarks.state === 'loading' && (
           <Spin indicator={<LoadingOutlined />} className="w-full" />
         )}
@@ -99,7 +101,6 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
               items={collapsibleItems(tab)}
               defaultActiveKey={activePanel ? [activePanel] : []}
               expandIconPosition="end"
-              accordion
               destroyInactivePanel
               onChange={(key) => {
                 if (Array.isArray(key) && key.length === 1) {
@@ -117,7 +118,7 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
   };
 
   return (
-    <div className="mt-10">
+    <div className="mr-5">
       <ConfigProvider
         theme={{
           components: {

@@ -2,7 +2,7 @@ import { ReactNode, Suspense } from 'react';
 import { Titillium_Web } from 'next/font/google';
 
 import Providers from './providers';
-import Feedback from '@/components/Feedback';
+import Feedback from '@/components/Feedback'; // eslint-disable-line
 import '@/styles/globals.scss';
 import { auth } from '@/auth';
 
@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <body>
         <Providers session={session}>
           <Suspense fallback={null}>{children}</Suspense>
-          <Feedback />
+          {/* <Feedback /> */}
         </Providers>
       </body>
     </html>

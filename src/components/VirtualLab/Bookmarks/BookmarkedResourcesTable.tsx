@@ -51,16 +51,8 @@ export default function BookmarkedResourcesTable({
   const dataSource = data.state === 'hasData' ? data.data : [];
 
   return (
-    <div
-      id="bookmark-list-container"
-      data-testid={`${dataType}-tab-panel`}
-      style={{
-        height: `${dataSource.length * 200 + 150}px`,
-        maxHeight: '1200px',
-        minHeight: '450px',
-      }}
-    >
-      <div className="grid h-full w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto">
+    <div id="bookmark-list-container" data-testid={`${dataType}-tab-panel`}>
+      <div className="overflow-x-hidden">
         <WithControlPanel
           dataType={dataType}
           dataScope={ExploreDataScope.BookmarkedResources}
@@ -77,6 +69,8 @@ export default function BookmarkedResourcesTable({
               />
 
               <ExploreSectionTable
+                scrollable={false}
+                autohideControls
                 columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
                 dataContext={{
                   dataScope: ExploreDataScope.BookmarkedResources,
