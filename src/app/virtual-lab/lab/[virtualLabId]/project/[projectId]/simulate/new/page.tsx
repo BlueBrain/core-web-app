@@ -66,8 +66,11 @@ export default function NewSimulation({
 
       {modelType ? (
         <div className="flex grow flex-col">
-          <div className="flex justify-between align-middle">
-            <div className="bg-white px-5 py-2 text-2xl font-bold text-primary-8 ">
+          <div className="mb-2 flex items-center justify-between">
+            <div
+              className="text-2xl font-bold"
+              style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}
+            >
               Create a simulation
             </div>
             <GenericButton
@@ -79,7 +82,7 @@ export default function NewSimulation({
           <div className="flex grow flex-col">
             {/* TODO: replace this list with items saved in Model Library */}
             <div className="flex w-full grow flex-col" id="explore-table-container-for-observable">
-              <div className="bg-white pl-5 pt-5 text-lg text-primary-8">
+              <div className="bg-white pl-7 pt-5 text-lg font-semibold text-primary-8">
                 {`Select a ${selectedSimulationScope.replace('-', ' ')} model to simulate`}
               </div>
               <ExploreSectionListingView
