@@ -4,7 +4,7 @@ import isNil from 'lodash/isNil';
 import { useReducer } from 'react';
 import { Button, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { ArticleAction, ArticlePreview, DoiDefinition } from '../Article';
+import { ArticlePreview, DoiDefinition } from '../Article';
 import { ArticleItem } from '@/api/explore-section/resources';
 import PersonIcon from '@/components/icons/Person';
 import JournalIcon from '@/components/icons/Journal';
@@ -12,7 +12,6 @@ import { formatDate } from '@/util/utils';
 import CalendarIcon from '@/components/icons/Calendar';
 import CitationIcon from '@/components/icons/CitationIcon';
 import CopyIcon from '@/components/icons/CopyIcon';
-import QuoteOutline from '@/components/icons/QuoteOutline';
 import CopyTextBtn from '@/components/CopyTextBtn';
 
 type Props = {
@@ -52,7 +51,6 @@ export default function ArticleListItem({ article, index }: Props) {
               </Tooltip>
             </div>
           )}
-          <ArticleAction key="cite" onClick={() => {}} title="Cite" icon={<QuoteOutline />} />
         </div>
       </div>
 
