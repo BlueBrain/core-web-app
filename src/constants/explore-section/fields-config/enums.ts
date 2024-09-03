@@ -3,6 +3,8 @@ export enum Field {
   Name = 'name',
   Contributors = 'contributors',
   CreatedAt = 'createdAt',
+  CreationDate = 'creationDate',
+  RegistrationDate = 'registrationDate',
   CreatedBy = 'createdBy',
   UpdatedAt = 'updatedAt',
   Description = 'description',

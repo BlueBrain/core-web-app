@@ -4,7 +4,10 @@ import intersection from 'lodash/intersection';
 import { Empty } from 'antd';
 
 import { DataType, DataTypeToNexusType } from '@/constants/explore-section/list-views';
-import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
+import {
+  ExploreFieldsConfigProps,
+  ExploreFieldConfig,
+} from '@/constants/explore-section/fields-config/types';
 import {
   selectorFnBasic,
   selectorFnContributors,
@@ -77,6 +80,34 @@ export const previewRender = ({
   );
 };
 
+function createdAtDateFieldConfig(
+  title: string
+): ExploreFieldConfig<DeltaExperiment | DeltaSimulationCampaign> {
+  return {
+    title,
+    esTerms: {
+      flat: {
+        filter: 'createdAt',
+        aggregation: 'createdAt',
+        sort: 'createdAt',
+      },
+    },
+    filter: FilterTypeEnum.DateRange,
+    render: {
+      esResourceViewFn: (_t, r) => selectorFnDate(r._source?.createdAt),
+      deltaResourceViewFn: (resource) =>
+        resource._createdAt && format(parseISO(resource._createdAt), 'dd.MM.yyyy'),
+    },
+    vocabulary: {
+      plural: 'Dates',
+      singular: 'Date',
+    },
+  };
+}
+
+const RegistrationDateConfig = createdAtDateFieldConfig('Registration Date');
+const CreationDateConfig = createdAtDateFieldConfig('Creation Date');
+
 export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
   DeltaExperiment | DeltaSimulationCampaign
 > = {
@@ -134,26 +165,9 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
       singular: 'Contributor',
     },
   },
-  [Field.CreatedAt]: {
-    esTerms: {
-      flat: {
-        filter: 'createdAt',
-        aggregation: 'createdAt',
-        sort: 'createdAt',
-      },
-    },
-    title: 'Registration date',
-    filter: FilterTypeEnum.DateRange,
-    render: {
-      esResourceViewFn: (_t, r) => selectorFnDate(r._source?.createdAt),
-      deltaResourceViewFn: (resource) =>
-        resource._createdAt && format(parseISO(resource._createdAt), 'dd.MM.yyyy'),
-    },
-    vocabulary: {
-      plural: 'Dates',
-      singular: 'Date',
-    },
-  },
+  [Field.RegistrationDate]: RegistrationDateConfig,
+  [Field.CreationDate]: CreationDateConfig,
+  [Field.CreatedAt]: RegistrationDateConfig,
   [Field.CreatedBy]: {
     title: 'Created by',
     filter: FilterTypeEnum.CheckList,

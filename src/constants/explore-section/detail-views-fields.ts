@@ -10,7 +10,7 @@ export const COMMON_FIELDS = [
     field: Field.Contributors,
   },
   {
-    field: Field.CreatedAt,
+    field: Field.RegistrationDate,
   },
 ] as DetailProps[];
 
@@ -178,13 +178,22 @@ export const ME_MODEL_FIELDS = [
     className: 'col-span-2',
   },
   {
-    field: Field.CreatedBy,
-    className: 'col-span-2',
-  },
-  {
     field: Field.MType,
   },
   {
     field: Field.EType,
+  },
+] as DetailProps[];
+
+export const ME_MODEL_COMMON_FIELDS = [
+  {
+    field: Field.Description,
+    className: 'col-span-3',
+  },
+  {
+    field: Field.CreatedBy,
+  },
+  {
+    field: Field.CreationDate,
   },
 ] as DetailProps[];

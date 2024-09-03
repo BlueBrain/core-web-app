@@ -13,16 +13,19 @@ import usePathname from '@/hooks/pathname';
 import { DeltaResource } from '@/types/explore-section/resources';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { COMMON_FIELDS } from '@/constants/explore-section/detail-views-fields';
 
 type ExtendsExperiment<T> = T extends DeltaResource ? T : never;
 
 export default function Detail<T extends DeltaResource>({
   fields,
   showViewMode,
+  commonFields = COMMON_FIELDS,
   children,
 }: {
   fields: DetailProps[];
   showViewMode?: boolean;
+  commonFields?: DetailProps[];
   children?: (detail: ExtendsExperiment<T>) => ReactNode;
 }) {
   const setBrainRegionSidebarIsCollapsed = useSetAtom(brainRegionSidebarIsCollapsedAtom);
@@ -56,7 +59,7 @@ export default function Detail<T extends DeltaResource>({
       <DetailsPageSideBackLink />
       <div className="ml-10 flex h-full w-full flex-col gap-7 overflow-auto bg-white p-7 pr-12">
         {showViewMode && <div className="text-right font-thin text-gray-400">View mode</div>}
-        <DetailHeader fields={fields} detail={detail.data} url={path} />
+        <DetailHeader fields={fields} commonFields={commonFields} detail={detail.data} url={path} />
         {children && detail.data && children(detail.data)}
       </div>
     </div>

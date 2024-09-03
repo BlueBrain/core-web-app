@@ -7,7 +7,10 @@ import { useSetAtom } from 'jotai';
 import { Analysis, Configuration, Simulation } from '.';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail from '@/components/explore-section/Detail';
-import { ME_MODEL_FIELDS } from '@/constants/explore-section/detail-views-fields';
+import {
+  ME_MODEL_FIELDS,
+  ME_MODEL_COMMON_FIELDS,
+} from '@/constants/explore-section/detail-views-fields';
 import SectionTabs, {
   EMODEL_TABS,
   EmodelTabKeys,
@@ -46,7 +49,11 @@ export default function MEModelDetailView({ vlProjectUrl, params, showViewMode =
 
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={ME_MODEL_FIELDS} showViewMode={showViewMode}>
+      <Detail
+        fields={ME_MODEL_FIELDS}
+        commonFields={ME_MODEL_COMMON_FIELDS}
+        showViewMode={showViewMode}
+      >
         {() => (
           <>
             <SectionTabs />
