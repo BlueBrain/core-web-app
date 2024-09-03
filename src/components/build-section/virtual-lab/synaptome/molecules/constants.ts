@@ -18,7 +18,7 @@ export const DEFAULT_SYNAPSE_VALUE: SingleSynaptomeConfig = {
   name: '',
   target: undefined,
   type: undefined,
-  distribution: undefined,
+  distribution: 'formula',
   formula: undefined,
   seed: undefined,
   exclusion_rules: null,

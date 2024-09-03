@@ -86,13 +86,18 @@ const SynapseGroupValidationSchema = z
   });
 
 export default function SynapseSet({ modelId, index, field, removeGroup }: Props) {
+  const secNames = useAtomValue(secNamesAtom);
   const [synapseVis, setSynapseVis] = useState(false);
   const [visualizeLoading, setLoadingVisualize] = useState(false);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
   const [displayExclusionRules, toggleDisplayExclusionRules] = useReducer((val) => !val, false);
   const [displayFormulaHelp, toggleFormulaHelp] = useReducer((val) => !val, false);
-
-  const secNames = useAtomValue(secNamesAtom);
+  const { error: notifyError } = useNotification();
+  const form = Form.useFormInstance();
+  const synapses = Form.useWatch<Array<SingleSynaptomeConfig>>('synapses', form);
+  const seed = Form.useWatch<number>('seed', form);
+  const config = synapses?.[index];
+  const configRef = useRef(config);
 
   const groupedSections = Object.keys(
     groupBy(secNames, (str) => {
@@ -105,13 +110,6 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
     value,
     label: sectionTargetMapping[value as keyof typeof sectionTargetMapping],
   }));
-
-  const { error: notifyError } = useNotification();
-  const form = Form.useFormInstance();
-  const synapses = Form.useWatch<Array<SingleSynaptomeConfig>>('synapses', form);
-  const seed = Form.useWatch<number>('seed', form);
-  const config = synapses?.[index];
-  const configRef = useRef(config);
 
   const isAlreadyVisualized = useMemo(
     () =>
@@ -168,11 +166,15 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
   };
 
   const showExclusionRules = () => {
-    if (config && !config.exclusion_rules?.length && !showExclusionRules) {
+    if (config && !config.exclusion_rules?.length && !displayExclusionRules) {
       addNewExclusionRule();
     }
     toggleDisplayExclusionRules();
   };
+
+  const exclusionRuleNotFilled =
+    config?.exclusion_rules?.some((p) => !p.distance_soma_gte && !p.distance_soma_lte) &&
+    !displayExclusionRules;
 
   const onVisualizationError = () => {
     notifyError(
@@ -329,26 +331,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             />
           </Form.Item>
         </div>
-        <div className="grid grid-cols-2 items-start gap-4">
-          <Form.Item
-            name={[field.name, 'distribution']}
-            rules={[{ required: true, message: 'Please select a distribution!' }]}
-            validateTrigger="onBlur"
-            label={label('Distribution')}
-            className="!border-b-[1.8px] border-primary-8 [&_.ant-form-item-row]:mb-0 [&_.ant-form-item-row]:inline-block [&_.ant-form-item-row]:w-full [&_.ant-select-arrow]:text-primary-8 [&_.ant-select-selector]:!border-0"
-          >
-            <Select
-              allowClear
-              placeholder="Select"
-              size="large"
-              className="[&_.ant-select-selection-item]:font-bold [&_.ant-select-selection-item]:text-primary-8"
-              options={[
-                { value: 'linear', label: 'Linear' },
-                { value: 'exponential', label: 'Exponential' },
-                { value: 'formula', label: 'Formula' },
-              ]}
-            />
-          </Form.Item>
+        <div className="flex items-start gap-4">
           <div className="w-full">
             <div className="flex w-full flex-col">
               <div
@@ -370,13 +353,18 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                   displayFormulaHelp ? 'mb-4 h-full opacity-100' : 'mb-0 h-0 opacity-0'
                 )}
               >
-                Maecenas faucibus mollis interdum. Etiam porta sem malesuada magna mollis euismod.
-                Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras mattis
-                consectetur purus sit amet fermentum. Aenean eu leo quam. Pellentesque ornare sem
-                lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id
-                elit. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+                More information on formulas here: <br />
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-8"
+                  href="https://docs.sympy.org/latest/index.html"
+                >
+                  https://docs.sympy.org/latest/index.html
+                </a>
               </p>
             </div>
+            <input hidden readOnly name="distribution" value="formula" />
             <Form.Item
               name={[field.name, 'formula']}
               rules={[
@@ -400,7 +388,15 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
               <Input
                 placeholder="00.3*x*x + 0.004"
                 size="large"
-                className="border border-neutral-2 text-base font-bold italic text-primary-8"
+                className={classNames(
+                  'text-base font-bold italic [&_.ant-input]:text-primary-8',
+                  '[&_.ant-input]:border [&_.ant-input]:border-r-0 [&_.ant-input]:border-neutral-2 [&_.ant-input]:py-4',
+                  '[&_.ant-input-group-addon]:border [&_.ant-input-group-addon]:border-neutral-2 [&_.ant-input-group-addon]:py-4',
+                  '[&_.ant-input-group-addon]: [&_.ant-input-group-addon]:border-l-0 [&_.ant-input-group-addon]:bg-white'
+                )}
+                addonAfter={
+                  <span className="w-max min-w-max not-italic text-gray-400">Synapses/µm</span>
+                }
               />
             </Form.Item>
           </div>
@@ -417,7 +413,14 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             onClick={showExclusionRules}
             type="button"
           >
-            <div className="text-lg font-medium">Filter synapses</div>
+            <div className="text-left text-lg font-medium">
+              Filter synapses
+              {exclusionRuleNotFilled && (
+                <p className="text-sm font-light text-pink-700">
+                  Some exclusion rules are missing.
+                </p>
+              )}
+            </div>
             <div className="flex items-center justify-center rounded-md p-2 hover:bg-gray-200">
               {displayExclusionRules ? (
                 <CloseOutlined />
@@ -433,9 +436,6 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
               displayExclusionRules ? 'mt-4 flex h-full flex-col opacity-100' : 'h-0 opacity-0'
             )}
           >
-            <div className="mb-4 text-left text-xl font-bold text-primary-8">
-              Distance from soma
-            </div>
             <Form.List name={[field.name, 'exclusion_rules']}>
               {(fields, { remove: removeRule }) => (
                 <div className="flex w-full flex-col gap-3">
@@ -454,13 +454,14 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                             className="h-[40px] w-[40px] rounded-md"
                           />
                         </div>
-                        <div className="mb-4 text-lg font-bold text-primary-8">
-                          Exclude synapses that are:{' '}
+                        <div className="mb-4 text-left text-xl font-bold text-primary-8">
+                          Exclude synapses that are:
+                          <p className="font-light">where the distance from soma is:</p>
                         </div>
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex items-start justify-center gap-2">
                             <div className="font-lightw-full flex h-[40px] min-w-max max-w-max items-center justify-center text-primary-8">
-                              Greater or equal to
+                              no more than
                             </div>
                             <Form.Item className="mb-2" name={[f.name, 'distance_soma_gte']}>
                               <InputNumber
@@ -473,7 +474,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                           </div>
                           <div className="flex items-start justify-center gap-2">
                             <div className="font-lightw-full flex h-[40px] min-w-max max-w-max items-center justify-center text-primary-8">
-                              Smaller or equal to
+                              no less than
                             </div>
                             <Form.Item className="mb-2" name={[f.name, 'distance_soma_lte']}>
                               <InputNumber
@@ -502,7 +503,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-start">
+        <div className="mt-4 flex items-center justify-end">
           <button
             type="button"
             onClick={onVisualizeSynapome}
@@ -513,7 +514,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             )}
           >
             {visualizeLoading && <LoadingOutlined className="mr-2 px-2 text-primary-8" />}
-            Generate new synapses
+            Apply changes
             <PlusCircleOutlined className="ml-2 px-2" />
           </button>
         </div>

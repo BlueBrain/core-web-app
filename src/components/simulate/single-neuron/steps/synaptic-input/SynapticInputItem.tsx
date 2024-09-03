@@ -5,12 +5,13 @@ import {
   EyeOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
-import { Button, Form, Popover, Select, SelectProps } from 'antd';
+import { Button, Form, Select, SelectProps } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import { Color } from 'three';
 
 import ConfigInputList from './ConfigInput';
 import useNotification from '@/hooks/notifications';
+import CustomPopover from '@/components/simulate/single-neuron/molecules/Popover';
 
 import { SingleSynaptomeConfig, SynaptomeConfigDistribution } from '@/types/synaptome';
 import { UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
@@ -194,33 +195,12 @@ export default function SynapticInputItem({
                 )}
               </div>
             </button>
-            <Popover
-              placement="topRight"
-              getPopupContainer={(trigger) => trigger.parentElement!}
-              getTooltipContainer={(trigger) => trigger.parentElement!}
-              trigger={['click']}
-              overlayClassName={classNames(
-                '[&_.ant-popover-inner]:!p-0 [&_.ant-popover-inner]:!bg-primary-8 max-w-[260px]',
-                '[&_.ant-popover-arrow:before]:bg-primary-8'
-              )}
-              destroyTooltipOnHide
-              content={
-                <div className="flex flex-col items-center justify-center gap-4 bg-primary-8 p-8">
-                  <p className="text-center text-base font-light text-white">
-                    Are you really really sure you want to delete this precious synaptic input?
-                  </p>
-                  <button
-                    type="button"
-                    className="border border-white bg-primary-8 px-7 py-3 font-bold text-white"
-                    onClick={() => {
-                      removeForm();
-                      abortController.current.abort();
-                    }}
-                  >
-                    Confirm
-                  </button>
-                </div>
-              }
+            <CustomPopover
+              message="Are you sure you want to delete this synaptic input configuration?"
+              onConfirm={() => {
+                removeForm();
+                abortController.current.abort();
+              }}
             >
               <Button
                 aria-label={`Delete synaptic input ${index}`}
@@ -228,7 +208,7 @@ export default function SynapticInputItem({
                 type="text"
                 htmlType="button"
               />
-            </Popover>
+            </CustomPopover>
           </div>
         </div>
       </div>

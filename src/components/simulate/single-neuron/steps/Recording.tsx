@@ -1,7 +1,8 @@
 import { Select, Form, InputNumber, Button } from 'antd';
 import { useAtomValue } from 'jotai';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
+import CustomPopover from '@/components/simulate/single-neuron/molecules/Popover';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { useRecordingSourceForSimulation } from '@/state/simulate/categories';
 import { RecordLocation } from '@/types/simulation/single-neuron';
@@ -43,8 +44,15 @@ function RecordItem({
               size="large"
             />
           </Form.Item>
-          <div className="flex h-11 items-center justify-center align-middle text-base uppercase text-neutral-4">
-            offset
+          <div className="flex h-11 items-center justify-center align-middle text-base text-neutral-4">
+            <span className="mr-2 uppercase">offset</span>
+            <CustomPopover
+              message="The recording position relative to the section. 0 being the start of the section and 1 being the end."
+              placement="bottomRight"
+              when={['hover']}
+            >
+              <InfoCircleOutlined className="cursor-pointer" />
+            </CustomPopover>
           </div>
           <Form.Item
             className="mb-2"
