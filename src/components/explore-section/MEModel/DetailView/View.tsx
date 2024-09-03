@@ -9,7 +9,7 @@ import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail from '@/components/explore-section/Detail';
 import {
   ME_MODEL_FIELDS,
-  ME_MODEL_COMMON_FIELDS,
+  MODEL_DATA_COMMON_FIELDS,
 } from '@/constants/explore-section/detail-views-fields';
 import SectionTabs, {
   EMODEL_TABS,
@@ -51,7 +51,7 @@ export default function MEModelDetailView({ vlProjectUrl, params, showViewMode =
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail
         fields={ME_MODEL_FIELDS}
-        commonFields={ME_MODEL_COMMON_FIELDS}
+        commonFields={MODEL_DATA_COMMON_FIELDS}
         showViewMode={showViewMode}
       >
         {() => (

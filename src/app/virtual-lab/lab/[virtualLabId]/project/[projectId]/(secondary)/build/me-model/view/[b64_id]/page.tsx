@@ -27,7 +27,7 @@ export default function MEModelViewPage({ params }: Params) {
     <div className="grid grid-cols-[min-content_auto] overflow-hidden bg-white">
       <Nav params={params} />
       <div className="secondary-scrollbar h-screen w-full overflow-y-auto">
-        <MEModelDetailView params={params} vlProjectUrl={vlProjectUrl} showViewMode />
+        <MEModelDetailView showViewMode params={params} vlProjectUrl={vlProjectUrl} />
       </div>
     </div>
   );

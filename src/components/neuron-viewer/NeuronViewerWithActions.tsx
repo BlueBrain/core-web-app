@@ -21,7 +21,7 @@ type Props = {
 };
 export default function NeuronViewerContainer({
   modelUrl,
-  zoomPlacement,
+  zoomPlacement = 'right',
   useZoomer = false,
   useCursor = false,
   useEvents = false,

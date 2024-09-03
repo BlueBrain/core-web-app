@@ -2,10 +2,12 @@ import { ExploreFieldsConfigProps } from './types';
 import { Field } from './enums';
 import { DisplayMessages } from '@/constants/display-messages';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
-import { Model } from '@/types/explore-section/delta-model';
+import { EModelResource, Model, SynaptomeModelResource } from '@/types/explore-section/delta-model';
 import { formatNumber } from '@/util/common';
-import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import { ESeModel, ESmeModel } from '@/types/explore-section/es';
+import { selectorFnBasic } from '@/util/explore-section/listing-selectors';
+
+import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import MorphPreviewFromId from '@/components/build-section/virtual-lab/me-model/MorphPreviewFromId';
 
 export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
@@ -44,7 +46,9 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
           ? formatNumber(r._source.emodel?.score)
           : DisplayMessages.NO_DATA_STRING,
       deltaResourceViewFn: (resource) =>
-        resource.score ? formatNumber(resource.score) : DisplayMessages.NO_DATA_STRING,
+        (resource as EModelResource).score
+          ? formatNumber((resource as EModelResource).score!)
+          : DisplayMessages.NO_DATA_STRING,
     },
     vocabulary: {
       plural: 'Model cumulated score',
@@ -102,6 +106,70 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     vocabulary: {
       plural: 'responses',
       singular: 'response',
+    },
+    style: { width: 184 },
+  },
+  [Field.SynatomeUsedMEModelName]: {
+    className: 'text-center',
+    title: 'me-model',
+    filter: null,
+    render: {
+      deltaResourceViewFn: (resource) => {
+        const { linkedMeModel } = resource as SynaptomeModelResource;
+        return selectorFnBasic(linkedMeModel?.eModel);
+      },
+    },
+    vocabulary: {
+      plural: 'me-models',
+      singular: 'me-model',
+    },
+    style: { width: 184 },
+  },
+  [Field.SynatomeUsedEModelName]: {
+    className: 'text-center',
+    title: 'e-model',
+    filter: null,
+    render: {
+      deltaResourceViewFn: (resource) => {
+        const { linkedMeModel } = resource as SynaptomeModelResource;
+        return selectorFnBasic(linkedMeModel?.eType);
+      },
+    },
+    vocabulary: {
+      plural: 'e-models',
+      singular: 'e-model',
+    },
+    style: { width: 184 },
+  },
+  [Field.SynatomeUsedMModelName]: {
+    className: 'text-center',
+    title: 'm-model',
+    filter: null,
+    render: {
+      deltaResourceViewFn: (resource) => {
+        const { linkedMeModel } = resource as SynaptomeModelResource;
+        return selectorFnBasic(linkedMeModel?.mType);
+      },
+    },
+    vocabulary: {
+      plural: 'm-models',
+      singular: 'm-model',
+    },
+    style: { width: 184 },
+  },
+  [Field.SynatomeUsedSpecies]: {
+    className: 'text-center',
+    title: 'Species',
+    filter: null,
+    render: {
+      deltaResourceViewFn: (resource) => {
+        const { linkedMeModel } = resource as SynaptomeModelResource;
+        return selectorFnBasic(linkedMeModel?.subject?.species.label);
+      },
+    },
+    vocabulary: {
+      plural: 'species',
+      singular: 'Species',
     },
     style: { width: 184 },
   },

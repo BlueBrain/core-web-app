@@ -1,11 +1,25 @@
 'use client';
 
 import { Spin } from 'antd';
+import { useSetAtom } from 'jotai';
+import { Suspense, useEffect } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+
 import { useModel } from '@/hooks/useModel';
 import { ModelResource } from '@/types/simulation/single-neuron';
+import {
+  MODEL_DATA_COMMON_FIELDS,
+  SYNATOME_MODEL_FIELDS,
+} from '@/constants/explore-section/detail-views-fields';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
+import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
+
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
+import Detail from '@/components/explore-section/Detail';
+import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
+import SynapseGroupList from '@/components/build-section/virtual-lab/synaptome/view-model/ListSynapses';
 
 type Params = {
   params: {
@@ -16,12 +30,18 @@ type Params = {
 
 export default function SynaptomeModelDetailPage({ params }: Params) {
   const info = useResourceInfoFromPath();
-
+  const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
   const { resource, loading } = useModel<ModelResource>({
     modelId: info.id,
     org: params.virtualLabId,
     project: params.projectId,
   });
+
+  const setBackToListPath = useSetAtom(backToListPathAtom);
+
+  useEffect(() => {
+    setBackToListPath(`${vlProjectUrl}/build`);
+  }, [setBackToListPath, vlProjectUrl]);
 
   if (loading || !resource) {
     return (
@@ -34,11 +54,23 @@ export default function SynaptomeModelDetailPage({ params }: Params) {
   return (
     <div className="grid grid-cols-[min-content_auto] overflow-hidden bg-white">
       <Nav params={params} />
-      <div className="secondary-scrollbar h-screen w-full overflow-y-auto p-10">
-        <div>
-          <span className="mx-8 text-gray-400">Name:</span>
-          <span className="font-bold text-primary-8">{resource.name}</span>
-        </div>
+      <div className="secondary-scrollbar h-screen w-full overflow-y-auto">
+        <Suspense fallback={<CentralLoadingSpinner />}>
+          <Detail
+            showViewMode
+            withRevision
+            fields={SYNATOME_MODEL_FIELDS}
+            commonFields={MODEL_DATA_COMMON_FIELDS}
+          >
+            {(data: SynaptomeModelResource) => {
+              return (
+                <div className="mt-4">
+                  <SynapseGroupList modelUrl={data.distribution.contentUrl} />
+                </div>
+              );
+            }}
+          </Detail>
+        </Suspense>
       </div>
     </div>
   );

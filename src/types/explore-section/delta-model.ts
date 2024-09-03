@@ -1,3 +1,4 @@
+import { MEModelResource } from '../me-model';
 import { IdWithLabel, IdWithType } from './common';
 import { Annotation, BrainLocation, Contribution, FileDistribution } from './delta-properties';
 import { Distribution, EntityResource } from '@/types/nexus/common';
@@ -40,6 +41,7 @@ export type EModelResource = ModelResource & {
 export type SynaptomeModelResource = EntityResource & {
   distribution: Distribution;
   name: string;
+  linkedMeModel?: MEModelResource;
 };
 
-export type Model = EModelResource;
+export type Model = EModelResource | SynaptomeModelResource;

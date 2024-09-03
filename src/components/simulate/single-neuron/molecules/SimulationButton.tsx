@@ -1,20 +1,24 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { Form } from 'antd';
 import { useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import kebabCase from 'lodash/kebabCase';
 
 import useSimulationModal from '../hooks/useSimulationModal';
-import { LaunchSimulation, SaveSimulation } from './modals';
-import type { LaunchSimulationProps, SaveSimulationProps } from './modals';
+import { SaveSimulation } from './modals';
+import type { SaveSimulationProps } from './modals';
 import {
   genericSingleNeuronSimulationPlotDataAtom,
   simulationStatusAtom,
 } from '@/state/simulate/single-neuron';
 import { SimulationType } from '@/types/simulation/common';
 import { exportSimulationResultsAsZip } from '@/util/simulation-plotly-to-csv';
+import { launchSimulationAtom } from '@/state/simulate/single-neuron-setter';
+import { simulationExperimentalSetupAtom } from '@/state/simulate/categories/simulation-conditions';
+import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
+import { PROTOCOL_DETAILS } from '@/constants/simulate/single-neuron';
 import useNotification from '@/hooks/notifications';
 
 type Props = {
@@ -35,21 +39,28 @@ export default function SimulationButton({
   const simulationResults = useAtomValue(genericSingleNeuronSimulationPlotDataAtom);
   const [downloading, setDownloading] = useState(false);
   const { error: notifyError, success: notifySuccess } = useNotification();
-
-  const onTrySimulation = useSimulationModal<LaunchSimulationProps>({
-    Content: LaunchSimulation,
-  });
+  const launchSimulation = useSetAtom(launchSimulationAtom);
+  const experimentalSetupConfig = useAtomValue(simulationExperimentalSetupAtom);
+  const currentInjectionConfig = useAtomValue(currentInjectionSimulationConfigAtom);
 
   const onCompleteSimulation = useSimulationModal<SaveSimulationProps>({
     showCloseIcon: false,
     Content: SaveSimulation,
   });
 
-  const [trySimulation, lunchModalContext] = onTrySimulation({
-    id: 'lunch-simulation',
-    modelSelfUrl,
-    simulationType,
-  });
+  const runSimulation = () => {
+    const protocol = currentInjectionConfig.at(0)?.stimulus.stimulusProtocol;
+    let currentInjectionDuration = 0;
+    if (protocol) {
+      currentInjectionDuration = PROTOCOL_DETAILS[protocol].defaults.time.stopTime;
+    }
+
+    launchSimulation(
+      modelSelfUrl,
+      simulationType,
+      experimentalSetupConfig.max_time ?? currentInjectionDuration
+    );
+  };
 
   const [saveSimulation, saveModalContext] = onCompleteSimulation({
     id: 'save-simulation',
@@ -105,7 +116,7 @@ export default function SimulationButton({
       <button
         type="button"
         className="bg-primary-8 px-7 py-3 text-lg text-white disabled:bg-gray-300"
-        onClick={trySimulation}
+        onClick={runSimulation}
         disabled={simulationStatus?.status === 'launched'}
       >
         {simulationStatus?.status === 'finished' ? 'Re-run Simulation' : 'Simulate'}
@@ -119,7 +130,6 @@ export default function SimulationButton({
           Save
         </button>
       )}
-      {lunchModalContext}
       {saveModalContext}
     </div>
   );

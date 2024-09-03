@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual';
 
 import sessionAtom from '@/state/session';
 import { fetchResourceById, queryES } from '@/api/nexus';
-import { DeltaResource, Contributor, Subject } from '@/types/explore-section/resources';
+import { DeltaResource, Contributor, Subject, ModelUsed } from '@/types/explore-section/resources';
 import { Contributor as DeltaContributor } from '@/types/explore-section/delta-contributor';
 import {
   ExperimentalTrace,
@@ -18,7 +18,9 @@ import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
 import { getLicenseByIdQuery } from '@/queries/es';
 import { subjectAgeSelectorFn, ageSelectorFn } from '@/util/explore-section/selector-functions';
-import { atlasESView } from '@/config';
+import { atlasESView, nexus } from '@/config';
+import { DataType } from '@/constants/explore-section/list-views';
+import { MEModelResource } from '@/types/me-model';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
@@ -43,6 +45,26 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>
         project: info.project,
         rev: info.rev,
       });
+
+      if (
+        ensureArray(resource['@type']).includes(DataType.SingleNeuronSynaptome) &&
+        'used' in resource
+      ) {
+        const meModelId = (resource.used as ModelUsed)['@id'];
+        const linkedMeModel = await fetchResourceById<MEModelResource>(meModelId, session, {
+          ...(meModelId.startsWith(nexus.defaultIdBaseUrl)
+            ? {}
+            : {
+                org: info.org,
+                project: info.project,
+              }),
+        });
+
+        return {
+          ...resource,
+          linkedMeModel,
+        };
+      }
 
       return resource;
     }),

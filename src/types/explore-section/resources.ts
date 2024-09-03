@@ -36,3 +36,8 @@ export type SerializedDeltaResource = DeltaExperiment & {
 export type EPhysImageItem = Image;
 
 export type Contributor = DeltaContributor;
+
+export type ModelUsed = {
+  '@id': string;
+  '@type': string | Array<string>;
+};

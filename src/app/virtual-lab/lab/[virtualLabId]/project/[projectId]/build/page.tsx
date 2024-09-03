@@ -34,19 +34,22 @@ type Params = {
 type TabDetails = {
   title: string;
   buildModelLabel: string;
-  url: string;
+  newUrl: string;
+  viewUrl: string;
 };
 
 const SupportedTypeToTabDetails: Record<string, TabDetails> = {
   [DataType.CircuitMEModel]: {
     title: 'Single neuron model',
     buildModelLabel: 'New model',
-    url: 'build/me-model/new',
+    newUrl: 'build/me-model/new',
+    viewUrl: 'build/me-model/view',
   },
   [DataType.SingleNeuronSynaptome]: {
     title: 'Single neuron synaptome',
     buildModelLabel: 'New synaptome model',
-    url: 'build/synaptome/new',
+    newUrl: 'build/synaptome/new',
+    viewUrl: 'build/synaptome/view',
   },
 };
 
@@ -54,6 +57,9 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
   const router = useRouter();
   const selectedSimulationScope = useAtomValue(selectedSimulationScopeAtom);
   const [selectedModelType, setSelectedModelType] = useState<DataType | null>();
+  const selectedRows = useAtomValue(
+    selectedRowsAtom({ dataType: selectedModelType ?? DataType.CircuitMEModel })
+  );
 
   useEffect(() => {
     if (selectedSimulationScope && selectedSimulationScope in SimulationScopeToModelType) {
@@ -63,10 +69,13 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
     }
   }, [selectedSimulationScope]);
 
-  const generateDetailUrl = (model: ExploreESHit<ExploreSectionResource>) => {
-    const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
-    const baseBuildUrl = `${vlProjectUrl}/build/me-model/view`;
-    return `${detailUrlBuilder(baseBuildUrl, model)}`;
+  const generateDetailUrl = () => {
+    const model = selectedRows[0];
+    if (model && selectedModelType) {
+      const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+      const baseBuildUrl = `${vlProjectUrl}/${SupportedTypeToTabDetails[selectedModelType].viewUrl}`;
+      return `${detailUrlBuilder(baseBuildUrl, model)}`;
+    }
   };
 
   const generateSynaptomeUrl = (model: ExploreESHit<ExploreSectionResource>) => {
@@ -77,26 +86,33 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
 
   const tabDetails = selectedModelType && SupportedTypeToTabDetails[selectedModelType];
 
-  const selectedRows = useAtomValue(
-    selectedRowsAtom({ dataType: selectedModelType ?? DataType.CircuitMEModel })
-  );
-
   const onNewModel = () => {
     switch (selectedSimulationScope) {
       case SimulationType.SingleNeuron: {
         if (tabDetails) {
-          return router.push(tabDetails.url);
+          return router.push(tabDetails.newUrl);
         }
         break;
       }
       case SimulationType.Synaptome: {
         if (tabDetails) {
-          return router.push(tabDetails.url);
+          return router.push(tabDetails.newUrl);
         }
         break;
       }
       default:
         return null;
+    }
+  };
+
+  const onViewModel = () => {
+    switch (selectedSimulationScope) {
+      case SimulationType.SingleNeuron:
+      case SimulationType.Synaptome: {
+        return generateDetailUrl();
+      }
+      default:
+        return undefined;
     }
   };
 
@@ -140,7 +156,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
                 <GenericButton
                   text="View model"
                   className="bg-primary-9  text-white hover:!bg-primary-7"
-                  href={generateDetailUrl(selectedRows[0])}
+                  href={onViewModel()}
                 />
                 <GenericButton
                   text="Clone model"

@@ -75,4 +75,8 @@ export enum Field {
   SingleNeuronSimulationResponse = 'singleNeuronSimulationResponse',
   SingleNeuronSimulationInjectionLocation = 'singleNeuronSimulationInjectionLocation',
   SingleNeuronSimulationRecordingLocation = 'singleNeuronSimulationRecordingLocation',
+  SynatomeUsedMEModelName = 'SynatomeUsedMEModelName',
+  SynatomeUsedEModelName = 'SynatomeUsedEModelName',
+  SynatomeUsedMModelName = 'SynatomeUsedMModelName',
+  SynatomeUsedSpecies = 'SynatomeUsedSpecies',
 }

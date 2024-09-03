@@ -185,7 +185,7 @@ export const ME_MODEL_FIELDS = [
   },
 ] as DetailProps[];
 
-export const ME_MODEL_COMMON_FIELDS = [
+export const MODEL_DATA_COMMON_FIELDS = [
   {
     field: Field.Description,
     className: 'col-span-3',
@@ -195,5 +195,28 @@ export const ME_MODEL_COMMON_FIELDS = [
   },
   {
     field: Field.CreationDate,
+  },
+] as DetailProps[];
+
+export const SYNATOME_MODEL_FIELDS = [
+  {
+    field: Field.SynatomeUsedMEModelName,
+    className: 'col-span-2',
+  },
+  {
+    field: Field.SynatomeUsedSpecies,
+    className: 'col-span-2',
+  },
+  {
+    field: Field.BrainRegion,
+    className: 'col-span-4',
+  },
+  {
+    field: Field.SynatomeUsedMModelName,
+    className: 'col-span-4',
+  },
+  {
+    field: Field.SynatomeUsedEModelName,
+    className: 'col-span-4',
   },
 ] as DetailProps[];

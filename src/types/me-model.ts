@@ -80,6 +80,16 @@ export interface MEModel extends Entity {
   validated: boolean;
   status: 'initalized' | 'processing' | 'done' | 'running' | 'error';
   brainLocation?: BrainLocation; // it will be added later when the me-model analysis is run
+  eModel?: string;
+  eType?: string;
+  mType?: string;
+  subject?: {
+    '@type': 'Subject';
+    species: {
+      '@id': string;
+      label: string;
+    };
+  };
 }
 
 export interface MEModelResource extends ResourceMetadata, MEModel {}
