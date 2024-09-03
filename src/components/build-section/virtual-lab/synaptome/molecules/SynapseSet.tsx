@@ -32,7 +32,7 @@ import {
 
 import useNotification from '@/hooks/notifications';
 import { getSession } from '@/authFetch';
-import { getSynaptomePlacement } from '@/api/bluenaas';
+import { getSynaptomePlacement, validateSynapseGenerationFormula } from '@/api/bluenaas';
 import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { SettingAdjustment } from '@/components/icons/SettingAdjustment';
@@ -182,6 +182,17 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
       undefined,
       'topRight'
     );
+  };
+  const validateFormula = async (value: string) => {
+    try {
+      const session = await getSession();
+      if (session) {
+        const result = await validateSynapseGenerationFormula(value, session.accessToken);
+        return result;
+      }
+    } catch (error) {
+      return false;
+    }
   };
 
   const onVisualizeSynapome = async () => {
@@ -373,6 +384,11 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                   message: 'Please provide a valid formula!',
                   async validator(_, value) {
                     if (synapses?.[index].distribution !== 'formula') {
+                      return Promise.resolve();
+                    }
+                    if (value) {
+                      const result = await validateFormula(value);
+                      if (!result) return Promise.reject();
                       return Promise.resolve();
                     }
                     if (!value) return Promise.reject();

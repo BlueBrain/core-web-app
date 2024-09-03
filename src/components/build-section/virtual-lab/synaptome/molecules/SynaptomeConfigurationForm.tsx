@@ -118,7 +118,14 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
     try {
       await form.validateFields({ recursive: true });
     } catch (error) {
-      return false;
+      if (
+        !(
+          'errorFields' in (error as { errorFields: any[] }) &&
+          !(error as { errorFields: any[] }).errorFields.length
+        )
+      ) {
+        return false;
+      }
     }
     const values = form.getFieldsValue();
 

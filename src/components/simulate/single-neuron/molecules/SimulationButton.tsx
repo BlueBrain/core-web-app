@@ -81,7 +81,7 @@ export default function SimulationButton({
           result: simulationResults,
         });
         notifySuccess(
-          'The simulation recording files was successfully downloaded. Please check your downloads folder.',
+          'The simulation recording files were successfully downloaded. Please check your downloads folder.',
           undefined,
           'topRight',
           true,
