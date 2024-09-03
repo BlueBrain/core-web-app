@@ -91,6 +91,8 @@ export default function StimuliPreviewPlot({ modelSelfUrl, amplitudes, protocol 
 
   return (
     <PlotRenderer
+      type="stimulus"
+      name={`${protocol}_plots`}
       className="min-h-[320px]"
       isLoading={loading}
       data={stimuliPreviewPlotData ?? []}

@@ -52,6 +52,10 @@ export default function Results() {
             </div>
             <div className="flex w-full flex-col border border-gray-300 p-2">
               <PlotRenderer
+                type="simulation"
+                name={key}
+                isDownloadable={!!value.length}
+                onlyAmplitudeLegend={false}
                 className="mt-8"
                 data={value.map((v, i) => ({ ...v, line: { color: SIMULATION_COLORS[i] } }))}
                 isLoading={isLoading}
