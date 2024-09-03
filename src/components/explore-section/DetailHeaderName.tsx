@@ -67,7 +67,7 @@ export default function DetailHeaderName({
       <div className="text font-thin">Name</div>
       <div className="flex  justify-between">
         <div className="flex items-center gap-5">
-          <div className="text-2xl font-bold">{detail?.name}</div>
+          <div className="max-w-[60%] text-2xl font-bold">{detail?.name}</div>
           {withRevision && (
             <Dropdown
               menu={{ items }}
