@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { Button, Form, Input } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
 import { label } from '../Label';
+import { SimulationType } from '@/types/simulation/common';
+import { createSingleNeuronSimulationAtom } from '@/state/simulate/single-neuron-setter';
+
 import GenericButton from '@/components/Global/GenericButton';
 import useNotification from '@/hooks/notifications';
-import { SimulationType } from '@/types/simulation/common';
-import { simulationStatusAtom } from '@/state/simulate/single-neuron';
-import { createSingleNeuronSimulationAtom } from '@/state/simulate/single-neuron-setter';
 
 export type Props = {
   name: string;
@@ -28,9 +28,10 @@ export default function SaveSimulationModal({
   simulationType,
   onClose,
 }: Props) {
+  const [loading, setLoading] = useState(false);
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
   const { error: errorNotify, success: successNotify } = useNotification();
-  const simulationStatus = useAtomValue(simulationStatusAtom);
+
   const [{ name: formName, description: formDescription }, setBasicConfig] = useState<{
     name: string;
     description: string;
@@ -38,8 +39,10 @@ export default function SaveSimulationModal({
     name,
     description,
   }));
+
   const saveSimulation = async () => {
     try {
+      setLoading(true);
       await createSingleNeuronSimulation(
         formName,
         formDescription,
@@ -53,6 +56,7 @@ export default function SaveSimulationModal({
       errorNotify('Un error encountered when saving simulation', undefined, 'topRight');
     } finally {
       onClose?.();
+      setLoading(false);
     }
   };
 
@@ -71,7 +75,6 @@ export default function SaveSimulationModal({
       <div>
         <div className="mb-2">{label('name', 'secondary')}</div>
         <Form.Item
-          name="f_name"
           rules={[{ required: true, message: 'Please provide a name!' }]}
           validateTrigger="onBlur"
         >
@@ -79,6 +82,7 @@ export default function SaveSimulationModal({
             placeholder="Your model name"
             size="large"
             value={formName}
+            defaultValue={formName}
             onChange={(e) => {
               setBasicConfig((prev) => ({
                 ...prev,
@@ -89,13 +93,14 @@ export default function SaveSimulationModal({
           />
         </Form.Item>
         <div className="mb-2">{label('Description', 'secondary')}</div>
-        <Form.Item name="f_description">
+        <Form.Item>
           <Input.TextArea
             rows={5}
             placeholder="Your description"
             size="large"
             className="rounded-none border border-neutral-3 p-2 !font-bold !text-primary-8"
             value={formDescription}
+            defaultValue={formDescription}
             onChange={(e) => {
               setBasicConfig((prev) => ({
                 ...prev,
@@ -114,8 +119,8 @@ export default function SaveSimulationModal({
           text="Save"
           htmlType="button"
           className="w-max bg-primary-8 text-white"
-          disabled={simulationStatus?.status === 'launched'}
-          loading={simulationStatus?.status === 'launched'}
+          disabled={loading}
+          loading={loading}
           onClick={saveSimulation}
         />
       </div>
