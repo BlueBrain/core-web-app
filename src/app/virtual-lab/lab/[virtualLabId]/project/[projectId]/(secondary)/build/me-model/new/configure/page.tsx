@@ -3,19 +3,21 @@
 import { useCallback } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { notification } from 'antd';
+import { useRouter } from 'next/navigation';
 
 import MorphologyCard from '@/components/build-section/virtual-lab/me-model/MorphologyCard';
 import EModelCard from '@/components/build-section/virtual-lab/me-model/EModelCard';
-
 import { usePendingValidationModal } from '@/components/build-section/virtual-lab/me-model/pending-validation-modal-hook';
-
 import { createMEModelAtom, meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { selectedEModelAtom, selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
-import { VirtualLabInfo } from '@/types/virtual-lab/common';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { classNames } from '@/util/utils';
 import { useLoadable } from '@/hooks/hooks';
+import { detailUrlWithinLab } from '@/util/common';
+import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
+import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 
 type Params = {
   params: {
@@ -74,6 +76,7 @@ function NewMEModelHeader({ projectId, virtualLabId }: Params['params']) {
 }
 
 export default function NewMEModelPage({ params: { projectId, virtualLabId } }: Params) {
+  const router = useRouter();
   const selectedMModel = useAtomValue(selectedMModelAtom);
   const selectedEModel = useAtomValue(selectedEModelAtom);
   const createMEModel = useSetAtom(createMEModelAtom);
@@ -82,27 +85,51 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
 
   const modelsAreSelected = selectedEModel && selectedMModel;
 
-  const onClick = useCallback(() => {
-    const virtualLabInfo: VirtualLabInfo = {
-      virtualLabId,
-      projectId,
-    };
-
-    createMEModel(virtualLabInfo);
+  const onClickWithValidation = useCallback(() => {
+    createMEModel({ virtualLabId, projectId });
 
     const virtualLabHomeLink = `${generateVlProjectUrl(virtualLabId, projectId)}/home`;
 
     createModal(virtualLabHomeLink);
   }, [createMEModel, createModal, projectId, virtualLabId]);
 
+  const onClickWithoutValidation = useCallback(() => {
+    createMEModel({ virtualLabId, projectId }).then((meModel) => {
+      if (!meModel) return;
+      // show success message
+      notification.success({
+        message: 'ME-model created successfully',
+      });
+      // redirect to simulation creation page
+      const redirectionUrl = detailUrlWithinLab(
+        virtualLabId,
+        projectId,
+        `${virtualLabId}/${projectId}`,
+        meModel['@id'],
+        BookmarkTabsName.MODELS,
+        ModelTypeNames.ME_MODEL
+      );
+      router.push(redirectionUrl);
+    });
+  }, [createMEModel, projectId, router, virtualLabId]);
+
   const validateTrigger = modelsAreSelected && (
-    <button
-      className="fit-content absolute bottom-10 right-10 ml-auto flex w-fit items-center bg-primary-8 p-4 font-bold hover:brightness-110"
-      onClick={onClick}
-      type="button"
-    >
-      Launch validation
-    </button>
+    <div className="absolute bottom-10 right-10 flex flex-row gap-4">
+      <button
+        className="fit-content ml-auto flex w-fit items-center bg-primary-8 p-4 font-bold hover:brightness-110"
+        onClick={onClickWithoutValidation}
+        type="button"
+      >
+        Skip validation
+      </button>
+      <button
+        className="fit-content ml-auto flex w-fit items-center bg-primary-8 p-4 font-bold hover:brightness-110"
+        onClick={onClickWithValidation}
+        type="button"
+      >
+        Launch validation
+      </button>
+    </div>
   );
 
   return (
