@@ -44,7 +44,7 @@ export default function EModelCard() {
       <button
         type="button"
         onClick={() => {
-          router.push('configure/electrophysiology');
+          router.push('configure/e-model');
         }}
         className="flex h-48 w-full items-center rounded-lg border border-neutral-2 pl-32 text-4xl text-neutral-4 hover:bg-primary-7 hover:text-white"
       >

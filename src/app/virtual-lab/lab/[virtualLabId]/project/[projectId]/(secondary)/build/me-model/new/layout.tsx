@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, Suspense, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSetAtom } from 'jotai';
 
@@ -24,7 +24,9 @@ export default function BuildMEModelLayout({ children, params }: GenericLayoutPr
 
       <div className="flex flex-col">
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <div className="flex h-full flex-col">{children}</div>
+          <div className="flex h-full flex-col">
+            <Suspense fallback={null}>{children}</Suspense>
+          </div>
         </ErrorBoundary>
       </div>
     </div>
