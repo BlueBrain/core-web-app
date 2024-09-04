@@ -57,9 +57,9 @@ export default function Detail<T extends DeltaResource>({
   }
 
   return (
-    <div className="flex h-full min-h-screen">
+    <div className="flex h-screen grow overflow-x-auto">
       <DetailsPageSideBackLink />
-      <div className="ml-10 flex h-full w-full flex-col gap-7 overflow-auto bg-white p-7 pr-12">
+      <div className="ml-10 flex grow flex-col gap-7 overflow-y-scroll bg-white p-7 pr-12">
         {showViewMode && <div className="text-right font-thin text-gray-400">View mode</div>}
         <DetailHeader
           fields={fields}

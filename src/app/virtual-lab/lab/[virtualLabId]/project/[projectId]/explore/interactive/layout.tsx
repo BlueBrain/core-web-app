@@ -28,7 +28,7 @@ export default function VirtualLabProjectInteractiveExploreLayout({
   const labProjectUrl = `${labUrl}/project/${params.projectId}`;
 
   return (
-    <div className="grid h-screen grid-cols-[min-content_min-content_auto] grid-rows-1">
+    <div className="flex h-screen w-screen">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="flex flex-row gap-4">
           <SideMenu

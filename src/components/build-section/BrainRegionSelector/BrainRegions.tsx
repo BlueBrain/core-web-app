@@ -195,7 +195,7 @@ export default function BrainRegions() {
   }, [brainModelConfigId, localSelectedBrainModelConfigId]);
 
   return brainRegionsTree ? (
-    <div className="flex h-screen flex-1 flex-col overflow-hidden bg-primary-8">
+    <div className="flex h-screen flex-col bg-primary-8">
       {isCollapsed ? (
         <CollapsedBrainRegionsSidebar setIsCollapsed={setIsCollapsed} />
       ) : (

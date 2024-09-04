@@ -6,7 +6,7 @@ export default function Configuration() {
   const openConfigurationInBuild = useNavigateToBuildEmodelConfiguration();
 
   return (
-    <div className="-mt-7 h-full">
+    <div className="-mt-7">
       <div className="mb-6 border border-primary-8 p-6">
         <EModelView showTitle={false} />
       </div>

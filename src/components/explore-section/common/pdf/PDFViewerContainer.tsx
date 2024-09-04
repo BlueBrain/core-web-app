@@ -65,7 +65,7 @@ export function PDFViewerContainer({ distributions }: Props) {
         5;
 
   return (
-    <div style={{ width: '90vw' }}>
+    <div className="w-full">
       <ConfigProvider
         theme={{
           token: {
@@ -97,28 +97,25 @@ export function PDFViewerContainer({ distributions }: Props) {
             ))}
           </div>
 
-          <div className="flex space-x-2">
-            <Button
-              type="text"
-              icon={<LeftOutlined className={!canScrollLeft ? 'text-neutral-4' : ''} />}
-              disabled={!canScrollLeft}
-              onClick={() => scroll(-300)}
-            />
-            <Button
-              type="text"
-              icon={<RightOutlined className={!canScrollRight ? 'text-neutral-4' : ''} />}
-              disabled={!canScrollRight}
-              onClick={() => scroll(300)}
-            />
-          </div>
+          {(canScrollLeft || canScrollRight) && (
+            <div className="flex space-x-2">
+              <Button
+                type="text"
+                icon={<LeftOutlined className={!canScrollLeft ? 'text-neutral-4' : ''} />}
+                disabled={!canScrollLeft}
+                onClick={() => scroll(-300)}
+              />
+              <Button
+                type="text"
+                icon={<RightOutlined className={!canScrollRight ? 'text-neutral-4' : ''} />}
+                disabled={!canScrollRight}
+                onClick={() => scroll(300)}
+              />
+            </div>
+          )}
         </div>
 
-        <div
-          ref={scrollContainerRef}
-          onScroll={onScroll}
-          className="overflow-x-auto"
-          style={{ width: '100%', overflowX: 'scroll' }}
-        >
+        <div ref={scrollContainerRef} onScroll={onScroll} className="w-full overflow-x-auto">
           {type !== AnalysisType.Custom ? (
             <div className="flex gap-x-16" style={{ minWidth: 'min-content' }}>
               {Object.entries(groupedDistributions).map(([pdfType, groupedDistribution]) => (
@@ -146,6 +143,7 @@ export function PDFViewerContainer({ distributions }: Props) {
             />
           )}
         </div>
+
         <Link
           className="ml-2 inline-flex items-center text-primary-9"
           href="/simulate/experiment-analysis?targetEntity=EModel"

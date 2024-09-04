@@ -35,6 +35,9 @@ export default function DefaultEModelTable<T extends SupportedDataTypes>({
         rowKey="@id"
         columns={columns}
         rowClassName="[&:last-child>td]:!border-b-0"
+        scroll={{
+          x: true,
+        }}
       />
     </ConfigProvider>
   );

@@ -39,7 +39,7 @@ export default function DetailHeader({
   if (!detail) return null;
 
   return (
-    <div className="flex max-w-screen-2xl flex-col gap-10">
+    <div className="flex w-full flex-col gap-10">
       <DetailHeaderName detail={detail} url={url} withRevision={withRevision} />
       <div className="flex w-full flex-row gap-x-8">
         <div className="grid w-1/2 auto-rows-max grid-cols-3 gap-x-8 gap-y-6">

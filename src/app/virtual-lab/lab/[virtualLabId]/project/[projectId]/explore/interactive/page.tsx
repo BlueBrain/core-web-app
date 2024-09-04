@@ -13,7 +13,7 @@ export default function VirtualLabProjectInteractiveExploreLayout({
     projectId: params.projectId,
   };
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen grow flex-col">
       <ExploreInteractivePanel virtualLabInfo={virtualLabInfo} />
     </div>
   );
