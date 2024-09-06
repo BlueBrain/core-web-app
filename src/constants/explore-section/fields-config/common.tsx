@@ -170,10 +170,13 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
   [Field.CreatedAt]: RegistrationDateConfig,
   [Field.CreatedBy]: {
     title: 'Created by',
-    filter: FilterTypeEnum.CheckList,
+    filter: FilterTypeEnum.Text,
     render: {
       deltaResourceViewFn: (resource) => (
         <span className="capitalize">{resource?._createdBy.split('/').reverse()[0]}</span>
+      ),
+      esResourceViewFn: (_t, r) => (
+        <span className="capitalize">{r._source?.createdBy?.split('/').reverse()[0]}</span>
       ),
     },
     vocabulary: {

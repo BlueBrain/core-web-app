@@ -2,6 +2,7 @@ import { Atom, atom } from 'jotai';
 import { atomFamily, atomWithDefault, atomWithRefresh } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import isEqual from 'lodash/isEqual';
+import getPath from 'lodash/get';
 
 import { bookmarksForProjectAtomFamily } from '../virtual-lab/bookmark';
 import columnKeyToFilter from './column-key-to-filter';
@@ -16,12 +17,21 @@ import {
   fetchTotalByExperimentAndRegions,
 } from '@/api/explore-section/resources';
 import { DataType, PAGE_NUMBER, PAGE_SIZE } from '@/constants/explore-section/list-views';
-import { ExploreESHit, FlattenedExploreESResponse } from '@/types/explore-section/es';
+import {
+  ExploreESHit,
+  ExploreResource,
+  FlattenedExploreESResponse,
+} from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { selectedBrainRegionWithChildrenAtom } from '@/state/brain-regions';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { fetchResourceById } from '@/api/nexus';
+import { MEModelResource } from '@/types/me-model';
+import { getSession } from '@/authFetch';
+import { nexus } from '@/config';
+import { getOrgAndProjectFromProjectId } from '@/util/nexus';
 
 type DataAtomFamilyScopeType = {
   dataType: DataType;
@@ -176,9 +186,22 @@ export const dataAtom = atomFamily<
       const response = await get(queryResponseAtom({ dataType, dataScope, virtualLabInfo }));
 
       if (response?.hits) {
+        if (dataType === DataType.SingleNeuronSynaptome) {
+          return await fetchLinkedModel({
+            results: response.hits,
+            path: '_source.singleNeuronSynaptome.memodel.["@id"]',
+            linkedProperty: 'linkedMeModel',
+          });
+        }
+        if (dataType === DataType.SingleNeuronSynaptomeSimulation) {
+          return await fetchLinkedModel({
+            results: response.hits,
+            path: '_source.synaptomeSimulation.synaptome.["@id"]',
+            linkedProperty: 'linkedSynaptomeModel',
+          });
+        }
         return response.hits;
       }
-
       return [];
     }),
   isListAtomEqual
@@ -206,3 +229,57 @@ export const aggregationsAtom = atomFamily(
     ),
   isListAtomEqual
 );
+
+async function fetchLinkedModel({
+  results,
+  path,
+  linkedProperty,
+}: {
+  path: string;
+  linkedProperty: string;
+  results: ExploreESHit<ExploreResource>[];
+}) {
+  const session = await getSession();
+  if (session) {
+    const cache = new Map();
+    const finalResult = [];
+    for (const model of results) {
+      const meModelId: string | null = getPath(model, path);
+      if (meModelId) {
+        if (cache.has(meModelId)) {
+          finalResult.push({
+            ...model,
+            _source: {
+              ...model._source,
+              [linkedProperty]: cache.get(meModelId),
+            },
+          });
+        } else {
+          const { org, project } = getOrgAndProjectFromProjectId(model._source.project['@id']);
+          const linkedModel = await fetchResourceById<MEModelResource>(meModelId, session, {
+            ...(meModelId.startsWith(nexus.defaultIdBaseUrl)
+              ? {}
+              : {
+                  org,
+                  project,
+                }),
+          });
+          cache.set(meModelId, linkedModel);
+          finalResult.push({
+            ...model,
+            _source: {
+              ...model._source,
+              [linkedProperty]: linkedModel,
+            },
+          });
+        }
+      } else {
+        finalResult.push(model);
+      }
+    }
+
+    cache.clear();
+    return finalResult;
+  }
+  return results;
+}

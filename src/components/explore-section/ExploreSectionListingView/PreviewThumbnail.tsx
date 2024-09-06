@@ -32,7 +32,7 @@ export default function PreviewThumbnail({
   height: number;
   type: keyof typeof dataTypeToEndpoint;
   width: number;
-  target?: string;
+  target?: 'simulation' | 'stimulus';
   alt?: string;
 }) {
   const session = useSessionAtomValue();

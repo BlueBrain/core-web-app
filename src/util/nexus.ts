@@ -157,3 +157,11 @@ export function getProjectFromSelfUrl(selfUrl: string | null) {
   if (!selfUrl) return null;
   return selfUrl.replace(`${nexus.url}/resources/`, '').split('/')[1];
 }
+
+export function getOrgAndProjectFromProjectId(projectId: string): { org: string; project: string } {
+  const [projectLabel, orgLabel] = projectId.split('/').reverse();
+  return {
+    org: orgLabel,
+    project: projectLabel,
+  };
+}

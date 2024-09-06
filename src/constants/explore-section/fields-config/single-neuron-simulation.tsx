@@ -121,4 +121,94 @@ export const SINGLE_NEURON_FIELDS_CONFIG: ExploreFieldsConfigProps<SingleNeuronS
     },
     style: { width: 80 },
   },
+  [Field.SimulationSynatomeUsedModelName]: {
+    title: 'Synaptome name',
+    filter: null,
+    render: {
+      esResourceViewFn: (_t, r) => {
+        return r._source.linkedSynaptomeModel?.name || DisplayMessages.NO_DATA_STRING;
+      },
+    },
+    vocabulary: {
+      plural: 'Synaptomes name',
+      singular: 'Synaptome name',
+    },
+    style: { width: 80 },
+  },
+  [Field.SimulationSynatomeUsedModelDescription]: {
+    title: 'Synaptome description',
+    filter: null,
+    render: {
+      esResourceViewFn: (_t, r) => {
+        return r._source.linkedSynaptomeModel?.description || DisplayMessages.NO_DATA_STRING;
+      },
+    },
+    vocabulary: {
+      plural: 'Synaptomes description',
+      singular: 'Synaptome description',
+    },
+    style: { width: 80 },
+  },
+  [Field.SimulationSynaptomeRecordingThumbnail]: {
+    title: 'Response',
+    filter: null,
+    render: {
+      esResourceViewFn: (value) => {
+        const distribution = ensureArray(value._source.distribution).find(
+          (o) => o.label && o.label.startsWith(SIMULATION_CONFIG_FILE_NAME_BASE)
+        );
+        if (!distribution) {
+          return (
+            <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          );
+        }
+        return (
+          <PreviewThumbnail
+            className="max-h-[116px] border border-neutral-2"
+            contentUrl={distribution.contentUrl}
+            height={116}
+            type={DataType.SingleNeuronSynaptomeSimulation}
+            width={184}
+            target="simulation"
+          />
+        );
+      },
+    },
+    vocabulary: {
+      plural: 'Synaptomes description',
+      singular: 'Synaptome description',
+    },
+    style: { width: 184 },
+  },
+  [Field.SimulationSynaptomeStimulusThumbnail]: {
+    title: 'Stimulus',
+    filter: null,
+    render: {
+      esResourceViewFn: (value) => {
+        const distribution = ensureArray(value._source.distribution).find(
+          (o) => o.label && o.label.startsWith(SIMULATION_CONFIG_FILE_NAME_BASE)
+        );
+        if (!distribution) {
+          return (
+            <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          );
+        }
+        return (
+          <PreviewThumbnail
+            className="max-h-[116px] border border-neutral-2"
+            contentUrl={distribution.contentUrl}
+            height={116}
+            type={DataType.SingleNeuronSynaptomeSimulation}
+            width={184}
+            target="stimulus"
+          />
+        );
+      },
+    },
+    vocabulary: {
+      plural: 'Synaptomes description',
+      singular: 'Synaptome description',
+    },
+    style: { width: 184 },
+  },
 };

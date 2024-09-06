@@ -179,6 +179,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
         used: {
           '@id': resource['@id'],
           '@type': resource['@type'],
+          name: resource.name,
         },
         brainLocation: resource.brainLocation,
       };

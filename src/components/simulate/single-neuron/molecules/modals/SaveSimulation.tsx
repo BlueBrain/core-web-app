@@ -28,6 +28,7 @@ export default function SaveSimulationModal({
   simulationType,
   onClose,
 }: Props) {
+  const form = Form.useFormInstance();
   const [loading, setLoading] = useState(false);
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
   const { error: errorNotify, success: successNotify } = useNotification();
@@ -51,6 +52,8 @@ export default function SaveSimulationModal({
         projectId,
         simulationType
       );
+      form.setFieldValue('name', formName);
+      form.setFieldValue('description', formDescription);
       successNotify('Simulation results saved successfully.', undefined, 'topRight');
     } catch (error) {
       errorNotify('Un error encountered when saving simulation', undefined, 'topRight');

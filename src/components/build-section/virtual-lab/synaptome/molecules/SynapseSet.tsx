@@ -477,7 +477,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex items-start justify-center gap-2">
                             <div className="font-lightw-full flex h-[40px] min-w-max max-w-max items-center justify-center text-primary-8">
-                              no more than
+                              greater or equal to
                             </div>
                             <Form.Item className="mb-2" name={[f.name, 'distance_soma_gte']}>
                               <InputNumber
@@ -490,7 +490,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                           </div>
                           <div className="flex items-start justify-center gap-2">
                             <div className="font-lightw-full flex h-[40px] min-w-max max-w-max items-center justify-center text-primary-8">
-                              no less than
+                              less or equal to
                             </div>
                             <Form.Item className="mb-2" name={[f.name, 'distance_soma_lte']}>
                               <InputNumber

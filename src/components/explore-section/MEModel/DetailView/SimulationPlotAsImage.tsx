@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Layout } from 'plotly.js-dist-min';
 import { Empty, Skeleton } from 'antd';
-import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
 
 import { PlotData } from '@/services/bluenaas-single-cell/types';
@@ -51,31 +50,49 @@ const makePlotLayout = ({
 
 export default function SimulationPlotAsImage({
   title,
+  yTitle,
   plotData,
 }: {
-  title: string;
+  title?: string;
+  yTitle?: string;
   plotData: PlotData;
 }) {
   const [image, setImage] = useState<string | null>(null);
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { ref, inView } = useInView({
-    threshold: 0.2,
-  });
 
   useEffect(() => {
-    if (inView) {
-      (async () => {
+    async function constructThumbnail() {
+      try {
+        setError(false);
         setLoading(true);
         const Plotly = await import('plotly.js-dist-min');
         const url = await Plotly.toImage(
-          { data: plotData, layout: makePlotLayout({ title, yTitle: 'Voltage [mv]' }) },
-          { format: 'webp', width: 700, height: 500 }
+          {
+            data: plotData,
+            layout: makePlotLayout({ title: title ?? '', yTitle: yTitle ?? 'Voltage [mv]' }),
+          },
+          { format: 'webp', width: 600, height: 500 }
         );
         setImage(url);
-      })();
+      } catch (err) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [plotData, title, inView]);
 
+    constructThumbnail();
+  }, [plotData, title, yTitle]);
+
+  if (error) {
+    return (
+      <Empty
+        description="Error while constructing thumbnail available"
+        image={Empty.PRESENTED_IMAGE_DEFAULT}
+      />
+    );
+  }
   if (image) {
     return (
       <div className="relative flex h-96 w-full max-w-2xl items-center justify-center">
@@ -91,7 +108,7 @@ export default function SimulationPlotAsImage({
   }
 
   return (
-    <div ref={ref} className="flex h-96 w-full max-w-2xl items-center justify-center">
+    <div className="flex h-96 w-full max-w-2xl items-center justify-center">
       {loading ? (
         <Skeleton.Image
           active={loading}

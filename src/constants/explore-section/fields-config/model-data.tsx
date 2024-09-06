@@ -111,19 +111,23 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
   },
   [Field.SynatomeUsedMEModelName]: {
     className: 'text-center',
-    title: 'me-model',
+    title: 'ME-model',
     filter: null,
     render: {
       deltaResourceViewFn: (resource) => {
         const { linkedMeModel } = resource as SynaptomeModelResource;
-        return selectorFnBasic(linkedMeModel?.eModel);
+        return selectorFnBasic(linkedMeModel?.name);
+      },
+      esResourceViewFn: (_t, r) => {
+        const { linkedMeModel } = r._source as SynaptomeModelResource;
+        return selectorFnBasic(linkedMeModel?.name);
       },
     },
     vocabulary: {
-      plural: 'me-models',
-      singular: 'me-model',
+      plural: 'ME-models',
+      singular: 'ME-model',
     },
-    style: { width: 184 },
+    style: { width: 184, align: 'left' },
   },
   [Field.SynatomeUsedEModelName]: {
     className: 'text-center',
@@ -136,8 +140,8 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
       },
     },
     vocabulary: {
-      plural: 'e-models',
-      singular: 'e-model',
+      plural: 'E-models',
+      singular: 'E-model',
     },
     style: { width: 184 },
   },
@@ -152,8 +156,8 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
       },
     },
     vocabulary: {
-      plural: 'm-models',
-      singular: 'm-model',
+      plural: 'M-models',
+      singular: 'M-model',
     },
     style: { width: 184 },
   },

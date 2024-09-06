@@ -132,7 +132,7 @@ export const selectorFnLayer = (_text: string, record: { _source: ExperimentalLa
  * @returns {string} - The formatted date.
  */
 export const selectorFnDate = (date: string): string =>
-  isValid(parseISO(date)) ? format(parseISO(date), 'dd.MM.yyyy') : '';
+  date && isValid(parseISO(date)) ? format(parseISO(date), 'dd.MM.yyyy') : '';
 
 /**
  * Renders the text value
