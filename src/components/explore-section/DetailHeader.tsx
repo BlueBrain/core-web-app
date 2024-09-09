@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { DetailProps } from '@/types/explore-section/application';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import { classNames } from '@/util/utils';
@@ -29,18 +30,25 @@ export default function DetailHeader({
   commonFields = COMMON_FIELDS,
   url,
   withRevision,
+  extraHeaderAction,
 }: {
   fields: DetailProps[];
   detail?: DetailType | undefined;
   commonFields: DetailProps[];
   url?: string | null;
   withRevision?: boolean;
+  extraHeaderAction?: ReactNode;
 }) {
   if (!detail) return null;
 
   return (
     <div className="flex w-full flex-col gap-10">
-      <DetailHeaderName detail={detail} url={url} withRevision={withRevision} />
+      <DetailHeaderName
+        detail={detail}
+        url={url}
+        withRevision={withRevision}
+        extraHeaderAction={extraHeaderAction}
+      />
       <div className="flex w-full flex-row gap-x-8">
         <div className="grid w-1/2 auto-rows-max grid-cols-3 gap-x-8 gap-y-6">
           {commonFields.map(({ className, field }) => (

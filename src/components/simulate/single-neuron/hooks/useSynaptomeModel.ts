@@ -21,7 +21,7 @@ export default function useSynaptomeModel({
   const settedRef = useRef(false);
   const bootstrapSimulationContext = useSetAtom(SynaptomeSimulationInstanceAtom);
 
-  const { newConfig } = useSynaptomeSimulationConfig();
+  const { newConfig, state: currentSynapseConfig } = useSynaptomeSimulationConfig();
   const { resource: model } = useModel<SynaptomeModelResource>({
     modelId: id,
     org: virtualLabId,
@@ -35,10 +35,13 @@ export default function useSynaptomeModel({
   useEffect(() => {
     if (model && configuration && !settedRef.current) {
       bootstrapSimulationContext({ model, configuration });
-      newConfig(configuration.synapses);
+      const cloningASimulation = currentSynapseConfig.length > 0;
+      if (!cloningASimulation) {
+        newConfig(configuration.synapses);
+      }
       settedRef.current = true;
     }
-  }, [configuration, model, newConfig, bootstrapSimulationContext]);
+  }, [configuration, model, currentSynapseConfig.length, newConfig, bootstrapSimulationContext]);
 
   return {
     model,

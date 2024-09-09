@@ -5,7 +5,6 @@ import { Form, Button, Space, InputNumber } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtom, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-
 import SynapseSet from './SynapseSet';
 import {
   CREATE_SYNAPTOME_CONFIG_FAIL,

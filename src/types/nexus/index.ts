@@ -714,7 +714,7 @@ export interface SingleNeuronSimulation extends Entity {
   brainLocation?: BrainLocation;
 }
 
-export interface SynaptomeSimulation extends Entity {
+export interface SynaptomeSimulation extends Entity, ResourceMetadata {
   '@type': ['Entity', 'SynaptomeSimulation'];
   name: string;
   description: string;

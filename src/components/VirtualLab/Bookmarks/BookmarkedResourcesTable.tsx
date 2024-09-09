@@ -21,6 +21,8 @@ import {
   ModelTypeNames,
 } from '@/constants/explore-section/data-types/model-data-types';
 import { ExploreDataScope } from '@/types/explore-section/application';
+import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/simulation-data-types';
+import { SimulationTypeNames } from '@/types/simulation/single-neuron';
 
 type Props = {
   dataType: DataType;
@@ -49,6 +51,19 @@ export default function BookmarkedResourcesTable({
   );
 
   const dataSource = data.state === 'hasData' ? data.data : [];
+
+  const modelTypeToModelName = (type: DataType, tabName: BookmarkTabsName) => {
+    switch (tabName) {
+      case BookmarkTabsName.EXPERIMENTS:
+        return EXPERIMENT_DATA_TYPES[type].name as ExperimentTypeNames;
+      case BookmarkTabsName.MODELS:
+        return MODEL_DATA_TYPES[dataType].name as ModelTypeNames;
+      case BookmarkTabsName.SIMULATIONS:
+        return SIMULATION_DATA_TYPES[dataType].name as SimulationTypeNames;
+      default:
+        throw new Error(`${tabName} is not supported as a bookmark`);
+    }
+  };
 
   return (
     <div id="bookmark-list-container" data-testid={`${dataType}-tab-panel`}>
@@ -96,9 +111,7 @@ export default function BookmarkedResourcesTable({
                       record._source.project.label,
                       record._id,
                       bookmarkTabName,
-                      bookmarkTabName === BookmarkTabsName.EXPERIMENTS
-                        ? (EXPERIMENT_DATA_TYPES[dataType].name as ExperimentTypeNames)
-                        : (MODEL_DATA_TYPES[dataType].name as ModelTypeNames)
+                      modelTypeToModelName(dataType, bookmarkTabName)
                     )
                   );
                 }}

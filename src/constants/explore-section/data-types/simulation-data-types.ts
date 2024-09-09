@@ -29,7 +29,7 @@ export const SIMULATION_DATA_TYPES: { [key: string]: DataTypeConfig } = {
   [DataType.SingleNeuronSynaptomeSimulation]: {
     title: 'Single Neuron Synaptome Simulation',
     group: DataTypeGroup.SimulationData,
-    name: 'single-neuron-synaptome-simulation',
+    name: 'synaptome-simulation',
     columns: [
       Field.Name,
       Field.Description,

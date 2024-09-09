@@ -1,6 +1,6 @@
 import { Dropdown, MenuProps, Spin, Button } from 'antd';
 import { useAtomValue } from 'jotai';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { DownloadOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import range from 'lodash/range';
 import { loadable } from 'jotai/utils';
@@ -17,15 +17,18 @@ import sessionAtom from '@/state/session';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { BookmarksSupportedTypes } from '@/types/virtual-lab/bookmark';
+import { SimulationTypeNames } from '@/types/simulation/single-neuron';
 
 export default function DetailHeaderName({
   detail,
   url,
   withRevision,
+  extraHeaderAction,
 }: {
   detail: DeltaResource;
   url?: string | null;
   withRevision?: boolean;
+  extraHeaderAction?: ReactNode;
 }) {
   const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
@@ -38,14 +41,18 @@ export default function DetailHeaderName({
   const session = useAtomValue(sessionAtom);
   const [fetching, setFetching] = useState<boolean>(false);
 
-  const { virtualLabId, projectId, experimentType, modelType } = useParams<{
-    virtualLabId?: string;
-    projectId?: string;
-    experimentType?: ExperimentTypeNames;
-    modelType?: ModelTypeNames;
-  }>();
+  const { virtualLabId, projectId, experimentType, modelType, simulationType, synaptome } =
+    useParams<{
+      virtualLabId?: string;
+      projectId?: string;
+      experimentType?: ExperimentTypeNames;
+      modelType?: ModelTypeNames;
+      simulationType?: SimulationTypeNames;
+      synaptome?: ModelTypeNames;
+    }>();
 
-  const experimentOrModelType: BookmarksSupportedTypes | undefined = experimentType ?? modelType;
+  const supportedBookmarkType: BookmarksSupportedTypes | undefined =
+    experimentType ?? modelType ?? simulationType ?? synaptome;
 
   // revisions builder
   const items: MenuProps['items'] = useMemo(() => {
@@ -65,9 +72,9 @@ export default function DetailHeaderName({
   return (
     <div className="flex flex-col text-primary-7">
       <div className="text font-thin">Name</div>
-      <div className="flex  justify-between">
-        <div className="flex items-center gap-5">
-          <div className="max-w-[60%] text-2xl font-bold">{detail?.name}</div>
+      <div className="flex justify-between">
+        <div className="flex max-w-[60%] items-center gap-5">
+          <div className="text-2xl font-bold">{detail?.name}</div>
           {withRevision && (
             <Dropdown
               menu={{ items }}
@@ -92,12 +99,13 @@ export default function DetailHeaderName({
         </div>
         {session && (
           <div className="flex">
-            {virtualLabId && projectId && experimentOrModelType && (
+            {extraHeaderAction}
+            {virtualLabId && projectId && supportedBookmarkType && (
               <BookmarkButton
                 virtualLabId={virtualLabId}
                 projectId={projectId}
                 resourceId={detail['@id']}
-                type={experimentOrModelType}
+                type={supportedBookmarkType}
               />
             )}
             <Button

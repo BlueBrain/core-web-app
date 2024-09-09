@@ -22,12 +22,15 @@ export default function Detail<T extends DeltaResource>({
   showViewMode,
   withRevision,
   commonFields = COMMON_FIELDS,
+  extraHeaderAction,
   children,
 }: {
   fields: DetailProps[];
   showViewMode?: boolean;
   commonFields?: DetailProps[];
   withRevision?: boolean;
+  extraHeaderAction?: ReactNode;
+
   children?: (detail: ExtendsExperiment<T>) => ReactNode;
 }) {
   const setBrainRegionSidebarIsCollapsed = useSetAtom(brainRegionSidebarIsCollapsedAtom);
@@ -67,6 +70,7 @@ export default function Detail<T extends DeltaResource>({
           detail={detail.data}
           url={path}
           withRevision={withRevision}
+          extraHeaderAction={extraHeaderAction}
         />
         {children && detail.data && children(detail.data)}
       </div>

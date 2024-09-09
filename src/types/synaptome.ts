@@ -39,6 +39,10 @@ export type SynaptomeModelConfiguration = {
 };
 
 export type SingleNeuronSynaptomeResource = ModelResource & {
+  used: {
+    '@id': string;
+    '@type': ['Entity', 'MEModel'];
+  };
   objectOfStudy: SynaptomeObjectOfStudy;
   '@type': 'SingleNeuronSynaptome';
 };

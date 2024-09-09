@@ -4,6 +4,11 @@ import { MEModelResource } from '../me-model';
 import { DataType } from '@/constants/explore-section/list-views';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 
+export enum SimulationTypeNames {
+  SYNAPTOME_SIMULATION = 'synaptome-simulation',
+  SINGLE_NEURON_SIMULATION = 'single-neuron-simulation',
+}
+
 export type StimulusType = 'current_clamp' | 'voltage_clamp' | 'conductance';
 export type StimulusModule = 'ap_waveform' | 'idrest' | 'iv' | 'fire_pattern';
 

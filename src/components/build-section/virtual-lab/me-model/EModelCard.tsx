@@ -99,7 +99,7 @@ function Details({ emodel }: { emodel: EModel }) {
   );
 }
 
-function EModelThumbnail({ emodel }: { emodel: EModel }) {
+export function EModelThumbnail({ emodel }: { emodel: EModel }) {
   if (!emodel.image)
     return <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
 

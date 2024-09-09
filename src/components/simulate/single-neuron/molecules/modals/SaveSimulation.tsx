@@ -82,7 +82,7 @@ export default function SaveSimulationModal({
           validateTrigger="onBlur"
         >
           <Input
-            placeholder="Your model name"
+            placeholder="Simulation name"
             size="large"
             value={formName}
             defaultValue={formName}

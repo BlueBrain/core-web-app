@@ -93,3 +93,15 @@ export interface MEModel extends Entity {
 }
 
 export interface MEModelResource extends ResourceMetadata, MEModel {}
+
+export type NexusMEModel = ResourceMetadata &
+  MEModel & {
+    eModel: string;
+    eType: string;
+    mType: string;
+    threshold_current: number;
+    holding_current: number;
+    iteration: string;
+    validated: boolean;
+    image: ESeModel['image'];
+  };

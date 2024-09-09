@@ -89,15 +89,6 @@ export default function BookmarkFooter({
       >
         Remove from library
       </Btn>
-      <Btn
-        className="fit-content sticky bottom-0 ml-2 w-fit animate-[slide-up_1s] bg-primary-6 "
-        style={{ animationDelay: '0.2s' }}
-        onClick={() =>
-          notification.info({ message: 'Coming soon', duration: 2, placement: 'bottomRight' })
-        }
-      >
-        Use in build
-      </Btn>
     </div>
   );
 }

@@ -18,8 +18,14 @@ import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/ex
 import { DataType } from '@/constants/explore-section/list-views';
 import { useAccessToken } from '@/hooks/useAccessToken';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
-import { BookmarksSupportedTypes, isExperiment, isModel } from '@/types/virtual-lab/bookmark';
+import {
+  BookmarksSupportedTypes,
+  isExperiment,
+  isModel,
+  isSimulation,
+} from '@/types/virtual-lab/bookmark';
 import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
+import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/simulation-data-types';
 
 type Props = {
   virtualLabId: string;
@@ -62,9 +68,13 @@ export default function BookmarkButton({
         (model) => MODEL_DATA_TYPES[model].name === type
       )! as DataType;
     }
+    if (isSimulation(type)) {
+      return Object.keys(SIMULATION_DATA_TYPES).find(
+        (simulation) => SIMULATION_DATA_TYPES[simulation].name === type
+      )! as DataType;
+    }
     throw new Error(`Resource of type ${type} cannot be bookmarked`);
   }, [type]);
-
   const notifySuccess = useCallback(() => {
     notification.open({
       message: (

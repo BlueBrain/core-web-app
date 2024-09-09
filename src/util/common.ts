@@ -57,10 +57,14 @@ export const detailUrlWithinLab = (
   labProjectId: string,
   resourceProjectLabel: string,
   resourceId: string,
-  experimentOrModel: BookmarkTabsName,
+  bookmarkTab: BookmarkTabsName,
   resourceType: BookmarksSupportedTypes
-) =>
-  `${generateVlProjectUrl(labId, labProjectId)}${experimentOrModel === BookmarkTabsName.EXPERIMENTS ? BASE_EXPERIMENTAL_EXPLORE_PATH : BASE_MODEL_EXPLORE_PATH}${resourceType}/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
+) => {
+  if (bookmarkTab === BookmarkTabsName.SIMULATIONS) {
+    return `${generateVlProjectUrl(labId, labProjectId)}/simulate/${resourceType}/view/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
+  }
+  return `${generateVlProjectUrl(labId, labProjectId)}${bookmarkTab === BookmarkTabsName.EXPERIMENTS ? BASE_EXPERIMENTAL_EXPLORE_PATH : BASE_MODEL_EXPLORE_PATH}${resourceType}/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
+};
 
 export const detailUrlOutsideLab = (
   projectLabel: string,

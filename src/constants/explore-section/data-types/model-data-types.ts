@@ -5,7 +5,7 @@ import { DataTypeConfig, DataTypeGroup } from '@/types/explore-section/data-type
 export enum ModelTypeNames {
   E_MODEL = 'e-model',
   ME_MODEL = 'me-model',
-  SINGLE_NEURON_SYNAPTOME = 'single-neuron-synaptome',
+  SINGLE_NEURON_SYNAPTOME = 'synaptome',
 }
 
 export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {

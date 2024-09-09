@@ -18,8 +18,15 @@ import {
   MODEL_DATA_TYPES,
   ModelTypeNames,
 } from '@/constants/explore-section/data-types/model-data-types';
-import { BookmarkTabsName, isModel } from '@/types/virtual-lab/bookmark';
+import {
+  BookmarksSupportedTypes,
+  BookmarkTabsName,
+  isModel,
+  isSimulation,
+} from '@/types/virtual-lab/bookmark';
 import { Btn } from '@/components/Btn';
+import { SimulationTypeNames } from '@/types/simulation/single-neuron';
+import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/simulation-data-types';
 
 type Props = {
   labId: string;
@@ -39,14 +46,55 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
     refreshBookmarks();
   }, [refreshBookmarks]);
 
+  const tabKeyFromQueryParam = (queryParam: string | null) => {
+    if (!queryParam) {
+      return BookmarkTabsName.EXPERIMENTS;
+    }
+
+    if (isModel(activePanel as ModelTypeNames)) {
+      return BookmarkTabsName.MODELS;
+    }
+
+    if (isSimulation(activePanel as BookmarksSupportedTypes)) {
+      return BookmarkTabsName.SIMULATIONS;
+    }
+
+    return BookmarkTabsName.EXPERIMENTS;
+  };
+
+  const updateQueryParam = (activeKey: string) => {
+    switch (activeKey) {
+      case 'experiments':
+        return setActivePanel(ExperimentTypeNames.MORPHOLOGY);
+      case 'models':
+        return setActivePanel(ModelTypeNames.E_MODEL);
+      case 'simulations':
+        return setActivePanel(SimulationTypeNames.SYNAPTOME_SIMULATION);
+      default:
+        return setActivePanel(ExperimentTypeNames.MORPHOLOGY);
+    }
+  };
+
+  const resourceTypeFromTabName = (tab: BookmarkTabsName) => {
+    switch (tab) {
+      case BookmarkTabsName.EXPERIMENTS:
+        return EXPERIMENT_DATA_TYPES;
+      case BookmarkTabsName.MODELS:
+        return MODEL_DATA_TYPES;
+      case BookmarkTabsName.SIMULATIONS:
+        return SIMULATION_DATA_TYPES;
+      default:
+        throw new Error(`${tab} is not supported as a bookmark`);
+    }
+  };
+
   const collapsibleItems = useCallback(
     (tab: BookmarkTabsName) => {
       if (bookmarks.state !== 'hasData') {
         return [];
       }
 
-      const resourceTypes =
-        tab === BookmarkTabsName.EXPERIMENTS ? EXPERIMENT_DATA_TYPES : MODEL_DATA_TYPES;
+      const resourceTypes = resourceTypeFromTabName(tab);
 
       const keys = Object.keys(resourceTypes) as DataType[];
 
@@ -139,18 +187,8 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
         }}
       >
         <Tabs
-          activeKey={
-            activePanel && isModel(activePanel as ModelTypeNames)
-              ? BookmarkTabsName.MODELS
-              : BookmarkTabsName.EXPERIMENTS
-          }
-          onChange={(activeKey) => {
-            return setActivePanel(
-              activeKey === BookmarkTabsName.MODELS
-                ? ModelTypeNames.E_MODEL
-                : ExperimentTypeNames.MORPHOLOGY
-            );
-          }}
+          activeKey={tabKeyFromQueryParam(activePanel)}
+          onChange={updateQueryParam}
           items={[
             {
               key: 'experiments',
@@ -169,6 +207,15 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
                 </div>
               ),
               children: tabContent(BookmarkTabsName.MODELS),
+            },
+            {
+              key: 'simulations',
+              label: (
+                <div className="align-center flex w-[200px] items-center justify-center text-xl font-bold">
+                  Simulations
+                </div>
+              ),
+              children: tabContent(BookmarkTabsName.SIMULATIONS),
             },
           ]}
           renderTabBar={(tabBarProps, DefaultTabBar) => {
