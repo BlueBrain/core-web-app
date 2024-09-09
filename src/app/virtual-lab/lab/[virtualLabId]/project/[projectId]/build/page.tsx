@@ -9,9 +9,7 @@ import { useRouter } from 'next/navigation';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
-import { detailUrlBuilder } from '@/util/common';
-import { ExploreSectionResource } from '@/types/explore-section/resources';
-import { ExploreESHit } from '@/types/explore-section/es';
+import { detailUrlBuilder, to64 } from '@/util/common';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
@@ -78,10 +76,13 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
     }
   };
 
-  const generateSynaptomeUrl = (model: ExploreESHit<ExploreSectionResource>) => {
-    const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
-    const baseBuildUrl = `${vlProjectUrl}/build/synaptome`;
-    return `${detailUrlBuilder(baseBuildUrl, model)}`;
+  const generateCloneUrl = () => {
+    const model = selectedRows[0];
+    if (model && selectedModelType) {
+      const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+      const baseBuildUrl = `${vlProjectUrl}/${SupportedTypeToTabDetails[selectedModelType].newUrl}`;
+      return `${baseBuildUrl}?mode=clone&model=${to64(model._source['@id'])}`;
+    }
   };
 
   const tabDetails = selectedModelType && SupportedTypeToTabDetails[selectedModelType];
@@ -110,6 +111,16 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
       case SimulationType.SingleNeuron:
       case SimulationType.Synaptome: {
         return generateDetailUrl();
+      }
+      default:
+        return undefined;
+    }
+  };
+
+  const onCloneModel = () => {
+    switch (selectedSimulationScope) {
+      case SimulationType.Synaptome: {
+        return generateCloneUrl();
       }
       default:
         return undefined;
@@ -161,7 +172,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
                 <GenericButton
                   text="Clone model"
                   className="bg-primary-9  text-white hover:!bg-primary-7"
-                  href={generateSynaptomeUrl(selectedRows[0])}
+                  href={onCloneModel()}
                 />
                 <BookmarkButton
                   virtualLabId={params.virtualLabId}

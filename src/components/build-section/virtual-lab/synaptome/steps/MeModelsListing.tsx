@@ -39,7 +39,7 @@ export default function MeModelsListing({
   configStep,
   onConfigStep,
 }: Props) {
-  const { setFieldValue, validateFields } = Form.useFormInstance();
+  const { setFieldValue, validateFields, getFieldValue } = Form.useFormInstance();
   const [selectedRows, setSelectedRows] = useState<ExploreESHit<ExploreResource>[]>([]);
   const [modelNotSelectedError, setModelNotSelectedError] = useState(false);
 
@@ -62,7 +62,7 @@ export default function MeModelsListing({
         configStep !== 'me-model-config' && 'hidden'
       )}
     >
-      <input name="modelUrl" aria-hidden hidden />
+      <input name="modelUrl" aria-hidden hidden defaultValue={getFieldValue('modelUrl')} />
       <div className="mb-4">
         <h1 className="text-xl font-bold text-primary-8">
           Select a single cell model to build a synaptom model

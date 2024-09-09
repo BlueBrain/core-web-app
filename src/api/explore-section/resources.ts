@@ -1,9 +1,19 @@
+import getPath from 'lodash/get';
 import esb, { Sort } from 'elastic-builder';
 import { API_SEARCH } from '@/constants/explore-section/queries';
-import { ExploreESResponse, FlattenedExploreESResponse } from '@/types/explore-section/es';
+import {
+  ExploreESHit,
+  ExploreESResponse,
+  ExploreResource,
+  FlattenedExploreESResponse,
+} from '@/types/explore-section/es';
 import { Experiment } from '@/types/explore-section/es-experiment';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
-import authFetch from '@/authFetch';
+import { getOrgAndProjectFromProjectId } from '@/util/nexus';
+import { fetchResourceById } from '@/api/nexus';
+import { MEModelResource } from '@/types/me-model';
+import { nexus } from '@/config';
+import authFetch, { getSession } from '@/authFetch';
 
 export type DataQuery = {
   size: number;
@@ -114,4 +124,68 @@ export async function fetchDimensionAggs(virtualLabInfo?: VirtualLabInfo) {
       total: data?.hits?.total,
       aggs: data.aggregations,
     }));
+}
+
+/**
+ * Fetches and attaches linked model data to each result based on the specified path.
+ * Uses caching to optimize repeated fetches of the same linked model.
+ *
+ * @param {Object} params - The parameters object.
+ * @param {Array<ExploreESHit<ExploreResource>>} params.results - Array of result objects.
+ * @param {string} params.path - Path to extract the linked model ID from each result.
+ * @param {string} params.linkedProperty - Property name to attach the linked model data.
+ * @returns {Promise<Array<ExploreESHit<ExploreResource>>>} - The modified results with linked model data.
+ */
+export async function fetchLinkedModel({
+  results,
+  path,
+  linkedProperty,
+}: {
+  path: string;
+  linkedProperty: string;
+  results: ExploreESHit<ExploreResource>[];
+}) {
+  const session = await getSession();
+  if (session) {
+    const cache = new Map();
+    const finalResult = [];
+    for (const model of results) {
+      const meModelId: string | null = getPath(model, path);
+      if (meModelId) {
+        if (cache.has(meModelId)) {
+          finalResult.push({
+            ...model,
+            _source: {
+              ...model._source,
+              [linkedProperty]: cache.get(meModelId),
+            },
+          });
+        } else {
+          const { org, project } = getOrgAndProjectFromProjectId(model._source.project['@id']);
+          const linkedModel = await fetchResourceById<MEModelResource>(meModelId, session, {
+            ...(meModelId.startsWith(nexus.defaultIdBaseUrl)
+              ? {}
+              : {
+                  org,
+                  project,
+                }),
+          });
+          cache.set(meModelId, linkedModel);
+          finalResult.push({
+            ...model,
+            _source: {
+              ...model._source,
+              [linkedProperty]: linkedModel,
+            },
+          });
+        }
+      } else {
+        finalResult.push(model);
+      }
+    }
+
+    cache.clear();
+    return finalResult;
+  }
+  return results;
 }

@@ -10,7 +10,7 @@ export function useModel<T>({
   project,
   callback,
 }: {
-  modelId: string;
+  modelId: string | null;
   org?: string;
   project?: string;
   callback?: (value: T) => void;
@@ -22,6 +22,8 @@ export function useModel<T>({
 
   useEffect(() => {
     let isAborted = false;
+    if (!modelId) return;
+
     (async () => {
       try {
         setLoading(true);

@@ -37,7 +37,7 @@ export default function CreateBaseSynaptome({ configStep, onConfigStep }: Props)
         configStep !== 'basic-config' ? 'hidden' : 'h-[calc(100vh-51px)]'
       )}
     >
-      <h1 className="text-3xl font-bold text-primary-8">Build new single cell model</h1>
+      <h1 className="text-3xl font-bold text-primary-8">Build new synaptome model</h1>
       <div className="flex w-full flex-col">
         <div className="grid max-h-[50%] w-full grid-cols-2 gap-14">
           <Form.Item
@@ -64,7 +64,7 @@ export default function CreateBaseSynaptome({ configStep, onConfigStep }: Props)
           </Form.Item>
           <div className="grid grid-cols-2 items-start justify-between gap-2">
             <div className="flex flex-col items-start gap-1">
-              {label('contributors', 'secondary')}
+              {label('created by', 'secondary')}
               <div className="flex items-center justify-center gap-2 text-primary-8">
                 <UserOutlined className="h-3 w-3" />
                 {session?.user.name}

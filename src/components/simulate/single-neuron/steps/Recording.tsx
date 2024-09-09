@@ -130,10 +130,12 @@ export default function Recording() {
             offset: 0.5,
           });
         }}
+        disabled={!sectionNames.length}
         type="button"
         className={classNames(
           'mt-4 border border-primary-8 bg-white px-6 py-3 text-lg font-bold text-primary-8',
-          'hover:border-neutral-4 hover:bg-neutral-4 hover:text-white'
+          'hover:border-neutral-4 hover:bg-neutral-4 hover:text-white',
+          'disabled:pointer-events-none disabled:border-gray-100 disabled:bg-gray-100 disabled:text-gray-400'
         )}
       >
         Add recording

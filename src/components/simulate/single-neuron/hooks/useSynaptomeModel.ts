@@ -1,47 +1,37 @@
-import { useEffect, useRef } from 'react';
-import { useSetAtom } from 'jotai';
+import { useRef } from 'react';
 
 import { useModel } from '@/hooks/useModel';
 import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
 import { useModelConfiguration } from '@/hooks/useModelConfiguration';
-import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
 import { SynaptomeConfigDistribution } from '@/types/synaptome';
-
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
-import useSynaptomeSimulationConfig from '@/state/simulate/categories/synaptome-simulation-config';
 
 export default function useSynaptomeModel({
   virtualLabId,
   projectId,
+  modelId,
+  callback,
 }: {
   projectId: string;
   virtualLabId: string;
+  modelId: string | null;
+  callback?: (model: SynaptomeModelResource, config: SynaptomeConfigDistribution) => void;
 }) {
-  const { id } = useResourceInfoFromPath();
-  const settedRef = useRef(false);
-  const bootstrapSimulationContext = useSetAtom(SynaptomeSimulationInstanceAtom);
+  const dataSetted = useRef(false);
 
-  const { newConfig, state: currentSynapseConfig } = useSynaptomeSimulationConfig();
   const { resource: model } = useModel<SynaptomeModelResource>({
-    modelId: id,
+    modelId,
     org: virtualLabId,
     project: projectId,
   });
 
   const { configuration } = useModelConfiguration<SynaptomeConfigDistribution>({
-    contentUrl: model?.distribution.contentUrl,
+    contentUrl: model?.distribution?.contentUrl,
   });
 
-  useEffect(() => {
-    if (model && configuration && !settedRef.current) {
-      bootstrapSimulationContext({ model, configuration });
-      const cloningASimulation = currentSynapseConfig.length > 0;
-      if (!cloningASimulation) {
-        newConfig(configuration.synapses);
-      }
-      settedRef.current = true;
-    }
-  }, [configuration, model, currentSynapseConfig.length, newConfig, bootstrapSimulationContext]);
+  if (model && configuration && !dataSetted.current) {
+    callback?.(model, configuration);
+    dataSetted.current = true;
+  }
 
   return {
     model,

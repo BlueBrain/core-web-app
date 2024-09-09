@@ -17,14 +17,14 @@ export function useModelConfiguration<T>({
 
   useEffect(() => {
     let isAborted = false;
+    if (!contentUrl) return;
 
     async function fetchConfiguration() {
-      if (!contentUrl) return;
       try {
         setLoading(true);
         const session = await getSession();
         if (!session) throw new Error('no session');
-        const config = await fetchJsonFileByUrl<T>(contentUrl, session);
+        const config = await fetchJsonFileByUrl<T>(contentUrl!, session);
         if (!isAborted) {
           setConfiguration(config);
           callbackRef.current?.(config);

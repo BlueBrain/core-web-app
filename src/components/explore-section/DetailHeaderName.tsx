@@ -98,7 +98,7 @@ export default function DetailHeaderName({
           )}
         </div>
         {session && (
-          <div className="flex">
+          <div className="flex items-center ">
             {extraHeaderAction}
             {virtualLabId && projectId && supportedBookmarkType && (
               <BookmarkButton

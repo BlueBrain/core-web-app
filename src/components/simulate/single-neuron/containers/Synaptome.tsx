@@ -1,10 +1,14 @@
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useSetAtom } from 'jotai';
 
 import useSynaptomeModel from '../hooks/useSynaptomeModel';
 import SimulationButton from '../molecules/SimulationButton';
 import { SimulationConfiguration } from '../processSteps';
 import { SimulationType } from '@/types/simulation/common';
+import { useSynaptomeSimulationConfig } from '@/state/simulate/categories';
+import { SynaptomeSimulationInstanceAtom } from '@/state/simulate/categories/simulation-model';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 type Props = {
   projectId: string;
@@ -14,9 +18,18 @@ type Props = {
 const SIMULATION_TYPE: SimulationType = 'synaptome-simulation';
 
 export default function Synaptome({ projectId, virtualLabId }: Props) {
+  const { id } = useResourceInfoFromPath();
+  const bootstrapSimulationContext = useSetAtom(SynaptomeSimulationInstanceAtom);
+  const { newConfig } = useSynaptomeSimulationConfig();
+
   const { model, configuration } = useSynaptomeModel({
     projectId,
     virtualLabId,
+    modelId: id,
+    callback: (m, c) => {
+      bootstrapSimulationContext({ model: m, configuration: c });
+      newConfig(c.synapses);
+    },
   });
 
   if (!model || !configuration) {

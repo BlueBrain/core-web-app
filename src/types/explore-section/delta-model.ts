@@ -41,6 +41,12 @@ export type EModelResource = ModelResource & {
 export type SynaptomeModelResource = EntityResource & {
   distribution: Distribution;
   name: string;
+  description: string;
+  used: {
+    '@id': string;
+    '@type': string | Array<string>;
+  };
+  seed: number;
   linkedMeModel?: MEModelResource;
 };
 

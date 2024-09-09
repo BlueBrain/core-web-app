@@ -206,10 +206,6 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
       setLoading(false);
       form.resetFields();
       setSimulationScope(SimulationType.Synaptome);
-      // TODO: look for a better way
-      // I tried using the atom an clear it but it does not work
-      // this way is to clear the selected rows so if user comes back to synaptome creation page
-      // will not face a disabled form because the hidden input was not set
       selectedRowsAtom.setShouldRemove(() => true); // set function to remove all
       selectedRowsAtom.setShouldRemove(null); // clear function
       sendResetSynapses3DEvent();
@@ -251,7 +247,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
         </Form.Item>
       </div>
       <div className="secondary-scrollbar mb-2 h-full max-h-[calc(100vh-255px)] overflow-y-auto pr-4">
-        <Form.List name="synapses">
+        <Form.List name="synapses" initialValue={['name', 'formula']}>
           {(fields, { remove: removeGroup }) => {
             return fields.map((field, index) => {
               return (
