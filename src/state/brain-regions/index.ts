@@ -426,7 +426,7 @@ export const brainRegionSidebarIsCollapsedAtom = atom(false);
 /**
  * Returns the descendants of a list of brain regions based on their id
  */
-export const getBrainRegionDescendants = (brainRegionIds: string[]) =>
+export const getBrainRegionDescendantsAndAncestors = (brainRegionIds: string[]) =>
   atom(async (get) => {
     const brainRegionTree = await get(brainRegionsFilteredTreeAtom);
     if (!brainRegionTree) return undefined;
@@ -434,10 +434,14 @@ export const getBrainRegionDescendants = (brainRegionIds: string[]) =>
     return uniqBy(
       brainRegionIds.reduce((totalDescendants: BrainRegion[], brainRegionId: string) => {
         // first search for the actual brain region in the tree
-        const brainRegion = findDeep(brainRegionTree, (region) => region.id === brainRegionId, {
-          pathFormat: 'array',
-          childrenPath: ['items'],
-        })?.value;
+        const brainRegion: BrainRegion = findDeep(
+          brainRegionTree,
+          (region) => region.id === brainRegionId,
+          {
+            pathFormat: 'array',
+            childrenPath: ['items'],
+          }
+        )?.value;
         // if not found, return empty array
         if (!brainRegion) return [];
         // iterate over the children of the brain region (items) and construct array of descendants
@@ -452,21 +456,31 @@ export const getBrainRegionDescendants = (brainRegionIds: string[]) =>
           [],
           { pathFormat: 'array', childrenPath: ['items'] }
         );
+        // create a list of the ancestor objects to have uniform format with the rest of the brain regions
+        const ancestors =
+          brainRegion.ancestors?.map((item: Record<string, any>) => ({
+            id: Object.keys(item)[0],
+          })) || [];
+
         // appends the brain region along with the descendants
-        return [...totalDescendants, ...descendants, brainRegion];
+        return [...totalDescendants, ...descendants, ...ancestors, brainRegion];
       }, []),
       'id'
     );
   });
+
 /**
  * An array containing the selected brain region along with all the descendants
  */
-export const selectedBrainRegionWithChildrenAtom = atom<Promise<string[]>>(async (get) => {
-  const selectedBrainRegion = get(selectedBrainRegionAtom);
-  if (!selectedBrainRegion) return [];
-  const descendants = await get(getBrainRegionDescendants([selectedBrainRegion.id]));
-  return descendants?.map((d) => d.id) || [];
-});
+export const selectedBrainRegionWithDescendantsAndAncestorsAtom = atom<Promise<string[]>>(
+  async (get) => {
+    const selectedBrainRegion = get(selectedBrainRegionAtom);
+    if (!selectedBrainRegion) return [];
+    const descendants = await get(getBrainRegionDescendantsAndAncestors([selectedBrainRegion.id]));
+
+    return descendants?.map((d) => d.id) || [];
+  }
+);
 
 /**
  * Keeps track of the hierarchy tree of the brain regions

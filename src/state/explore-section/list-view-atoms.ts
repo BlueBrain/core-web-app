@@ -23,7 +23,7 @@ import {
   FlattenedExploreESResponse,
 } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
-import { selectedBrainRegionWithChildrenAtom } from '@/state/brain-regions';
+import { selectedBrainRegionWithDescendantsAndAncestorsAtom } from '@/state/brain-regions';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
@@ -114,12 +114,13 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
   ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atom<Promise<number | undefined | null>>(async (get) => {
       const sortState = get(sortStateAtom);
-      let descendantIds: string[] = [];
+      let descendantAndAncestorIds: string[] = [];
 
       if (dataScope === ExploreDataScope.SelectedBrainRegion)
-        descendantIds = (await get(selectedBrainRegionWithChildrenAtom)) || [];
+        descendantAndAncestorIds =
+          (await get(selectedBrainRegionWithDescendantsAndAncestorsAtom)) || [];
 
-      const query = fetchDataQuery(0, 1, [], dataType, sortState, '', descendantIds);
+      const query = fetchDataQuery(0, 1, [], dataType, sortState, '', descendantAndAncestorIds);
       const result =
         query && (await fetchTotalByExperimentAndRegions(query, undefined, virtualLabInfo));
 
@@ -143,7 +144,7 @@ export const queryAtom = atomFamily(
 
       const descendantIds: string[] =
         dataScope === ExploreDataScope.SelectedBrainRegion
-          ? (await get(selectedBrainRegionWithChildrenAtom)) || []
+          ? (await get(selectedBrainRegionWithDescendantsAndAncestorsAtom)) || []
           : [];
 
       const filters = await get(filtersAtom({ dataType }));
