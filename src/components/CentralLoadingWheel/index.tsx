@@ -1,10 +1,10 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import LoadingWheel from '@/components/icons/LoadingWheel';
 import GreyRing from '@/components/icons/LoadingWheel/GreyRing';
 
 interface Props {
   style?: CSSProperties;
-  text?: string;
+  text?: string | ReactNode;
   noResults?: boolean;
 }
 
@@ -20,7 +20,6 @@ function CentralLoadingWheel({
       style={{
         ...style,
         textAlign: 'center',
-        paddingTop: 'calc(15vh - 27px)',
       }}
     >
       <div style={{ position: 'relative', display: 'inline-block' }}>

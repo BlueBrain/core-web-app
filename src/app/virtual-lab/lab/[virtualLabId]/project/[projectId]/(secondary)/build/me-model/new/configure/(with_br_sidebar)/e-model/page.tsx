@@ -9,7 +9,6 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { selectedEModelIdAtom, meModelSectionAtom } from '@/state/virtual-lab/build/me-model';
 import { Btn } from '@/components/Btn';
 import { ESeModel, ExploreESHit, ExploreResource } from '@/types/explore-section/es';
-import { usePendingValidationModal } from '@/components/build-section/virtual-lab/me-model/pending-validation-modal-hook';
 import { ExploreDataScope } from '@/types/explore-section/application';
 
 type Params = {
@@ -22,8 +21,6 @@ type Params = {
 export default function ElectrophysiologyPage({ params }: Params) {
   const setMEModelSection = useSetAtom(meModelSectionAtom);
   const setSelectedEModelId = useSetAtom(selectedEModelIdAtom);
-
-  const { contextHolder } = usePendingValidationModal();
 
   useEffect(() => setMEModelSection('electrophysiology'), [setMEModelSection]);
 
@@ -58,7 +55,6 @@ export default function ElectrophysiologyPage({ params }: Params) {
           )}
         />
       </div>
-      {contextHolder}
     </>
   );
 }

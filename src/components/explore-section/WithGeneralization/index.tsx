@@ -12,7 +12,12 @@ import {
 } from '@/types/explore-section/es-experiment';
 import CentralLoadingWheel from '@/components/CentralLoadingWheel';
 
-const spinStyles = { display: 'table', width: '100%', height: '200px' };
+const spinStyles = {
+  display: 'table',
+  width: '100%',
+  height: '200px',
+  paddingTop: 'calc(15vh - 27px)',
+};
 const loadingIconText = 'Searching for similar morphologies';
 const notFoundText = 'No similar morphologies were found';
 

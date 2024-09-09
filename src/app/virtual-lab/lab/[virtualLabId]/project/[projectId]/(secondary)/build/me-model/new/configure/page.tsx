@@ -1,6 +1,5 @@
 'use client';
 
-import { useCallback } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { notification } from 'antd';
@@ -12,7 +11,6 @@ import { usePendingValidationModal } from '@/components/build-section/virtual-la
 import { createMEModelAtom, meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { selectedEModelAtom, selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
-import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { classNames } from '@/util/utils';
 import { useLoadable } from '@/hooks/hooks';
 import { detailUrlWithinLab } from '@/util/common';
@@ -85,22 +83,14 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
 
   const modelsAreSelected = selectedEModel && selectedMModel;
 
-  const onClickWithValidation = useCallback(() => {
+  const onClickWithValidation = () => {
     createMEModel({ virtualLabId, projectId });
+    createModal({ virtualLabId, projectId });
+  };
 
-    const virtualLabHomeLink = `${generateVlProjectUrl(virtualLabId, projectId)}/home`;
-
-    createModal(virtualLabHomeLink);
-  }, [createMEModel, createModal, projectId, virtualLabId]);
-
-  const onClickWithoutValidation = useCallback(() => {
+  const onClickWithoutValidation = () =>
     createMEModel({ virtualLabId, projectId }).then((meModel) => {
       if (!meModel) return;
-      // show success message
-      notification.success({
-        message: 'ME-model created successfully',
-      });
-      // redirect to simulation creation page
       const redirectionUrl = detailUrlWithinLab(
         virtualLabId,
         projectId,
@@ -109,9 +99,11 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
         BookmarkTabsName.MODELS,
         ModelTypeNames.ME_MODEL
       );
+      notification.success({
+        message: 'ME-model created successfully',
+      });
       router.push(redirectionUrl);
     });
-  }, [createMEModel, projectId, router, virtualLabId]);
 
   const validateTrigger = modelsAreSelected && (
     <div className="absolute bottom-10 right-10 flex flex-row gap-4 text-white">
