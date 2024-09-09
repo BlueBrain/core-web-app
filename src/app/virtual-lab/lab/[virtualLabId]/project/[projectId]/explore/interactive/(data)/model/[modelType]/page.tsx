@@ -27,7 +27,7 @@ export default function VirtualLabModelListingView() {
   if (!currentModel) notFound();
 
   switch (currentModel as DataType) {
-    case 'CircuitEModel':
+    case DataType.CircuitEModel:
       return (
         <ExploreEModelTable
           virtualLabInfo={virtualLabInfo}
@@ -35,7 +35,15 @@ export default function VirtualLabModelListingView() {
           dataScope={ExploreDataScope.SelectedBrainRegion}
         />
       );
-    case 'CircuitMEModel':
+    case DataType.CircuitMEModel:
+      return (
+        <ExploreMEModelTable
+          virtualLabInfo={virtualLabInfo}
+          dataType={currentModel as DataType}
+          dataScope={ExploreDataScope.SelectedBrainRegion}
+        />
+      );
+    case DataType.SingleNeuronSynaptome:
       return (
         <ExploreMEModelTable
           virtualLabInfo={virtualLabInfo}

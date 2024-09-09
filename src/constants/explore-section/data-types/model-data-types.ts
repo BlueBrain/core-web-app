@@ -36,6 +36,7 @@ export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
       Field.Name,
       Field.MEModelMorphologyPreview,
       Field.MEModelResponse,
+      Field.MEModelValidated,
       Field.BrainRegion,
       Field.MType,
       Field.EType,
@@ -44,7 +45,7 @@ export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
     curated: false,
   },
   [DataType.SingleNeuronSynaptome]: {
-    title: 'Single Neuron Synaptome',
+    title: 'Synaptome',
     group: DataTypeGroup.ModelData,
     name: ModelTypeNames.SINGLE_NEURON_SYNAPTOME,
     columns: [

@@ -109,6 +109,24 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     },
     style: { width: 184 },
   },
+  [Field.MEModelValidated]: {
+    className: 'text-center',
+    title: 'Validated',
+    filter: null,
+    render: {
+      esResourceViewFn: (_value, record) => {
+        const { _source: source } = record;
+
+        const isValidated = (source as ESmeModel)?.memodel?.validated;
+        return selectorFnBasic(isValidated ? 'True' : 'False');
+      },
+    },
+    vocabulary: {
+      plural: 'Validated',
+      singular: 'Validated',
+    },
+    style: { align: 'left' },
+  },
   [Field.SynatomeUsedMEModelName]: {
     className: 'text-center',
     title: 'ME-model',

@@ -32,6 +32,7 @@ export type ESmeModel = ESeModel & {
       '@id': string;
       name: string;
     };
+    validated: boolean;
   };
 };
 

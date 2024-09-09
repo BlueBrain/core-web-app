@@ -70,6 +70,7 @@ export enum Field {
   EModelResponse = 'eModelResponse',
   MEModelResponse = 'meModelResponse',
   MEModelMorphologyPreview = 'meModelMorphologyPreview',
+  MEModelValidated = 'meModelValidated',
   SingleNeuronSimulationUsedModelName = 'singleNeuronSimulationUsedModelName',
   SingleNeuronSimulationStimulus = 'singleNeuronSimulationStimulus',
   SingleNeuronSimulationResponse = 'singleNeuronSimulationResponse',
