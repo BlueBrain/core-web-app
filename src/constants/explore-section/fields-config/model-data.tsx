@@ -9,6 +9,7 @@ import { selectorFnBasic } from '@/util/explore-section/listing-selectors';
 
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import MorphPreviewFromId from '@/components/build-section/virtual-lab/me-model/MorphPreviewFromId';
+import { MEModel } from '@/types/me-model';
 
 export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
   [Field.EModelMorphology]: {
@@ -114,6 +115,9 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     title: 'Validated',
     filter: null,
     render: {
+      deltaResourceViewFn: (resource) => {
+        return selectorFnBasic((resource as unknown as MEModel).validated ? 'True' : 'False');
+      },
       esResourceViewFn: (_value, record) => {
         const { _source: source } = record;
 

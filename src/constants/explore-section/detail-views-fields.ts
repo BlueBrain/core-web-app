@@ -178,10 +178,16 @@ export const ME_MODEL_FIELDS = [
     className: 'col-span-2',
   },
   {
+    field: Field.MEModelValidated,
+    className: 'col-span-2',
+  },
+  {
     field: Field.MType,
+    className: 'col-span-4',
   },
   {
     field: Field.EType,
+    className: 'col-span-4',
   },
 ] as DetailProps[];
 
