@@ -48,7 +48,11 @@ export default function SynapseGroupList({ modelUrl }: { modelUrl: string }) {
                   {...{ label: 'type', value: type ? SYNPASE_CODE_TO_TYPE[type] : undefined }}
                 />
               </div>
-              <ConfigItem {...{ label: 'formula', value: formula }} />
+                              {target === 'soma' ? (
+                                <ConfigItem {...{ label: 'Synapse Count', value: `${soma_synapse_count}` }} />
+                              ) : (
+                                <ConfigItem {...{ label: 'formula', value: formula }} />
+                              )}
             </div>
           </div>
         ))}
