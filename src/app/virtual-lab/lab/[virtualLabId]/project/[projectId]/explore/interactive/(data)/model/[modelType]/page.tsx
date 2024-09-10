@@ -15,6 +15,10 @@ const ExploreMEModelTable = dynamic(
   () => import('@/components/explore-section/MEModel/ExploreMEModelTable')
 );
 
+const ExploreSynaptomeModelTable = dynamic(
+  () => import('@/components/explore-section/Synaptome/ExploreSynaptomeModelTable')
+);
+
 export default function VirtualLabModelListingView() {
   const params = useParams<{ modelType: string; virtualLabId: string; projectId: string }>();
   const currentModel = Object.keys(MODEL_DATA_TYPES).find(
@@ -45,7 +49,7 @@ export default function VirtualLabModelListingView() {
       );
     case DataType.SingleNeuronSynaptome:
       return (
-        <ExploreMEModelTable
+        <ExploreSynaptomeModelTable
           virtualLabInfo={virtualLabInfo}
           dataType={currentModel as DataType}
           dataScope={ExploreDataScope.SelectedBrainRegion}

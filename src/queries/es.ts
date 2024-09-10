@@ -555,7 +555,13 @@ export const getPaperCountQuery = () => ({
   },
 });
 
-export const getSimulationsPerMEModelQuery = (modelId: string) => ({
+export const getSimulationsPerModelQuery = ({
+  modelId,
+  type,
+}: {
+  modelId: string;
+  type: 'SingleNeuronSimulation' | 'SynaptomeSimulation';
+}) => ({
   size: DEFAULT_SIZE,
   query: {
     bool: {
@@ -564,7 +570,7 @@ export const getSimulationsPerMEModelQuery = (modelId: string) => ({
           bool: {
             must: [
               { term: { _deprecated: false } },
-              { term: { '@type': 'SingleNeuronSimulation' } },
+              { term: { '@type': type } },
               { term: { 'used.@id.keyword': modelId } },
             ],
           },

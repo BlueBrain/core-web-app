@@ -64,7 +64,7 @@ function Synaptome({ params: { virtualLabId, projectId } }: Props) {
     };
   }, []);
 
-  if (queryParams.get('op') === 'clone' && !model && !configuration) {
+  if (queryParams.get('mode') === 'clone' && (!model || !configuration)) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-3">
         <Spin indicator={<LoadingOutlined />} size="large" />

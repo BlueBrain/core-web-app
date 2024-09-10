@@ -6,15 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { useModelConfiguration } from '@/hooks/useModelConfiguration';
 import { SynaptomeConfigDistribution } from '@/types/synaptome';
 import { SIMULATION_COLORS, SYNPASE_CODE_TO_TYPE } from '@/constants/simulate/single-neuron';
-
-function ConfigItem({ label, value }: { label: string; value?: string }) {
-  return (
-    <div className="flex flex-col items-start gap-1">
-      <div className="font-medium capitalize text-gray-400">{label}</div>
-      <div className="text-lg font-bold capitalize text-primary-8">{value}</div>
-    </div>
-  );
-}
+import ConfigItem from '@/components/build-section/virtual-lab/synaptome/molecules/ConfigItem';
 
 export default function SynapseGroupList({ modelUrl }: { modelUrl: string }) {
   const { configuration, loading } = useModelConfiguration<SynaptomeConfigDistribution>({

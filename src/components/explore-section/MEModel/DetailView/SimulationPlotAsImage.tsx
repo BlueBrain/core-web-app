@@ -52,10 +52,15 @@ export default function SimulationPlotAsImage({
   title,
   yTitle,
   plotData,
+  size,
 }: {
   title?: string;
   yTitle?: string;
   plotData: PlotData;
+  size?: {
+    w: number;
+    h: number;
+  };
 }) {
   const [image, setImage] = useState<string | null>(null);
   const [error, setError] = useState(false);
@@ -72,7 +77,11 @@ export default function SimulationPlotAsImage({
             data: plotData,
             layout: makePlotLayout({ title: title ?? '', yTitle: yTitle ?? 'Voltage [mv]' }),
           },
-          { format: 'webp', width: 600, height: 500 }
+          {
+            format: 'webp',
+            width: size?.w ?? 600,
+            height: size?.h ?? 500,
+          }
         );
         setImage(url);
       } catch (err) {
@@ -83,23 +92,24 @@ export default function SimulationPlotAsImage({
     }
 
     constructThumbnail();
-  }, [plotData, title, yTitle]);
+  }, [plotData, title, yTitle, size]);
 
   if (error) {
     return (
       <Empty
-        description="Error while constructing thumbnail available"
+        description="Error while constructing thumbnail"
         image={Empty.PRESENTED_IMAGE_DEFAULT}
       />
     );
   }
+
   if (image) {
     return (
-      <div className="relative flex h-96 w-full max-w-2xl items-center justify-center">
+      <div className="relative flex h-96 w-full items-center justify-center">
         <Image
           fill
           objectFit="contains"
-          alt="Stimulus plot"
+          alt="plot"
           className="border border-neutral-2"
           src={image}
         />
@@ -108,7 +118,7 @@ export default function SimulationPlotAsImage({
   }
 
   return (
-    <div className="flex h-96 w-full max-w-2xl items-center justify-center">
+    <div className="flex h-96 w-full items-center justify-center">
       {loading ? (
         <Skeleton.Image
           active={loading}

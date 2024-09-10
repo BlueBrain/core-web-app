@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
 import { ErrorBoundary } from '@sentry/nextjs';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 
-import SimulationDetail from './SimulationDetails';
-import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import { queryES } from '@/api/nexus';
+import { SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
 import { getSimulationsPerModelQuery } from '@/queries/es';
-import { selectedMEModelIdAtom } from '@/state/virtual-lab/build/me-model';
-import { SingleNeuronSimulation } from '@/types/nexus';
+import { SynaptomeSimulation } from '@/types/nexus';
 import { getSession } from '@/authFetch';
+import { queryES } from '@/api/nexus';
+
+import SimulationDetail from '@/components/explore-section/MEModel/DetailView/SimulationDetails';
+import ConfigItem from '@/components/build-section/virtual-lab/synaptome/molecules/ConfigItem';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
 type LocationParams = {
   projectId: string;
   virtualLabId: string;
 };
 
-export default function Simulation({ params }: { params: LocationParams }) {
-  const selectedMEModelId = useAtomValue(selectedMEModelIdAtom);
-  const [simulations, setSimulations] = useState<SingleNeuronSimulation[]>([]);
+export default function Results({ params, modelId }: { params: LocationParams; modelId: string }) {
+  const [simulations, setSimulations] = useState<SynaptomeSimulation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!selectedMEModelId) return;
+    if (!modelId) return;
 
     const fetchSims = async () => {
       setLoading(true);
@@ -32,11 +32,12 @@ export default function Simulation({ params }: { params: LocationParams }) {
       try {
         const session = await getSession();
         if (!session) return;
+
         const simulationsPerMEModelQuery = getSimulationsPerModelQuery({
-          modelId: selectedMEModelId,
-          type: 'SingleNeuronSimulation',
+          modelId,
+          type: 'SynaptomeSimulation',
         });
-        const sims = await queryES<SingleNeuronSimulation>(simulationsPerMEModelQuery, session, {
+        const sims = await queryES<SynaptomeSimulation>(simulationsPerMEModelQuery, session, {
           org: params.virtualLabId,
           project: params.projectId,
         });
@@ -49,7 +50,7 @@ export default function Simulation({ params }: { params: LocationParams }) {
     };
 
     fetchSims();
-  }, [params.projectId, params.virtualLabId, selectedMEModelId]);
+  }, [params.projectId, params.virtualLabId, modelId]);
 
   if (loading) {
     return (
@@ -90,7 +91,38 @@ export default function Simulation({ params }: { params: LocationParams }) {
     <div className="flex w-full flex-col gap-2">
       {simulations.map((sim, indx) => (
         <ErrorBoundary fallback={SimpleErrorComponent} key={sim['@id']}>
-          <SimulationDetail<SingleNeuronSimulation> simulation={sim} index={indx} />
+          <SimulationDetail<SynaptomeSimulation> simulation={sim} index={indx}>
+            {({ config }) => {
+              if (!config.synaptome) return null;
+              return (
+                <div className="grid grid-cols-2 gap-4">
+                  {config.synaptome.map((c, ind) => (
+                    <div
+                      key={c.id}
+                      className="flex w-max min-w-96 flex-col items-start justify-start"
+                    >
+                      <div
+                        className="flex items-center justify-center px-4 py-2 text-base text-white"
+                        style={{
+                          backgroundColor: SIMULATION_COLORS[ind],
+                        }}
+                      >
+                        {ind + 1}
+                      </div>
+                      <div className="flex w-full flex-col gap-5 border border-gray-300 p-6">
+                        <div className="grid grid-cols-3 gap-2">
+                          <ConfigItem {...{ label: 'delay', value: c.delay, unit: 'ms' }} />
+                          <ConfigItem {...{ label: 'duration', value: c.duration, unit: 'ms' }} />
+                          <ConfigItem {...{ label: 'frequency', value: c.frequency, unit: 'hz' }} />
+                          <ConfigItem {...{ label: 'weight scalar', value: c.weightScalar }} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            }}
+          </SimulationDetail>
         </ErrorBoundary>
       ))}
     </div>

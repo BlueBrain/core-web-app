@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { OnCellClick } from '../ExploreSectionListingView/ExploreSectionTable';
 import { RenderButtonProps } from '../ExploreSectionListingView/useRowSelection';
@@ -7,10 +7,12 @@ import { detailUrlBuilder } from '@/util/common';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { DataType } from '@/constants/explore-section/list-views';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
+import { getOrgAndProjectFromProjectId } from '@/util/nexus';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 
-export default function ExploreMEModelTable({
+export default function ExploreSynaptomeModelTable({
   dataType,
   dataScope,
   virtualLabInfo,
@@ -22,11 +24,12 @@ export default function ExploreMEModelTable({
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const { push: navigate } = useRouter();
-  const params = useSearchParams();
 
   const onCellClick: OnCellClick = (basePath, record) => {
-    const newSearhParams = new URLSearchParams(params);
-    const exploreUrl = `${detailUrlBuilder(basePath, record)}?${newSearhParams.toString()}`;
+    const { org, project } = getOrgAndProjectFromProjectId(record._source.project['@id']);
+    const vlProjectUrl = generateVlProjectUrl(org, project);
+    const baseBuildUrl = `${vlProjectUrl}/build/synaptome/view`;
+    const exploreUrl = `${detailUrlBuilder(baseBuildUrl, record)}`;
 
     navigate(exploreUrl);
   };

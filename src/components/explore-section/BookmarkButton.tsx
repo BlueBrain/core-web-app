@@ -75,6 +75,7 @@ export default function BookmarkButton({
     }
     throw new Error(`Resource of type ${type} cannot be bookmarked`);
   }, [type]);
+
   const notifySuccess = useCallback(() => {
     notification.open({
       message: (
@@ -103,14 +104,14 @@ export default function BookmarkButton({
         message: 'Resource could not be added to the library',
         description: (err as Error)?.message ?? null,
         duration: 3,
-        placement: 'bottomRight',
+        placement: 'topRight',
       });
     } else {
       notification.error({
         message: 'Resource could not be removed from the library',
         description: (err as Error)?.message ?? null,
         duration: 3,
-        placement: 'bottomRight',
+        placement: 'topRight',
       });
     }
   }, []);
@@ -157,7 +158,11 @@ export default function BookmarkButton({
   }, [bookmarks, resourceId, category]);
 
   if (saving || bookmarks.state === 'loading') {
-    return <Spin className="px-3 py-2" indicator={<LoadingOutlined />} />;
+    return (
+      <div className="flex w-32 items-center justify-end">
+        <Spin className="px-3 py-2" indicator={<LoadingOutlined />} />
+      </div>
+    );
   }
 
   if (bookmarks.state === 'hasError') {

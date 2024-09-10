@@ -18,15 +18,16 @@ export default function useSynaptomeModel({
 }) {
   const dataSetted = useRef(false);
 
-  const { resource: model } = useModel<SynaptomeModelResource>({
+  const { resource: model, loading: loadingModel } = useModel<SynaptomeModelResource>({
     modelId,
     org: virtualLabId,
     project: projectId,
   });
 
-  const { configuration } = useModelConfiguration<SynaptomeConfigDistribution>({
-    contentUrl: model?.distribution?.contentUrl,
-  });
+  const { configuration, loading: loadingConfig } =
+    useModelConfiguration<SynaptomeConfigDistribution>({
+      contentUrl: model?.distribution?.contentUrl,
+    });
 
   if (model && configuration && !dataSetted.current) {
     callback?.(model, configuration);
@@ -36,5 +37,6 @@ export default function useSynaptomeModel({
   return {
     model,
     configuration,
+    loading: loadingModel || loadingConfig,
   };
 }
