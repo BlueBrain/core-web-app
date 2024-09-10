@@ -110,7 +110,7 @@ async function launchAnalysis(
 
   await launchWorkflowTask({
     loginInfo: session,
-    workflowName: 'bbp_workflow.sbo.analysis.task.MultiAnalyseEModelMeta/',
+    workflowName: 'bbp_workflow.sbo.analysis.emodel.task.MultiAnalyseEModelMeta/',
     workflowFiles: [
       {
         NAME: 'config.cfg',

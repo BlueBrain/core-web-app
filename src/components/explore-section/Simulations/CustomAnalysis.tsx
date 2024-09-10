@@ -7,6 +7,7 @@ import {
   ExtendedCumAnalysisReport,
   CumulativeAnalysisReport,
   MultipleSimulationCampaignAnalysis,
+  Generation,
 } from './types';
 import DimensionSelector from './DimensionSelector';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
@@ -112,9 +113,17 @@ export function useCumulativeAnalysisReports(
     async function fetchCumulativeReports() {
       if (!session || fetchingRef.current || !incoming || !analysisId) return;
 
+      const inComingUrl = new URL(incoming);
+      inComingUrl.search = ''; // Clear existing query params.
+      const params = inComingUrl.searchParams;
+      params.set('size', '1000');
+      params.set('from', '0');
+
+      const newIncomingUrl = inComingUrl.toString();
+
       fetchingRef.current = true;
       const res: { _results: { '@id': string; '@type': string; _deprecated: boolean }[] } =
-        await fetch(incoming, {
+        await fetch(newIncomingUrl, {
           headers: createHeaders(session.accessToken),
         }).then((r) => r.json());
 
@@ -135,10 +144,13 @@ export function useCumulativeAnalysisReports(
       });
 
       const foundReport = cumulativeAnalysisReports.find((r) => {
-        if (Array.isArray(r.contribution))
-          return r.contribution.find((c) => c.agent['@id'] === analysisId);
+        const hasAnalysis = (g: Generation) => {
+          return g.activity.wasAssociatedWith && g.activity.wasAssociatedWith['@id'] === analysisId;
+        };
 
-        return r.contribution.agent['@id'] === analysisId;
+        return Array.isArray(r.generation)
+          ? r.generation.find(hasAnalysis)
+          : hasAnalysis(r.generation);
       });
 
       const multiAnalysis =
