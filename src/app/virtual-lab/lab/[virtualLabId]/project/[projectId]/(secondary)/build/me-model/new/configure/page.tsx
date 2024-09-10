@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { notification } from 'antd';
+import { notification, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
 
 import MorphologyCard from '@/components/build-section/virtual-lab/me-model/MorphologyCard';
@@ -78,6 +79,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
   const selectedMModel = useAtomValue(selectedMModelAtom);
   const selectedEModel = useAtomValue(selectedEModelAtom);
   const createMEModel = useSetAtom(createMEModelAtom);
+  const [meModelCreating, setMeModelCreating] = useState<boolean>(false);
 
   const { contextHolder, createModal } = usePendingValidationModal();
 
@@ -88,31 +90,49 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
     createModal({ virtualLabId, projectId });
   };
 
-  const onClickWithoutValidation = () =>
-    createMEModel({ virtualLabId, projectId }).then((meModel) => {
-      if (!meModel) return;
-      const redirectionUrl = detailUrlWithinLab(
-        virtualLabId,
-        projectId,
-        `${virtualLabId}/${projectId}`,
-        meModel['@id'],
-        BookmarkTabsName.MODELS,
-        ModelTypeNames.ME_MODEL
-      );
-      notification.success({
-        message: 'ME-model created successfully',
+  const onClickWithoutValidation = () => {
+    setMeModelCreating(true);
+
+    createMEModel({ virtualLabId, projectId })
+      .then((meModel) => {
+        if (!meModel) return;
+        const redirectionUrl = detailUrlWithinLab(
+          virtualLabId,
+          projectId,
+          `${virtualLabId}/${projectId}`,
+          meModel['@id'],
+          BookmarkTabsName.MODELS,
+          ModelTypeNames.ME_MODEL
+        );
+        notification.success({
+          message: 'ME-model created successfully',
+        });
+        setMeModelCreating(false);
+        router.push(redirectionUrl);
+      })
+      .catch(() => {
+        setMeModelCreating(false);
       });
-      router.push(redirectionUrl);
-    });
+  };
 
   const validateTrigger = modelsAreSelected && (
     <div className="absolute bottom-10 right-10 flex flex-row gap-4 text-white">
       <button
-        className="fit-content ml-auto flex w-fit items-center bg-primary-8 p-4 font-bold hover:brightness-110"
+        className={classNames(
+          'fit-content ml-auto flex w-fit items-center p-4 font-bold hover:brightness-110',
+          meModelCreating ? 'bg-neutral-4' : 'bg-primary-8'
+        )}
         onClick={onClickWithoutValidation}
         type="button"
+        disabled={meModelCreating}
       >
-        Skip validation
+        {meModelCreating ? (
+          <span className="flex flex-row gap-4">
+            Creating ME-model <Spin />
+          </span>
+        ) : (
+          'Skip validation'
+        )}
       </button>
       <button
         className="fit-content ml-auto flex w-fit items-center bg-primary-8 p-4 font-bold hover:brightness-110"
