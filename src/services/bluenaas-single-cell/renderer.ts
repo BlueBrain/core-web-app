@@ -443,7 +443,7 @@ export default class NeuronViewerRenderer {
         const openEnded = !/^spine/.test(secName);
         const color = getColor(secName);
         const mesh = createSegmentMesh(sec, segIdx, openEnded, color);
-
+        console.log('SecName', secName);
         const name = `${secName}_${segIdx}`;
         mesh.name = name;
 

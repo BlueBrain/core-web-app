@@ -104,7 +104,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
       const bracketIndex = findIndex(str, (char) => char === '[');
       return bracketIndex !== -1 ? str.slice(0, bracketIndex) : str;
     })
-  ).filter((o) => o !== 'soma');
+  );
 
   const targetOptions = groupedSections.map((value) => ({
     value,
@@ -342,81 +342,107 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             />
           </Form.Item>
         </div>
+
         <div className="flex items-start gap-4">
-          <div className="w-full">
-            <div className="flex w-full flex-col">
-              <div
-                className={classNames(
-                  'flex w-full items-center gap-2 pb-[8px]',
-                  displayFormulaHelp && 'justify-between'
-                )}
-              >
-                {label('Formula')}
-                {displayFormulaHelp ? (
-                  <CloseOutlined className="text-gray-300" onClick={toggleFormulaHelp} />
-                ) : (
-                  <InfoCircleFilled className="text-gray-300" onClick={toggleFormulaHelp} />
-                )}
-              </div>
-              <p
-                className={classNames(
-                  'font-light text-gray-400 transition-all',
-                  displayFormulaHelp ? 'mb-4 h-full opacity-100' : 'mb-0 h-0 opacity-0'
-                )}
-              >
-                More information on formulas here: <br />
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary-8"
-                  href="https://docs.sympy.org/latest/index.html"
+          {config?.target === 'soma' ? (
+            <div className="w-full">
+              <div className="flex w-full flex-col">
+                <div className={classNames('flex w-full items-center gap-2 pb-[8px]')}>
+                  {label('Synapse Count')}
+                </div>
+                <Form.Item
+                  name={[field.name, 'synapse_count']}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                  validateTrigger="onBlur"
                 >
-                  https://docs.sympy.org/latest/index.html
-                </a>
-              </p>
+                  <InputNumber
+                    size="large"
+                    className="border-0 border-b-[1.8px] border-primary-8 text-base font-bold text-primary-8"
+                  />
+                </Form.Item>
+              </div>
             </div>
-            <input hidden readOnly name="distribution" value="formula" />
-            <Form.Item
-              name={[field.name, 'formula']}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please provide a valid formula!',
-                  async validator(_, value) {
-                    if (synapses?.[index].distribution !== 'formula') {
-                      return Promise.resolve();
-                    }
-                    if (value) {
-                      const result = await validateFormula(value);
-                      if (!result) return Promise.reject();
-                      return Promise.resolve();
-                    }
-                    if (!value) return Promise.reject();
+          ) : (
+            <div className="w-full">
+              <div className="flex w-full flex-col">
+                <div
+                  className={classNames(
+                    'flex w-full items-center gap-2 pb-[8px]',
+                    displayFormulaHelp && 'justify-between'
+                  )}
+                >
+                  {label('Formula')}
+                  {displayFormulaHelp ? (
+                    <CloseOutlined className="text-gray-300" onClick={toggleFormulaHelp} />
+                  ) : (
+                    <InfoCircleFilled className="text-gray-300" onClick={toggleFormulaHelp} />
+                  )}
+                </div>
+                <p
+                  className={classNames(
+                    'font-light text-gray-400 transition-all',
+                    displayFormulaHelp ? 'mb-4 h-full opacity-100' : 'mb-0 h-0 opacity-0'
+                  )}
+                >
+                  More information on formulas here: <br />
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary-8"
+                    href="https://docs.sympy.org/latest/index.html"
+                  >
+                    https://docs.sympy.org/latest/index.html
+                  </a>
+                </p>
+              </div>
+              <input hidden readOnly name="distribution" value="formula" />
+              <Form.Item
+                name={[field.name, 'formula']}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please provide a valid formula!',
+                    async validator(_, value) {
+                      if (synapses?.[index].distribution !== 'formula') {
+                        return Promise.resolve();
+                      }
+                      if (value) {
+                        const result = await validateFormula(value);
+                        if (!result) return Promise.reject();
+                        return Promise.resolve();
+                      }
+                      if (!value) return Promise.reject();
+                    },
                   },
-                },
-              ]}
-              validateTrigger="onBlur"
-              className={classNames(
-                '[&_.ant-form-item-required]:w-full',
-                synapses?.[index].distribution !== 'formula' ? 'hidden' : ''
-              )}
-            >
-              <Input
-                placeholder="00.3*x*x + 0.004"
-                size="large"
+                ]}
+                validateTrigger="onBlur"
                 className={classNames(
-                  'text-base font-bold italic [&_.ant-input]:text-primary-8',
-                  '[&_.ant-input]:border [&_.ant-input]:border-r-0 [&_.ant-input]:border-neutral-2 [&_.ant-input]:py-4',
-                  '[&_.ant-input-group-addon]:border [&_.ant-input-group-addon]:border-neutral-2 [&_.ant-input-group-addon]:py-4',
-                  '[&_.ant-input-group-addon]: [&_.ant-input-group-addon]:border-l-0 [&_.ant-input-group-addon]:bg-white'
+                  '[&_.ant-form-item-required]:w-full',
+                  synapses?.[index].distribution !== 'formula' ? 'hidden' : ''
                 )}
-                addonAfter={
-                  <span className="w-max min-w-max not-italic text-gray-400">Synapses/µm</span>
-                }
-              />
-            </Form.Item>
-          </div>
+              >
+                <Input
+                  placeholder="00.3*x*x + 0.004"
+                  size="large"
+                  className={classNames(
+                    'text-base font-bold italic [&_.ant-input]:text-primary-8',
+                    '[&_.ant-input]:border [&_.ant-input]:border-r-0 [&_.ant-input]:border-neutral-2 [&_.ant-input]:py-4',
+                    '[&_.ant-input-group-addon]:border [&_.ant-input-group-addon]:border-neutral-2 [&_.ant-input-group-addon]:py-4',
+                    '[&_.ant-input-group-addon]: [&_.ant-input-group-addon]:border-l-0 [&_.ant-input-group-addon]:bg-white'
+                  )}
+                  addonAfter={
+                    <span className="w-max min-w-max not-italic text-gray-400">Synapses/µm</span>
+                  }
+                />
+              </Form.Item>
+            </div>
+          )}
         </div>
+
         <div
           className={classNames(
             'mt-5 border border-gray-300',
