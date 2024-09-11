@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSetAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
 import { Button, Form, Input } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
@@ -9,6 +10,12 @@ import { createSingleNeuronSimulationAtom } from '@/state/simulate/single-neuron
 
 import GenericButton from '@/components/Global/GenericButton';
 import useNotification from '@/hooks/notifications';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { to64 } from '@/util/common';
+import { CREATE_SYNAPTOME_SIMULATION_WARNING } from '@/components/build-section/virtual-lab/synaptome/molecules/constants';
+import { queryAtom } from '@/state/explore-section/list-view-atoms';
+import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 export type Props = {
   name: string;
@@ -29,9 +36,18 @@ export default function SaveSimulationModal({
   onClose,
 }: Props) {
   const form = Form.useFormInstance();
+  const { push: navigate } = useRouter();
+  const refreshSynaptomeSimulations = useSetAtom(
+    queryAtom({
+      dataType: DataType.SingleNeuronSynaptomeSimulation,
+      dataScope: ExploreDataScope.NoScope,
+      virtualLabInfo: { virtualLabId: vLabId, projectId },
+    })
+  );
+
   const [loading, setLoading] = useState(false);
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
-  const { error: errorNotify, success: successNotify } = useNotification();
+  const { error: errorNotify, success: successNotify, warning: warningNotify } = useNotification();
 
   const [{ name: formName, description: formDescription }, setBasicConfig] = useState<{
     name: string;
@@ -41,10 +57,16 @@ export default function SaveSimulationModal({
     description,
   }));
 
+  const generateSimulationDetailUrl = (simulationId: string) => {
+    const vlProjectUrl = generateVlProjectUrl(vLabId, projectId);
+    const baseBuildUrl = `${vlProjectUrl}/simulate/synaptome-simulation/view`;
+    return `${baseBuildUrl}/${to64(`${vLabId}/${projectId}!/!${simulationId}`)}`;
+  };
+
   const saveSimulation = async () => {
     try {
       setLoading(true);
-      await createSingleNeuronSimulation(
+      const savedSimulation = await createSingleNeuronSimulation(
         formName,
         formDescription,
         modelSelfUrl,
@@ -54,7 +76,10 @@ export default function SaveSimulationModal({
       );
       form.setFieldValue('name', formName);
       form.setFieldValue('description', formDescription);
+      warningNotify(CREATE_SYNAPTOME_SIMULATION_WARNING, 6, 'topRight', undefined);
       successNotify('Simulation results saved successfully.', undefined, 'topRight');
+      refreshSynaptomeSimulations();
+      navigate(generateSimulationDetailUrl(savedSimulation!['@id']));
     } catch (error) {
       errorNotify('Un error encountered when saving simulation', undefined, 'topRight');
     } finally {

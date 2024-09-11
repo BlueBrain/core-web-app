@@ -31,7 +31,9 @@ export default function SynapticInputs({ synapses }: Props) {
   return (
     <div className="flex flex-wrap">
       {synapses.map((synapse, index) => (
-        <div key={synapse.id} className="border border-neutral-200 p-4">
+        // Same synaptic group (id) can be used multiple times in simulation. Therefore, appending index to key to create unique values
+        // eslint-disable-next-line react/no-array-index-key
+        <div key={`${synapse.id}-${index}`} className="mr-2 border border-neutral-200 p-4">
           <div>
             <div className="mb-6 flex items-center border-b border-neutral-200">
               <span

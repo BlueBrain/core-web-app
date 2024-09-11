@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
-import { detailUrlBuilder, to64 } from '@/util/common';
+import { detailUrlBuilder } from '@/util/common';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
@@ -76,14 +76,15 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
     }
   };
 
-  const generateCloneUrl = () => {
-    const model = selectedRows[0];
-    if (model && selectedModelType) {
-      const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
-      const baseBuildUrl = `${vlProjectUrl}/${SupportedTypeToTabDetails[selectedModelType].newUrl}`;
-      return `${baseBuildUrl}?mode=clone&model=${to64(model._source['@id'])}`;
-    }
-  };
+  // Note: Disabled temporarily until SFN
+  // const generateCloneUrl = () => {
+  //   const model = selectedRows[0];
+  //   if (model && selectedModelType) {
+  //     const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+  //     const baseBuildUrl = `${vlProjectUrl}/${SupportedTypeToTabDetails[selectedModelType].newUrl}`;
+  //     return `${baseBuildUrl}?mode=clone&model=${to64(model._source['@id'])}`;
+  //   }
+  // };
 
   const tabDetails = selectedModelType && SupportedTypeToTabDetails[selectedModelType];
 
@@ -117,15 +118,15 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
     }
   };
 
-  const onCloneModel = () => {
-    switch (selectedSimulationScope) {
-      case SimulationType.Synaptome: {
-        return generateCloneUrl();
-      }
-      default:
-        return undefined;
-    }
-  };
+  // const onCloneModel = () => {
+  //   switch (selectedSimulationScope) {
+  //     case SimulationType.Synaptome: {
+  //       return generateCloneUrl();
+  //     }
+  //     default:
+  //       return undefined;
+  //   }
+  // };
 
   return (
     <div className="flex min-h-screen w-full flex-col gap-5 pr-5 pt-8">
@@ -168,11 +169,6 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
                   text="View model"
                   className="bg-primary-9  text-white hover:!bg-primary-7"
                   href={onViewModel()}
-                />
-                <GenericButton
-                  text="Clone model"
-                  className="bg-primary-9  text-white hover:!bg-primary-7"
-                  href={onCloneModel()}
                 />
                 <BookmarkButton
                   virtualLabId={params.virtualLabId}

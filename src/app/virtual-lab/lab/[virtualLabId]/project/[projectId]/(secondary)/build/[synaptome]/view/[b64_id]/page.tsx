@@ -4,7 +4,6 @@ import { Spin } from 'antd';
 import { useSetAtom } from 'jotai';
 import { Suspense, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import Link from 'next/link';
 
 import {
   MODEL_DATA_COMMON_FIELDS,
@@ -15,7 +14,6 @@ import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { classNames } from '@/util/utils';
-import { to64 } from '@/util/common';
 
 import Results from '@/components/build-section/virtual-lab/synaptome/view-model/Results';
 import SynapseGroupList from '@/components/build-section/virtual-lab/synaptome/view-model/ListSynapses';
@@ -24,7 +22,6 @@ import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 import Detail from '@/components/explore-section/Detail';
-import CloneIcon from '@/components/icons/Clone';
 
 type Params = {
   params: {
@@ -51,7 +48,6 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
   const info = useResourceInfoFromPath();
   const [activeTab, setActiveTab] = useState<TabKeys>('synaptome-configuration');
   const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-  const baseBuildUrl = `${vlProjectUrl}/build/synaptome/new`;
 
   const { model, configuration, loading } = useSynaptomeModel({
     modelId: info.id,
@@ -84,19 +80,6 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
             withRevision
             fields={SYNATOME_MODEL_FIELDS}
             commonFields={MODEL_DATA_COMMON_FIELDS}
-            extraHeaderAction={
-              <Link
-                className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
-                href={`${baseBuildUrl}?mode=clone&model=${to64(info.id)}`}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  Clone model
-                  <div className="h-auto w-12 border border-neutral-2 px-4 py-3">
-                    <CloneIcon />
-                  </div>
-                </div>
-              </Link>
-            }
           >
             {(data: SynaptomeModelResource) => {
               return (

@@ -7,7 +7,7 @@ import { classNames } from '@/util/utils';
 type Props = {
   experimentSetup: SimulationPayload;
 };
-type TabKeys = 'simulation-configuration' | 'recordings' | 'analysis';
+type TabKeys = 'simulation-configuration' | 'results';
 type Tab = { key: TabKeys; title: string };
 
 const TABS: Tab[] = [
@@ -16,12 +16,8 @@ const TABS: Tab[] = [
     title: 'Simulation configuration',
   },
   {
-    key: 'recordings',
-    title: 'Recordings',
-  },
-  {
-    key: 'analysis',
-    title: 'Analysis',
+    key: 'results',
+    title: 'Results',
   },
 ];
 export default function ExperimentSetup({ experimentSetup }: Props) {
@@ -54,8 +50,7 @@ export default function ExperimentSetup({ experimentSetup }: Props) {
         <SimulationConfigurationTab simulation={experimentSetup} />
       )}
 
-      {activeTab === 'recordings' && <RecordingTab recordings={experimentSetup.simulation} />}
-      {activeTab === 'analysis' && <div className="my-6">Coming Soon!</div>}
+      {activeTab === 'results' && <RecordingTab recordings={experimentSetup.simulation} />}
     </div>
   );
 }

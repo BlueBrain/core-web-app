@@ -10,7 +10,6 @@ import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import Detail from '@/components/explore-section/Detail';
 import MEModelDetails from '@/components/simulate/SynaptomeSimulationDetails/MEModelDetails';
 import ExperimentSetup from '@/components/simulate/SynaptomeSimulationDetails/ExperimentSetup';
-import CloneSimulationButton from '@/components/simulate/SynaptomeSimulationDetails/CloneSimulationButton';
 
 type Params = {
   params: {
@@ -41,20 +40,7 @@ export default function SynaptomeSimulationDetailPage({ params }: Params) {
   return (
     <div className="grid grid-cols-[min-content_auto] overflow-hidden bg-white text-primary-8">
       <Nav params={params} />
-      <Detail
-        fields={[]}
-        extraHeaderAction={
-          meModel &&
-          simulationConfig && (
-            <CloneSimulationButton
-              synaptomeModelId={simulationResource.used['@id']}
-              simulationConfig={simulationConfig}
-              virtualLabId={params.virtualLabId}
-              projectId={params.projectId}
-            />
-          )
-        }
-      >
+      <Detail fields={[]}>
         {() => (
           <div>
             {meModel ? <MEModelDetails meModel={meModel} /> : <Spin />}

@@ -1,9 +1,10 @@
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 
+import { atomWithReset } from 'jotai/utils';
 import { SimulationExperimentalSetup } from '@/types/simulation/single-neuron';
 import { DEFAULT_SIMULATION_EXPERIMENTAL_SETUP } from '@/constants/simulate/single-neuron';
 
-export const simulationExperimentalSetupAtom = atom<SimulationExperimentalSetup>(
+export const simulationExperimentalSetupAtom = atomWithReset<SimulationExperimentalSetup>(
   DEFAULT_SIMULATION_EXPERIMENTAL_SETUP
 );
 

@@ -97,7 +97,7 @@ export default function VirtualLabProjectSimulatePage({
           >
             <ExploreSectionListingView
               dataType={simulationType}
-              dataScope={ExploreDataScope.SelectedBrainRegion}
+              dataScope={ExploreDataScope.NoScope}
               virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
               selectionType="radio"
               renderButton={() => null}

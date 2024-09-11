@@ -1,9 +1,10 @@
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 
+import { atomWithReset } from 'jotai/utils';
 import { DEFAULT_RECORDING_LOCATION } from '@/constants/simulate/single-neuron';
 import { RecordLocation } from '@/types/simulation/single-neuron';
 
-export const recordingSourceForSimulationAtom = atom<Array<RecordLocation>>([
+export const recordingSourceForSimulationAtom = atomWithReset<Array<RecordLocation>>([
   { ...DEFAULT_RECORDING_LOCATION },
 ]);
 

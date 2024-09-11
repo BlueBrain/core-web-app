@@ -1,6 +1,7 @@
 'use client';
 
 import { atom } from 'jotai';
+import { RESET } from 'jotai/utils';
 
 import groupBy from 'lodash/groupBy';
 import uniqBy from 'lodash/uniqBy';
@@ -329,3 +330,11 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
     }
   }
 );
+
+export const resetSimulationAtom = atom(null, (get, set, resetValue: typeof RESET) => {
+  set(recordingSourceForSimulationAtom, resetValue);
+  set(currentInjectionSimulationConfigAtom, resetValue);
+  set(synaptomeSimulationConfigAtom, resetValue);
+  set(simulationExperimentalSetupAtom, resetValue);
+  set(simulateStepTrackerAtom, resetValue);
+});

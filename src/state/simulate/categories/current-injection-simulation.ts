@@ -1,5 +1,6 @@
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 
+import { atomWithReset } from 'jotai/utils';
 import updateArray from '@/util/updateArray';
 import {
   CurrentInjectionSimulationConfig,
@@ -11,9 +12,9 @@ import {
   PROTOCOL_DETAILS,
 } from '@/constants/simulate/single-neuron';
 
-export const currentInjectionSimulationConfigAtom = atom<Array<CurrentInjectionSimulationConfig>>([
-  DEFAULT_CURRENT_INJECTION_CONFIG,
-]);
+export const currentInjectionSimulationConfigAtom = atomWithReset<
+  Array<CurrentInjectionSimulationConfig>
+>([DEFAULT_CURRENT_INJECTION_CONFIG]);
 currentInjectionSimulationConfigAtom.debugLabel = 'directCurrentInjectionSimulationConfigAtom';
 
 export default function useCurrentInjectionSimulationConfig() {

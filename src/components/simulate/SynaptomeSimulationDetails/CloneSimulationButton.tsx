@@ -45,7 +45,7 @@ export default function CloneSimulationButton({
     const baseSimulateUrl = `${vlProjectUrl}/simulate/${DataTypeToNewSimulationPage[DataTypeToNexusType[DataType.SingleNeuronSynaptome]]}/new`;
 
     const projectLabel = `${virtualLabId}/${projectId}`;
-    router.push(`${baseSimulateUrl}/${to64(`${projectLabel}!/!${synaptomeModelId}`)}`);
+    router.push(`${baseSimulateUrl}/${to64(`${projectLabel}!/!${synaptomeModelId}`)}?mode=clone`);
   };
 
   return (

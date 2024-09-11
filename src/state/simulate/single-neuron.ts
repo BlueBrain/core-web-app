@@ -14,7 +14,7 @@ export const defaultSteps: Array<SimulationStep> = [
   { title: 'Results', status: 'wait' },
 ];
 
-export const simulateStepTrackerAtom = atom<SimulationStepsTraker>({
+export const simulateStepTrackerAtom = atomWithReset<SimulationStepsTraker>({
   steps: defaultSteps,
   current: { title: 'Experimental setup', status: undefined },
 });
