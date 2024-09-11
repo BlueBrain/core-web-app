@@ -73,7 +73,7 @@ export default function DetailHeaderName({
     <div className="flex flex-col text-primary-7">
       <div className="text font-thin">Name</div>
       <div className="flex justify-between">
-        <div className="flex max-w-[60%] items-center gap-5">
+        <div className="flex max-w-[75%] items-center gap-5">
           <div className="text-2xl font-bold">{detail?.name}</div>
           {withRevision && (
             <Dropdown

@@ -303,7 +303,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
     title: 'Mean ± std',
     unit: (
       <>
-        &#181;m<sup>-1</sup>
+        µm<sup>⁻1</sup>
       </>
     ),
     filter: FilterTypeEnum.ValueRange,

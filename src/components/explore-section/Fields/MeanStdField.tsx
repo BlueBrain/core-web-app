@@ -15,17 +15,22 @@ type MeanStdFieldProps = {
     | ExperimentalSynapsesPerConnection;
 };
 
+const muMinusOne = (
+  <span className="text-neutral-4">
+    µm<sup>⁻1</sup>
+  </span>
+);
+
 export default function MeanStdField({ detail }: MeanStdFieldProps) {
   const { mean, std } = useStats(detail);
   if (!mean) return null;
   return std ? (
     <>
-      {formatNumber(mean.value)} ± {formatNumber(std.value)}{' '}
-      <span className="text-neutral-4"> {mean.unitCode}</span>
+      {formatNumber(mean.value)} ± {formatNumber(std.value)} {muMinusOne}
     </>
   ) : (
     <>
-      {formatNumber(mean.value)} <span className="text-neutral-4"> {mean.unitCode}</span>
+      {formatNumber(mean.value)} {muMinusOne}
     </>
   );
 }
