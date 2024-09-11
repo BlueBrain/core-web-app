@@ -22,6 +22,7 @@ export const DEFAULT_SYNAPSE_VALUE: SingleSynaptomeConfig = {
   formula: undefined,
   seed: undefined,
   exclusion_rules: null,
+  soma_synapse_count: undefined,
 };
 
 export const sectionTargetMapping = {

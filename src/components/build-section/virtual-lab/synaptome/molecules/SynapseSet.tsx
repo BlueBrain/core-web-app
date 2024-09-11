@@ -54,7 +54,8 @@ const SynapseGroupValidationSchema = z
     target: z.string().nullish(),
     type: z.union([z.literal(110), z.literal(10)]),
     distribution: z.union([z.literal('linear'), z.literal('exponential'), z.literal('formula')]),
-    formula: z.string(),
+    formula: z.string().nullish(),
+    soma_synapse_count: z.number().nullish(),
     exclusion_rules: z
       .array(
         z.object({
@@ -76,11 +77,20 @@ const SynapseGroupValidationSchema = z
       }),
   })
   .superRefine((values, ctx) => {
-    if (values.distribution === 'formula' && !values.formula) {
+    if (values.distribution === 'formula' && values.target !== 'soma' && !values.formula) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Formula required when distribution is equal to formula',
         path: ['formula'],
+      });
+    }
+  })
+  .superRefine((values, ctx) => {
+    if (values.target === 'soma' && !values.soma_synapse_count) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Synapse count is required when target is soma',
+        path: ['soma_synapse_count'],
       });
     }
   });
@@ -161,6 +171,19 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             lte: undefined,
           },
         ],
+      });
+    }
+  };
+
+  const onTargetChange = (newTarget?: keyof typeof sectionTargetMapping) => {
+    if (newTarget === 'soma') {
+      form.setFieldValue(['synapses', index], { ...config, formula: undefined, target: newTarget });
+    }
+    if (config?.target === 'soma' && newTarget !== 'soma') {
+      form.setFieldValue(['synapses', index], {
+        ...config,
+        soma_synapse_count: undefined,
+        target: newTarget,
       });
     }
   };
@@ -321,6 +344,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
               className="[&_.ant-select-selection-item]:font-bold [&_.ant-select-selection-item]:text-primary-8"
               disabled={!targetOptions.length}
               options={targetOptions}
+              onChange={onTargetChange}
             />
           </Form.Item>
           <Form.Item
@@ -351,17 +375,20 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                   {label('Synapse Count')}
                 </div>
                 <Form.Item
-                  name={[field.name, 'synapse_count']}
+                  name={[field.name, 'soma_synapse_count']}
                   rules={[
                     {
                       required: true,
+                      message: 'Please provide a valid count for synapses on soma',
                     },
                   ]}
                   validateTrigger="onBlur"
                 >
                   <InputNumber
                     size="large"
-                    className="border-0 border-b-[1.8px] border-primary-8 text-base font-bold text-primary-8"
+                    className="w-full border-0 border-b-[1.8px] border-primary-8 text-base font-bold text-primary-8"
+                    min={0}
+                    max={1000}
                   />
                 </Form.Item>
               </div>
@@ -408,6 +435,9 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                     message: 'Please provide a valid formula!',
                     async validator(_, value) {
                       if (synapses?.[index].distribution !== 'formula') {
+                        return Promise.resolve();
+                      }
+                      if (synapses?.[index].target === 'soma') {
                         return Promise.resolve();
                       }
                       if (value) {

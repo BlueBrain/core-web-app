@@ -26,6 +26,7 @@ export type SingleSynaptomeConfig = {
   type: 110 | 10 | undefined;
   distribution: string | undefined;
   formula: string | undefined;
+  soma_synapse_count: number | undefined;
   seed: number | undefined;
   exclusion_rules: Array<ExclusionRule> | null;
 };

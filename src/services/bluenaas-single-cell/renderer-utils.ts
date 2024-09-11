@@ -66,9 +66,6 @@ export function createSegmentMesh(
   mesh.setRotationFromQuaternion(rotQuat);
   mesh.position.copy(v);
 
-  if (sec.name.includes('oma')) {
-    console.log('Mesh', mesh);
-  }
   return mesh;
 }
 
