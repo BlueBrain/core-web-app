@@ -38,6 +38,8 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { to64 } from '@/util/common';
 import { Entity } from '@/types/nexus';
+import { useSessionStorage } from '@/hooks/useSessionStorage';
+import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 
 const label = (text: string) => (
   <span className="text-base font-semibold text-primary-8">{text}</span>
@@ -56,6 +58,13 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
   const form = Form.useFormInstance<SynaptomeModelConfiguration>();
   const seed = Form.useWatch<number>('seed', form);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
+  const { removeSessionValue } = useSessionStorage<{
+    name: string;
+    description: string;
+    basePath: string;
+    record: ExploreESHit<ExploreResource>;
+    selectedRows: Array<ExploreESHit<ExploreResource>> | null;
+  } | null>(`me-model/${org}/${project}`, null);
 
   const setSimulationScope = useSetAtom(selectedSimulationScopeAtom);
   const refreshSynaptomeModels = useSetAtom(
@@ -203,7 +212,6 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
         );
       }
 
-      setLoading(false);
       form.resetFields();
       setSimulationScope(SimulationType.Synaptome);
       selectedRowsAtom.setShouldRemove(() => true); // set function to remove all
@@ -211,6 +219,8 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
       sendResetSynapses3DEvent();
       notifyWarning(CREATE_SYNAPTOME_WARNING, 6, 'topRight', undefined, newSynaptomeModel['@id']);
       notifySuccess(CREATE_SYNAPTOME_SUCCESS, undefined, 'topRight');
+      removeSessionValue();
+      setLoading(false);
 
       navigate(generateSynaptomeUrl(newSynaptomeModel));
     } catch (error) {

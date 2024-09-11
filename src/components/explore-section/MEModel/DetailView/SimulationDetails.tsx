@@ -192,7 +192,7 @@ function Params({ payload }: { payload: SimulationPayload | null }) {
       <div>
         <div className={subtitleStyle}>Holding current</div>
         <div>
-          <span className="font-bold">{payload.config.conditions.vinit}</span>
+          <span className="font-bold">{payload.config.conditions.hypamp}</span>
           <span>&nbsp;nA</span>
         </div>
       </div>

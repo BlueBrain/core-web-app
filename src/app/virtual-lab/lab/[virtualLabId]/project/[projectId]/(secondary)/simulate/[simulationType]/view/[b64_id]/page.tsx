@@ -2,9 +2,11 @@
 
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+
+import { useSynaptomeSimulation } from '@/hooks/useSynapseSimulation';
+
 import Nav from '@/components/build-section/virtual-lab/me-model/Nav';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
-import { useSynaptomeSimulation } from '@/hooks/useSynapseSimulation';
 import Detail from '@/components/explore-section/Detail';
 import MEModelDetails from '@/components/simulate/SynaptomeSimulationDetails/MEModelDetails';
 import ExperimentSetup from '@/components/simulate/SynaptomeSimulationDetails/ExperimentSetup';
@@ -14,6 +16,7 @@ type Params = {
   params: {
     projectId: string;
     virtualLabId: string;
+    simulationType: string;
   };
 };
 
@@ -34,6 +37,7 @@ export default function SynaptomeSimulationDetailPage({ params }: Params) {
       </div>
     );
   }
+
   return (
     <div className="grid grid-cols-[min-content_auto] overflow-hidden bg-white text-primary-8">
       <Nav params={params} />

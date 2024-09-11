@@ -4,13 +4,17 @@ import { useState } from 'react';
 import { Form } from 'antd';
 import { z } from 'zod';
 import { WarningOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
 
 import { SynaptomeModelConfigSteps } from '../molecules/types';
 import { DataType } from '@/constants/explore-section/list-views';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { classNames } from '@/util/utils';
 import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
+import { useSessionStorage } from '@/hooks/useSessionStorage';
+import { to64 } from '@/util/common';
 
+import useRowSelection from '@/components/explore-section/ExploreSectionListingView/useRowSelection';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 
 type Props = {
@@ -39,9 +43,19 @@ export default function MeModelsListing({
   configStep,
   onConfigStep,
 }: Props) {
+  const form = Form.useFormInstance();
+  const { push: navigate } = useRouter();
   const { setFieldValue, validateFields, getFieldValue } = Form.useFormInstance();
-  const [selectedRows, setSelectedRows] = useState<ExploreESHit<ExploreResource>[]>([]);
+  const { selectedRows } = useRowSelection({ dataType: DataType.CircuitMEModel });
   const [modelNotSelectedError, setModelNotSelectedError] = useState(false);
+
+  const { setSessionValue } = useSessionStorage<{
+    name: string;
+    description: string;
+    basePath: string;
+    record: ExploreESHit<ExploreResource>;
+    selectedRows: Array<ExploreESHit<ExploreResource>> | null;
+  } | null>(`me-model/${virtualLabId}/${projectId}`, null);
 
   const proceed = async () => {
     setModelNotSelectedError(false);
@@ -53,6 +67,18 @@ export default function MeModelsListing({
     } else {
       setModelNotSelectedError(true);
     }
+  };
+
+  const onNavigateToMeModel = (basePath: string, record: ExploreESHit<ExploreResource>): void => {
+    setSessionValue({
+      name: form.getFieldValue('name'),
+      description: form.getFieldValue('description'),
+      basePath,
+      record,
+      selectedRows,
+    });
+    const url = `/virtual-lab/lab/${virtualLabId}/project/${projectId}/explore/interactive/model/me-model/${to64(`${record._source.project.label}!/!${record._id}`)}`;
+    navigate(url);
   };
 
   return (
@@ -82,10 +108,10 @@ export default function MeModelsListing({
           dataScope={ExploreDataScope.SelectedBrainRegion}
           virtualLabInfo={{ virtualLabId, projectId }}
           selectionType="radio"
-          onRowsSelected={(rows) => {
+          onRowsSelected={() => {
             setModelNotSelectedError(false);
-            setSelectedRows(rows);
           }}
+          onCellClick={onNavigateToMeModel}
         />
       </div>
       <button

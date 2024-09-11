@@ -21,14 +21,17 @@ import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 
 type TabDetails = {
   title: string;
+  urlParam: string;
 };
 
 const SupportedTypeToTabDetails: Record<string, TabDetails> = {
   [DataType.SingleNeuronSimulation]: {
     title: 'Single Neuron Simulation',
+    urlParam: 'single-neuron',
   },
   [DataType.SingleNeuronSynaptomeSimulation]: {
     title: 'Single Neuron Synaptome Simulation',
+    urlParam: 'synaptome-simulation',
   },
 };
 
@@ -52,19 +55,22 @@ export default function VirtualLabProjectSimulatePage({
     selectedRowsAtom({ dataType: simulationType ?? DataType.CircuitMEModel })
   );
 
-  const generateSynaptomeDetailUrl = (selectedRow: ExploreESHit<ExploreResource>) => {
+  const generateDetailUrl = (selectedRow: ExploreESHit<ExploreResource>, type: DataType) => {
     const { virtualLabId, projectId } = params;
     const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-    const baseBuildUrl = `${vlProjectUrl}/simulate/synaptome-simulation/view`;
+    const baseBuildUrl = `${vlProjectUrl}/simulate/${SupportedTypeToTabDetails[type].urlParam}/view`;
     return `${baseBuildUrl}/${to64(`${virtualLabId}/${projectId}!/!${selectedRow._id}`)}`;
   };
 
   const onViewRow = (selectedRow: ExploreESHit<ExploreResource>) => {
-    // TODO: Handle single neuron simulation resource also
-    if (simulationType !== DataType.SingleNeuronSynaptomeSimulation) {
-      return;
+    switch (simulationType) {
+      case DataType.SingleNeuronSynaptomeSimulation:
+        return navigate(generateDetailUrl(selectedRow, DataType.SingleNeuronSynaptomeSimulation));
+      // case DataType.SingleNeuronSimulation:
+      //   return navigate(generateDetailUrl(selectedRow, DataType.SingleNeuronSynaptomeSimulation));
+      default:
+        break;
     }
-    navigate(generateSynaptomeDetailUrl(selectedRow));
   };
 
   return (

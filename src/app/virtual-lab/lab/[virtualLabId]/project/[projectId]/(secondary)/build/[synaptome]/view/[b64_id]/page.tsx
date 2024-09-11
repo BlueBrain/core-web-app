@@ -48,8 +48,8 @@ const TABS: Tab[] = [
 ];
 
 export default function SynaptomeModelDetailPage({ params: { virtualLabId, projectId } }: Params) {
-  const [activeTab, setActiveTab] = useState<TabKeys>('synaptome-configuration');
   const info = useResourceInfoFromPath();
+  const [activeTab, setActiveTab] = useState<TabKeys>('synaptome-configuration');
   const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
   const baseBuildUrl = `${vlProjectUrl}/build/synaptome/new`;
 

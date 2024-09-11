@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { ConfigProvider, Form, Spin } from 'antd';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useSetAtom } from 'jotai';
 
 import { Content, Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
@@ -18,6 +19,10 @@ import {
 import { DEFAULT_SYNAPSE_VALUE } from '@/components/build-section/virtual-lab/synaptome/molecules/constants';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { from64 } from '@/util/common';
+import { useSessionStorage } from '@/hooks/useSessionStorage';
+import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
+import { DataType } from '@/constants/explore-section/list-views';
+
 import useSynaptomeModel from '@/components/simulate/single-neuron/hooks/useSynaptomeModel';
 import SideMenu from '@/components/SideMenu';
 
@@ -30,9 +35,17 @@ type Props = {
 
 function Synaptome({ params: { virtualLabId, projectId } }: Props) {
   const [form] = Form.useForm();
-  const [configStep, setConfigStep] = useState<SynaptomeModelConfigSteps>('basic-config');
-  const queryParams = useSearchParams();
+  const { sessionValue } = useSessionStorage<{
+    name: string;
+    description: string;
+    basePath: string;
+    record: ExploreESHit<ExploreResource>;
+    selectedRows: Array<ExploreESHit<ExploreResource>> | null;
+  } | null>(`me-model/${virtualLabId}/${projectId}`, null);
 
+  const [configStep, setConfigStep] = useState<SynaptomeModelConfigSteps>('basic-config');
+  const setSelectedRows = useSetAtom(selectedRowsAtom({ dataType: DataType.CircuitMEModel }));
+  const queryParams = useSearchParams();
   const onConfigStep = (value: SynaptomeModelConfigSteps) => setConfigStep(value);
 
   const labUrl = generateLabUrl(virtualLabId);
@@ -58,11 +71,16 @@ function Synaptome({ params: { virtualLabId, projectId } }: Props) {
   });
 
   useEffect(() => {
-    return () => {
-      selectedRowsAtom.setShouldRemove(() => true);
-      selectedRowsAtom.setShouldRemove(null);
-    };
-  }, []);
+    if (sessionValue) {
+      form.setFieldValue('name', sessionValue.name);
+      form.setFieldValue('description', sessionValue.description);
+      if (sessionValue.selectedRows && sessionValue.selectedRows.length) {
+        setSelectedRows(sessionValue.selectedRows);
+        form.setFieldValue('modelUrl', sessionValue.selectedRows.at(0)?._id);
+      }
+      setConfigStep('me-model-config');
+    }
+  }, [sessionValue, form, setSelectedRows]);
 
   if (queryParams.get('mode') === 'clone' && (!model || !configuration)) {
     return (
