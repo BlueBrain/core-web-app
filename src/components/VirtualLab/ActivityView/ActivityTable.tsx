@@ -123,21 +123,30 @@ export default function ActivityTable() {
   return (
     <ConfigProvider
       theme={{
+        hashed: false,
         components: {
           Table: {
-            headerBg: '#002766',
             headerColor: '#69C0FF',
-            headerSplitColor: '#002766',
+            headerSplitColor: 'transparent',
             bodySortBg: 'rgb(226, 25, 25)',
             colorBgContainer: '#002766',
             colorText: '#FFFFFF',
-            borderColor: '#8C8C8C',
+            borderColor: '#1890FF',
             cellPaddingInline: 0,
           },
         },
       }}
     >
-      <Table dataSource={dataSource} columns={columns} pagination={false} loading={loading} />
+      <Table
+        className={classNames(
+          '[&_.ant-table-tbody>tr:last-child>td]:border-b-0',
+          '[&_.ant-table-thead>tr>th]:border-b-0'
+        )}
+        dataSource={dataSource}
+        columns={columns}
+        pagination={false}
+        loading={loading}
+      />
     </ConfigProvider>
   );
 }

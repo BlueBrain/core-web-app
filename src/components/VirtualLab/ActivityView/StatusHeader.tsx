@@ -7,7 +7,7 @@ const headerData = [
 
 export default function StatusHeader() {
   return (
-    <div className="flex gap-7">
+    <div className="relative bottom-20 flex gap-7">
       {headerData.map(({ name, count }) => (
         <div className="flex gap-2" key={name}>
           <span className="text-primary-3">{name}</span>
