@@ -1,4 +1,5 @@
 import type { EModelMenuItem, MEModelMenuItem } from './e-model';
+import { Annotation } from './explore-section/delta-properties';
 import { ESeModel } from './explore-section/es';
 import { BrainLocation, Entity, ResourceMetadata } from '@/types/nexus';
 
@@ -80,6 +81,7 @@ export interface MEModel extends Entity {
   validated: boolean;
   status: 'initalized' | 'processing' | 'done' | 'running' | 'error';
   brainLocation?: BrainLocation; // it will be added later when the me-model analysis is run
+  annotation?: Annotation[];
   eModel?: string;
   eType?: string;
   mType?: string;

@@ -100,16 +100,7 @@ export interface EModelResource extends ResourceMetadata, EModel {}
 
 interface EModelCommonProps extends Entity {
   '@context': 'https://bbp.neuroshapes.org';
-  annotation: [
-    {
-      '@type': ['ETypeAnnotation', 'Annotation'];
-      hasBody: {
-        '@type': ['EType', 'AnnotationBody'];
-        label: string;
-      };
-      name: string;
-    },
-  ];
+  annotation: Annotation[];
   contribution: ContributionEntity;
   distribution: Distribution | Distribution[];
   eModel: string;

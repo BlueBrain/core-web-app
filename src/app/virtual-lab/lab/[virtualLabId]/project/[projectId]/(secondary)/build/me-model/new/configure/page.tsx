@@ -17,6 +17,7 @@ import { useLoadable } from '@/hooks/hooks';
 import { detailUrlWithinLab } from '@/util/common';
 import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
+import { DisplayMessages } from '@/constants/display-messages';
 
 type Params = {
   params: {
@@ -27,6 +28,8 @@ type Params = {
 
 function NewMEModelHeader({ projectId, virtualLabId }: Params['params']) {
   const contributors = useAtomValue(virtualLabProjectUsersAtomFamily({ projectId, virtualLabId }));
+  const selectedMModel = useAtomValue(selectedMModelAtom);
+  const selectedEModel = useAtomValue(selectedEModelAtom);
 
   const meModelDetails = useLoadable<{
     name: string;
@@ -44,7 +47,7 @@ function NewMEModelHeader({ projectId, virtualLabId }: Params['params']) {
       value: <span className="text-2xl font-bold">{meModelDetails.name}</span>,
     },
     {
-      className: 'col-span-3',
+      className: 'col-span-3 row-span-3',
       title: 'description',
       value: meModelDetails.description,
     },
@@ -59,6 +62,18 @@ function NewMEModelHeader({ projectId, virtualLabId }: Params['params']) {
     {
       title: 'registration date',
       value: new Intl.DateTimeFormat('fr-CH').format(new Date()),
+    },
+    {
+      title: 'm-model',
+      value:
+        selectedMModel?.annotation?.find(({ '@type': type }) => type.includes('MTypeAnnotation'))
+          ?.hasBody.label || DisplayMessages.NO_DATA_STRING,
+    },
+    {
+      title: 'e-model',
+      value:
+        selectedEModel?.annotation?.find(({ '@type': type }) => type.includes('ETypeAnnotation'))
+          ?.hasBody.label || DisplayMessages.NO_DATA_STRING,
     },
   ];
 

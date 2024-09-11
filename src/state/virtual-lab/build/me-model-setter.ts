@@ -50,6 +50,15 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
       };
     }
 
+    // find annotations
+    const mModelAnnotation = selectedMModel.annotation?.find((annotation) =>
+      annotation['@type'].includes('MTypeAnnotation')
+    );
+    const eModelAnnotation = selectedEModel.annotation?.find((annotation) =>
+      annotation['@type'].includes('ETypeAnnotation')
+    );
+    // add only non-undefined values
+    const annotationList = [mModelAnnotation, eModelAnnotation].filter((ann) => ann !== undefined);
     const entity: EntityCreation<MEModel> = {
       '@type': ['Entity', 'MEModel'],
       '@context': 'https://bbp.neuroshapes.org',
@@ -68,6 +77,7 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
           name: selectedMModel.name,
         },
       ],
+      annotation: annotationList,
       brainLocation,
       // 'image' will be added after me-model validation
       validated: false,
