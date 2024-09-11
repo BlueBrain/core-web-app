@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import { InputNumber } from 'antd';
-
+import { useAtomValue } from 'jotai';
 import isEqual from 'lodash/isEqual';
 import dynamic from 'next/dynamic';
 
@@ -12,6 +12,7 @@ import {
   MAX_AMPERAGE_STEPS,
   PROTOCOL_DETAILS,
 } from '@/constants/simulate/single-neuron';
+import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
 
 const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPreviewPlot'), {
   ssr: false,
@@ -99,6 +100,8 @@ export default function AmperageRange({
   modelSelfUrl,
   protocol,
 }: Props) {
+  const { current: currentSimulationStep } = useAtomValue(simulateStepTrackerAtom);
+
   const [amperageState, dispatch] = useReducer(rangeReducer, {
     ...getInitialAmperageState(DEFAULT_PROTOCOL),
   });
@@ -176,7 +179,7 @@ export default function AmperageRange({
         </div>
       </div>
 
-      {!amperageState.error && (
+      {!amperageState.error && currentSimulationStep.title === 'Stimulation protocol' && (
         <StimuliPreviewPlot
           amplitudes={amperageState.computed}
           protocol={amperageState.protocol}
