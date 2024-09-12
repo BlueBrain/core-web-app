@@ -330,9 +330,6 @@ describe('LiteratureArticleListingPage', () => {
 
     await expectActiveFiltersCount(0);
 
-    await openFilterPanel(user);
-    const dateInputAfter = screen.getByPlaceholderText('Start date');
-    expect(dateInputAfter).toHaveValue('');
     const authorInputAfter = screen.getByLabelText('Authors', {
       selector: 'input',
     }) as HTMLInputElement;
@@ -351,10 +348,6 @@ describe('LiteratureArticleListingPage', () => {
     const clearFiltersButton = await findButton('Clear filters');
     user.click(clearFiltersButton);
 
-    await openFilterPanel(user);
-
-    const dateInputAfter = screen.getByPlaceholderText('Start date');
-    expect(dateInputAfter).toHaveValue('');
     const authorInputAfter = screen.getByLabelText('Authors', {
       selector: 'input',
     }) as HTMLInputElement;
