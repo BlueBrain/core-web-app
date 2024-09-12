@@ -188,7 +188,7 @@ async function launchAnalysis(
 
   await launchWorkflowTask({
     loginInfo: session,
-    workflowName: 'bbp_workflow.sbo.analysis.task.MultiAnalyseSimCampaignMeta/',
+    workflowName: 'bbp_workflow.sbo.analysis.sim.task.MultiAnalyseSimCampaignMeta/',
     workflowFiles: [
       {
         NAME: 'config.cfg',
