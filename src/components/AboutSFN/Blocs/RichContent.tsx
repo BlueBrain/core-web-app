@@ -1,5 +1,6 @@
-import slugify from '@/util/slugify';
 import Image from 'next/image';
+
+import slugify from '@/util/slugify';
 
 export default function RichContent({
   title,
@@ -20,8 +21,8 @@ export default function RichContent({
       </header>
       <div className="flex flex-row gap-x-10 font-sans text-xl font-light leading-normal">
         <div className="relative top-4 h-px w-56 bg-white" />
-        {paragraphs.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
+        {paragraphs.map((paragraph: string) => (
+          <p key={`paragraph_${paragraph.slice(0, 10)}`}>{paragraph}</p>
         ))}
       </div>
       <div className="w-full">

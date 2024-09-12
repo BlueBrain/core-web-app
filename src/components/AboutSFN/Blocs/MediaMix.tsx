@@ -1,6 +1,7 @@
+import Image from 'next/image';
+
 import slugify from '@/util/slugify';
 import { classNames } from '@/util/utils';
-import Image from 'next/image';
 
 export default function MediaMix({
   layout,

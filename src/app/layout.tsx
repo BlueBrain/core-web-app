@@ -1,9 +1,9 @@
 import { Gabarito, Titillium_Web } from 'next/font/google';
 import { ReactNode, Suspense } from 'react';
+import Providers from './providers';
 
 import { auth } from '@/auth';
 import '@/styles/globals.scss';
-import Providers from './providers';
 
 const titilliumWeb = Titillium_Web({
   weight: ['300', '400', '600', '700'],

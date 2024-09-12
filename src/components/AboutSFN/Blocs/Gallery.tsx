@@ -1,8 +1,8 @@
 'use client';
+import SingleGalleryItem from './SingleGalleryItem';
 
 import slugify from '@/util/slugify';
 import { useState } from 'react';
-import SingleGalleryItem from './SingleGalleryItem';
 
 export type GalleryContentProps = {
   title: string;
@@ -41,11 +41,11 @@ export default function Gallery({
           <button
             type="button"
             onClick={() => handleItemSelection(index)}
-            key={index}
+            key={`item-${item.title}`}
             className="flex h-12 flex-col bg-primary-9 font-sans font-light"
           >
             <div className="text-primary-4">{index + 1}</div>
-            <label className="text-lg font-semibold text-white">{item.title}</label>
+            <h5 className="text-lg font-semibold text-white">{item.title}</h5>
           </button>
         ))}
       </div>

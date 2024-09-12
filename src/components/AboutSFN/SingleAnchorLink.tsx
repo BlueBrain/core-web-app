@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
+
 import { classNames } from '@/util/utils';
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function SingleAnchorLink({
   href,
@@ -30,14 +31,14 @@ export default function SingleAnchorLink({
           isMouseHover ? 'bg-white' : 'bg-primary-5'
         )}
       />
-      <label
+      <h6
         className={classNames(
           'font-sans text-base font-normal transition-opacity duration-300 ease-linear',
           isMouseHover ? 'opacity-100' : 'opacity-0'
         )}
       >
         {label}
-      </label>
+      </h6>
     </Link>
   );
 }

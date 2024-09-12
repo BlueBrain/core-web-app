@@ -1,10 +1,3 @@
-import {
-  complementing,
-  featuresBlock,
-  inShortList,
-  originBlock,
-  simulationNeuroscienceBlock,
-} from '@/constants/about/about-content';
 import Footer from './Blocs/Footer';
 import Gallery from './Blocs/Gallery';
 import Introduction from './Blocs/Introduction';
@@ -12,6 +5,14 @@ import List from './Blocs/List';
 import MediaMix from './Blocs/MediaMix';
 import RichContent from './Blocs/RichContent';
 import InternalNavigation from './InternalNavigation';
+
+import {
+  complementing,
+  featuresBlock,
+  inShortList,
+  originBlock,
+  simulationNeuroscienceBlock,
+} from '@/constants/about/about-content';
 
 export default function AboutSFN() {
   return (
