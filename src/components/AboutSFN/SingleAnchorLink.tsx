@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 
-import { classNames } from '@/util/utils';
 import Link from 'next/link';
+
+import { classNames } from '@/util/utils';
 
 export default function SingleAnchorLink({
   href,

@@ -1,8 +1,10 @@
 'use client';
+
+import { useState } from 'react';
+
 import SingleGalleryItem from './SingleGalleryItem';
 
 import slugify from '@/util/slugify';
-import { useState } from 'react';
 
 export type GalleryContentProps = {
   title: string;
