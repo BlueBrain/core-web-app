@@ -43,7 +43,7 @@ export default function LoginButton({
         </div>
         <div
           className={classNames(
-            'transition-width absolute left-0 z-0 h-full bg-white duration-300 ease-in-out',
+            'absolute left-0 z-0 h-full bg-white transition-width duration-300 ease-in-out',
             isMouseHover ? 'w-full' : 'w-0'
           )}
         />
@@ -61,7 +61,7 @@ export default function LoginButton({
       </div>
       <div
         className={classNames(
-          'transition-width absolute left-0 z-0 h-full bg-white duration-300 ease-in-out',
+          'absolute left-0 z-0 h-full bg-white transition-width duration-300 ease-in-out',
           isMouseHover ? 'w-full' : 'w-0'
         )}
       />
