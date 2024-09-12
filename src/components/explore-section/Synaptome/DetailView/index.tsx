@@ -74,7 +74,6 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
       <Suspense fallback={<CentralLoadingSpinner />}>
         <Detail
           showViewMode
-          withRevision
           fields={SYNATOME_MODEL_FIELDS}
           commonFields={MODEL_DATA_COMMON_FIELDS}
           // extraHeaderAction={
