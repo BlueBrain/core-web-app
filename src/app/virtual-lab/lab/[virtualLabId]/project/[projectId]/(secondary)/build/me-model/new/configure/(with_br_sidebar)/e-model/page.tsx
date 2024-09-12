@@ -5,11 +5,14 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
+import { OnCellClick } from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import { DataType } from '@/constants/explore-section/list-views';
 import { selectedEModelIdAtom, meModelSectionAtom } from '@/state/virtual-lab/build/me-model';
 import { Btn } from '@/components/Btn';
 import { ESeModel, ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 import { ExploreDataScope } from '@/types/explore-section/application';
+import { detailUrlBuilder } from '@/util/common';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 type Params = {
   params: {
@@ -37,12 +40,20 @@ export default function ElectrophysiologyPage({ params }: Params) {
     router.push('../configure');
   };
 
+  const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+  const baseExploreUrl = `${vlProjectUrl}/explore/interactive/experimental/electrophysiology`;
+
+  const onCellClick: OnCellClick = (_basePath, record) => {
+    router.push(detailUrlBuilder(baseExploreUrl, record));
+  };
+
   return (
     <>
       <div className="h-full px-10" id="explore-table-container-for-observable">
         <ExploreSectionListingView
           dataType={DataType.CircuitEModel}
           dataScope={ExploreDataScope.SelectedBrainRegion}
+          onCellClick={onCellClick}
           selectionType="radio"
           virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}
           renderButton={({ selectedRows }) => (

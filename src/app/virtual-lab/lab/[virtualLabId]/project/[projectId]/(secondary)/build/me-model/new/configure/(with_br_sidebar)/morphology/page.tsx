@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
+import { OnCellClick } from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import { DataType } from '@/constants/explore-section/list-views';
 import { selectedMModelIdAtom, morphologyTypeAtom } from '@/state/virtual-lab/build/me-model';
 import { Btn } from '@/components/Btn';
@@ -13,8 +14,17 @@ import { ExploreESHit } from '@/types/explore-section/es';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
+import { detailUrlBuilder } from '@/util/common';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
-export default function ReconstrucedMorphologyPage() {
+type Params = {
+  params: {
+    projectId: string;
+    virtualLabId: string;
+  };
+};
+
+export default function ReconstrucedMorphologyPage({ params }: Params) {
   const setMorphologyType = useSetAtom(morphologyTypeAtom);
   const [meModelDetails, setMEModelDetails] = useAtom(meModelDetailsAtom);
 
@@ -56,11 +66,19 @@ export default function ReconstrucedMorphologyPage() {
     [setSelectedMModelId, router, meModelDetails, setMEModelDetails]
   );
 
+  const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+  const baseExploreUrl = `${vlProjectUrl}/explore/interactive/experimental/morphology`;
+
+  const onCellClick: OnCellClick = (_basePath, record) => {
+    router.push(detailUrlBuilder(baseExploreUrl, record));
+  };
+
   return (
     <div className="h-full" id="explore-table-container-for-observable">
       <ExploreSectionListingView
         dataType={DataType.ExperimentalNeuronMorphology}
         dataScope={ExploreDataScope.SelectedBrainRegion}
+        onCellClick={onCellClick}
         selectionType="radio"
         renderButton={({ selectedRows }) => (
           <Btn
