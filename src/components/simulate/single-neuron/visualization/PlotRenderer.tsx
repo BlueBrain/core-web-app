@@ -199,7 +199,7 @@ export default function PlotRenderer({
               style={{ opacity: isLoading ? 0.5 : 1 }}
             />
             {isLoading && (
-              <div className="absolute top-0 flex h-full w-full items-center justify-center text-sm text-gray-500">
+              <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center text-sm text-gray-500">
                 <Spin size="large" />
               </div>
             )}
