@@ -65,7 +65,7 @@ export default function CreateBaseSimulationConfig({ configStep, onConfigStep }:
           </Form.Item>
           <div className="grid grid-cols-2 items-start justify-between gap-2">
             <div className="flex flex-col items-start gap-1">
-              {label('contributors', 'secondary')}
+              {label('created by', 'secondary')}
               <div className="flex items-center justify-center gap-2 text-primary-8">
                 <UserOutlined className="h-3 w-3" />
                 {session?.user.name}

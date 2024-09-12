@@ -19,9 +19,9 @@ import {
 import { DEFAULT_SYNAPSE_VALUE } from '@/components/build-section/virtual-lab/synaptome/molecules/constants';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { from64 } from '@/util/common';
-import { useSessionStorage } from '@/hooks/useSessionStorage';
 import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 import { DataType } from '@/constants/explore-section/list-views';
+import { useSessionStorage } from '@/hooks/useSessionStorage';
 
 import useSynaptomeModel from '@/components/simulate/single-neuron/hooks/useSynaptomeModel';
 import SideMenu from '@/components/SideMenu';

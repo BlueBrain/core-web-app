@@ -107,7 +107,9 @@ export default function SimulationPlotAsImage({
     return (
       <div className="relative flex h-96 w-full items-center justify-center">
         <Image
-          fill
+          fill={!size}
+          width={size ? size.w : undefined}
+          height={size ? size.h : undefined}
           objectFit="contains"
           alt="plot"
           className="border border-neutral-2"

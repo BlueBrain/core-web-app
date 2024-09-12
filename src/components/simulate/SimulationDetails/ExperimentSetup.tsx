@@ -1,13 +1,15 @@
 import { useState } from 'react';
+
 import SimulationConfigurationTab from './SimultationConfigurationTab';
-import RecordingTab from './RecordingTab';
+import AnalysisTab from './AnalysisTab';
+import ResultsTab from './RecordingTab';
+
 import { SimulationPayload } from '@/types/simulation/single-neuron';
 import { classNames } from '@/util/utils';
+import { NexusMEModel } from '@/types/me-model';
 
-type Props = {
-  experimentSetup: SimulationPayload;
-};
-type TabKeys = 'simulation-configuration' | 'results';
+type TabKeys = 'simulation-configuration' | 'results' | 'analysis';
+
 type Tab = { key: TabKeys; title: string };
 
 const TABS: Tab[] = [
@@ -19,12 +21,23 @@ const TABS: Tab[] = [
     key: 'results',
     title: 'Results',
   },
+  {
+    key: 'analysis',
+    title: 'Analysis',
+  },
 ];
-export default function ExperimentSetup({ experimentSetup }: Props) {
+
+type Props = {
+  experimentSetup: SimulationPayload;
+  type: 'single-neuron-simulation' | 'synaptome-simulation';
+  meModel: NexusMEModel | null;
+};
+
+export default function ExperimentSetupTab({ experimentSetup, type, meModel }: Props) {
   const [activeTab, setActiveTab] = useState<TabKeys>('simulation-configuration');
   return (
     <div>
-      <h1 className="mb-2 mt-6 text-3xl font-bold text-primary-8">Experiment Setup</h1>
+      <h1 className="mb-3 mt-6 text-3xl font-bold text-primary-8">Experiment Setup</h1>
       <ul className="flex w-full items-center justify-center">
         {TABS.map(({ key, title }) => (
           <li
@@ -50,7 +63,10 @@ export default function ExperimentSetup({ experimentSetup }: Props) {
         <SimulationConfigurationTab simulation={experimentSetup} />
       )}
 
-      {activeTab === 'results' && <RecordingTab recordings={experimentSetup.simulation} />}
+      {activeTab === 'results' && <ResultsTab recordings={experimentSetup.simulation} />}
+      {activeTab === 'analysis' && type === 'single-neuron-simulation' && (
+        <AnalysisTab meModel={meModel} />
+      )}
     </div>
   );
 }

@@ -87,7 +87,7 @@ export default function SimulationDetail<T extends GenericSimulation>({
         </div>
         <div className="flex w-full flex-col gap-2">
           <div className="text-lg font-bold text-primary-8">Recording locations</div>
-          <div className="mt-2 grid grid-flow-col gap-2">
+          <div className="mt-2 flex items-center gap-4">
             {distributionJson?.config.recordFrom.map((r, ind) => (
               <div key={`${r.section}_${r.offset}`} className="flex flex-col gap-1">
                 <div className="uppercase text-gray-400">Recording {ind + 1}</div>

@@ -91,13 +91,17 @@ export default function StimuliPreviewPlot({ modelSelfUrl, amplitudes, protocol 
 
   return (
     <PlotRenderer
+      isDownloadable
+      withTitle={false}
+      title={null}
       type="stimulus"
       name={`${protocol}_plots`}
-      className="min-h-[320px]"
+      className="min-h-[320px] w-full"
       isLoading={loading}
       data={stimuliPreviewPlotData ?? []}
       plotConfig={{
         yAxisTitle: 'Current [nA]',
+        showDefaultLegends: false,
       }}
     />
   );

@@ -1,5 +1,7 @@
 import { StepsProps } from 'antd/lib/steps';
 
+import { DataType } from '@/constants/explore-section/list-views';
+
 export type SimulationType = 'single-neuron-simulation' | 'synaptome-simulation';
 
 export type SimulationStepTitle =
@@ -17,4 +19,20 @@ export type SimulationStep = {
 export type SimulationStepsTraker = {
   steps: Array<SimulationStep>;
   current: SimulationStep;
+};
+
+type TabDetails = {
+  title: string;
+  urlParam: string;
+};
+
+export const SupportedTypeToTabDetails: Record<string, TabDetails> = {
+  [DataType.SingleNeuronSimulation]: {
+    title: 'Single Neuron Simulation',
+    urlParam: 'single-neuron-simulation',
+  },
+  [DataType.SingleNeuronSynaptomeSimulation]: {
+    title: 'Single Neuron Synaptome Simulation',
+    urlParam: 'synaptome-simulation',
+  },
 };

@@ -33,7 +33,6 @@ export const EXPLORE_NAVIGATION_LIST: Array<NavigationItemProps> = [
 
 export function DetailsPageSideBackLink() {
   const pathName = usePathname();
-
   const backToListPath = useAtomValue(backToListPathAtom); // this uses the previous path atom for the back to list
   const activePrevPath = backToListPath || pathName?.substring(0, pathName.lastIndexOf('/')); // this condition checks if the back to list path atom is set, if not use default
 

@@ -77,7 +77,7 @@ export function PDFViewerContainer({ distributions }: Props) {
         }}
       >
         <div className="flex items-center justify-between pl-2">
-          <div className="flex space-x-10">
+          <div className="my-4 flex space-x-10">
             {Object.values(AnalysisType).map((option) => (
               <button
                 type="button"

@@ -10,6 +10,9 @@ const EModelDetailView = dynamic(
 const MEModelDetailView = dynamic(
   () => import('@/components/explore-section/MEModel/DetailView/View')
 );
+const SynaptomeDetailView = dynamic(
+  () => import('@/components/explore-section/Synaptome/DetailView')
+);
 
 type Params = {
   params: {
@@ -27,6 +30,8 @@ export default function DetailPage({ params }: Params) {
       return <EModelDetailView />;
     case 'me-model':
       return <MEModelDetailView params={params} vlProjectUrl={vlProjectUrl} />;
+    case 'synaptome':
+      return <SynaptomeDetailView params={params} />;
     default:
       break;
   }

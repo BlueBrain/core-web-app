@@ -39,31 +39,28 @@ export default function Results() {
     );
   }
 
-  // plotData with one element is a placeholder to show something
-  // in the plot when we launched simulation but still processing
   const isLoading = simulationStatus?.status === 'launched';
   return (
     <div className="flex w-full flex-col gap-2">
       {Object.entries(recordingPlotData).map(([key, value]) => {
         return (
           <div key={key} className="flex w-full flex-col items-start justify-start">
-            <div className="flex items-center justify-center bg-primary-8 px-4 py-2 text-base text-white">
-              {key}
-            </div>
-            <div className="flex w-full flex-col border border-gray-300 p-2">
-              <PlotRenderer
-                type="simulation"
-                name={key}
-                isDownloadable={!!value.length}
-                onlyAmplitudeLegend={false}
-                className="mt-8"
-                data={value.map((v, i) => ({ ...v, line: { color: SIMULATION_COLORS[i] } }))}
-                isLoading={isLoading}
-                plotConfig={{
-                  yAxisTitle: 'Voltage [mv]',
-                }}
-              />
-            </div>
+            <PlotRenderer
+              withTitle
+              bordered
+              title={key}
+              type="simulation"
+              name={key}
+              isDownloadable={!!value.length}
+              onlyAmplitudeLegend={false}
+              data={value.map((v, i) => ({ ...v, line: { color: SIMULATION_COLORS[i] } }))}
+              isLoading={isLoading}
+              className="min-h-[320px] w-full"
+              plotConfig={{
+                yAxisTitle: 'Voltage [mv]',
+                showDefaultLegends: true,
+              }}
+            />
           </div>
         );
       })}

@@ -77,7 +77,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
 
   const generateSynaptomeUrl = (newSynaptome: Entity) => {
     const vlProjectUrl = generateVlProjectUrl(org, project);
-    const baseBuildUrl = `${vlProjectUrl}/build/synaptome/view`;
+    const baseBuildUrl = `${vlProjectUrl}/explore/interactive/model/synaptome`;
     return `${baseBuildUrl}/${to64(`${org}/${project}!/!${newSynaptome['@id']}`)}`;
   };
 

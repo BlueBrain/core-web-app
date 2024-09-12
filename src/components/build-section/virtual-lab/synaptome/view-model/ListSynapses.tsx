@@ -26,9 +26,12 @@ export default function SynapseGroupList({ modelUrl }: { modelUrl: string }) {
   return (
     <div className="w-full">
       <h2 className="mb-8 text-2xl font-bold text-primary-8">Synapse groups</h2>
-      <div className="grid grid-flow-col gap-4">
+      <div className="flex flex-row flex-wrap gap-4">
         {configuration?.synapses?.map(({ id, name, formula, target, type }, indx) => (
-          <div key={id} className="flex w-max min-w-96 flex-col items-start justify-start">
+          <div
+            key={id}
+            className="flex w-max min-w-96 max-w-max flex-1 flex-col items-start justify-start"
+          >
             <div
               className="flex items-center justify-center px-4 py-2 text-base text-white"
               style={{

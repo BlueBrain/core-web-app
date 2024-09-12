@@ -1,14 +1,15 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import Plotly, { Layout, Config } from 'plotly.js-dist-min';
 import { Button, Spin } from 'antd';
-import lodashSet from 'lodash/set';
 import { DownloadOutlined } from '@ant-design/icons';
+import Plotly, { Layout, Config } from 'plotly.js-dist-min';
+import lodashSet from 'lodash/set';
 
 import LegendItem from './LegendItem';
 import { PlotData, PlotDataEntry } from '@/services/bluenaas-single-cell/types';
 import { exportSingleSimulationResultAsZip } from '@/util/simulation-plotly-to-csv';
+import { classNames } from '@/util/utils';
 
 const PLOT_LAYOUT: Partial<Layout> = {
   plot_bgcolor: '#fff',
@@ -32,6 +33,13 @@ const PLOT_LAYOUT: Partial<Layout> = {
   showlegend: false,
   height: 320,
   margin: { t: 20, r: 20, b: 20, l: 20 },
+  legend: {
+    orientation: 'h',
+    yanchor: 'top',
+    xanchor: 'center',
+    x: 0.5,
+    y: 1.15,
+  },
 };
 
 const PLOT_CONFIG: Partial<Config> = {
@@ -42,9 +50,10 @@ const PLOT_CONFIG: Partial<Config> = {
 
 type PlotConfig = {
   yAxisTitle?: string;
+  showDefaultLegends?: boolean;
 };
 
-type Props = {
+type BasicProps = {
   name?: string;
   type: 'stimulus' | 'simulation';
   data: PlotData;
@@ -53,7 +62,18 @@ type Props = {
   plotConfig?: PlotConfig;
   isDownloadable?: boolean;
   onlyAmplitudeLegend?: boolean;
+  bordered?: boolean;
 };
+
+type Props =
+  | (BasicProps & {
+      withTitle: true;
+      title: React.ReactNode;
+    })
+  | (BasicProps & {
+      withTitle: false;
+      title: null;
+    });
 
 export default function PlotRenderer({
   className,
@@ -62,8 +82,11 @@ export default function PlotRenderer({
   data,
   isLoading,
   plotConfig,
+  withTitle,
+  title,
   isDownloadable = false,
   onlyAmplitudeLegend = true,
+  bordered = false,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -83,6 +106,8 @@ export default function PlotRenderer({
 
     const container = containerRef.current;
 
+    lodashSet(PLOT_LAYOUT, 'showlegend', Boolean(plotConfig?.showDefaultLegends));
+
     if (plotConfig?.yAxisTitle) {
       lodashSet(PLOT_LAYOUT, 'yaxis.title.text', plotConfig.yAxisTitle);
     }
@@ -93,6 +118,7 @@ export default function PlotRenderer({
     } else {
       Plotly.react(container, data, PLOT_LAYOUT, PLOT_CONFIG);
     }
+
     // eslint-disable-next-line consistent-return
     return () => {
       Plotly.purge(container);
@@ -113,7 +139,7 @@ export default function PlotRenderer({
 
   return (
     <div className="relative mt-4 w-full px-3">
-      {!isLoading && data.length && (
+      {!isLoading && data.length && !plotConfig?.showDefaultLegends && (
         <div className="py-4">
           <div className="flex w-full justify-between text-gray-400">
             <span className="text-base uppercase">Output Values</span>
@@ -134,26 +160,50 @@ export default function PlotRenderer({
           </div>
         </div>
       )}
-      <div className="relative w-full">
-        {isDownloadable && !isLoading && (
-          <div className="flex flex-col items-end py-4">
-            <Button
-              type="primary"
-              htmlType="button"
-              icon={<DownloadOutlined />}
-              onClick={onDownloadPlotDataCsv}
-              className="border border-primary-8 bg-white text-primary-8"
-            >
-              Download
-            </Button>
+      <div className="relative w-full p-2">
+        <div className="flex items-center justify-between gap-4">
+          {withTitle && title && (
+            <div className="flex h-10 items-center justify-center bg-primary-8 px-4 py-2 text-base text-white">
+              {title}
+            </div>
+          )}
+          <div className="ml-auto flex items-center gap-2 self-end">
+            {isDownloadable && !isLoading && (
+              <Button
+                type="primary"
+                size="middle"
+                htmlType="button"
+                icon={<DownloadOutlined />}
+                onClick={onDownloadPlotDataCsv}
+                className={classNames(
+                  'h-10 rounded-none border border-primary-8 bg-white text-primary-8',
+                  bordered && 'border-b-0'
+                )}
+              >
+                Download
+              </Button>
+            )}
           </div>
-        )}
-        <div className={className} ref={containerRef} style={{ opacity: isLoading ? 0.5 : 1 }} />
-        {isLoading && (
-          <div className="absolute top-0 flex h-full w-full items-center justify-center text-sm text-gray-500">
-            <Spin size="large" />
+        </div>
+        <div
+          className={classNames(
+            'relative flex h-full  w-full flex-col items-center justify-center',
+            bordered && 'border border-primary-8 '
+          )}
+        >
+          <div className="h-full w-[calc(100%-2rem)]">
+            <div
+              className={classNames(className, 'w-full p-4')}
+              ref={containerRef}
+              style={{ opacity: isLoading ? 0.5 : 1 }}
+            />
+            {isLoading && (
+              <div className="absolute top-0 flex h-full w-full items-center justify-center text-sm text-gray-500">
+                <Spin size="large" />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

@@ -92,7 +92,7 @@ export function useSessionStorage<T>(
     (value) => {
       // Prevent build error "window is undefined" but keeps working
       if (IS_SERVER) {
-        throw new Error(`set sessionStorage key “${key}” in server environment`);
+        throw new Error(`Cannot set session storage “${key}” in server environment.`);
       }
 
       try {
@@ -105,7 +105,7 @@ export function useSessionStorage<T>(
         // Save state
         setStoredValue(newValue);
 
-        // We dispatch a custom event so every similar useSessionStorage hook is notified
+        // We dispatch a custom event so very similar useSessionStorage hook is notified
         window.dispatchEvent(new StorageEvent('session-storage', { key }));
       } catch (error) {
         throw new Error(`Error setting sessionStorage key “${key}”:`);

@@ -18,22 +18,7 @@ import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { to64 } from '@/util/common';
 import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
-
-type TabDetails = {
-  title: string;
-  urlParam: string;
-};
-
-const SupportedTypeToTabDetails: Record<string, TabDetails> = {
-  [DataType.SingleNeuronSimulation]: {
-    title: 'Single Neuron Simulation',
-    urlParam: 'single-neuron',
-  },
-  [DataType.SingleNeuronSynaptomeSimulation]: {
-    title: 'Single Neuron Synaptome Simulation',
-    urlParam: 'synaptome-simulation',
-  },
-};
+import { SupportedTypeToTabDetails } from '@/types/simulation/common';
 
 export default function VirtualLabProjectSimulatePage({
   params,
@@ -66,8 +51,8 @@ export default function VirtualLabProjectSimulatePage({
     switch (simulationType) {
       case DataType.SingleNeuronSynaptomeSimulation:
         return navigate(generateDetailUrl(selectedRow, DataType.SingleNeuronSynaptomeSimulation));
-      // case DataType.SingleNeuronSimulation:
-      //   return navigate(generateDetailUrl(selectedRow, DataType.SingleNeuronSynaptomeSimulation));
+      case DataType.SingleNeuronSimulation:
+        return navigate(generateDetailUrl(selectedRow, DataType.SingleNeuronSimulation));
       default:
         break;
     }
@@ -112,8 +97,8 @@ export default function VirtualLabProjectSimulatePage({
             <div className="fixed bottom-3 right-[60px] mb-6 flex items-center justify-end gap-2">
               <GenericButton disabled className="bg-white" text="Clone configuration" />
               <GenericButton
-                className="bg-white"
-                text="View"
+                className="bg-primary-9  text-white hover:!bg-primary-7"
+                text="View simulation"
                 onClick={() => onViewRow(selectedRows[0])}
               />
             </div>

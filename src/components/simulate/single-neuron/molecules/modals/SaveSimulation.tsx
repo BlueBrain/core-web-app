@@ -10,6 +10,7 @@ import { createSingleNeuronSimulationAtom } from '@/state/simulate/single-neuron
 
 import GenericButton from '@/components/Global/GenericButton';
 import useNotification from '@/hooks/notifications';
+
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { to64 } from '@/util/common';
 import { CREATE_SYNAPTOME_SIMULATION_WARNING } from '@/components/build-section/virtual-lab/synaptome/molecules/constants';
@@ -59,7 +60,8 @@ export default function SaveSimulationModal({
 
   const generateSimulationDetailUrl = (simulationId: string) => {
     const vlProjectUrl = generateVlProjectUrl(vLabId, projectId);
-    const baseBuildUrl = `${vlProjectUrl}/simulate/synaptome-simulation/view`;
+    const baseBuildUrl = `${vlProjectUrl}/simulate/${simulationType}/view`;
+
     return `${baseBuildUrl}/${to64(`${vLabId}/${projectId}!/!${simulationId}`)}`;
   };
 

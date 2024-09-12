@@ -28,7 +28,7 @@ export default function ExploreSynaptomeModelTable({
   const onCellClick: OnCellClick = (basePath, record) => {
     const { org, project } = getOrgAndProjectFromProjectId(record._source.project['@id']);
     const vlProjectUrl = generateVlProjectUrl(org, project);
-    const baseBuildUrl = `${vlProjectUrl}/build/synaptome/view`;
+    const baseBuildUrl = `${vlProjectUrl}/explore/interactive/model/synaptome`;
     const exploreUrl = `${detailUrlBuilder(baseBuildUrl, record)}`;
 
     navigate(exploreUrl);
