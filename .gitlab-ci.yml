@@ -148,7 +148,7 @@ deploy-aws-prod:
     NEXT_PUBLIC_VIRTUAL_LAB_API_URL: https://openbluebrain.com/api/virtual-lab-manager
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_51P6uAFFE4Bi50cLlatJIc0fUPsP0jQkaCCJ8TTkIYOOLIrLzxX1M9p1kVD11drNqsF9p7yiaumWJ8UHb3ptJJRXB00y3qjYReV
     NEXT_PUBLIC_BBS_ML_PRIVATE_BASE_URL: http://internal-sbo-poc-private-alb-1398645643.us-east-1.elb.amazonaws.com:3000/api/literature
-    NEXT_PUBLIC_CELL_SVC_BASE_URL: https://sbo-cell-svc.shapes-registry.org
+    NEXT_PUBLIC_CELL_SVC_BASE_URL: https://openbluebrain.com/api/circuit/
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
     NEXT_PUBLIC_BLUE_NAAS_URL: https://openbluebrain.com/api/bluenaas
     KANIKO_EXTRA_ARGS: >
