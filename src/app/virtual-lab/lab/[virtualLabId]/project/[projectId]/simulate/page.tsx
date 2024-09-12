@@ -19,6 +19,12 @@ import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { to64 } from '@/util/common';
 import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 import { SupportedTypeToTabDetails } from '@/types/simulation/common';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
+import BookmarkButton from '@/components/explore-section/BookmarkButton';
+import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/simulation-data-types';
+import { isSimulation } from '@/types/virtual-lab/bookmark';
+import { HTMLProps } from 'react';
+import { Btn } from '@/components/Btn';
 
 export default function VirtualLabProjectSimulatePage({
   params,
@@ -58,6 +64,22 @@ export default function VirtualLabProjectSimulatePage({
     }
   };
 
+  const navigateToDetailPage = (
+    basePath: string,
+    record: ExploreESHit<ExploreSectionResource>,
+    dataType: DataType
+  ) => {
+    switch (dataType) {
+      case DataType.SingleNeuronSimulation:
+      case DataType.SingleNeuronSynaptomeSimulation: {
+        navigate(generateDetailUrl(record, dataType));
+        return;
+      }
+      default:
+        return undefined;
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col gap-5 pr-5 pt-8">
       <VirtualLabTopMenu />
@@ -91,16 +113,21 @@ export default function VirtualLabProjectSimulatePage({
               style={{ background: 'bg-white' }}
               containerClass="flex flex-col grow"
               tableClass="overflow-y-auto grow"
+              onCellClick={navigateToDetailPage}
             />
           </div>
           {selectedRows.length > 0 && (
             <div className="fixed bottom-3 right-[60px] mb-6 flex items-center justify-end gap-2">
-              <GenericButton disabled className="bg-white" text="Clone configuration" />
-              <GenericButton
-                className="bg-primary-9  text-white hover:!bg-primary-7"
-                text="View simulation"
-                onClick={() => onViewRow(selectedRows[0])}
-              />
+              {isSimulation(SIMULATION_DATA_TYPES[simulationType].name) && (
+                <BookmarkButton
+                  virtualLabId={params.virtualLabId}
+                  projectId={params.projectId}
+                  // `selectedRows` will be an array with only one element because `selectionType` is a radio button not a checkbox.
+                  resourceId={selectedRows[0]?._source['@id']}
+                  type={SIMULATION_DATA_TYPES[simulationType].name}
+                  customButton={customBookmarkButton}
+                />
+              )}
             </div>
           )}
         </div>
@@ -108,5 +135,13 @@ export default function VirtualLabProjectSimulatePage({
         <div className="m-auto w-fit border p-6">Coming Soon</div>
       )}
     </div>
+  );
+}
+
+function customBookmarkButton({ onClick, children }: HTMLProps<HTMLButtonElement>) {
+  return (
+    <Btn className="h-12 bg-secondary-2 px-8" onClick={onClick}>
+      {children}
+    </Btn>
   );
 }

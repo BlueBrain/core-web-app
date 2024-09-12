@@ -19,16 +19,16 @@ export type BulkRemoveBookmarksResponse = {
 
 export type BookmarksSupportedTypes = ExperimentTypeNames | ModelTypeNames | SimulationTypeNames;
 
-export const isExperiment = (t: BookmarksSupportedTypes): t is ExperimentTypeNames => {
-  return Object.values(ExperimentTypeNames).includes(t as ExperimentTypeNames);
+export const isExperiment = (t: string | null): t is ExperimentTypeNames => {
+  return t ? Object.values(ExperimentTypeNames).includes(t as ExperimentTypeNames) : false;
 };
 
-export const isModel = (t: BookmarksSupportedTypes): t is ModelTypeNames => {
-  return Object.values(ModelTypeNames).includes(t as ModelTypeNames);
+export const isModel = (t: string | null): t is ModelTypeNames => {
+  return t ? Object.values(ModelTypeNames).includes(t as ModelTypeNames) : false;
 };
 
-export const isSimulation = (t: BookmarksSupportedTypes): t is SimulationTypeNames => {
-  return Object.values(SimulationTypeNames).includes(t as SimulationTypeNames);
+export const isSimulation = (t: string | null): t is SimulationTypeNames => {
+  return t ? Object.values(SimulationTypeNames).includes(t as SimulationTypeNames) : false;
 };
 
 export enum BookmarkTabsName {

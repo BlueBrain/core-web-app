@@ -21,6 +21,8 @@ import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 import BookmarkButton from '@/components/explore-section/BookmarkButton';
 import GenericButton from '@/components/Global/GenericButton';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { ExploreESHit } from '@/types/explore-section/es';
 
 type Params = {
   params: {
@@ -67,15 +69,6 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
     }
   }, [selectedSimulationScope]);
 
-  const generateDetailUrl = () => {
-    const model = selectedRows[0];
-    if (model && selectedModelType) {
-      const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
-      const baseBuildUrl = `${vlProjectUrl}/${SupportedTypeToTabDetails[selectedModelType].viewUrl}`;
-      return `${detailUrlBuilder(baseBuildUrl, model)}`;
-    }
-  };
-
   // Note: Disabled temporarily until SFN
   // const generateCloneUrl = () => {
   //   const model = selectedRows[0];
@@ -107,17 +100,6 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
     }
   };
 
-  const onViewModel = () => {
-    switch (selectedSimulationScope) {
-      case SimulationType.SingleNeuron:
-      case SimulationType.Synaptome: {
-        return generateDetailUrl();
-      }
-      default:
-        return undefined;
-    }
-  };
-
   // const onCloneModel = () => {
   //   switch (selectedSimulationScope) {
   //     case SimulationType.Synaptome: {
@@ -127,6 +109,24 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
   //       return undefined;
   //   }
   // };
+
+  const navigateToDetailPage = (
+    basePath: string,
+    record: ExploreESHit<ExploreSectionResource>,
+    dataType: DataType
+  ) => {
+    switch (selectedSimulationScope) {
+      case SimulationType.SingleNeuron:
+      case SimulationType.Synaptome: {
+        const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+        const baseBuildUrl = `${vlProjectUrl}/${SupportedTypeToTabDetails[dataType].viewUrl}`;
+        router.push(`${detailUrlBuilder(baseBuildUrl, record)}`);
+        return;
+      }
+      default:
+        return undefined;
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col gap-5 pr-5 pt-8">
@@ -161,15 +161,11 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               style={{ background: 'bg-white' }}
               containerClass="grow bg-primary-9 flex flex-col"
               tableClass="grow"
+              onCellClick={navigateToDetailPage}
             />
 
             {selectedRows.length > 0 && (
               <div className="fixed bottom-3 right-[60px] mb-6 flex items-center justify-end gap-2">
-                <GenericButton
-                  text="View model"
-                  className="bg-primary-9  text-white hover:!bg-primary-7"
-                  href={onViewModel()}
-                />
                 <BookmarkButton
                   virtualLabId={params.virtualLabId}
                   projectId={params.projectId}

@@ -18,12 +18,7 @@ import {
   MODEL_DATA_TYPES,
   ModelTypeNames,
 } from '@/constants/explore-section/data-types/model-data-types';
-import {
-  BookmarksSupportedTypes,
-  BookmarkTabsName,
-  isModel,
-  isSimulation,
-} from '@/types/virtual-lab/bookmark';
+import { BookmarkTabsName, isModel, isSimulation } from '@/types/virtual-lab/bookmark';
 import { Btn } from '@/components/Btn';
 import { SimulationTypeNames } from '@/types/simulation/single-neuron';
 import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/simulation-data-types';
@@ -51,11 +46,11 @@ export default function BookmarkTabs({ labId, projectId }: Props) {
       return BookmarkTabsName.EXPERIMENTS;
     }
 
-    if (isModel(activePanel as ModelTypeNames)) {
+    if (isModel(activePanel)) {
       return BookmarkTabsName.MODELS;
     }
 
-    if (isSimulation(activePanel as BookmarksSupportedTypes)) {
+    if (isSimulation(activePanel)) {
       return BookmarkTabsName.SIMULATIONS;
     }
 
