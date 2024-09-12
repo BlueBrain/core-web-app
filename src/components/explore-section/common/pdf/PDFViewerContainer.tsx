@@ -76,8 +76,8 @@ export function PDFViewerContainer({ distributions }: Props) {
           },
         }}
       >
-        <div className="flex items-center justify-between pl-2">
-          <div className="my-4 flex space-x-10">
+        <div className="flex flex-wrap items-center justify-between pl-2">
+          <div className="my-4 flex flex-wrap gap-x-10 gap-y-4">
             {Object.values(AnalysisType).map((option) => (
               <button
                 type="button"
@@ -98,7 +98,7 @@ export function PDFViewerContainer({ distributions }: Props) {
           </div>
 
           {(canScrollLeft || canScrollRight) && (
-            <div className="flex space-x-2">
+            <div className="flex gap-2">
               <Button
                 type="text"
                 icon={<LeftOutlined className={!canScrollLeft ? 'text-neutral-4' : ''} />}
@@ -113,6 +113,17 @@ export function PDFViewerContainer({ distributions }: Props) {
               />
             </div>
           )}
+
+          <Link
+            className="flex items-center gap-2 text-primary-9"
+            href="/simulate/experiment-analysis?targetEntity=EModel"
+            aria-label="Add analysis"
+          >
+            Add analysis
+            <span className="flex h-8 w-8 items-center justify-center border">
+              <PlusOutlined className="text-md" />
+            </span>
+          </Link>
         </div>
 
         <div ref={scrollContainerRef} onScroll={onScroll} className="w-full overflow-x-auto">
@@ -143,15 +154,6 @@ export function PDFViewerContainer({ distributions }: Props) {
             />
           )}
         </div>
-
-        <Link
-          className="ml-2 inline-flex items-center text-primary-9"
-          href="/simulate/experiment-analysis?targetEntity=EModel"
-          aria-label="Add analysis"
-        >
-          <PlusOutlined className="mr-3 inline-block border" />
-          Add analysis
-        </Link>
 
         <EModelAnalysisLauncher analysis={analyses.find((a) => a['@id'] === analysis)} />
       </ConfigProvider>
