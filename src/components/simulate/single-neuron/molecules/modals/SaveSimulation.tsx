@@ -13,7 +13,7 @@ import useNotification from '@/hooks/notifications';
 
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { to64 } from '@/util/common';
-import { CREATE_SYNAPTOME_SIMULATION_WARNING } from '@/components/build-section/virtual-lab/synaptome/molecules/constants';
+import { CREATE_SYNAPTOME_SIMULATION_SUCCESS } from '@/components/build-section/virtual-lab/synaptome/molecules/constants';
 import { queryAtom } from '@/state/explore-section/list-view-atoms';
 import { DataType } from '@/constants/explore-section/list-views';
 import { ExploreDataScope } from '@/types/explore-section/application';
@@ -48,7 +48,7 @@ export default function SaveSimulationModal({
 
   const [loading, setLoading] = useState(false);
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
-  const { error: errorNotify, success: successNotify, warning: warningNotify } = useNotification();
+  const { error: errorNotify, success: successNotify } = useNotification();
 
   const [{ name: formName, description: formDescription }, setBasicConfig] = useState<{
     name: string;
@@ -78,8 +78,7 @@ export default function SaveSimulationModal({
       );
       form.setFieldValue('name', formName);
       form.setFieldValue('description', formDescription);
-      warningNotify(CREATE_SYNAPTOME_SIMULATION_WARNING, 6, 'topRight', undefined);
-      successNotify('Simulation results saved successfully.', undefined, 'topRight');
+      successNotify(CREATE_SYNAPTOME_SIMULATION_SUCCESS, undefined, 'topRight');
       refreshSynaptomeSimulations();
       navigate(generateSimulationDetailUrl(savedSimulation!['@id']));
     } catch (error) {

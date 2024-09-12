@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 
+import { HTMLProps } from 'react';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import GenericButton from '@/components/Global/GenericButton';
 import Link from '@/components/Link';
@@ -23,7 +24,6 @@ import { ExploreSectionResource } from '@/types/explore-section/resources';
 import BookmarkButton from '@/components/explore-section/BookmarkButton';
 import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/simulation-data-types';
 import { isSimulation } from '@/types/virtual-lab/bookmark';
-import { HTMLProps } from 'react';
 import { Btn } from '@/components/Btn';
 
 export default function VirtualLabProjectSimulatePage({
@@ -53,17 +53,6 @@ export default function VirtualLabProjectSimulatePage({
     return `${baseBuildUrl}/${to64(`${virtualLabId}/${projectId}!/!${selectedRow._id}`)}`;
   };
 
-  const onViewRow = (selectedRow: ExploreESHit<ExploreResource>) => {
-    switch (simulationType) {
-      case DataType.SingleNeuronSynaptomeSimulation:
-        return navigate(generateDetailUrl(selectedRow, DataType.SingleNeuronSynaptomeSimulation));
-      case DataType.SingleNeuronSimulation:
-        return navigate(generateDetailUrl(selectedRow, DataType.SingleNeuronSimulation));
-      default:
-        break;
-    }
-  };
-
   const navigateToDetailPage = (
     basePath: string,
     record: ExploreESHit<ExploreSectionResource>,
@@ -73,10 +62,10 @@ export default function VirtualLabProjectSimulatePage({
       case DataType.SingleNeuronSimulation:
       case DataType.SingleNeuronSynaptomeSimulation: {
         navigate(generateDetailUrl(record, dataType));
-        return;
+        break;
       }
       default:
-        return undefined;
+        break;
     }
   };
 

@@ -13,7 +13,6 @@ import {
   CREATE_SYNAPTOME_SUCCESS,
   DEFAULT_SYNAPSE_VALUE,
   CONFIG_FILE_NAME,
-  CREATE_SYNAPTOME_WARNING,
 } from './constants';
 import { classNames, createHeaders, getRandomIntInclusive } from '@/util/utils';
 import { composeUrl, createDistribution } from '@/util/nexus';
@@ -56,7 +55,7 @@ type Props = {
 export default function SynaptomeConfigurationForm({ org, project, resource }: Props) {
   const { push: navigate } = useRouter();
   const [loading, setLoading] = useState(false);
-  const { error: notifyError, success: notifySuccess, warning: notifyWarning } = useNotification();
+  const { error: notifyError, success: notifySuccess } = useNotification();
   const form = Form.useFormInstance<SynaptomeModelConfiguration>();
   const seed = Form.useWatch<number>('seed', form);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
@@ -221,7 +220,6 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
       selectedRowsAtom.setShouldRemove(() => true); // set function to remove all
       selectedRowsAtom.setShouldRemove(null); // clear function
       sendResetSynapses3DEvent();
-      notifyWarning(CREATE_SYNAPTOME_WARNING, 6, 'topRight', undefined, newSynaptomeModel['@id']);
       notifySuccess(CREATE_SYNAPTOME_SUCCESS, undefined, 'topRight');
       removeSessionValue();
       setLoading(false);

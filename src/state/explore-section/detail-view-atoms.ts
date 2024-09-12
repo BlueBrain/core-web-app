@@ -40,11 +40,17 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>
   (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const resource = await fetchResourceById<DeltaResource>(info.id, session, {
-        org: info.org,
-        project: info.project,
-        rev: info.rev,
-      });
+      const resource = await fetchResourceById<DeltaResource>(
+        info.id,
+        session,
+        info.id.startsWith(nexus.defaultIdBaseUrl)
+          ? { rev: info.rev }
+          : {
+              org: info.org,
+              project: info.project,
+              rev: info.rev,
+            }
+      );
 
       if (
         ensureArray(resource['@type']).includes(DataType.SingleNeuronSynaptome) &&

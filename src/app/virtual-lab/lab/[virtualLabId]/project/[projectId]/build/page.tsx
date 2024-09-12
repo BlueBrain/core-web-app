@@ -10,7 +10,7 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { detailUrlBuilder } from '@/util/common';
-import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
+import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType, SimulationType } from '@/types/virtual-lab/lab';
@@ -23,6 +23,7 @@ import GenericButton from '@/components/Global/GenericButton';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
+import { isModel } from '@/types/virtual-lab/bookmark';
 
 type Params = {
   params: {
@@ -121,10 +122,10 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
         const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
         const baseBuildUrl = `${vlProjectUrl}/${SupportedTypeToTabDetails[dataType].viewUrl}`;
         router.push(`${detailUrlBuilder(baseBuildUrl, record)}`);
-        return;
+        break;
       }
       default:
-        return undefined;
+        break;
     }
   };
 
@@ -166,14 +167,16 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
 
             {selectedRows.length > 0 && (
               <div className="fixed bottom-3 right-[60px] mb-6 flex items-center justify-end gap-2">
-                <BookmarkButton
-                  virtualLabId={params.virtualLabId}
-                  projectId={params.projectId}
-                  // `selectedRows` will be an array with only one element because `selectionType` is a radio button not a checkbox.
-                  resourceId={selectedRows[0]?._source['@id']}
-                  type={ModelTypeNames.ME_MODEL}
-                  customButton={customBookmarkButton}
-                />
+                {isModel(MODEL_DATA_TYPES[selectedModelType].name) && (
+                  <BookmarkButton
+                    virtualLabId={params.virtualLabId}
+                    projectId={params.projectId}
+                    // `selectedRows` will be an array with only one element because `selectionType` is a radio button not a checkbox.
+                    resourceId={selectedRows[0]?._source['@id']}
+                    type={MODEL_DATA_TYPES[selectedModelType].name}
+                    customButton={customBookmarkButton}
+                  />
+                )}
               </div>
             )}
           </div>

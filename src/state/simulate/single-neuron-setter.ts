@@ -338,4 +338,5 @@ export const resetSimulationAtom = atom(null, (get, set, resetValue: typeof RESE
   set(synaptomeSimulationConfigAtom, resetValue);
   set(simulationExperimentalSetupAtom, resetValue);
   set(simulateStepTrackerAtom, resetValue);
+  set(simulationStatusAtom, resetValue);
 });

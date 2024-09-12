@@ -166,7 +166,7 @@ export default function SynapticInputItem({
           <div className="flex items-center gap-4">
             <div
               className="px-6 py-3 font-bold text-white"
-              style={{ backgroundColor: config.color }}
+              style={{ backgroundColor: config?.color }}
             >
               {index + 1}
             </div>
