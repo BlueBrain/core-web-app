@@ -40,7 +40,7 @@ export function MEModelConfiguration({
   }
 
   return (
-    <div className="mt-2 flex gap-10 rounded-md border border-gray-400 p-8">
+    <div className="mt-2 flex gap-10 rounded-md border border-gray-400 p-4">
       <div className="flex flex-col justify-center gap-2">
         <div className="mb-2 text-2xl font-light uppercase text-gray-400">ME-Model</div>
         <div className="border border-gray-400">
