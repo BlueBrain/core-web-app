@@ -7,6 +7,7 @@ import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { useRecordingSourceForSimulation } from '@/state/simulate/categories';
 import { RecordLocation } from '@/types/simulation/single-neuron';
 import { classNames } from '@/util/utils';
+import { getSimulationColor } from '@/constants/simulate/single-neuron';
 
 type RecordItemProps = {
   index: number;
@@ -31,7 +32,11 @@ function RecordItem({
     <div className="w-full [&:last-of-type_div.divider]:hidden">
       <div className="flex w-full flex-col items-start justify-start">
         <h3 className="mb-1 text-lg uppercase text-neutral-4">Recording {index + 1}</h3>
-        <div className="grid w-full grid-cols-[1fr_max-content_max-content_.5fr] items-start justify-center gap-2">
+        <div className="grid w-full grid-cols-[auto_1fr_max-content_max-content_.5fr] items-start justify-center gap-2">
+          {/**
+           * We add 1 to the index because the first color is already used by the current injection.
+           */}
+          <ColorMarker index={index + 1} />
           <Form.Item className="mb-2 w-full" name={[name, 'section']} rules={[{ required: true }]}>
             <Select
               showSearch
@@ -140,6 +145,27 @@ export default function Recording() {
       >
         Add recording
       </button>
+    </div>
+  );
+}
+
+/**
+ * Represents the color of the matching label.
+ */
+function ColorMarker({ index }: { index: number }) {
+  return (
+    <div className="flex h-11 items-center justify-center">
+      <div
+        style={{
+          display: 'inline-block',
+          width: '1em',
+          height: '1em',
+          border: '1px solid currentColor',
+          borderRadius: '50%',
+          background: getSimulationColor(index),
+          verticalAlign: 'center',
+        }}
+      />
     </div>
   );
 }

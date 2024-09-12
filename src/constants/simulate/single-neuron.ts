@@ -204,6 +204,10 @@ export const SIMULATION_COLORS = [
   '#DD63CF',
 ];
 
+export function getSimulationColor(index: number) {
+  return SIMULATION_COLORS[index % SIMULATION_COLORS.length];
+}
+
 // Each amperage starts a new simulation process in the server. To limit resource consumption, we put a maximum threshold on number of amperages a simulation can have.
 export const MAX_AMPERAGE_STEPS = 15;
 

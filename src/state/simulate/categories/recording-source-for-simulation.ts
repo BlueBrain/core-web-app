@@ -21,8 +21,8 @@ export default function useRecordingSourceForSimulation() {
     update([...state, location]);
   }
 
-  function remove(indx: number) {
-    update(state.filter((_, i) => i !== indx));
+  function remove(index: number) {
+    update(state.filter((_, i) => i !== index));
   }
 
   return {

@@ -30,6 +30,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import RendererCtrl from './renderer-ctrl';
 import type { Morphology, SecMarkerConfig } from './types';
 import { createSegMarkerMesh, createSegmentMesh, NeuronSegementInfo } from './renderer-utils';
+import { Labels } from './labels';
 
 import { basePath } from '@/config';
 import { SynapsesMesh } from '@/components/neuron-viewer/hooks/events';
@@ -125,6 +126,8 @@ function getElementOffset(element: HTMLElement): { x: number; y: number } {
 type MorphMesh = Mesh<CylinderGeometry, MeshLambertMaterial>;
 type HoverBox = LineSegments<EdgesGeometry, LineBasicMaterial>;
 export default class NeuronViewerRenderer {
+  public readonly labels: Labels;
+
   private container: HTMLDivElement;
 
   private containerOffset: { x: number; y: number };
@@ -170,6 +173,11 @@ export default class NeuronViewerRenderer {
   private synapses: Array<SynapsesMesh> = [];
 
   constructor(container: HTMLDivElement, config: NeuronViewerConfig) {
+    this.labels = new Labels(() => ({
+      scene: this.scene,
+      camera: this.camera,
+    }));
+
     this.config = config;
 
     this.container = container;
@@ -226,6 +234,7 @@ export default class NeuronViewerRenderer {
     this.camera.lookAt(new Vector3());
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.screenSpacePanning = true;
+    this.controls.addEventListener('change', this.labels.paint);
     this.initEventHandlers();
     this.startRenderLoop();
   }

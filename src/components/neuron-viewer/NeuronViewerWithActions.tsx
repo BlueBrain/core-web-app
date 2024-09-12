@@ -18,6 +18,7 @@ type Props = {
   useCursor?: boolean;
   useEvents?: boolean;
   useActions?: boolean;
+  useLabels?: boolean;
 };
 export default function NeuronViewerContainer({
   modelUrl,
@@ -26,6 +27,7 @@ export default function NeuronViewerContainer({
   useCursor = false,
   useEvents = false,
   useActions = false,
+  useLabels = false,
 }: Props) {
   const [disbaleHovering, setDisableHovering] = useState(false);
   const [neuronViewerClickData, setNeuronViewerOnClickData] =
@@ -50,6 +52,7 @@ export default function NeuronViewerContainer({
           useCursor,
           useEvents,
           useActions,
+          useLabels,
         }}
       >
         {({
