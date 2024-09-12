@@ -170,7 +170,7 @@ function BannerWrapper({
   );
 }
 
-const hippocampusImg = `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`;
+const hippocampusImg = `url(${basePath}/images/virtual-lab/obp_hippocampus_original.webp)`;
 const neocortexImg = `url(${basePath}/images/virtual-lab/obp_neocortex.webp)`;
 const linkClassName = 'absolute left-0 top-0 flex h-full w-full justify-between p-8';
 

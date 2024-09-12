@@ -35,7 +35,7 @@ export default function WelcomeUserBanner({ title }: { title?: string }) {
           <div
             className={styles.bannerImg}
             style={{
-              backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
+              backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.webp)`,
             }}
           />
           <div>
