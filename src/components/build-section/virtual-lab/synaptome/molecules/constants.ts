@@ -1,3 +1,4 @@
+import { SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 
 export const CREATE_SYNAPTOME_SUCCESS = 'The synaptome has been successfully created';
@@ -25,6 +26,7 @@ export const DEFAULT_SYNAPSE_VALUE: SingleSynaptomeConfig = {
   seed: undefined,
   exclusion_rules: null,
   soma_synapse_count: undefined,
+  color: SIMULATION_COLORS[0],
 };
 
 export const sectionTargetMapping = {

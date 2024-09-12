@@ -5,6 +5,7 @@ import { Form, Button, Space, InputNumber } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtom, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
+import sample from 'lodash/sample';
 import SynapseSet from './SynapseSet';
 import {
   CREATE_SYNAPTOME_CONFIG_FAIL,
@@ -40,6 +41,7 @@ import { to64 } from '@/util/common';
 import { Entity } from '@/types/nexus';
 import { useSessionStorage } from '@/hooks/useSessionStorage';
 import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
+import { SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
 
 const label = (text: string) => (
   <span className="text-base font-semibold text-primary-8">{text}</span>
@@ -95,6 +97,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
         ...DEFAULT_SYNAPSE_VALUE,
         id,
         seed: seed + getRandomIntInclusive(0, seed),
+        color: sample(SIMULATION_COLORS) ?? SIMULATION_COLORS[synapses.length],
       },
     ]);
   }, [form, seed, synapsesPlacement, setSynapsesPlacementAtom]);

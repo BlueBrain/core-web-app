@@ -16,15 +16,11 @@ import isEqual from 'lodash/isEqual';
 import groupBy from 'lodash/groupBy';
 import findIndex from 'lodash/findIndex';
 
+import { Color } from 'three';
 import { GENERATE_SYNAPSES_FAIL, sectionTargetMapping } from './constants';
 import { classNames } from '@/util/utils';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
-import {
-  SectionSynapses,
-  synapsesPlacementAtom,
-  SynapseTypeColorMap,
-  SynapseTypeColorMapKey,
-} from '@/state/synaptome';
+import { SectionSynapses, synapsesPlacementAtom } from '@/state/synaptome';
 import {
   sendDisplaySynapses3DEvent,
   sendRemoveSynapses3DEvent,
@@ -248,10 +244,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
         .flatMap((p) => p.synapses)
         .map((o) => o.coordinates);
 
-      const mesh = createBubblesInstanced(
-        synapsePositions,
-        config.type ? SynapseTypeColorMap[config.type as SynapseTypeColorMapKey] : undefined
-      );
+      const mesh = createBubblesInstanced(synapsePositions, new Color(config.color));
 
       sendDisplaySynapses3DEvent(config.id, mesh);
 
@@ -280,7 +273,13 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
         className="flex min-w-max items-center justify-between gap-2 text-lg font-bold"
       >
         <div className="flex items-center justify-center gap-2">
-          <div className="bg-primary-8 px-6 py-3 font-bold text-white"> {index + 1}</div>
+          <div
+            className="bg-primary-8 px-6 py-3 font-bold text-white"
+            style={{ backgroundColor: config?.color }}
+          >
+            {' '}
+            {index + 1}
+          </div>
           {synapsesPlacement?.[config?.id]?.count && (
             <span className="text-base font-light text-primary-7">
               {synapsesPlacement?.[config?.id]?.count} synapses generated
@@ -387,6 +386,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                   <InputNumber
                     size="large"
                     className="w-full border-0 border-b-[1.8px] border-primary-8 text-base font-bold text-primary-8"
+                    defaultValue={50}
                     min={0}
                     max={1000}
                   />

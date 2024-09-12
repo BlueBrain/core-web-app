@@ -29,6 +29,7 @@ export type SingleSynaptomeConfig = {
   soma_synapse_count: number | undefined;
   seed: number | undefined;
   exclusion_rules: Array<ExclusionRule> | null;
+  color: string;
 };
 
 export type SynaptomeModelConfiguration = {
