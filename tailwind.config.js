@@ -63,6 +63,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['var(--font-titillium-web)', ...fontFamily.sans],
+        title: ['var(--font-gabarito)', ...fontFamily.sans],
       },
       transitionProperty: {
         padding: 'padding',
@@ -72,6 +73,7 @@ module.exports = {
         bottom: 'bottom',
         left: 'left',
         right: 'right',
+        width: 'width',
         height: 'height',
         background: 'background',
         height: 'height',

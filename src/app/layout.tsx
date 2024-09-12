@@ -1,15 +1,20 @@
+import { Gabarito, Titillium_Web } from 'next/font/google';
 import { ReactNode, Suspense } from 'react';
-import { Titillium_Web } from 'next/font/google';
 
-import Providers from './providers';
-import Feedback from '@/components/Feedback'; // eslint-disable-line
-import '@/styles/globals.scss';
 import { auth } from '@/auth';
+import '@/styles/globals.scss';
+import Providers from './providers';
 
 const titilliumWeb = Titillium_Web({
   weight: ['300', '400', '600', '700'],
   subsets: ['latin'],
   variable: '--font-titillium-web',
+});
+
+const gabarito = Gabarito({
+  weight: ['400', '600', '800'],
+  subsets: ['latin'],
+  variable: '--font-gabarito',
 });
 
 type RootLayoutProps = {
@@ -19,7 +24,10 @@ type RootLayoutProps = {
 export default async function RootLayout({ children }: RootLayoutProps) {
   const session = await auth();
   return (
-    <html lang="en" className={`${titilliumWeb.variable} font-sans`}>
+    <html
+      lang="en"
+      className={`${titilliumWeb.variable} font-sans, ${gabarito.variable} font-geometric`}
+    >
       <body>
         <Providers session={session}>
           <Suspense fallback={null}>{children}</Suspense>
