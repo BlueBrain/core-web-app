@@ -47,13 +47,11 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
 
     if (values.brainRegion && !brainRegion) return;
 
-    setMEModelDetails(
-      Promise.resolve({
-        name: values.name,
-        description: values.description,
-        brainRegion: brainRegion && { id: brainRegion.id, title: brainRegion.title },
-      })
-    );
+    setMEModelDetails({
+      name: values.name,
+      description: values.description,
+      brainRegion: brainRegion && { id: brainRegion.id, title: brainRegion.title },
+    });
     setSelectedMModel(null);
     setSelectedEModel(null);
     router.push('new/configure');

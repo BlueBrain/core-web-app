@@ -30,18 +30,24 @@ export default function ReconstrucedMorphologyPage() {
           'Multiple morphologies selected for ME-Model building. Only one is allowed'
         );
       }
+
       const morph = selectedRows[0]._source as ReconstructedNeuronMorphology;
+
+      if (meModelDetails === null) {
+        router.push('./'); // Redirects to (...)/build/me-model/new
+
+        return undefined;
+      }
+
       // if a brain region is not already set for the me-model, setting the brain region of the morphology selected
       if (!meModelDetails.brainRegion) {
-        setMEModelDetails(
-          Promise.resolve({
-            ...meModelDetails,
-            brainRegion: {
-              id: morph.brainRegion['@id'],
-              title: morph.brainRegion.label,
-            },
-          })
-        );
+        setMEModelDetails({
+          ...meModelDetails,
+          brainRegion: {
+            id: morph.brainRegion['@id'],
+            title: morph.brainRegion.label,
+          },
+        });
       }
 
       setSelectedMModelId(morph['@id']);

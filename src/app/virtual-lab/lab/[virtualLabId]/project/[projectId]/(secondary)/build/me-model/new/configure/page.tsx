@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
 import { notification, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
 
@@ -13,7 +12,6 @@ import { createMEModelAtom, meModelDetailsAtom } from '@/state/virtual-lab/build
 import { selectedEModelAtom, selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 import { classNames } from '@/util/utils';
-import { useLoadable } from '@/hooks/hooks';
 import { detailUrlWithinLab } from '@/util/common';
 import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
@@ -31,14 +29,15 @@ function NewMEModelHeader({ projectId, virtualLabId }: Params['params']) {
   const selectedMModel = useAtomValue(selectedMModelAtom);
   const selectedEModel = useAtomValue(selectedEModelAtom);
 
-  const meModelDetails = useLoadable<{
-    name: string;
-    description: string;
-    brainRegion?: { id: string; title: string };
-  }>(loadable(meModelDetailsAtom), {
-    name: '',
-    description: '',
-  });
+  const meModelDetails = useAtomValue(meModelDetailsAtom);
+
+  const router = useRouter();
+
+  if (meModelDetails === null) {
+    router.push('./'); // Redirects to (...)/build/me-model/new
+
+    return undefined;
+  }
 
   const fields = [
     {

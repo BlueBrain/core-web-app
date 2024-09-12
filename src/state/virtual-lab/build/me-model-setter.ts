@@ -16,18 +16,13 @@ import { createResource, fetchResourceById, updateResource } from '@/api/nexus';
 import { composeUrl } from '@/util/nexus';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
 
-export const meModelDetailsAtom = atomWithDefault<
-  Promise<{ description: string; name: string; brainRegion?: { id: string; title: string } }>
->(async (get) => {
-  const selectedMModel = await get(selectedMModelAtom);
+type MEModelDetails = {
+  description: string;
+  name: string;
+  brainRegion?: { id: string; title: string };
+};
 
-  return {
-    name: `WIP ME-Model - ${selectedMModel?.name}`,
-    description:
-      'Nunc mi ipsum faucibus vitae aliquet nec ullamcorper sit amet. Tincidunt vitae semper quis lectus nulla at. Volutpat ac tincidunt vitae semper. Adipiscing commodo elit at imperdiet dui accumsan',
-    brainRegion: { id: 'http://api.brain-map.org/api/v2/data/Structure/315', title: 'Isocortex' },
-  };
-});
+export const meModelDetailsAtom = atomWithDefault<MEModelDetails | null>(() => null);
 
 export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelResource | null>>(
   null,
@@ -35,9 +30,9 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
     const session = get(sessionAtom);
     const selectedMModel = await get(selectedMModelAtom);
     const selectedEModel = await get(selectedEModelAtom);
-    const meModelDetails = await get(meModelDetailsAtom);
+    const meModelDetails = get(meModelDetailsAtom);
 
-    if (!session || !selectedMModel || !selectedEModel) return null;
+    if (!session || !meModelDetails || !selectedMModel || !selectedEModel) return null;
 
     let brainLocation: BrainLocation | undefined;
     if (meModelDetails.brainRegion) {
