@@ -14,6 +14,7 @@ import { classNames } from '@/util/utils';
 const PLOT_LAYOUT: Partial<Layout> = {
   plot_bgcolor: '#fff',
   paper_bgcolor: '#fff',
+  autosize: true,
   xaxis: {
     automargin: true,
     color: '#003A8C',
@@ -187,13 +188,13 @@ export default function PlotRenderer({
         </div>
         <div
           className={classNames(
-            'relative flex h-full  w-full flex-col items-center justify-center',
+            'relative flex h-full  w-full flex-col items-center justify-center px-2 pt-8',
             bordered && 'border border-primary-8 '
           )}
         >
           <div className="h-full w-[calc(100%-2rem)]">
             <div
-              className={classNames(className, 'w-full p-4')}
+              className={classNames(className, 'w-full')}
               ref={containerRef}
               style={{ opacity: isLoading ? 0.5 : 1 }}
             />

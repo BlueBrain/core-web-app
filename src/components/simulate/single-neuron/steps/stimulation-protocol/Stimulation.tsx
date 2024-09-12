@@ -1,6 +1,6 @@
-import { Select, Form, Button, Collapse, ConfigProvider } from 'antd';
+import { Select, Form, Collapse, ConfigProvider } from 'antd';
 import { useAtomValue } from 'jotai';
-import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 
 import AmperageRange from './AmperageRange';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
@@ -24,7 +24,6 @@ type FormItemProps = {
 };
 
 export default function Stimulation({ modelSelfUrl }: Props) {
-  const { remove: removeDirectConfig } = useCurrentInjectionSimulationConfig();
   const state = useAtomValue(currentInjectionSimulationConfigAtom);
   return (
     <ConfigProvider
@@ -38,7 +37,7 @@ export default function Stimulation({ modelSelfUrl }: Props) {
       }}
     >
       <Form.List name="currentInjection">
-        {(fields, { remove }) => (
+        {(fields) => (
           <div className="flex flex-col gap-2">
             {fields.map((field) => (
               <Collapse
@@ -50,23 +49,24 @@ export default function Stimulation({ modelSelfUrl }: Props) {
                 items={[
                   {
                     key: '1',
-                    label: (
-                      <div className="flex w-fit items-center bg-primary-8 p-4 text-primary-4">
-                        <span>Stimulation</span>{' '}
-                        <span className="ml-2 font-bold text-white">1</span>
-                        <DownOutlined className="ml-8 text-primary-4" size={10} />
-                      </div>
-                    ),
-                    extra: (
-                      <Button
-                        onClick={() => {
-                          remove(field.name);
-                          removeDirectConfig(field.name);
-                        }}
-                        icon={<DeleteOutlined />}
-                        className="border-none shadow-none"
-                      />
-                    ),
+                    // TODO: return back dropdown when we have multiple stimulation
+                    // label: (
+                    //   <div className="flex w-fit items-center bg-primary-8 p-4 text-primary-4">
+                    //     <span>Stimulation</span>{' '}
+                    //     {/* <DownOutlined className="ml-8 text-primary-4" size={10} /> */}
+                    //   </div>
+                    // ),
+                    // // TODO: return back deletion when we have multiple stimulation
+                    // extra: (
+                    //   <Button
+                    //     onClick={() => {
+                    //       remove(field.name);
+                    //       removeDirectConfig(field.name);
+                    //     }}
+                    //     icon={<DeleteOutlined />}
+                    //     className="border-none shadow-none"
+                    //   />
+                    // ),
 
                     children: (
                       <div className="mt-[-12px] border border-primary-8 p-6">

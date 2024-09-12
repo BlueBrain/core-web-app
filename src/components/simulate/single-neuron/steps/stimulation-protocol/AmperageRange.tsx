@@ -12,7 +12,7 @@ import {
   MAX_AMPERAGE_STEPS,
   PROTOCOL_DETAILS,
 } from '@/constants/simulate/single-neuron';
-import { simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
+import { secNamesAtom } from '@/state/simulate/single-neuron';
 
 const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPreviewPlot'), {
   ssr: false,
@@ -100,8 +100,7 @@ export default function AmperageRange({
   modelSelfUrl,
   protocol,
 }: Props) {
-  const { current: currentSimulationStep } = useAtomValue(simulateStepTrackerAtom);
-
+  const morphologySections = useAtomValue(secNamesAtom);
   const [amperageState, dispatch] = useReducer(rangeReducer, {
     ...getInitialAmperageState(DEFAULT_PROTOCOL),
   });
@@ -179,7 +178,7 @@ export default function AmperageRange({
         </div>
       </div>
 
-      {!amperageState.error && currentSimulationStep.title === 'Stimulation protocol' && (
+      {!amperageState.error && Boolean(morphologySections.length) && (
         <StimuliPreviewPlot
           amplitudes={amperageState.computed}
           protocol={amperageState.protocol}
