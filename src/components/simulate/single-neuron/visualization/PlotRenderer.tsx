@@ -45,7 +45,7 @@ const PLOT_LAYOUT: Partial<Layout> = {
 
 const PLOT_CONFIG: Partial<Config> = {
   displayModeBar: false,
-  responsive: true,
+  responsive: false,
   displaylogo: false,
 };
 

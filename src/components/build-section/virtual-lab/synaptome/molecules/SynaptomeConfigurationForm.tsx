@@ -187,6 +187,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
         description: values.description,
         seed: values.seed,
         distribution: [createDistribution(fileMetadata, fileMetadata._self)],
+        memodel: resource['@id'],
         used: {
           '@id': resource['@id'],
           '@type': resource['@type'],

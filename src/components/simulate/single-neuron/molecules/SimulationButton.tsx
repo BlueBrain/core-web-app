@@ -101,6 +101,17 @@ export default function SimulationButton({
     }
   };
 
+  if (simulationStatus?.status === 'error') {
+    notifyError(
+      simulationStatus.description ??
+        'We are having trouble running the simulation, please wait a few moments, and try again',
+      2,
+      'topRight',
+      true,
+      'simulation'
+    );
+  }
+
   return (
     <div className="flex items-center justify-between gap-4">
       {simulationStatus?.status === 'finished' && (

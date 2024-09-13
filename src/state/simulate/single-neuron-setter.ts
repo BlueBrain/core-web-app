@@ -3,11 +3,10 @@
 import { atom } from 'jotai';
 import { RESET } from 'jotai/utils';
 
-import groupBy from 'lodash/groupBy';
 import uniqBy from 'lodash/uniqBy';
 import pick from 'lodash/pick';
 import values from 'lodash/values';
-import sortBy from 'lodash/sortBy';
+import delay from 'lodash/delay';
 
 import {
   genericSingleNeuronSimulationPlotDataAtom,
@@ -27,7 +26,7 @@ import {
 } from '@/types/nexus';
 import { createJsonFileOnVlabProject, createResource, fetchResourceById } from '@/api/nexus';
 import { composeUrl, createDistribution, getIdFromSelfUrl } from '@/util/nexus';
-import { PlotData } from '@/services/bluenaas-single-cell/types';
+import { PlotData, PlotDataEntry } from '@/services/bluenaas-single-cell/types';
 import { EModel } from '@/types/e-model';
 import { MEModel } from '@/types/me-model';
 import {
@@ -40,6 +39,7 @@ import { getSession } from '@/authFetch';
 import { SimulationPlotResponse } from '@/types/simulation/graph';
 import { nexus } from '@/config';
 import { runGenericSingleNeuronSimulation } from '@/api/bluenaas/runSimulation';
+import updateArray from '@/util/updateArray';
 
 export const SIMULATION_CONFIG_FILE_NAME_BASE = 'simulation-config';
 export const STIMULUS_PLOT_NAME = 'stimulus-plot';
@@ -71,7 +71,7 @@ export const createSingleNeuronSimulationAtom = atom<
       .map(String)
       .join()
   );
-  // TODO: Remove `singleNeuronSimulationConfig` and use `simulationConfig` directly once backend is updated to accept this type
+
   const singleNeuronSimulationConfig: SingleNeuronModelSimulationConfig = {
     recordFrom: recordFromUniq,
     conditions: experimentalSetupConfig,
@@ -127,7 +127,7 @@ export const createSingleNeuronSimulationAtom = atom<
     ],
     injectionLocation: singleNeuronSimulationConfig.currentInjection.injectTo,
     recordingLocation: singleNeuronSimulationConfig.recordFrom.map(
-      (r) => `${r.section}_${r.offset}` // TODO: recordingLocation is not needed in the entity since it is present in the distribution and the enity schema does not allow saving correct format for record location
+      (r) => `${r.section}_${r.offset}`
     ),
     brainLocation: resource.brainLocation,
   };
@@ -204,34 +204,15 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
       current: { title: 'Results', status: 'process' },
     });
 
-    const initialPlotData: Record<string, PlotData> = {};
-    recordFromConfig.forEach((o) => {
-      const key = `${o.section}_${o.offset}`;
-      initialPlotData[key] = [
-        {
-          x: [0],
-          y: [0],
-          type: 'scatter',
-          name: '',
-        },
-      ];
-    });
-
     set(
       genericSingleNeuronSimulationPlotDataAtom,
       recordFromConfig.reduce((acc: Record<string, PlotData>, o) => {
         const key = `${o.section}_${o.offset}`;
-        acc[key] = [
-          {
-            x: [0],
-            y: [0],
-            type: 'scatter',
-            name: '',
-          },
-        ];
+        acc[key] = [];
         return acc;
       }, {})
     );
+
     const recordFromUniq = uniqBy(recordFromConfig, (item) =>
       values(pick(item, ['section', 'offset']))
         .map(String)
@@ -256,8 +237,10 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
       if (!response.ok) {
         set(simulationStatusAtom, {
           status: 'error',
-          description: 'Simulation encountered an error, please try again',
+          description:
+            'Simulation encountered an error, please be sure that the configuration is correct and try again',
         });
+        delay(() => set(simulationStatusAtom, { status: null }), 1000);
         set(simulateStepTrackerAtom, {
           steps: get(simulateStepTrackerAtom).steps.map((p) => ({
             ...p,
@@ -271,54 +254,36 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
       const reader = response.body?.getReader();
       const decoder = new TextDecoder('utf-8');
       if (reader) {
-        let plotData: PlotData = [];
-        let data = '';
+        let buffer: string = '';
         // eslint-disable-next-line no-constant-condition
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          const decodedValue = decoder.decode(value, { stream: true });
-          data += decodedValue;
+          buffer += decoder.decode(value, { stream: true });
+          const parts = buffer.split('\n');
+          buffer = parts.pop() ?? '';
+          parts.forEach((part) => mergeJsonBuffer(part.trim()));
         }
-        const result = data
-          .split('\n')
-          .filter((o) => isJSON(o))
-          .map((o) => JSON.parse(o) as SimulationPlotResponse);
-
-        if (isJSON(JSON.stringify(result))) {
-          plotData = sortBy(
-            result.map((p) => ({
-              x: p.t,
-              y: p.v,
-              type: 'scatter',
-              name: p.stimulus_name,
-              recording: p.recording_name,
-              amplitude: p.amplitude,
-            })),
-            ['amplitude']
-          );
-
-          const groupedRecording = groupBy(plotData, (p) => p.recording);
-          set(genericSingleNeuronSimulationPlotDataAtom, groupedRecording);
-          set(simulationStatusAtom, { status: 'finished' });
-          set(simulateStepTrackerAtom, {
-            steps: get(simulateStepTrackerAtom).steps.map((p) => ({
-              ...p,
-              status: p.title === 'Results' ? 'finish' : p.status,
-            })),
-            current: { title: 'Results', status: 'finish' },
-          });
-          return;
+        // if we encountered that the remaining part is also a string
+        if (isJSON(buffer.trim())) {
+          const jsonData = JSON.parse(buffer);
+          mergeJsonBuffer(jsonData);
         }
-        set(simulationStatusAtom, {
-          status: 'error',
-          description: 'Plot data generation failed. Please try again',
+
+        set(simulationStatusAtom, { status: 'finished' });
+        set(simulateStepTrackerAtom, {
+          steps: get(simulateStepTrackerAtom).steps.map((p) => ({
+            ...p,
+            status: p.title === 'Results' ? 'finish' : p.status,
+          })),
+          current: { title: 'Results', status: 'finish' },
         });
       }
     } catch (error) {
       set(simulationStatusAtom, {
         status: 'error',
-        description: 'Simulation encountered an error, please try again',
+        description:
+          'We are having trouble running the simulation, please wait a few moments, and try again',
       });
       set(simulateStepTrackerAtom, {
         steps: get(simulateStepTrackerAtom).steps.map((p) => ({
@@ -327,6 +292,42 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
         })),
         current: { title: 'Experimental setup' },
       });
+    }
+
+    function mergeJsonBuffer(part: string) {
+      if (isJSON(part)) {
+        const jsonData = JSON.parse(part) as SimulationPlotResponse;
+        const newPlot: PlotDataEntry = {
+          x: jsonData.t,
+          y: jsonData.v,
+          type: 'scatter',
+          name: jsonData.stimulus_name,
+          recording: jsonData.recording_name,
+          amplitude: jsonData.amplitude,
+        };
+
+        const currentRecording = get(genericSingleNeuronSimulationPlotDataAtom)![
+          jsonData.recording_name
+        ];
+
+        const updatedPlot = {
+          ...get(genericSingleNeuronSimulationPlotDataAtom),
+          [jsonData.recording_name]:
+            !currentRecording.length ||
+            !currentRecording.find((o) => o.amplitude === newPlot.amplitude)
+              ? [...currentRecording, newPlot]
+              : updateArray({
+                  array: currentRecording,
+                  keyfn: (item) => item.amplitude === newPlot.amplitude,
+                  newVal: (value) => ({
+                    ...value,
+                    x: [...value.x, ...newPlot.x],
+                    y: [...value.y, ...newPlot.y],
+                  }),
+                }),
+        };
+        set(genericSingleNeuronSimulationPlotDataAtom, updatedPlot);
+      }
     }
   }
 );
