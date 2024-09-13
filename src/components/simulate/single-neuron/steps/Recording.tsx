@@ -1,6 +1,7 @@
 import { Select, Form, InputNumber, Button } from 'antd';
 import { useAtomValue } from 'jotai';
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import isNil from 'lodash/isNil';
 
 import CustomPopover from '@/components/simulate/single-neuron/molecules/Popover';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
@@ -78,7 +79,7 @@ function RecordItem({
               step={0.01}
               className="w-full [&_.ant-input-number-input]:font-bold [&_.ant-input-number-input]:!text-primary-8"
               onChange={(v) => {
-                if (v) {
+                if (!isNil(v)) {
                   onAddSource(index, { offset: v });
                 }
               }}

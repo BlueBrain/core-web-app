@@ -39,7 +39,10 @@ export default function Results() {
     );
   }
 
-  const isLoading = simulationStatus?.status === 'launched';
+  const isLoading =
+    simulationStatus?.status === 'launched' &&
+    Object.values(recordingPlotData).every((o) => o.every((p) => p.y.length === 0));
+
   return (
     <div className="flex w-full flex-col gap-2">
       {Object.entries(recordingPlotData).map(([key, value]) => {

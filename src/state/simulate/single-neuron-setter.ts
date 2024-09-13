@@ -2,6 +2,7 @@
 
 import { atom } from 'jotai';
 import { RESET } from 'jotai/utils';
+import { captureException } from '@sentry/nextjs';
 
 import uniqBy from 'lodash/uniqBy';
 import pick from 'lodash/pick';
@@ -10,6 +11,7 @@ import delay from 'lodash/delay';
 
 import {
   genericSingleNeuronSimulationPlotDataAtom,
+  secNamesAtom,
   simulateStepTrackerAtom,
   simulationStatusAtom,
   stimulusPreviewPlotDataAtom,
@@ -207,7 +209,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
     set(
       genericSingleNeuronSimulationPlotDataAtom,
       recordFromConfig.reduce((acc: Record<string, PlotData>, o) => {
-        const key = `${o.section}_${o.offset}`;
+        const key = `${o.section}_${o.offset === 0 ? '0.0' : String(o.offset)}`;
         acc[key] = [];
         return acc;
       }, {})
@@ -264,6 +266,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
           buffer = parts.pop() ?? '';
           parts.forEach((part) => mergeJsonBuffer(part.trim()));
         }
+
         // if we encountered that the remaining part is also a string
         if (isJSON(buffer.trim())) {
           const jsonData = JSON.parse(buffer);
@@ -280,6 +283,22 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
         });
       }
     } catch (error) {
+      captureException(error, {
+        tags: { section: 'simulation', type: 'simulationType' },
+        extra: {
+          modelSelfUrl,
+          config: {
+            recordFrom: recordFromUniq,
+            conditions: conditionsConfig,
+            currentInjection:
+              currentInjectionConfig.length > 0 ? currentInjectionConfig[0] : undefined,
+            synapses: simulationType === 'synaptome-simulation' ? synapsesConfig : undefined,
+            type: simulationType,
+            simulationDuration,
+          },
+        },
+      });
+
       set(simulationStatusAtom, {
         status: 'error',
         description:
@@ -310,23 +329,25 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
           jsonData.recording_name
         ];
 
-        const updatedPlot = {
-          ...get(genericSingleNeuronSimulationPlotDataAtom),
-          [jsonData.recording_name]:
-            !currentRecording.length ||
-            !currentRecording.find((o) => o.amplitude === newPlot.amplitude)
-              ? [...currentRecording, newPlot]
-              : updateArray({
-                  array: currentRecording,
-                  keyfn: (item) => item.amplitude === newPlot.amplitude,
-                  newVal: (value) => ({
-                    ...value,
-                    x: [...value.x, ...newPlot.x],
-                    y: [...value.y, ...newPlot.y],
+        if (currentRecording) {
+          const updatedPlot = {
+            ...get(genericSingleNeuronSimulationPlotDataAtom),
+            [jsonData.recording_name]:
+              !currentRecording.length ||
+              !currentRecording.find((o) => o.amplitude === newPlot.amplitude)
+                ? [...currentRecording, newPlot]
+                : updateArray({
+                    array: currentRecording,
+                    keyfn: (item) => item.amplitude === newPlot.amplitude,
+                    newVal: (value) => ({
+                      ...value,
+                      x: [...value.x, ...newPlot.x],
+                      y: [...value.y, ...newPlot.y],
+                    }),
                   }),
-                }),
-        };
-        set(genericSingleNeuronSimulationPlotDataAtom, updatedPlot);
+          };
+          set(genericSingleNeuronSimulationPlotDataAtom, updatedPlot);
+        }
       }
     }
   }
@@ -339,4 +360,5 @@ export const resetSimulationAtom = atom(null, (get, set, resetValue: typeof RESE
   set(simulationExperimentalSetupAtom, resetValue);
   set(simulateStepTrackerAtom, resetValue);
   set(simulationStatusAtom, resetValue);
+  set(secNamesAtom, resetValue);
 });
