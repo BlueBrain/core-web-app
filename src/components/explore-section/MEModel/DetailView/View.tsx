@@ -16,7 +16,6 @@ import SectionTabs, {
   EmodelTabKeys,
 } from '@/components/explore-section/EModel/DetailView/SectionTabs';
 import If from '@/components/ConditionalRenderer/If';
-import GenericButton from '@/components/Global/GenericButton';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter';
 
@@ -26,12 +25,11 @@ type Params = {
 };
 
 type Props = {
-  vlProjectUrl: string;
   params: Params;
   showViewMode?: boolean;
 };
 
-export default function MEModelDetailView({ vlProjectUrl, params, showViewMode = false }: Props) {
+export default function MEModelDetailView({ params, showViewMode = false }: Props) {
   const [activeTab] = useQueryState(
     'tab',
     parseAsString.withDefault(EMODEL_TABS.at(0)!.key)
@@ -70,11 +68,12 @@ export default function MEModelDetailView({ vlProjectUrl, params, showViewMode =
                 </If>
               </Suspense>
             </div>
-            <GenericButton
+            {/* Hiding button SfN */}
+            {/* <GenericButton
               text="New model"
               className="fixed bottom-10 right-10 w-[200px] bg-primary-9 font-bold text-white hover:!bg-primary-7"
               href={`${vlProjectUrl}/build/me-model/new`}
-            />
+            /> */}
           </>
         )}
       </Detail>
