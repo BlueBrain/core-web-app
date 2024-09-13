@@ -114,3 +114,8 @@ export type Synapse = {
   postSynaptic: IdWithLabel;
   preSynaptic: IdWithLabel;
 };
+
+export type ModelSubject = {
+  '@type': 'Subject';
+  species: IdWithLabel;
+};

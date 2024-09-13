@@ -1,6 +1,5 @@
 import { IdWithType } from './explore-section/common';
-import { ModelSubject } from './explore-section/delta-model';
-import { Annotation } from './explore-section/delta-properties';
+import { Annotation, ModelSubject } from './explore-section/delta-properties';
 import { ESeModel } from './explore-section/es';
 import { FileDistribution } from './explore-section/es-properties';
 import { MModelMenuItem } from './m-model';

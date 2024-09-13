@@ -29,7 +29,7 @@ export default function NeuronViewerContainer({
   useActions = false,
   useLabels = false,
 }: Props) {
-  const [disbaleHovering, setDisableHovering] = useState(false);
+  const [disbaleHovering, setDisableHovering] = useState(() => !useActions);
   const [neuronViewerClickData, setNeuronViewerOnClickData] =
     useState<NeuronViewerClickData | null>(null);
   const [neuronViewerHoverData, setNeuronViewerOnHoverData] =

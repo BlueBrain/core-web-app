@@ -206,23 +206,11 @@ export const MODEL_DATA_COMMON_FIELDS = [
 
 export const SYNATOME_MODEL_FIELDS = [
   {
-    field: Field.SynatomeUsedMEModelName,
-    className: 'col-span-2',
-  },
-  {
-    field: Field.SynatomeUsedSpecies,
-    className: 'col-span-2',
-  },
-  {
     field: Field.BrainRegion,
-    className: 'col-span-4',
+    className: 'col-span-1',
   },
   {
-    field: Field.SynatomeUsedMModelName,
-    className: 'col-span-4',
-  },
-  {
-    field: Field.SynatomeUsedEModelName,
-    className: 'col-span-4',
+    field: Field.License,
+    className: 'col-span-1',
   },
 ] as DetailProps[];

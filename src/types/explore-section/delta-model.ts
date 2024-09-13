@@ -1,6 +1,13 @@
+import { EModel, NeuronMorphology } from '../e-model';
 import { MEModelResource } from '../me-model';
 import { IdWithLabel, IdWithType } from './common';
-import { Annotation, BrainLocation, Contribution, FileDistribution } from './delta-properties';
+import {
+  Annotation,
+  BrainLocation,
+  Contribution,
+  FileDistribution,
+  ModelSubject,
+} from './delta-properties';
 import { Distribution, EntityResource } from '@/types/nexus/common';
 
 export type ModelResource = EntityResource & {
@@ -12,11 +19,6 @@ export type ModelResource = EntityResource & {
 type Activity = {
   '@type': 'Activity';
   followedWorkflow: IdWithType;
-};
-
-export type ModelSubject = {
-  '@type': 'Subject';
-  species: IdWithLabel;
 };
 
 export type EModelResource = ModelResource & {
@@ -48,6 +50,8 @@ export type SynaptomeModelResource = EntityResource & {
   };
   seed: number;
   linkedMeModel?: MEModelResource;
+  linkedMModel?: NeuronMorphology;
+  linkedEModel?: EModel;
 };
 
 export type Model = EModelResource | SynaptomeModelResource;

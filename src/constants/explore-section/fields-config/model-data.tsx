@@ -157,8 +157,8 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     filter: null,
     render: {
       deltaResourceViewFn: (resource) => {
-        const { linkedMeModel } = resource as SynaptomeModelResource;
-        return selectorFnBasic(linkedMeModel?.eType);
+        const { linkedEModel } = resource as SynaptomeModelResource;
+        return selectorFnBasic(linkedEModel?.name);
       },
     },
     vocabulary: {
@@ -173,8 +173,8 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     filter: null,
     render: {
       deltaResourceViewFn: (resource) => {
-        const { linkedMeModel } = resource as SynaptomeModelResource;
-        return selectorFnBasic(linkedMeModel?.mType);
+        const { linkedMModel } = resource as SynaptomeModelResource;
+        return selectorFnBasic(linkedMModel?.name);
       },
     },
     vocabulary: {

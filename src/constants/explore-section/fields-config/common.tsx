@@ -28,6 +28,7 @@ import {
   ExemplarMorphologyDataType as ExemplarMorphologyEModel,
   ExperimentalTracesDataType as ExperimentalTracesEModel,
 } from '@/types/e-model';
+import { DisplayMessages } from '@/constants/display-messages';
 
 export const previewRender = ({
   distribution,
@@ -202,7 +203,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
     filter: FilterTypeEnum.Text,
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.description),
-      deltaResourceViewFn: (resource) => resource.description,
+      deltaResourceViewFn: (resource) => resource.description || DisplayMessages.NO_DATA_STRING,
     },
     esTerms: {
       flat: {

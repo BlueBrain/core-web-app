@@ -5,7 +5,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import { useModelConfiguration } from '@/hooks/useModelConfiguration';
 import { SynaptomeConfigDistribution } from '@/types/synaptome';
-import { SYNPASE_CODE_TO_TYPE } from '@/constants/simulate/single-neuron';
+import { getSimulationColor, SYNPASE_CODE_TO_TYPE } from '@/constants/simulate/single-neuron';
 import ConfigItem from '@/components/build-section/virtual-lab/synaptome/molecules/ConfigItem';
 
 export default function SynapseGroupList({ modelUrl }: { modelUrl: string }) {
@@ -36,7 +36,7 @@ export default function SynapseGroupList({ modelUrl }: { modelUrl: string }) {
               <div
                 className="flex items-center justify-center px-4 py-2 text-base text-white"
                 style={{
-                  backgroundColor: color,
+                  backgroundColor: color ?? getSimulationColor(indx),
                 }}
               >
                 {indx + 1}

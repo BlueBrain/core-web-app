@@ -10,7 +10,7 @@ export function useModel<T>({
   project,
   callback,
 }: {
-  modelId: string | null;
+  modelId?: string | null;
   org?: string;
   project?: string;
   callback?: (value: T) => void;

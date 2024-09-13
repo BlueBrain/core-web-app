@@ -47,14 +47,13 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
   const info = useResourceInfoFromPath();
   const [activeTab, setActiveTab] = useState<TabKeys>('synaptome-configuration');
   const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
+  const setBackToListPath = useSetAtom(backToListPathAtom);
 
   const { model, configuration, loading } = useSynaptomeModel({
     modelId: info.id,
     virtualLabId,
     projectId,
   });
-
-  const setBackToListPath = useSetAtom(backToListPathAtom);
 
   useEffect(() => {
     setBackToListPath(`${vlProjectUrl}/build`);
@@ -64,7 +63,7 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-3">
         <Spin indicator={<LoadingOutlined />} size="large" />
-        <h2 className="font-light text-primary-9">Loading Synaptome model...</h2>
+        <h2 className="font-light text-primary-9">Loading synaptome model...</h2>
       </div>
     );
   }
@@ -76,6 +75,7 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
           showViewMode
           fields={SYNATOME_MODEL_FIELDS}
           commonFields={MODEL_DATA_COMMON_FIELDS}
+
           // extraHeaderAction={
           //   <Link
           //     className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
@@ -117,9 +117,17 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
                 <div className="mt-8 w-full">
                   {activeTab === 'synaptome-configuration' && (
                     <div className="flex w-full flex-col gap-4">
-                      <MEModelConfiguration
-                        {...{ virtualLabId, projectId, meModelId: model.used['@id'] }}
-                      />
+                      {data.linkedMeModel && data.linkedMModel && data.linkedEModel && (
+                        <MEModelConfiguration
+                          {...{
+                            virtualLabId,
+                            projectId,
+                            meModel: data.linkedMeModel,
+                            mModel: data.linkedMModel,
+                            eModel: data.linkedEModel,
+                          }}
+                        />
+                      )}
                       <div className="mt-10">
                         <SynapseGroupList modelUrl={data.distribution.contentUrl} />
                       </div>

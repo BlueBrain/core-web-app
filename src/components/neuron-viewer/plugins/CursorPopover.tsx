@@ -7,7 +7,7 @@ const dataMapping = {
   section: { title: 'Section', unit: '' },
   section_nseg: { title: 'Number of segments', unit: '' },
   offset: { title: 'Offset', unit: '' },
-  distance_from_soma: { title: 'Distance from soma', unit: 'mM' },
+  distance_from_soma: { title: 'Distance from soma', unit: 'µM' },
 };
 
 export default function NeuronMeshInjectionRecordingPopover({

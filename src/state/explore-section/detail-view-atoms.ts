@@ -21,6 +21,7 @@ import { subjectAgeSelectorFn, ageSelectorFn } from '@/util/explore-section/sele
 import { atlasESView, nexus } from '@/config';
 import { DataType } from '@/constants/explore-section/list-views';
 import { MEModelResource } from '@/types/me-model';
+import { EModel, NeuronMorphology } from '@/types/e-model';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
@@ -66,9 +67,32 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>
               }),
         });
 
+        const mModelId = linkedMeModel?.hasPart.find((p) => p['@type'] === 'NeuronMorphology')?.[
+          '@id'
+        ]!;
+        const linkedMModel = await fetchResourceById<NeuronMorphology>(mModelId, session, {
+          ...(mModelId.startsWith(nexus.defaultIdBaseUrl)
+            ? {}
+            : {
+                org: info.org,
+                project: info.project,
+              }),
+        });
+        const eModelId = linkedMeModel?.hasPart.find((p) => p['@type'] === 'EModel')?.['@id']!;
+        const linkedEModel = await fetchResourceById<EModel>(eModelId, session, {
+          ...(eModelId.startsWith(nexus.defaultIdBaseUrl)
+            ? {}
+            : {
+                org: info.org,
+                project: info.project,
+              }),
+        });
+
         return {
           ...resource,
           linkedMeModel,
+          linkedMModel,
+          linkedEModel,
         };
       }
 
