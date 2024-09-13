@@ -1,8 +1,7 @@
 'use client';
 
 import { Spin } from 'antd';
-import { useSetAtom } from 'jotai';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import {
@@ -10,9 +9,7 @@ import {
   SYNATOME_MODEL_FIELDS,
 } from '@/constants/explore-section/detail-views-fields';
 import { MEModelConfiguration } from '@/components/build-section/virtual-lab/synaptome/view-model/MEModelConfig';
-import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
-import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { classNames } from '@/util/utils';
 
 import Results from '@/components/build-section/virtual-lab/synaptome/view-model/Results';
@@ -46,18 +43,12 @@ const TABS: Tab[] = [
 export default function SynaptomeModelDetailPage({ params: { virtualLabId, projectId } }: Props) {
   const info = useResourceInfoFromPath();
   const [activeTab, setActiveTab] = useState<TabKeys>('synaptome-configuration');
-  const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-  const setBackToListPath = useSetAtom(backToListPathAtom);
 
   const { model, configuration, loading } = useSynaptomeModel({
     modelId: info.id,
     virtualLabId,
     projectId,
   });
-
-  useEffect(() => {
-    setBackToListPath(`${vlProjectUrl}/build`);
-  }, [setBackToListPath, vlProjectUrl]);
 
   if (loading || !model || !configuration) {
     return (

@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useSetAtom } from 'jotai';
 import { notFound, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
@@ -7,6 +9,8 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 
 const ExploreEModelTable = dynamic(
   () => import('@/components/explore-section/EModel/ExploreEModelTable')
@@ -28,6 +32,14 @@ export default function VirtualLabModelListingView() {
     virtualLabId: params.virtualLabId,
     projectId: params.projectId,
   };
+
+  const setBackToListPath = useSetAtom(backToListPathAtom);
+  const vlProjectUrl = generateVlProjectUrl(virtualLabInfo.virtualLabId, virtualLabInfo.projectId);
+
+  useEffect(() => {
+    setBackToListPath(`${vlProjectUrl}/explore/interactive`);
+  }, [setBackToListPath, vlProjectUrl]);
+
   if (!currentModel) notFound();
 
   switch (currentModel as DataType) {
