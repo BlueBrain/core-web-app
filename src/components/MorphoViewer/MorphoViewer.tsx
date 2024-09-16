@@ -8,11 +8,13 @@ import { useEffect, useRef } from 'react';
 import { ColorRamp } from './ColorRamp';
 import { Scalebar } from './Scalebar';
 import { Settings } from './Settings';
-import { WaitingForSomaEnhancement } from './WaitingForSomaEnhancement';
 import { Warning } from './Warning';
-import { useEnhancedSomaService } from './hooks/neuro-morpho-viz-service';
 import { useMorphoViewerSettings } from './hooks/settings';
 import { useSignal } from './hooks/signal';
+
+// We disable enhanced somas until they are fixed on the backend.
+// import { WaitingForSomaEnhancement } from './WaitingForSomaEnhancement';
+// import { useEnhancedSomaService } from './hooks/neuro-morpho-viz-service';
 
 import { classNames } from '@/util/utils';
 
@@ -24,10 +26,11 @@ export interface MorphoViewerProps {
    * Text content of a SWC file.
    */
   swc: string;
-  contentUrl?: string;
+  // We disable enhanced somas until they are fixed on the backend.
+  // contentUrl?: string;
 }
 
-export function MorphoViewer({ className, swc, contentUrl }: MorphoViewerProps) {
+export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   const refDiv = useRef<HTMLDivElement | null>(null);
   const refMorphoCanvas = useRef(new MorphologyCanvas());
   const morphoCanvas = refMorphoCanvas.current;
@@ -36,7 +39,8 @@ export function MorphoViewer({ className, swc, contentUrl }: MorphoViewerProps) 
   const refCanvas = useRef<HTMLCanvasElement | null>(null);
   const [{ isDarkMode }] = useMorphoViewerSettings(morphoCanvas);
   const [warning, setWarning] = useSignal(10000);
-  const enhancedSomaIsLoading = useEnhancedSomaService(morphoCanvas, contentUrl);
+  // We disable enhanced somas until they are fixed on the backend.
+  //   const enhancedSomaIsLoading = useEnhancedSomaService(morphoCanvas, contentUrl);
 
   useEffect(() => {
     morphoCanvas.canvas = refCanvas.current;
@@ -98,7 +102,10 @@ export function MorphoViewer({ className, swc, contentUrl }: MorphoViewerProps) 
       </div>
       <Scalebar painter={morphoCanvas} />
       <Warning visible={warning} />
-      <WaitingForSomaEnhancement visible={enhancedSomaIsLoading} />
+      {
+        // We disable enhanced somas until they are fixed on the backend.
+        // <WaitingForSomaEnhancement visible={enhancedSomaIsLoading} />
+      }
     </div>
   );
 }

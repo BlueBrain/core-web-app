@@ -5,7 +5,9 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
-import { useSwcContentUrl } from '@/util/content-url';
+// We disable enhanced somas until they are fixed on the backend.
+// import { useSwcContentUrl } from '@/util/content-url';
+
 import createMorphologyDataAtom from '@/state/morpho-viewer';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import WithGeneralization, {
@@ -53,7 +55,8 @@ function MorphoViewerLoader({ resource }: { resource: ReconstructedNeuronMorphol
     () => loadable(createMorphologyDataAtom(resource)),
     [resource]
   );
-  const swcContentUrl = useSwcContentUrl(resource.distribution);
+  // We disable enhanced somas until they are fixed on the backend.
+  // const swcContentUrl = useSwcContentUrl(resource.distribution);
   const morphologyData = useAtomValue(morphologyDataAtom);
 
   const { state } = morphologyData;
@@ -63,7 +66,8 @@ function MorphoViewerLoader({ resource }: { resource: ReconstructedNeuronMorphol
         <MorphoViewer
           className="min-h-[75%]"
           swc={morphologyData.data}
-          contentUrl={swcContentUrl}
+          // We disable enhanced somas until they are fixed on the backend.
+          // contentUrl={swcContentUrl}
         />
       ) : (
         <div>No data...</div>
