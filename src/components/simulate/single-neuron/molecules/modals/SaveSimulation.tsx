@@ -60,7 +60,7 @@ export default function SaveSimulationModal({
 
   const generateSimulationDetailUrl = (simulationId: string) => {
     const vlProjectUrl = generateVlProjectUrl(vLabId, projectId);
-    const baseBuildUrl = `${vlProjectUrl}/simulate/${simulationType}/view`;
+    const baseBuildUrl = `${vlProjectUrl}/explore/simulate/${simulationType}/view`;
 
     return `${baseBuildUrl}/${to64(`${vLabId}/${projectId}!/!${simulationId}`)}`;
   };
