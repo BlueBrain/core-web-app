@@ -62,25 +62,7 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
   return (
     <div className="secondary-scrollbar h-screen w-full overflow-y-auto">
       <Suspense fallback={<CentralLoadingSpinner />}>
-        <Detail
-          showViewMode
-          fields={SYNATOME_MODEL_FIELDS}
-          commonFields={MODEL_DATA_COMMON_FIELDS}
-
-          // extraHeaderAction={
-          //   <Link
-          //     className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
-          //     href={`${baseBuildUrl}?mode=clone&model=${to64(info.id)}`}
-          //   >
-          //     <div className="flex items-center justify-center gap-2">
-          //       Clone model
-          //       <div className="h-auto w-12 border border-neutral-2 px-4 py-3">
-          //         <CloneIcon />
-          //       </div>
-          //     </div>
-          //   </Link>
-          // }
-        >
+        <Detail showViewMode fields={SYNATOME_MODEL_FIELDS} commonFields={MODEL_DATA_COMMON_FIELDS}>
           {(data: SynaptomeModelResource) => {
             return (
               <div>

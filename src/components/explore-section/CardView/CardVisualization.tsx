@@ -19,6 +19,7 @@ type CardVisualizationProps = {
   resource: ReconstructedNeuronMorphology | ExperimentalTrace | NeuronMorphology;
   height?: number;
   width?: number;
+  className?: string;
 };
 
 const swcFileAtom = atomFamily((contentUrl?: string) =>
@@ -33,6 +34,7 @@ const swcFileAtom = atomFamily((contentUrl?: string) =>
 export default function CardVisualization({
   dataType,
   resource,
+  className,
   height = 350,
   width = 350,
 }: CardVisualizationProps) {
@@ -55,6 +57,7 @@ export default function CardVisualization({
           !!contentUrl && (
             <PreviewThumbnail
               contentUrl={contentUrl}
+              className={className}
               dpi={300}
               height={height}
               type={DataType.ExperimentalNeuronMorphology}

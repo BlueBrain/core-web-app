@@ -103,9 +103,5 @@ export function EModelThumbnail({ emodel }: { emodel: EModel }) {
   if (!emodel.image)
     return <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
 
-  return (
-    <div className="border border-black">
-      <EModelTracePreview images={emodel.image} height={200} width={200} />
-    </div>
-  );
+  return <EModelTracePreview images={emodel.image} height={200} width={200} />;
 }

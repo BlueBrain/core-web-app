@@ -1,4 +1,3 @@
-import { Skeleton } from 'antd';
 import Link from 'next/link';
 
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
@@ -36,24 +35,24 @@ export function MEModelConfiguration({
     <div className="relative mt-2 flex gap-10 rounded-md border border-gray-400 p-4">
       <Link
         href={generateMeModelDetailView()}
-        className="absolute right-4 top-4 font-bold text-primary-8"
+        className="absolute right-4 top-4 flex items-center justify-center font-bold text-primary-8 hover:text-primary-7"
       >
         View details
       </Link>
-      <div className="flex flex-col justify-center gap-2">
-        <div className="mb-2 text-2xl font-light uppercase text-gray-400">single neuron model</div>
+      <div className="flex flex-col items-start gap-2">
+        <div className="mb-2 text-xl font-light uppercase text-gray-400">single neuron model</div>
         <div className="flex items-start gap-2">
-          <CardVisualization
-            dataType={DataType.ExperimentalNeuronMorphology}
-            resource={mModel}
-            height={200}
-            width={200}
-          />
-          {eModel ? (
+          <div className="flex h-56 w-56 items-center justify-center border border-neutral-3">
+            <CardVisualization
+              dataType={DataType.ExperimentalNeuronMorphology}
+              resource={mModel}
+              height={200}
+              width={200}
+            />
+          </div>
+          <div className="flex h-56 w-56 items-center justify-center border border-neutral-3">
             <EModelThumbnail emodel={eModel} />
-          ) : (
-            <Skeleton.Image className="h-full w-full rounded-none" />
-          )}
+          </div>
         </div>
       </div>
       <div className="mt-12 flex-grow">
@@ -73,7 +72,7 @@ type ModelDetails = {
 
 function MeModelDetails({ meModel, eModel, mModel }: ModelDetails) {
   return (
-    <div className="mt-4 grid grid-cols-2 gap-4 text-primary-8">
+    <div className="mt-4 grid grid-cols-[max-content_max-content] gap-4 gap-x-12 text-primary-8">
       <div className="col-span-1">
         <div className="font-thin uppercase text-slate-600">m-model</div>
         <div className="line-clamp-1">{mModel.name || DisplayMessages.NO_DATA_STRING}</div>
