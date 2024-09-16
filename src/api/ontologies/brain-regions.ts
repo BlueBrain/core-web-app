@@ -1,5 +1,4 @@
 import has from 'lodash/has';
-import { createHeaders } from '@/util/utils';
 import { BrainRegion, BrainRegionOntology, BrainRegionOntologyView } from '@/types/ontologies';
 import {
   ClassNexus,
@@ -9,6 +8,7 @@ import {
 import { composeUrl } from '@/util/nexus';
 import { brainRegionOntologyResource } from '@/config';
 import { Distribution } from '@/types/nexus';
+import authFetch from '@/authFetch';
 
 /**
  * Sanitizes the leaves in order to be in a uniform format. Leaves sometimes are
@@ -95,11 +95,11 @@ export const serializeBrainRegionOntologyViews = (
  * Retrieves the brain regions from Nexus
  * @param accessToken
  */
-const getBrainRegionOntology = async (accessToken: string): Promise<BrainRegionOntology> => {
+const getBrainRegionOntology = async (): Promise<BrainRegionOntology> => {
   const { id, org, project, tag } = brainRegionOntologyResource;
 
   const url = composeUrl('resource', id, { org, project, source: true, tag });
-  return fetch(url, { headers: createHeaders(accessToken) })
+  return authFetch(url, { headers: { 'Content-Type': 'application/json', Accept: '*/*' } })
     .then((response) => {
       if (!response.ok) {
         throw new Error('Brain region ontology could not be retrieved');
@@ -114,9 +114,8 @@ const getBrainRegionOntology = async (accessToken: string): Promise<BrainRegionO
         throw new Error('Distribution not found in brain region ontology');
       }
 
-      return fetch(distribution.contentUrl, {
-        method: 'GET',
-        headers: createHeaders(accessToken, { Accept: '*/*' }),
+      return authFetch(distribution.contentUrl, {
+        headers: { 'Content-Type': 'application/json', Accept: '*/*' },
       });
     })
     .then((response) => {

@@ -11,12 +11,10 @@ import {
 import useNotification from '@/hooks/notifications';
 import { thumbnailGenerationBaseUrl } from '@/config';
 import { logError } from '@/util/logger';
-import { createHeaders } from '@/util/utils';
-import { useAccessToken } from '@/hooks/useAccessToken';
+import authFetch from '@/authFetch';
 
 interface NeuroMorphoVizQuery {
   contentUrl: string;
-  accessToken: string;
 }
 
 class EnhancedSomaLoader {
@@ -42,7 +40,7 @@ class EnhancedSomaLoader {
 
     this.nextQuery = query;
     do {
-      const { accessToken, contentUrl } = this.nextQuery;
+      const { contentUrl } = this.nextQuery;
       console.log('Fetching enhanced soma:', this.nextQuery);
       this.nextQuery = null;
       this.fetchingInProgress = true;
@@ -52,7 +50,7 @@ class EnhancedSomaLoader {
           this.eventSomaGlbReceived.dispatch(this.lastSomaGlb);
           continue;
         }
-        const data = await fetchSomaFromNeuroMorphoViz(contentUrl, accessToken);
+        const data = await fetchSomaFromNeuroMorphoViz(contentUrl);
         this.eventSomaGlbReceived.dispatch(data);
         this.lastContentUrl = contentUrl;
         this.lastSomaGlb = data;
@@ -76,12 +74,7 @@ class EnhancedSomaLoader {
   }
 }
 
-async function fetchSomaFromNeuroMorphoViz(
-  contentUrl: string,
-  accessToken: string | undefined
-): Promise<ArrayBuffer | null> {
-  if (!accessToken) return null;
-
+async function fetchSomaFromNeuroMorphoViz(contentUrl: string): Promise<ArrayBuffer | null> {
   const url = `${thumbnailGenerationBaseUrl}/soma/process-nexus-swc?content_url=${encodeURIComponent(contentUrl)}`;
   console.log('Actual fetch:', url);
   console.log(
@@ -91,11 +84,9 @@ async function fetchSomaFromNeuroMorphoViz(
   console.log('🚀 [neuro-morpho-viz-service] contentUrl = ', contentUrl); // @FIXME: Remove this line written on 2024-06-04 at 09:49
   const time = Date.now();
   try {
-    const resp = await fetch(url, {
+    const resp = await authFetch(url, {
       method: 'GET',
-      headers: createHeaders(accessToken, {
-        Accept: 'application/json',
-      }),
+      headers: { Accept: 'application/json' },
     });
     console.log('🚀 [neuro-morpho-viz-service] resp = ', resp); // @FIXME: Remove this line written on 2024-06-04 at 09:47
     if (!resp.ok) {
@@ -121,7 +112,6 @@ export function useEnhancedSomaService(
   morphoCanvasManager: MorphologyCanvas,
   contentUrl: string | undefined
 ) {
-  const accessToken = useAccessToken();
   const notification = useNotification();
 
   useEventHandler(enhancedSomaService.eventErrorOccured, (err) => {
@@ -142,10 +132,10 @@ export function useEnhancedSomaService(
   const fetchingInProgress = useEventValue(enhancedSomaService.eventFetchingInProgress, false);
 
   useEffect(() => {
-    if (!contentUrl || !accessToken) return;
+    if (!contentUrl) return;
 
-    enhancedSomaService.fetch({ contentUrl, accessToken });
-  }, [contentUrl, accessToken]);
+    enhancedSomaService.fetch({ contentUrl });
+  }, [contentUrl]);
 
   return fetchingInProgress;
 }

@@ -83,11 +83,7 @@ export const densityOrCountLabelAtom = atom<'Counts [N]' | 'Densities [/mm³]' |
   }
 });
 
-export const brainRegionOntologyAtom = atom<Promise<BrainRegionOntology | null>>(async (get) => {
-  const session = get(sessionAtom);
-
-  return session && getBrainRegionOntology(session.accessToken);
-});
+export const brainRegionOntologyAtom = atom(getBrainRegionOntology);
 
 export const brainRegionOntologyViewsAtom = selectAtom<
   Promise<BrainRegionOntology | null>,

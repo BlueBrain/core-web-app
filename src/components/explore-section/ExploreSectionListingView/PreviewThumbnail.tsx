@@ -3,11 +3,10 @@ import Image from 'next/image';
 import { Empty, Skeleton } from 'antd';
 import { useInView } from 'react-intersection-observer';
 
-import { createHeaders } from '@/util/utils';
-import { useSessionAtomValue } from '@/hooks/hooks';
 import { thumbnailGenerationBaseUrl } from '@/config';
 import { DataType } from '@/constants/explore-section/list-views';
 import buildQueryString from '@/util/query-params-builder';
+import authFetch from '@/authFetch';
 
 export const dataTypeToEndpoint = {
   [DataType.ExperimentalNeuronMorphology]: 'morphology-image',
@@ -35,7 +34,6 @@ export default function PreviewThumbnail({
   target?: 'simulation' | 'stimulus';
   alt?: string;
 }) {
-  const session = useSessionAtomValue();
   const { ref, inView } = useInView({
     threshold: 0.2,
   });
@@ -46,9 +44,7 @@ export default function PreviewThumbnail({
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const { accessToken } = session ?? { accessToken: undefined };
-
-    if (accessToken && inView) {
+    if (inView) {
       setLoading(true);
 
       const encodedContentUrl = encodeURIComponent(contentUrl);
@@ -59,11 +55,9 @@ export default function PreviewThumbnail({
 
       const requestUrl = `${thumbnailGenerationBaseUrl}/generate/${endpoint}?content_url=${encodedContentUrl}&${queryParams}`;
 
-      fetch(requestUrl, {
+      authFetch(requestUrl, {
         method: 'GET',
-        headers: createHeaders(accessToken, {
-          Accept: 'image/png',
-        }),
+        headers: { Accept: 'image/png' },
       })
         .then((response) => response.blob())
         .then((blob) => {
@@ -74,7 +68,7 @@ export default function PreviewThumbnail({
         })
         .catch(() => setLoading(false));
     }
-  }, [contentUrl, dpi, target, endpoint, inView, session]);
+  }, [contentUrl, dpi, target, endpoint, inView]);
 
   if (thumbnail) {
     return <Image alt={alt} className={className} height={height} src={thumbnail} width={width} />;
