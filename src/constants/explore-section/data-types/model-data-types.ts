@@ -26,7 +26,7 @@ export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
       Field.Contributors,
     ],
 
-    curated: false,
+    curated: true,
   },
   [DataType.CircuitMEModel]: {
     title: 'ME-model',

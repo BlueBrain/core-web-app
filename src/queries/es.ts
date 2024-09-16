@@ -73,7 +73,11 @@ export const getEModelQuery = (searchString: string = '') => ({
       filter: [
         {
           bool: {
-            must: [{ term: { _deprecated: false } }, { term: { '@type': 'EModel' } }],
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'EModel' } },
+              { term: { curated: true } },
+            ],
           },
         },
         idExistsFilter,
