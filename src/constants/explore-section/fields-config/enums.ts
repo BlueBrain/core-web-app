@@ -80,6 +80,8 @@ export enum Field {
   SynatomeUsedEModelName = 'SynatomeUsedEModelName',
   SynatomeUsedMModelName = 'SynatomeUsedMModelName',
   SynatomeUsedSpecies = 'SynatomeUsedSpecies',
+  SynatomeUsedMType = 'SynatomeUsedMType',
+  SynatomeUsedEType = 'SynatomeUsedEType',
   SimulationSynatomeUsedModelName = 'SimulationSynatomeUsedModelName',
   SimulationSynatomeUsedModelDescription = 'SimulationSynatomeUsedModelDescription',
   SimulationSynaptomeRecordingThumbnail = 'SimulationSynaptomeRecordingThumbnail',

@@ -14,6 +14,7 @@ import { fetchResourceById } from '@/api/nexus';
 import { MEModelResource } from '@/types/me-model';
 import { nexus } from '@/config';
 import authFetch, { getSession } from '@/authFetch';
+import { EModel, NeuronMorphology } from '@/types/e-model';
 
 export type DataQuery = {
   size: number;
@@ -142,7 +143,7 @@ export async function fetchLinkedModel({
   linkedProperty,
 }: {
   path: string;
-  linkedProperty: string;
+  linkedProperty: 'linkedMeModel' | 'linkedSynaptomeModel';
   results: ExploreESHit<ExploreResource>[];
 }) {
   const session = await getSession();
@@ -162,7 +163,7 @@ export async function fetchLinkedModel({
           });
         } else {
           const { org, project } = getOrgAndProjectFromProjectId(model._source.project['@id']);
-          const linkedModel = await fetchResourceById<MEModelResource>(meModelId, session, {
+          const linkedModel = await fetchResourceById(meModelId, session, {
             ...(meModelId.startsWith(nexus.defaultIdBaseUrl)
               ? {}
               : {
@@ -170,12 +171,29 @@ export async function fetchLinkedModel({
                   project,
                 }),
           });
+          let linkedMModel: NeuronMorphology | undefined;
+          let linkedEModel: EModel | undefined;
+
+          if (linkedProperty === 'linkedMeModel') {
+            ({ linkedMModel, linkedEModel } = await fetchLinkedMandEModels({
+              org,
+              project,
+              meModel: linkedModel as MEModelResource,
+            }));
+          }
+
           cache.set(meModelId, linkedModel);
           finalResult.push({
             ...model,
             _source: {
               ...model._source,
               [linkedProperty]: linkedModel,
+              ...(linkedProperty === 'linkedMeModel'
+                ? {
+                    linkedMModel,
+                    linkedEModel,
+                  }
+                : {}),
             },
           });
         }
@@ -188,4 +206,45 @@ export async function fetchLinkedModel({
     return finalResult;
   }
   return results;
+}
+
+export async function fetchLinkedMandEModels({
+  org,
+  project,
+  meModel,
+}: {
+  org: string;
+  project: string;
+  meModel: MEModelResource;
+}) {
+  const session = await getSession();
+  if (!session)
+    return {
+      linkedMModel: undefined,
+      linkedEModel: undefined,
+    };
+
+  const mModelId = meModel?.hasPart.find((p) => p['@type'] === 'NeuronMorphology')?.['@id']!;
+  const linkedMModel = await fetchResourceById<NeuronMorphology>(mModelId, session, {
+    ...(mModelId.startsWith(nexus.defaultIdBaseUrl)
+      ? {}
+      : {
+          org,
+          project,
+        }),
+  });
+  const eModelId = meModel?.hasPart.find((p) => p['@type'] === 'EModel')?.['@id']!;
+  const linkedEModel = await fetchResourceById<EModel>(eModelId, session, {
+    ...(eModelId.startsWith(nexus.defaultIdBaseUrl)
+      ? {}
+      : {
+          org,
+          project,
+        }),
+  });
+
+  return {
+    linkedMModel,
+    linkedEModel,
+  };
 }

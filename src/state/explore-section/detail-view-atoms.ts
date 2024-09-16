@@ -1,8 +1,8 @@
 'use client';
 
 import { Atom, atom } from 'jotai';
-import pick from 'lodash/pick';
 import { atomFamily } from 'jotai/utils';
+import pick from 'lodash/pick';
 import isEqual from 'lodash/isEqual';
 
 import sessionAtom from '@/state/session';
@@ -21,7 +21,7 @@ import { subjectAgeSelectorFn, ageSelectorFn } from '@/util/explore-section/sele
 import { atlasESView, nexus } from '@/config';
 import { DataType } from '@/constants/explore-section/list-views';
 import { MEModelResource } from '@/types/me-model';
-import { EModel, NeuronMorphology } from '@/types/e-model';
+import { fetchLinkedMandEModels } from '@/api/explore-section/resources';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
@@ -67,25 +67,10 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>
               }),
         });
 
-        const mModelId = linkedMeModel?.hasPart.find((p) => p['@type'] === 'NeuronMorphology')?.[
-          '@id'
-        ]!;
-        const linkedMModel = await fetchResourceById<NeuronMorphology>(mModelId, session, {
-          ...(mModelId.startsWith(nexus.defaultIdBaseUrl)
-            ? {}
-            : {
-                org: info.org,
-                project: info.project,
-              }),
-        });
-        const eModelId = linkedMeModel?.hasPart.find((p) => p['@type'] === 'EModel')?.['@id']!;
-        const linkedEModel = await fetchResourceById<EModel>(eModelId, session, {
-          ...(eModelId.startsWith(nexus.defaultIdBaseUrl)
-            ? {}
-            : {
-                org: info.org,
-                project: info.project,
-              }),
+        const { linkedMModel, linkedEModel } = await fetchLinkedMandEModels({
+          org: info.org,
+          project: info.project,
+          meModel: linkedMeModel,
         });
 
         return {

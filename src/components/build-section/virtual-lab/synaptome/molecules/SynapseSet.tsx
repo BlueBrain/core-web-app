@@ -131,8 +131,8 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
 
   const disableVisualizeBtn = useMemo(() => {
     const result = SynapseGroupValidationSchema.safeParse(config);
-    return !result.success || visualizeLoading || isAlreadyVisualized;
-  }, [config, isAlreadyVisualized, visualizeLoading]);
+    return !result.success || visualizeLoading;
+  }, [config, visualizeLoading]);
 
   const onHideSynapse = () => {
     const currentSynapsesPlacementConfig = synapsesPlacement?.[config.id];

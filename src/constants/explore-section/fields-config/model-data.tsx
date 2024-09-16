@@ -199,4 +199,42 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     },
     style: { width: 184 },
   },
+  [Field.SynatomeUsedEType]: {
+    className: 'text-center',
+    title: 'E-type',
+    filter: null,
+    render: {
+      deltaResourceViewFn: (resource) => {
+        const { linkedEModel, linkedMeModel } = resource as SynaptomeModelResource;
+        return selectorFnBasic(linkedEModel?.eType || linkedMeModel?.eType);
+      },
+      esResourceViewFn: (_t, r) => {
+        const { linkedEModel } = r._source as SynaptomeModelResource;
+        return selectorFnBasic(linkedEModel?.eType || linkedEModel?.eType);
+      },
+    },
+    vocabulary: {
+      plural: 'E-type',
+      singular: 'E-type',
+    },
+  },
+  [Field.SynatomeUsedMType]: {
+    className: 'text-center',
+    title: 'M-type',
+    filter: null,
+    render: {
+      deltaResourceViewFn: (resource) => {
+        const { linkedMModel, linkedMeModel } = resource as SynaptomeModelResource;
+        return selectorFnBasic(linkedMModel?.mType || linkedMeModel?.mType);
+      },
+      esResourceViewFn: (_t, r) => {
+        const { linkedMModel, linkedMeModel } = r._source as SynaptomeModelResource;
+        return selectorFnBasic(linkedMModel?.mType || linkedMeModel?.mType);
+      },
+    },
+    vocabulary: {
+      plural: 'M-type',
+      singular: 'M-type',
+    },
+  },
 };

@@ -52,6 +52,8 @@ export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
       Field.Name,
       Field.Description,
       Field.SynatomeUsedMEModelName,
+      Field.SynatomeUsedMType,
+      Field.SynatomeUsedEType,
       Field.BrainRegion,
       Field.CreatedBy,
       Field.CreationDate,
