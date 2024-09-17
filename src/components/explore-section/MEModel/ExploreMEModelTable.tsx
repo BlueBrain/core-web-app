@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { OnCellClick } from '../ExploreSectionListingView/ExploreSectionTable';
 import { RenderButtonProps } from '../ExploreSectionListingView/useRowSelection';
@@ -22,11 +22,9 @@ export default function ExploreMEModelTable({
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const { push: navigate } = useRouter();
-  const params = useSearchParams();
 
   const onCellClick: OnCellClick = (basePath, record) => {
-    const newSearhParams = new URLSearchParams(params);
-    const exploreUrl = `${detailUrlBuilder(basePath, record)}?${newSearhParams.toString()}`;
+    const exploreUrl = detailUrlBuilder(basePath, record);
 
     navigate(exploreUrl);
   };

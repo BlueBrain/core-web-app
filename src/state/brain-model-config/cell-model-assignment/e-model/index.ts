@@ -47,26 +47,13 @@ import {
   presetNames,
 } from '@/constants/cell-model-assignment/e-model';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
-import { DEFAULT_BRAIN_REGION_STORAGE_KEY } from '@/constants/brain-hierarchy';
 import { getInitializationValue } from '@/util/utils';
-import { DefaultBrainRegionType } from '@/state/brain-regions/types';
 import { ensureArray } from '@/util/nexus';
-
-const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
-  DEFAULT_BRAIN_REGION_STORAGE_KEY
-);
 
 const initializationEModel = getInitializationValue<DefaultEModelType>(DEFAULT_E_MODEL_STORAGE_KEY);
 
-const useSavedEModel =
-  (initializationBrainRegion &&
-    initializationBrainRegion?.value?.id === initializationEModel?.brainRegionId) ||
-  (typeof window !== 'undefined' &&
-    initializationEModel?.brainRegionId ===
-      new URLSearchParams(window.location.search).get('eModelBrainRegion'));
-
 export const selectedEModelAtom = atom<EModelMenuItem | null>(
-  useSavedEModel ? initializationEModel.value : null
+  initializationEModel ? initializationEModel?.value : null
 );
 
 export const eModelRemoteParamsLoadedAtom = atom(false);
