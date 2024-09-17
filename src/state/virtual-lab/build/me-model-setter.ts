@@ -76,7 +76,7 @@ export const createMEModelAtom = atom<null, [VirtualLabInfo], Promise<MEModelRes
       brainLocation,
       // 'image' will be added after me-model validation
       validated: false,
-      status: 'initalized',
+      status: 'initialized',
     };
     const url = composeUrl('resource', '', {
       sync: true,

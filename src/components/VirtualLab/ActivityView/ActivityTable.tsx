@@ -40,7 +40,7 @@ const LinkIcon = (
 );
 
 const statusToColorMap: { [key in Status]: string } = {
-  initalized: 'text-white',
+  initialized: 'text-white',
   processing: 'text-primary-2',
   running: 'text-primary-2',
   error: 'text-error',
@@ -50,7 +50,7 @@ const statusToColorMap: { [key in Status]: string } = {
 };
 
 const statusToIcon: { [key in Status]: ReactNode | null } = {
-  initalized: <EmptyCircleIcon className="mr-2" />,
+  initialized: <EmptyCircleIcon className="mr-2" />,
   processing: <PartialCircleIcon className="mr-2" />,
   running: <PartialCircleIcon className="mr-2" />,
   error: <TriangleIcon className="mr-2" />,
@@ -246,7 +246,7 @@ function generateRowItems(
   const defaultStatus = (r: Result) => {
     if (isSim(r)) return 'done'; // All single cell and synaptome simulations are 'done' by the time they're saved
     if (isSynaptome(r)) return 'created';
-    return r.status ?? 'initalized';
+    return r.status ?? 'initialized';
   };
 
   const link = (r: ActivityRecord, id: string) => {

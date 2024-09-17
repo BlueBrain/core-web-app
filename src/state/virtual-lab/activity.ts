@@ -22,7 +22,7 @@ const mockMEModelResources: MEModelResource[] = [
       },
     ],
     validated: false,
-    status: 'initalized',
+    status: 'initialized',
     _createdAt: '2022-01-01T00:00:00Z',
     _createdBy: 'John Smith',
     _deprecated: false,

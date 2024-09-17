@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 export type Status =
-  | 'initalized'
+  | 'initialized'
   | 'processing'
   | 'done'
   | 'running'
