@@ -216,12 +216,17 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
     config?.exclusion_rules?.some((p) => !p.distance_soma_gte && !p.distance_soma_lte) &&
     !displayExclusionRules;
 
-  const onVisualizationError = () => {
-    notifyError(
-      GENERATE_SYNAPSES_FAIL.replace('$$', (index + 1).toString()),
-      undefined,
-      'topRight'
-    );
+  const onVisualizationError = async (response: Response) => {
+    try {
+      const errorDetails = await response.json();
+      notifyError(errorDetails.details, undefined, 'topRight');
+    } catch {
+      notifyError(
+        GENERATE_SYNAPSES_FAIL.replace('$$', (index + 1).toString()),
+        undefined,
+        'topRight'
+      );
+    }
   };
 
   const onVisualizeSynapome = async () => {
@@ -244,7 +249,7 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
         token: session?.accessToken,
       });
       if (!response.ok) {
-        return onVisualizationError();
+        return onVisualizationError(response);
       }
 
       const result: { synapses: Array<SectionSynapses> } = await response.json();
