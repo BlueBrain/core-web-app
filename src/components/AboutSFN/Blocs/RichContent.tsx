@@ -7,14 +7,16 @@ export default function RichContent({
   subtitle,
   paragraphs,
   image,
+  id,
 }: {
   title: string;
   subtitle: string;
   paragraphs: string[];
   image: string;
+  id: string;
 }) {
   return (
-    <div className="relative flex flex-col" id={slugify(title)}>
+    <div className="relative flex flex-col" id={slugify(id)}>
       <header className="mb-12 flex flex-col uppercase leading-[0.9] tracking-[0.1em]">
         <h2 className="mb-3 text-[100px] font-bold">{title}</h2>
         <h3 className="text-3xl uppercase text-primary-3">{subtitle}</h3>

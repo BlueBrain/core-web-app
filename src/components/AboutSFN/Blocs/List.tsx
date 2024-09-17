@@ -1,11 +1,8 @@
 import slugify from '@/util/slugify';
 
-export default function List({ title, list, id }: { title?: string; list: string[]; id?: string }) {
+export default function List({ title, list, id }: { title?: string; list: string[]; id: string }) {
   return (
-    <div
-      className="relative grid h-auto w-full grid-cols-2 self-center"
-      id={title ? slugify(title) : id}
-    >
+    <div className="relative grid h-auto w-full grid-cols-2 self-center" id={slugify(id)}>
       {title && (
         <h2 className="relative self-center text-8xl font-bold uppercase tracking-wider">
           {title}

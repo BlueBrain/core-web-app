@@ -6,8 +6,8 @@ export default function InternalNavigation() {
       <SingleAnchorLink href="#introduction" label="Introduction" />
       <SingleAnchorLink href="#features" label="Features" />
       <SingleAnchorLink href="#origin" label="Origin" />
-      <SingleAnchorLink href="#in-short" label="In short" />
-      <SingleAnchorLink href="#simulation" label="Simulation" />
+      <SingleAnchorLink href="#inshort" label="In short" />
+      <SingleAnchorLink href="#simulationneuroscience" label="Simulation" />
       <SingleAnchorLink href="#complementing" label="Complementing" />
     </div>
   );

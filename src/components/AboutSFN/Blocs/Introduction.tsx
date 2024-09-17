@@ -1,8 +1,8 @@
 import { INTRODUCTION_PARAGRAPH } from '@/constants/about/about-content';
 
-export default function Introduction() {
+export default function Introduction({ id = 'introduction' }: { id?: string }) {
   return (
-    <div className="relative flex w-full flex-col text-white" id="introduction">
+    <div className="relative flex w-full flex-col text-white" id={id}>
       <h1 className="mb-12 text-[100px] font-bold uppercase tracking-wider">about</h1>
       <div className="relative flex w-full flex-col gap-y-4">
         {INTRODUCTION_PARAGRAPH.map((paragraph: string, index: number) => (

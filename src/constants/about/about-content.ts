@@ -11,7 +11,7 @@ export const FEATURES_BLOCK = {
     'The Blue Brain Open Platform enables atlas-driven exploration of brain data, from molecular models of metabolic systems to single-cell morphologies and complex brain region simulations. ',
     'Users can customize their models, run personalized simulations, and leverage machine learning for comparative data analyses. This flexibility accelerates and enhances neuroscience research.',
   ],
-  image: '/images/about/placeholder_image_mixcontent.png',
+  image: '/images/about/bbop_3d_rat_brain_image_01.png',
 };
 
 export const ORIGIN_BLOCK = {

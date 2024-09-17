@@ -16,10 +16,12 @@ export default function Gallery({
   title,
   subtitle,
   content,
+  id,
 }: {
   title: string;
   subtitle: string;
   content: GalleryContentProps[];
+  id: string;
 }) {
   const [currentActiveItem, setCurrentActiveItem] = useState<number>(0);
 
@@ -28,10 +30,10 @@ export default function Gallery({
   };
 
   return (
-    <div className="relative flex w-full flex-col" id={slugify(title)}>
+    <div className="relative my-[30vh] flex w-full flex-col" id={slugify(id)}>
       <header className="mb-12 flex flex-col uppercase tracking-[0.1em]">
         <h2 className="mb-4 text-[100px] font-bold leading-[0.86]">{title}</h2>
-        <h3 className="text-3xl uppercase text-primary-3">{subtitle}</h3>
+        <h3 className="text-3xl font-normal uppercase text-primary-3">{subtitle}</h3>
       </header>
       <SingleGalleryItem
         title={content[currentActiveItem].title}

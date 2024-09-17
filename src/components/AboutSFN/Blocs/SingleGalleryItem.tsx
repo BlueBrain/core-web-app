@@ -21,7 +21,7 @@ export default function SingleGalleryItem({
         />
       </div>
       <aside className="absolute right-0 flex w-[32vw] flex-col gap-y-3 bg-primary-9 p-12">
-        <h4 className="text-6xl font-semibold uppercase tracking-[0.06em]">{title}</h4>
+        <h4 className="text-5xl font-black uppercase tracking-[0.06em]">{title}</h4>
         <p className="font-sans text-xl font-light leading-normal">{paragraph}</p>
       </aside>
     </div>

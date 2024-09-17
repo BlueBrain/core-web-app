@@ -9,12 +9,14 @@ export default function MediaMix({
   subtitle,
   paragraphs,
   image = '/images/about/placeholder_image_mixcontent.png',
+  id,
 }: {
   layout: 'left' | 'right';
   title: string;
   subtitle: string;
   paragraphs: string[];
   image: string;
+  id: string;
 }) {
   return (
     <div
@@ -22,7 +24,7 @@ export default function MediaMix({
         'relative flex min-h-screen w-full items-center',
         layout === 'left' ? 'flex-row' : 'flex-row-reverse'
       )}
-      id={slugify(title)}
+      id={slugify(id)}
     >
       <div
         className={classNames('absolute ', layout === 'left' ? '-right-[20vw]' : '-left-[20vw]')}

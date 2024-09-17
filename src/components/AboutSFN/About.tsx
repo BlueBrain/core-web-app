@@ -18,13 +18,14 @@ export default function AboutSFN() {
   return (
     <div className="relative flex flex-col gap-y-56 px-[10vw]">
       <InternalNavigation />
-      <Introduction />
+      <Introduction id="introduction" />
       <MediaMix
         layout="left"
         title={FEATURES_BLOCK.title}
         subtitle={FEATURES_BLOCK.subtitle}
         paragraphs={FEATURES_BLOCK.paragraphs}
         image={FEATURES_BLOCK.image}
+        id="Features"
       />
       <MediaMix
         layout="right"
@@ -32,18 +33,21 @@ export default function AboutSFN() {
         subtitle={ORIGIN_BLOCK.subtitle}
         paragraphs={ORIGIN_BLOCK.paragraphs}
         image={ORIGIN_BLOCK.image}
+        id="Origin"
       />
-      <List title={IN_SHORT_LIST.title} list={IN_SHORT_LIST.list} />
+      <List title={IN_SHORT_LIST.title} list={IN_SHORT_LIST.list} id="inshort" />
       <Gallery
         title="Simulation neuroscience"
         subtitle="Discover the benefits"
         content={SIMULATION_NEUROSCIENCE_BLOCK}
+        id="simulationneuroscience"
       />
       <RichContent
         title={COMPLEMENTING.title}
         subtitle={COMPLEMENTING.subtitle}
         paragraphs={COMPLEMENTING.paragraphs}
         image={COMPLEMENTING.image}
+        id="complementing"
       />
       <Footer />
     </div>
