@@ -1,7 +1,11 @@
 'use client';
 
-import ActivityView from '@/components/VirtualLab/ActivityView';
+import ActivityTable from '@/components/VirtualLab/ActivityView/ActivityTable';
 
 export default function VirtualLabProjectActivityPage() {
-  return <ActivityView />;
+  return (
+    <div className="flex h-full w-full flex-col">
+      <ActivityTable />
+    </div>
+  );
 }

@@ -728,7 +728,9 @@ export interface SynaptomeSimulation extends Entity, ResourceMetadata {
   brainLocation?: BrainLocation;
 }
 
-export interface SingleNeuronSimulationResource extends ResourceMetadata, SingleNeuronSimulation {}
+export interface SingleNeuronSimulationResource extends ResourceMetadata, SingleNeuronSimulation {
+  status: undefined;
+}
 
 export interface Paper extends Entity {
   '@type': ['ScholarlyArticle', 'Entity'];

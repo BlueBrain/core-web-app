@@ -155,6 +155,7 @@ export const queryAtom = atomFamily(
         bookmarkResourceIds
       );
     }),
+
   isListAtomEqual
 );
 

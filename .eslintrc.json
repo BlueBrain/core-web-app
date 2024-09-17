@@ -21,6 +21,7 @@
         "ignoreRestSiblings": true
       }
     ],
+    "prefer-template": "off",
     "react/jsx-no-useless-fragment": "off",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/return-await": "off",

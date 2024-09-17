@@ -1,19 +1,23 @@
-// TODO: this numbers need to be fetched
-const headerData = [
-  { name: 'Error', count: 0 },
-  { name: 'Model builds', count: 0 },
-  { name: 'Analysis running', count: 0 },
-];
-
-export default function StatusHeader() {
+export default function StatusHeader({
+  error,
+  build,
+  running,
+}: {
+  error?: number;
+  build?: number;
+  running?: number;
+}) {
+  const wrap = (name: string, value?: number) => (
+    <div className="flex gap-2">
+      <span className="text-primary-3">{name}</span>
+      <span className="font-bold text-white">{value}</span>
+    </div>
+  );
   return (
     <div className="relative bottom-20 flex gap-7">
-      {headerData.map(({ name, count }) => (
-        <div className="flex gap-2" key={name}>
-          <span className="text-primary-3">{name}</span>
-          <span className="font-bold text-white">{count}</span>
-        </div>
-      ))}
+      {wrap('Error', error)}
+      {wrap('Model builds', build)}
+      {wrap('Analyses runing', running)}
     </div>
   );
 }

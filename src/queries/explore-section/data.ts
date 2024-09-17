@@ -18,6 +18,7 @@ export default function fetchDataQuery(
   bookmarkResourceIds?: string[]
 ): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
+
   return {
     size,
     sort: sortQuery,

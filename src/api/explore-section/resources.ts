@@ -17,14 +17,14 @@ import authFetch, { getSession } from '@/authFetch';
 import { EModel, NeuronMorphology } from '@/types/e-model';
 
 export type DataQuery = {
-  size: number;
-  sort?: Sort;
-  from: number;
-  track_total_hits: boolean;
+  size?: number;
+  sort?: { [field: string]: 'asc' | 'desc' } | Sort;
+  from?: number;
+  track_total_hits?: boolean;
   query: {};
 };
 
-function buildSearchUrl(virtualLabInfo?: VirtualLabInfo) {
+export function buildSearchUrl(virtualLabInfo?: VirtualLabInfo) {
   return virtualLabInfo
     ? `${API_SEARCH}?addProject=${virtualLabInfo.virtualLabId}/${virtualLabInfo.projectId}`
     : API_SEARCH;
@@ -52,23 +52,27 @@ export async function fetchTotalByExperimentAndRegions(
     .then((data) => data?.hits?.total?.value);
 }
 
-export async function fetchEsResourcesByType(
+export async function fetchEsResourcesByType<T extends ExploreResource>(
   dataQuery: DataQuery,
   signal?: AbortSignal,
   virtualLabInfo?: VirtualLabInfo
-): Promise<FlattenedExploreESResponse<Experiment>> {
-  return authFetch(buildSearchUrl(virtualLabInfo), {
+): Promise<FlattenedExploreESResponse<T>> {
+  const res = await authFetch(buildSearchUrl(virtualLabInfo), {
     method: 'POST',
     headers: createHeaders(),
     body: JSON.stringify(dataQuery),
     signal,
   })
-    .then<ExploreESResponse<Experiment>>((response) => response.json())
-    .then<FlattenedExploreESResponse<Experiment>>((data) => ({
+    .then<ExploreESResponse<T>>(async (response) => {
+      return response.json();
+    })
+    .then<FlattenedExploreESResponse<T>>((data) => ({
       hits: data?.hits?.hits,
       total: data?.hits?.total,
       aggs: data.aggregations,
     }));
+
+  return res;
 }
 
 export type ExperimentDatasetCountPerBrainRegion = {
