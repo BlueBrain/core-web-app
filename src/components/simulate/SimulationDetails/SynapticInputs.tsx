@@ -32,10 +32,13 @@ export default function SynapticInputs({ synapses }: Props) {
     <div className="flex flex-wrap">
       {synapses.map((synapse, index) => (
         // Same synaptic group (id) can be used multiple times in simulation. Therefore, appending index to key to create unique values
-        // eslint-disable-next-line react/no-array-index-key
-        <div key={`${synapse.id}-${index}`} className="mr-2 border border-neutral-200 p-4">
+        <div
+          // eslint-disable-next-line react/no-array-index-key
+          key={`${synapse.id}-${index}`}
+          className="mr-2 border border-neutral-200 p-4"
+        >
           <div>
-            <div className="mb-6 flex items-center border-b border-neutral-200">
+            <div className="mb-6 flex items-center border-b border-neutral-200 py-2">
               <span
                 className="mr-4 inline-block h-[14px] w-[14px]"
                 style={{ backgroundColor: synapse.color }}
@@ -52,7 +55,7 @@ export default function SynapticInputs({ synapses }: Props) {
               <Field label="Weight scalar" value={`${synapse.weightScalar}`} />
             </div>
           </div>
-          <hr />
+          <hr className="last:hidden" />
         </div>
       ))}
     </div>

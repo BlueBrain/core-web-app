@@ -15,6 +15,7 @@ import { MODEL_DATA_COMMON_FIELDS } from '@/constants/explore-section/detail-vie
 import { useSimulation } from '@/hooks/useSimulation';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
 type Props = {
   params: {
@@ -35,11 +36,11 @@ export default function SimulationDetailPage({ params }: Props) {
     type: params.simulationType,
   });
 
+  const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+  const baseBuildUrl = `${vlProjectUrl}/simulate`;
   useEffect(() => {
-    const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
-    const baseBuildUrl = `${vlProjectUrl}/simulate`;
     setBackPath(baseBuildUrl);
-  }, [params, setBackPath]);
+  }, [baseBuildUrl, setBackPath]);
 
   if (!simulationResource) {
     return (
@@ -52,7 +53,17 @@ export default function SimulationDetailPage({ params }: Props) {
 
   return (
     <div className="grid grid-cols-[min-content_auto] overflow-hidden bg-white text-primary-8">
-      <Nav params={params} />
+      <Nav
+        params={params}
+        extraLinks={[
+          {
+            key: LinkItemKey.Explore,
+            href: `${vlProjectUrl}/explore`,
+            content: 'Explore',
+            styles: 'rounded-full bg-primary-5 py-3 text-primary-9 w-2/3',
+          },
+        ]}
+      />
       <Detail
         fields={[]}
         commonFields={MODEL_DATA_COMMON_FIELDS}

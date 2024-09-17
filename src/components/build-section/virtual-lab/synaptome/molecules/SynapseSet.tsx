@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Form, Input, Select, Button, FormListFieldData, InputNumber } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import {
@@ -8,7 +8,6 @@ import {
   DeleteOutlined,
   EyeInvisibleOutlined,
   InfoCircleFilled,
-  LoadingOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons';
 import { z } from 'zod';
@@ -43,6 +42,18 @@ type Props = {
 const label = (text: string) => (
   <span className={classNames('text-base font-bold capitalize text-gray-500')}>{text}</span>
 );
+
+const validateFormula = async (value: string) => {
+  try {
+    const session = await getSession();
+    if (session) {
+      const result = await validateSynapseGenerationFormula(value, session.accessToken);
+      return result;
+    }
+  } catch (error) {
+    return false;
+  }
+};
 
 const SynapseGroupValidationSchema = z
   .object({
@@ -89,12 +100,27 @@ const SynapseGroupValidationSchema = z
         path: ['soma_synapse_count'],
       });
     }
+  })
+  .superRefine((values, ctx) => {
+    if (values.formula) {
+      return validateFormula(values.formula).then((v) => {
+        if (!v) {
+          return ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'formula is not valid',
+            path: ['formula'],
+          });
+        }
+      });
+    }
   });
 
 export default function SynapseSet({ modelId, index, field, removeGroup }: Props) {
   const secNames = useAtomValue(secNamesAtom);
   const [synapseVis, setSynapseVis] = useState(false);
   const [visualizeLoading, setLoadingVisualize] = useState(false);
+  const [disableApplyChanges, setDisableApplyChanges] = useState(false);
+
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
   const [displayExclusionRules, toggleDisplayExclusionRules] = useReducer((val) => !val, false);
   const [displayFormulaHelp, toggleFormulaHelp] = useReducer((val) => !val, false);
@@ -128,11 +154,6 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
       ),
     [config, synapsesPlacement]
   );
-
-  const disableVisualizeBtn = useMemo(() => {
-    const result = SynapseGroupValidationSchema.safeParse(config);
-    return !result.success || visualizeLoading;
-  }, [config, visualizeLoading]);
 
   const onHideSynapse = () => {
     const currentSynapsesPlacementConfig = synapsesPlacement?.[config.id];
@@ -202,17 +223,6 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
       'topRight'
     );
   };
-  const validateFormula = async (value: string) => {
-    try {
-      const session = await getSession();
-      if (session) {
-        const result = await validateSynapseGenerationFormula(value, session.accessToken);
-        return result;
-      }
-    } catch (error) {
-      return false;
-    }
-  };
 
   const onVisualizeSynapome = async () => {
     if (isAlreadyVisualized) {
@@ -265,6 +275,13 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
       setLoadingVisualize(false);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      const result = await SynapseGroupValidationSchema.safeParseAsync(config);
+      setDisableApplyChanges(!result.success || visualizeLoading);
+    })();
+  }, [config, visualizeLoading]);
 
   return (
     <div className="w-full">
@@ -576,19 +593,20 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
         </div>
 
         <div className="mt-4 flex items-center justify-end">
-          <button
-            type="button"
+          <Button
+            htmlType="button"
             onClick={onVisualizeSynapome}
-            disabled={disableVisualizeBtn}
+            disabled={disableApplyChanges}
+            loading={visualizeLoading}
+            size="large"
             className={classNames(
-              'cursor-pointer self-end px-3  py-3 text-lg font-bold',
-              disableVisualizeBtn ? 'bg-gray-100 text-neutral-400' : 'bg-primary-8 text-white'
+              'h-14 cursor-pointer self-end bg-primary-8 text-lg font-bold text-white',
+              'disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-neutral-400'
             )}
+            icon={<PlusCircleOutlined />}
           >
-            {visualizeLoading && <LoadingOutlined className="mr-2 px-2 text-primary-8" />}
             Apply changes
-            <PlusCircleOutlined className="ml-2 px-2" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

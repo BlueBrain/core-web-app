@@ -13,9 +13,10 @@ type Props = {
     virtualLabId: string;
     projectId: string;
   };
+  extraLinks?: LinkItem[];
 };
 
-export default function Nav({ params }: Props) {
+export default function Nav({ params, extraLinks }: Props) {
   const labUrl = generateLabUrl(params.virtualLabId);
 
   const labProjectUrl = `${labUrl}/project/${params.projectId}`;
@@ -41,7 +42,7 @@ export default function Nav({ params }: Props) {
   return (
     <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
       <SideMenu
-        links={links}
+        links={extraLinks ?? links}
         lab={{
           key: LinkItemKey.VirtualLab,
           id: params.virtualLabId,
