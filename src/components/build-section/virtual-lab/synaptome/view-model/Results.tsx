@@ -95,31 +95,36 @@ export default function Results({ params, modelId }: { params: LocationParams; m
             {({ config }) => {
               if (!config.synaptome) return null;
               return (
-                <div className="grid grid-cols-2 gap-4">
-                  {config.synaptome.map((c, ind) => (
-                    <div
-                      key={c.id}
-                      className="flex w-max min-w-96 flex-col items-start justify-start"
-                    >
+                <>
+                  <div className="text-lg font-bold text-primary-8">Synaptic Inputs</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {config.synaptome.map((c, ind) => (
                       <div
-                        className="flex items-center justify-center px-4 py-2 text-base text-white"
-                        style={{
-                          backgroundColor: SIMULATION_COLORS[ind],
-                        }}
+                        key={c.id}
+                        className="flex w-max min-w-96 flex-col items-start justify-start"
                       >
-                        {ind + 1}
-                      </div>
-                      <div className="flex w-full flex-col gap-5 border border-gray-300 p-6">
-                        <div className="grid grid-cols-3 gap-2">
-                          <ConfigItem {...{ label: 'delay', value: c.delay, unit: 'ms' }} />
-                          <ConfigItem {...{ label: 'duration', value: c.duration, unit: 'ms' }} />
-                          <ConfigItem {...{ label: 'frequency', value: c.frequency, unit: 'hz' }} />
-                          <ConfigItem {...{ label: 'weight scalar', value: c.weightScalar }} />
+                        <div
+                          className="flex items-center justify-center px-4 py-2 text-base text-white"
+                          style={{
+                            backgroundColor: SIMULATION_COLORS[ind],
+                          }}
+                        >
+                          {ind + 1}
+                        </div>
+                        <div className="flex w-full flex-col gap-5 border border-gray-300 p-6">
+                          <div className="grid grid-cols-3 gap-2">
+                            <ConfigItem {...{ label: 'delay', value: c.delay, unit: 'ms' }} />
+                            <ConfigItem {...{ label: 'duration', value: c.duration, unit: 'ms' }} />
+                            <ConfigItem
+                              {...{ label: 'frequency', value: c.frequency, unit: 'hz' }}
+                            />
+                            <ConfigItem {...{ label: 'weight scalar', value: c.weightScalar }} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </>
               );
             }}
           </SimulationDetail>

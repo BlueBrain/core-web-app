@@ -7,8 +7,6 @@ import { useAtom, useAtomValue } from 'jotai';
 import SingleNeuron from './SingleNeuron';
 import Synaptome from './Synaptome';
 
-import { GenericSingleNeuronSimulationConfigSteps } from '@/components/simulate/single-neuron/molecules/types';
-import { CreateBaseSimulationConfig } from '@/components/simulate/single-neuron/processSteps';
 import { defaultSteps, simulateStepTrackerAtom } from '@/state/simulate/single-neuron';
 import { SimulationConfiguration } from '@/types/simulation/single-neuron';
 import { SimulationStepTitle, SimulationType } from '@/types/simulation/common';
@@ -16,8 +14,6 @@ import { recordingSourceForSimulationAtom } from '@/state/simulate/categories/re
 import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 import { simulationExperimentalSetupAtom } from '@/state/simulate/categories/simulation-conditions';
-
-import ConfigStepHeader from '@/components/simulate/single-neuron/molecules/ConfigStepHeader';
 
 type Props = {
   projectId: string;
@@ -59,10 +55,6 @@ export default function SingleNeuronSimulationGenericContainer({
   projectId,
   type,
 }: Props) {
-  const [configStep, setConfigStep] =
-    useState<GenericSingleNeuronSimulationConfigSteps>('basic-config');
-  const onConfigStep = (value: GenericSingleNeuronSimulationConfigSteps) => setConfigStep(value);
-
   const [form] = Form.useForm<SimulationConfiguration>();
   const [disableForm, setDisableSubmit] = useState(false);
   const recordFromConfig = useAtomValue(recordingSourceForSimulationAtom);
@@ -128,7 +120,7 @@ export default function SingleNeuronSimulationGenericContainer({
           name="simulation-configuration"
           autoComplete="off"
           layout="vertical"
-          className="h-[calc(100%-55px)]"
+          className="h-[calc(100%-46.5px)]"
           initialValues={{
             ...initialValues,
             name: undefined,
@@ -137,17 +129,11 @@ export default function SingleNeuronSimulationGenericContainer({
           onValuesChange={onValuesChange}
           requiredMark={false}
         >
-          {configStep !== 'basic-config' && <ConfigStepHeader {...{ configStep }} />}
-          <CreateBaseSimulationConfig {...{ configStep, onConfigStep }} />
-          {configStep === 'simulaton-config' && (
-            <>
-              {type === 'single-neuron-simulation' && (
-                <SingleNeuron {...{ virtualLabId, projectId, disableForm }} />
-              )}
-              {type === 'synaptome-simulation' && (
-                <Synaptome {...{ virtualLabId, projectId, disableForm }} />
-              )}
-            </>
+          {type === 'single-neuron-simulation' && (
+            <SingleNeuron {...{ virtualLabId, projectId, disableForm }} />
+          )}
+          {type === 'synaptome-simulation' && (
+            <Synaptome {...{ virtualLabId, projectId, disableForm }} />
           )}
         </Form>
       </ConfigProvider>

@@ -64,8 +64,6 @@ export default function SimulationButton({
 
   const [saveSimulation, saveModalContext] = onCompleteSimulation({
     id: 'save-simulation',
-    name: form.getFieldValue('name'),
-    description: form.getFieldValue('description'),
     modelSelfUrl,
     vLabId,
     projectId,

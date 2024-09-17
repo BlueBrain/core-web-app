@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, FormProps, Input } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
 import { label } from '../Label';
@@ -17,30 +17,39 @@ import { CREATE_SYNAPTOME_SIMULATION_SUCCESS } from '@/components/build-section/
 import { queryAtom } from '@/state/explore-section/list-view-atoms';
 import { DataType } from '@/constants/explore-section/list-views';
 import { ExploreDataScope } from '@/types/explore-section/application';
+import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/simulation-data-types';
 
 export type Props = {
-  name: string;
-  description: string;
   modelSelfUrl: string;
   vLabId: string;
   projectId: string;
   simulationType: SimulationType;
   onClose?: () => void;
 };
+
+type SimulationForm = {
+  name: string;
+  description?: string;
+};
+
 export default function SaveSimulationModal({
-  name,
-  description,
   modelSelfUrl,
   vLabId,
   projectId,
   simulationType,
   onClose,
 }: Props) {
-  const form = Form.useFormInstance();
   const { push: navigate } = useRouter();
-  const refreshSynaptomeSimulations = useSetAtom(
+  const dataType = useMemo(() => {
+    const dataTypeFromSimulationType = Object.keys(SIMULATION_DATA_TYPES).find(
+      (type) => SIMULATION_DATA_TYPES[type].name === simulationType
+    );
+    return (dataTypeFromSimulationType ?? DataType.SingleNeuronSynaptomeSimulation) as DataType;
+  }, [simulationType]);
+
+  const refreshSimulations = useSetAtom(
     queryAtom({
-      dataType: DataType.SingleNeuronSynaptomeSimulation,
+      dataType,
       dataScope: ExploreDataScope.NoScope,
       virtualLabInfo: { virtualLabId: vLabId, projectId },
     })
@@ -50,14 +59,6 @@ export default function SaveSimulationModal({
   const createSingleNeuronSimulation = useSetAtom(createSingleNeuronSimulationAtom);
   const { error: errorNotify, success: successNotify } = useNotification();
 
-  const [{ name: formName, description: formDescription }, setBasicConfig] = useState<{
-    name: string;
-    description: string;
-  }>(() => ({
-    name,
-    description,
-  }));
-
   const generateSimulationDetailUrl = (simulationId: string) => {
     const vlProjectUrl = generateVlProjectUrl(vLabId, projectId);
     const baseBuildUrl = `${vlProjectUrl}/explore/simulate/${simulationType}/view`;
@@ -65,21 +66,19 @@ export default function SaveSimulationModal({
     return `${baseBuildUrl}/${to64(`${vLabId}/${projectId}!/!${simulationId}`)}`;
   };
 
-  const saveSimulation = async () => {
+  const saveSimulation: FormProps<SimulationForm>['onFinish'] = async ({ name, description }) => {
     try {
       setLoading(true);
       const savedSimulation = await createSingleNeuronSimulation(
-        formName,
-        formDescription,
+        name,
+        description ?? '',
         modelSelfUrl,
         vLabId,
         projectId,
         simulationType
       );
-      form.setFieldValue('name', formName);
-      form.setFieldValue('description', formDescription);
       successNotify(CREATE_SYNAPTOME_SIMULATION_SUCCESS, undefined, 'topRight');
-      refreshSynaptomeSimulations();
+      refreshSimulations();
       navigate(generateSimulationDetailUrl(savedSimulation!['@id']));
     } catch (error) {
       errorNotify('Un error encountered when saving simulation', undefined, 'topRight');
@@ -102,56 +101,44 @@ export default function SaveSimulationModal({
         <CloseOutlined className="text-2xl text-primary-8" onClick={onClose} />
       </div>
       <div>
-        <div className="mb-2">{label('name', 'secondary')}</div>
-        <Form.Item
-          rules={[{ required: true, message: 'Please provide a name!' }]}
-          validateTrigger="onBlur"
-        >
-          <Input
-            placeholder="Simulation name"
-            size="large"
-            value={formName}
-            defaultValue={formName}
-            onChange={(e) => {
-              setBasicConfig((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }));
-            }}
-            className="rounded-none border-0 !border-b border-neutral-3 !font-bold  !text-primary-8"
-          />
-        </Form.Item>
-        <div className="mb-2">{label('Description', 'secondary')}</div>
-        <Form.Item>
-          <Input.TextArea
-            rows={5}
-            placeholder="Your description"
-            size="large"
-            className="rounded-none border border-neutral-3 p-2 !font-bold !text-primary-8"
-            value={formDescription}
-            defaultValue={formDescription}
-            onChange={(e) => {
-              setBasicConfig((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }));
-            }}
-          />
-        </Form.Item>
-      </div>
+        <Form name="simulation" onFinish={saveSimulation}>
+          <div className="mb-2">{label('name', 'secondary')}</div>
+          <Form.Item
+            rules={[{ required: true, message: 'Please provide a name!' }]}
+            validateTrigger="onBlur"
+            name="name"
+          >
+            <Input
+              placeholder="Simulation name"
+              size="large"
+              className="rounded-none border-0 !border-b border-neutral-3 !font-bold  !text-primary-8"
+            />
+          </Form.Item>
+          <div className="mb-2">{label('Description', 'secondary')}</div>
+          <Form.Item name="description">
+            <Input.TextArea
+              rows={5}
+              placeholder="Your description"
+              size="large"
+              className="rounded-none border border-neutral-3 p-2 !font-bold !text-primary-8"
+            />
+          </Form.Item>
 
-      <div className="flex items-center justify-end gap-4">
-        <Button type="text" onClick={onClose}>
-          Cancel
-        </Button>
-        <GenericButton
-          text="Save"
-          htmlType="button"
-          className="w-max bg-primary-8 text-white"
-          disabled={loading}
-          loading={loading}
-          onClick={saveSimulation}
-        />
+          <Form.Item>
+            <div className="flex items-center justify-end gap-4">
+              <Button type="text" onClick={onClose}>
+                Cancel
+              </Button>
+              <GenericButton
+                text="Save"
+                htmlType="submit"
+                className="w-max bg-primary-8 text-white"
+                disabled={loading}
+                loading={loading}
+              />
+            </div>
+          </Form.Item>
+        </Form>
       </div>
     </div>
   );

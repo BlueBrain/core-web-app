@@ -12,7 +12,7 @@ export default function Wrapper({ viewer, type, children }: Props) {
   return (
     <div className="h-screen w-full overflow-hidden">
       <StepTabs type={type} />
-      <div className="flex h-[calc(100vh-97.5px)]">
+      <div className="flex h-[calc(100vh-42.5px)]">
         <div className="flex w-1/2 items-center justify-center bg-black">{viewer}</div>
         <div className="secondary-scrollbar mb-20 flex w-1/2 flex-col overflow-y-auto">
           <DefaultLoadingSuspense>{children}</DefaultLoadingSuspense>
