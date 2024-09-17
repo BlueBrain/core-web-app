@@ -199,7 +199,7 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     },
     style: { width: 184 },
   },
-  [Field.SynatomeUsedEType]: {
+  [Field.SynaptomeUsedEType]: {
     className: 'text-center',
     title: 'E-type',
     filter: null,
@@ -217,8 +217,9 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
       plural: 'E-type',
       singular: 'E-type',
     },
+    style: { align: 'left' },
   },
-  [Field.SynatomeUsedMType]: {
+  [Field.SynaptomeUsedMType]: {
     className: 'text-center',
     title: 'M-type',
     filter: null,
@@ -236,5 +237,6 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
       plural: 'M-type',
       singular: 'M-type',
     },
+    style: { align: 'left' },
   },
 };
