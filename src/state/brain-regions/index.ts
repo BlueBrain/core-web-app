@@ -424,7 +424,7 @@ export const brainRegionSidebarIsCollapsedAtom = atom(false);
  */
 export const getBrainRegionDescendantsAndAncestors = (brainRegionIds: string[]) =>
   atom(async (get) => {
-    const brainRegionTree = await get(brainRegionsFilteredTreeAtom);
+    const brainRegionTree = await get(brainRegionsAlternateTreeAtom);
     if (!brainRegionTree) return undefined;
     // returns unique brain regions (in case there is an overlap of brain regions)
     return uniqBy(
