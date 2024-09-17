@@ -49,7 +49,7 @@ export default function VirtualLabProjectSimulatePage({
   const generateDetailUrl = (selectedRow: ExploreESHit<ExploreResource>, type: DataType) => {
     const { virtualLabId, projectId } = params;
     const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-    const baseBuildUrl = `${vlProjectUrl}/simulate/${SupportedTypeToTabDetails[type].urlParam}/view`;
+    const baseBuildUrl = `${vlProjectUrl}/explore/simulate/${SupportedTypeToTabDetails[type].urlParam}/view`;
     return `${baseBuildUrl}/${to64(`${virtualLabId}/${projectId}!/!${selectedRow._id}`)}`;
   };
 

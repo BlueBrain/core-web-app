@@ -43,13 +43,13 @@ export default function SynapticInputs({ synapses }: Props) {
               <h4>Synaptic Input {index + 1}</h4>
             </div>
 
-            <Field label="Name" value={synapse.id} />
+            <Field label="Name" value="Synapses set" />
 
             <div className="flex">
               <Field label="Delay" value={`${synapse.delay}`} unit="ms" className="mr-10" />
               <Field label="Duration" value={`${synapse.duration}`} unit="ms" className="mr-10" />
-              <Field label="Delay" value={`${synapse.frequency}`} unit="Hz" className="mr-10" />
-              <Field label="Delay" value={`${synapse.weightScalar}`} />
+              <Field label="Frequency" value={`${synapse.frequency}`} unit="Hz" className="mr-10" />
+              <Field label="Weight scalar" value={`${synapse.weightScalar}`} />
             </div>
           </div>
           <hr />

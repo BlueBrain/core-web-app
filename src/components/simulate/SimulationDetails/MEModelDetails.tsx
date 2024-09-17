@@ -62,22 +62,27 @@ export default function ModelDetails({ meModel, name, type }: Props) {
           <span className="mb-2 text-base uppercase text-neutral-4">
             {type === 'single-neuron-simulation' ? 'Single neuron model' : 'Synaptome'}
           </span>
-          {mModel ? (
-            <CardVisualization
-              dataType={DataType.ExperimentalNeuronMorphology}
-              resource={mModel}
-              height={200}
-              width={200}
-            />
-          ) : (
-            <Skeleton.Image className="h-full w-full rounded-none" />
-          )}
-          <span className="mb-2 uppercase text-neutral-4">Trace</span>
-          {eModel ? (
-            <EModelThumbnail emodel={eModel} />
-          ) : (
-            <Skeleton.Image className="h-full w-full rounded-none" />
-          )}
+          <div className="flex items-start gap-2">
+            {mModel ? (
+              <div className="flex h-56 w-56 items-center justify-center border border-neutral-3">
+                <CardVisualization
+                  dataType={DataType.ExperimentalNeuronMorphology}
+                  resource={mModel}
+                  height={200}
+                  width={200}
+                />
+              </div>
+            ) : (
+              <Skeleton.Image className="h-full w-full rounded-none" />
+            )}
+            {eModel ? (
+              <div className="flex h-56 w-56 items-center justify-center border border-neutral-3">
+                <EModelThumbnail emodel={eModel} />
+              </div>
+            ) : (
+              <Skeleton.Image className="h-full w-full rounded-none" />
+            )}
+          </div>
         </div>
         <div className="mt-6 flex flex-col gap-3">
           <div className="pl-12">
