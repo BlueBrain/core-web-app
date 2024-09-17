@@ -21,8 +21,8 @@ export default function RichContent({
       </header>
       <div className="flex flex-row gap-x-10 font-sans text-xl font-light leading-normal">
         <div className="relative top-4 h-px w-56 bg-white" />
-        {paragraphs.map((paragraph: string) => (
-          <p key={`paragraph_${paragraph.slice(0, 10)}`}>{paragraph}</p>
+        {paragraphs.map((paragraph: string, index: number) => (
+          <p key={`paragraph_${index + 1}`}>{paragraph}</p>
         ))}
       </div>
       <div className="w-full">

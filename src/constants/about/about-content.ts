@@ -1,10 +1,10 @@
-export const introductionParagraph = [
+export const INTRODUCTION_PARAGRAPH = [
   'The Blue Brain Open Platform is a groundbreaking open-source simulation neuroscience platform developed by the Blue Brain Project.',
   'Our mission is to advance the understanding of the brain by providing access to state-of-the-art data exploration, modeling, and simulation techniques.',
   'By integrating a wide range of open-source tools and models, especially those created by Blue Brain, we offer an invaluable resource for the neuroscience community to leverage simulation neuroscience.',
 ];
 
-export const featuresBlock = {
+export const FEATURES_BLOCK = {
   title: 'Features',
   subtitle: 'of the blue brain open platform',
   paragraphs: [
@@ -14,7 +14,7 @@ export const featuresBlock = {
   image: '/images/about/placeholder_image_mixcontent.png',
 };
 
-export const originBlock = {
+export const ORIGIN_BLOCK = {
   title: 'Origin',
   subtitle: 'of the blue brain open platform',
   paragraphs: [
@@ -24,7 +24,7 @@ export const originBlock = {
   image: '/images/about/placeholder_image_mixcontent.png',
 };
 
-export const inShortList = {
+export const IN_SHORT_LIST = {
   title: 'In Short',
   list: [
     'Swiss-based initiative',
@@ -39,70 +39,70 @@ export const inShortList = {
   ],
 };
 
-export const simulationNeuroscienceBlock = [
+export const SIMULATION_NEUROSCIENCE_BLOCK = [
   {
     title: 'Feasibility',
     description:
       'Provides a scalable, cost-effective environment for brain mapping across different ages, species, and diseases.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-feasability.jpg',
   },
   {
     title: 'Expertise',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-expertise.jpg',
   },
   {
     title: 'Equipment',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-equipment.jpg',
   },
   {
     title: 'Cost',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-cost.jpg',
   },
   {
     title: 'Complexity',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-complexity.jpg',
   },
   {
     title: 'Fragmentation',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-fragmentation.jpg',
   },
   {
     title: 'Standardization',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-standardization.jpg',
   },
   {
     title: 'Reproducibility',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-reproductibility.jpg',
   },
   {
     title: 'Diagnostics',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-diagnostic.jpg',
   },
   {
     title: 'Consolidation',
     description:
       'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    image: '/images/about/placeholder_img-01.jpg',
+    image: '/images/about/simulation_neuroscience/bbop_about_image-consolidation.jpg',
   },
 ];
 
-export const complementing = {
+export const COMPLEMENTING = {
   title: 'Complementing',
   subtitle: 'theory and experiments',
   paragraphs: [

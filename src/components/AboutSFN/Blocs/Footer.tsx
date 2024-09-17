@@ -102,12 +102,15 @@ export default function Footer() {
     <div className="relative flex w-full flex-row items-start justify-between border-t border-solid border-primary-4 pb-20 pt-32">
       <OBPLogo color="text-white" />
       <div className="relative flex w-2/3 flex-row justify-between gap-x-10">
-        {content.map((section: SingleSectionProps) => (
-          <div key={`Footer_element-${section.title}`} className="flex flex-col gap-y-3">
+        {content.map((section: SingleSectionProps, index: number) => (
+          <div
+            key={`Footer_element-${section.title}-${index + 1}`}
+            className="flex flex-col gap-y-3"
+          >
             <h4 className="text-xl font-semibold uppercase tracking-[0.06em]">{section.title}</h4>
-            {section.items.map((item: { title: string; url: string }) => (
+            {section.items.map((item: { title: string; url: string }, idx: number) => (
               <Link
-                key={`link_${item.title}`}
+                key={`link_${item.title}-${idx + 1}`}
                 href={item.url}
                 className="font-sans text-xl font-light leading-normal"
               >

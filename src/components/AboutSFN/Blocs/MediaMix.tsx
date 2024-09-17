@@ -38,7 +38,7 @@ export default function MediaMix({
         <div className="relative flex flex-col">
           {paragraphs.map((paragraph: string, index: number) => (
             <div
-              key={`about-introduction-paragraph-${paragraph.slice(0, 10)}`}
+              key={`about-introduction-paragraph-${index + 1}`}
               className="font-sans text-3xl font-normal leading-normal"
             >
               {index !== 0 && <div className="mb-5 mt-3 block h-8 w-px bg-primary-3" />}

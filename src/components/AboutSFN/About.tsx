@@ -7,11 +7,11 @@ import RichContent from './Blocs/RichContent';
 import InternalNavigation from './InternalNavigation';
 
 import {
-  complementing,
-  featuresBlock,
-  inShortList,
-  originBlock,
-  simulationNeuroscienceBlock,
+  COMPLEMENTING,
+  FEATURES_BLOCK,
+  IN_SHORT_LIST,
+  ORIGIN_BLOCK,
+  SIMULATION_NEUROSCIENCE_BLOCK,
 } from '@/constants/about/about-content';
 
 export default function AboutSFN() {
@@ -21,25 +21,29 @@ export default function AboutSFN() {
       <Introduction />
       <MediaMix
         layout="left"
-        title={featuresBlock.title}
-        subtitle={featuresBlock.subtitle}
-        paragraphs={featuresBlock.paragraphs}
-        image={featuresBlock.image}
+        title={FEATURES_BLOCK.title}
+        subtitle={FEATURES_BLOCK.subtitle}
+        paragraphs={FEATURES_BLOCK.paragraphs}
+        image={FEATURES_BLOCK.image}
       />
       <MediaMix
         layout="right"
-        title={originBlock.title}
-        subtitle={originBlock.subtitle}
-        paragraphs={originBlock.paragraphs}
-        image={originBlock.image}
+        title={ORIGIN_BLOCK.title}
+        subtitle={ORIGIN_BLOCK.subtitle}
+        paragraphs={ORIGIN_BLOCK.paragraphs}
+        image={ORIGIN_BLOCK.image}
       />
-      <List title={inShortList.title} list={inShortList.list} />
-      <Gallery title="Simulation" subtitle="Neuroscience" content={simulationNeuroscienceBlock} />
+      <List title={IN_SHORT_LIST.title} list={IN_SHORT_LIST.list} />
+      <Gallery
+        title="Simulation neuroscience"
+        subtitle="Discover the benefits"
+        content={SIMULATION_NEUROSCIENCE_BLOCK}
+      />
       <RichContent
-        title={complementing.title}
-        subtitle={complementing.subtitle}
-        paragraphs={complementing.paragraphs}
-        image={complementing.image}
+        title={COMPLEMENTING.title}
+        subtitle={COMPLEMENTING.subtitle}
+        paragraphs={COMPLEMENTING.paragraphs}
+        image={COMPLEMENTING.image}
       />
       <Footer />
     </div>
