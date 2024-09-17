@@ -91,7 +91,7 @@ export default function MeModelsListing({
       <input name="modelUrl" aria-hidden hidden defaultValue={getFieldValue('modelUrl')} />
       <div className="mb-4">
         <h1 className="text-xl font-bold text-primary-8">
-          Select a single cell model to build a synaptom model
+          Select a single neuron model to build a synaptome model
         </h1>
         {modelNotSelectedError && (
           <i className="text-pink-700">
@@ -120,7 +120,7 @@ export default function MeModelsListing({
         onClick={proceed}
         disabled={!selectedRows.length}
       >
-        Use single cell model
+        Use single neuron model
       </button>
     </div>
   );

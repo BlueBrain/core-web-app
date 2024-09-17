@@ -3,7 +3,7 @@
 import { ChangeEvent, CSSProperties, ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { Button, ConfigProvider, Input } from 'antd';
+import { Button, ConfigProvider, Input, Progress } from 'antd';
 import { EditOutlined, UnlockOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
@@ -158,7 +158,7 @@ function BannerWrapper({
   userCount?: number;
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex w-full flex-col gap-2">
       <div className="flex grow flex-col gap-2">
         <div className="text-primary-2">{label}</div>
         {children}
@@ -183,18 +183,21 @@ export function DashboardBanner({ createdAt, description, id, name }: Props & { 
   const href = `${labUrl}/overview`;
 
   return (
-    <BackgroundImg backgroundImage={hippocampusImg} className="hover:brightness-110">
-      <Link className={linkClassName} href={href}>
-        <BannerWrapper
-          admin={users?.find((user) => user.role === 'admin')?.name || '-'}
-          createdAt={createdAt}
-          label="Virtual lab Name"
-          userCount={users?.length || 0}
-        >
-          <StaticValues description={description} name={name} dataTestid="dashboard-banner" />
-        </BannerWrapper>
-      </Link>
-    </BackgroundImg>
+    <>
+      <BackgroundImg backgroundImage={hippocampusImg} className="hover:brightness-110">
+        <Link className={linkClassName} href={href}>
+          <BannerWrapper
+            admin={users?.find((user) => user.role === 'admin')?.name || '-'}
+            createdAt={createdAt}
+            label="Virtual lab Name"
+            userCount={users?.length || 0}
+          >
+            <StaticValues description={description} name={name} dataTestid="dashboard-banner" />
+          </BannerWrapper>
+        </Link>
+      </BackgroundImg>
+      <BudgetStatus />
+    </>
   );
 }
 
@@ -231,28 +234,61 @@ export function LabDetailBanner({ vlab }: { vlab?: VirtualLab }) {
   const { button: editBtn, isEditable } = useEditBtn({ dataTestid: 'lab-detail-banner-edit-btn' });
 
   return (
-    <BackgroundImg backgroundImage={hippocampusImg}>
-      <div className={linkClassName}>
-        <BannerWrapper
-          admin={users?.find((user) => user.role === 'admin')?.name || '-'}
-          createdAt={vlab?.created_at}
-          label="Virtual lab Name"
-          userCount={users?.length || 0}
-        >
-          {isEditable ? (
-            <EditableInputs
-              description={description}
-              name={name}
-              onChange={onChange}
-              dataTestid="lab-detail-banner"
-            />
-          ) : (
-            <StaticValues description={description} name={name} dataTestid="lab-detail-banner" />
-          )}
-        </BannerWrapper>
-        {editBtn}
+    <>
+      <BackgroundImg backgroundImage={hippocampusImg}>
+        <div className={linkClassName}>
+          <BannerWrapper
+            admin={users?.find((user) => user.role === 'admin')?.name || '-'}
+            createdAt={vlab?.created_at}
+            label="Virtual lab Name"
+            userCount={users?.length || 0}
+          >
+            {isEditable ? (
+              <EditableInputs
+                description={description}
+                name={name}
+                onChange={onChange}
+                dataTestid="lab-detail-banner"
+              />
+            ) : (
+              <StaticValues description={description} name={name} dataTestid="lab-detail-banner" />
+            )}
+          </BannerWrapper>
+          {editBtn}
+        </div>
+      </BackgroundImg>
+      <BudgetStatus />
+    </>
+  );
+}
+
+function BudgetStatus() {
+  const totalSpent = 100;
+  const totalBudget = 300;
+  const remaining = totalBudget - totalSpent;
+
+  return (
+    <div className="mt-1 flex w-full flex-col items-start bg-primary-8 p-4 text-white">
+      <div className="mb-2 flex w-full justify-between text-primary-1">
+        <p className="font-bold text-white">Budget</p>
+        <p>Total budget: ${totalBudget}</p>
       </div>
-    </BackgroundImg>
+      <Progress
+        showInfo={false}
+        percent={(totalSpent / totalBudget) * 100}
+        strokeColor="white"
+        trailColor="#91D5FF"
+        className="w-full"
+      />
+      <div className="flex w-full justify-between text-primary-1">
+        <p className="text-neutral-2">
+          Total spent: <span className="font-bold text-white">${totalSpent}</span>
+        </p>
+        <p>
+          Remaining: <span className="font-bold ">${remaining}</span>
+        </p>
+      </div>
+    </div>
   );
 }
 

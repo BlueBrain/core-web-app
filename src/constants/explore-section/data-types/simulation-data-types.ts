@@ -11,7 +11,7 @@ export const SIMULATION_DATA_TYPES: { [key: string]: DataTypeConfig } = {
     curated: false,
   },
   [DataType.SingleNeuronSimulation]: {
-    title: 'Single Neuron simulation',
+    title: 'Single neuron simulations',
     group: DataTypeGroup.SimulationData,
     name: 'single-neuron-simulation',
     columns: [
@@ -27,7 +27,7 @@ export const SIMULATION_DATA_TYPES: { [key: string]: DataTypeConfig } = {
     curated: false,
   },
   [DataType.SingleNeuronSynaptomeSimulation]: {
-    title: 'Single Neuron Synaptome Simulation',
+    title: 'Single neuron synaptome simulations',
     group: DataTypeGroup.SimulationData,
     name: 'synaptome-simulation',
     columns: [

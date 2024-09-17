@@ -64,7 +64,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
 
   return (
     <div className="m-10 flex h-full flex-col gap-5">
-      <div className="text-3xl font-bold text-primary-8">Build new single cell model</div>
+      <div className="text-3xl font-bold text-primary-8">Build a new single neuron model</div>
       <div className="flex flex-row gap-4">
         <div className="flex-1 grow flex-col gap-4">
           <Form

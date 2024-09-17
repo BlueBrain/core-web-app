@@ -25,7 +25,7 @@ export default function ConditionsDetails({ conditions }: Props) {
       </div>
 
       <div className="min-w-[200px]">
-        <Field label="Voltage Initial" value={`${conditions.vinit}`} unit="mv" />
+        <Field label="Initial voltage" value={`${conditions.vinit}`} unit="mv" />
         <Field label="Time Step" value={`${conditions.time_step}`} unit="ms" />
       </div>
 

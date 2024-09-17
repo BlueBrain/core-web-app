@@ -28,11 +28,11 @@ type TabDetails = {
 
 export const SupportedTypeToTabDetails: Record<string, TabDetails> = {
   [DataType.SingleNeuronSimulation]: {
-    title: 'Single Neuron Simulation',
+    title: 'Single neuron simulation',
     urlParam: 'single-neuron-simulation',
   },
   [DataType.SingleNeuronSynaptomeSimulation]: {
-    title: 'Single Neuron Synaptome Simulation',
+    title: 'Single neuron synaptome simulations',
     urlParam: 'synaptome-simulation',
   },
 };

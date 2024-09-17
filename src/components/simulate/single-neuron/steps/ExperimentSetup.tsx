@@ -28,7 +28,7 @@ const CONDITIONS_FIELDS: Array<Omit<SetupInputProps, 'onChange'>> = [
   },
   {
     name: 'vinit',
-    text: 'Voltage initial',
+    text: 'Initial voltage',
     unit: 'mv',
     min: -200,
     max: 200,

@@ -182,7 +182,7 @@ function Params({ payload }: { payload: SimulationPayload | null }) {
       </div>
 
       <div>
-        <div className={subtitleStyle}>Voltage initial</div>
+        <div className={subtitleStyle}>Initial voltage</div>
         <div>
           <span className="font-bold">{payload.config.conditions.vinit}</span>
           <span>&nbsp;mV</span>
