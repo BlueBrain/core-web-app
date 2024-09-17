@@ -43,21 +43,21 @@ export default function EModelTracePreview({
     };
 
     const imagesArray = ensureArray(images);
-    if (imagesArray.length === 1) {
-      const id = imagesArray[0]['@id'];
-      const url = composeUrl('file', id);
-      fetchFile(url);
-    } else if (imagesArray.length > 1) {
-      const thumbnailImgObj = imagesArray.find((i) => i.about?.endsWith('thumbnail'));
-      if (!thumbnailImgObj) {
-        setSrc(null);
-        setLoading(false);
-        return;
-      }
-      const id = thumbnailImgObj['@id'];
-      const url = composeUrl('file', id);
-      fetchFile(url);
+
+    if (imagesArray.length === 0) {
+      setSrc(null);
+      setLoading(false);
+      return;
     }
+
+    const thumbnailImgObj =
+      imagesArray.find((i) => i.about?.endsWith('thumbnail')) ?? imagesArray[0];
+
+    const id = thumbnailImgObj['@id'];
+    const [org, project] = id.split('/').slice(-3, -1);
+    const url = composeUrl('file', id, { org, project });
+
+    fetchFile(url);
   }, [session, images, inView]);
 
   if (loading) {
