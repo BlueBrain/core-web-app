@@ -15,7 +15,7 @@ const SYNAPTIC_INPUT_FIELDS: Array<Omit<ConfigInputProps, 'onChange' | 'index' |
     text: 'duration',
     unit: 'ms',
     min: 0,
-    max: Infinity,
+    max: 3000,
   },
   {
     name: 'frequency',
