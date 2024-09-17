@@ -71,13 +71,16 @@ export const simulationParametersAtom = atom<Promise<SimulationParameter | null>
   const remoteParameters = await get(eModelParameterAtom);
 
   if (!remoteParameters) return null;
-
-  const simParams = convertRemoteParamsForUI({
-    parameters: remoteParameters,
-    // default to 20 because the original is > 500
-    maxGenerations: 20,
-  });
-  return simParams;
+  try {
+    const simParams = convertRemoteParamsForUI({
+      parameters: remoteParameters,
+      // default to 20 because the original is > 500
+      maxGenerations: 20,
+    });
+    return simParams;
+  } catch (e) {
+    return null;
+  }
 });
 
 export const featureSelectedPresetAtom = atom<FeaturePresetName>('firing_pattern');
@@ -103,8 +106,11 @@ export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | 
     const morphology = await get(eModelMorphologyAtom);
 
     if (!morphology) return null;
-
-    return convertMorphologyForUI(morphology);
+    try {
+      return convertMorphologyForUI(morphology);
+    } catch (e) {
+      return null;
+    }
   }
 );
 
@@ -124,7 +130,9 @@ export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] 
 
     if (!eModelExtractionTargetsConfiguration || !session) return null;
 
-    const traceIds = eModelExtractionTargetsConfiguration.uses.map((trace) => trace['@id']);
+    const traceIds = ensureArray(eModelExtractionTargetsConfiguration.uses).map(
+      (trace) => trace['@id']
+    );
 
     const tracesQuery = getEntityListByIdsQuery('Trace', traceIds);
 

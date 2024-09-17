@@ -99,7 +99,7 @@ export default function ExemplarMorphology() {
   const columns = [previewColumn, ...defaultColumns, ...(eModelEditMode ? [deleteColumn] : [])];
 
   let displayMorphologyError = null;
-  if (morphologies && morphologies.length !== 1) {
+  if (exemplarMorphologyAsList.length > 0 && morphologies && morphologies.length !== 1) {
     if (morphologies.length > 1) {
       displayMorphologyError = 'Too many morphologies selected. Keep only one.';
     } else {
