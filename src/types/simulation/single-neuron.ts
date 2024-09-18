@@ -150,12 +150,12 @@ export type ProtocolDetails = {
   };
 };
 
-type SimulationError = {
+type BluenaasError = {
   details: string;
   message: string;
   error_code: string;
 };
 
-export const isSimulationError = (obj: Object): obj is SimulationError => {
+export const isBluenaasError = (obj: Object): obj is BluenaasError => {
   return 'details' in obj && 'message' in obj && 'error_code' in obj;
 };

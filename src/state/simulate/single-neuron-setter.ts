@@ -34,7 +34,7 @@ import { MEModel } from '@/types/me-model';
 import {
   SingleNeuronModelSimulationConfig,
   SimulationPayload,
-  isSimulationError,
+  isBluenaasError,
 } from '@/types/simulation/single-neuron';
 import { SimulationType } from '@/types/simulation/common';
 import { isJSON } from '@/util/utils';
@@ -317,7 +317,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
     function mergeJsonBuffer(part: string) {
       if (isJSON(part)) {
         const jsonData = JSON.parse(part) as SimulationPlotResponse;
-        if (isSimulationError(jsonData)) {
+        if (isBluenaasError(jsonData)) {
           throw new Error(
             jsonData.details ??
               'Simulation encountered an error, please be sure that the configuration is correct and try again',
