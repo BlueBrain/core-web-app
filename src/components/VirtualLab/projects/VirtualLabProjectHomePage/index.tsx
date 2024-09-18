@@ -4,7 +4,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 
 import Member from '@/components/VirtualLab/VirtualLabHomePage/Member';
-import { ProjectDetailBanner } from '@/components/VirtualLab/VirtualLabBanner';
+import { ProjectDetailBanner, BudgetStatus } from '@/components/VirtualLab/VirtualLabBanner';
 import WelcomeUserBanner from '@/components/VirtualLab/VirtualLabHomePage/WelcomeUserBanner';
 import {
   virtualLabProjectDetailsAtomFamily,
@@ -74,6 +74,7 @@ export default function VirtualLabProjectHomePage({
           projectId={projectId}
           virtualLabId={virtualLabId}
         />
+        <BudgetStatus />
         <div>
           <div className="my-10 text-lg font-bold uppercase">Members</div>
           <VirtualLabUsersHorizontalList virtualLabId={virtualLabId} projectId={projectId} />

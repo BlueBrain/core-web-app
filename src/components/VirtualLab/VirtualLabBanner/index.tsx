@@ -262,7 +262,7 @@ export function LabDetailBanner({ vlab }: { vlab?: VirtualLab }) {
   );
 }
 
-function BudgetStatus() {
+export function BudgetStatus() {
   const totalSpent = 100;
   const totalBudget = 300;
   const remaining = totalBudget - totalSpent;
