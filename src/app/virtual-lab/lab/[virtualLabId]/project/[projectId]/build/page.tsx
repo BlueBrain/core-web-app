@@ -47,7 +47,7 @@ const SupportedTypeToTabDetails: Record<string, TabDetails> = {
     viewUrl: 'build/me-model/view',
   },
   [DataType.SingleNeuronSynaptome]: {
-    title: 'Single neuron synaptome',
+    title: 'Synaptome',
     buildModelLabel: 'New synaptome model',
     newUrl: 'build/synaptome/new',
     viewUrl: 'build/synaptome/view',

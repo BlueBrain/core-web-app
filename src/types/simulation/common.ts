@@ -32,7 +32,7 @@ export const SupportedTypeToTabDetails: Record<string, TabDetails> = {
     urlParam: 'single-neuron-simulation',
   },
   [DataType.SingleNeuronSynaptomeSimulation]: {
-    title: 'Single neuron synaptome simulations',
+    title: 'Synaptome simulations',
     urlParam: 'synaptome-simulation',
   },
 };
