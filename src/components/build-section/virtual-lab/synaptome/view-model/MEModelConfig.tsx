@@ -26,7 +26,7 @@ export function MEModelConfiguration({
 }) {
   const generateMeModelDetailView = () => {
     const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
-    const baseBuildUrl = `${vlProjectUrl}/build/me-model/view`;
+    const baseBuildUrl = `${vlProjectUrl}/explore/interactive/model/me-model`;
     const { org, project } = getOrgAndProjectFromProjectId(meModel._project);
     return `${baseBuildUrl}/${to64(`${org}/${project}!/!${meModel['@id']}`)}`;
   };

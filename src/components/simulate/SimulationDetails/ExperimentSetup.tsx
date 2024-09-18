@@ -39,28 +39,30 @@ export default function ExperimentSetupTab({ experimentSetup, type, meModel }: P
     <div>
       <h1 className="mb-3 mt-6 text-3xl font-bold text-primary-8">Experiment Setup</h1>
       <ul className="flex w-full items-center justify-center">
-        {TABS.map(({ key, title }) => (
-          <li
-            title={title}
-            key={key}
-            className={classNames(
-              'w-1/3 flex-[1_1_33%] border py-3 text-center text-xl font-semibold transition-all duration-200 ease-out',
-              activeTab === key ? 'bg-primary-9 text-white' : 'bg-white text-primary-9'
-            )}
-          >
-            <button
-              type="button"
-              className="w-full"
-              onClick={() => setActiveTab(key)}
-              onKeyDown={() => setActiveTab(key)}
+        {(type === 'synaptome-simulation' ? TABS.filter((p) => p.key !== 'analysis') : TABS).map(
+          ({ key, title }) => (
+            <li
+              title={title}
+              key={key}
+              className={classNames(
+                'w-1/3 flex-[1_1_33%] border py-3 text-center text-xl font-semibold transition-all duration-200 ease-out',
+                activeTab === key ? 'bg-primary-9 text-white' : 'bg-white text-primary-9'
+              )}
             >
-              {title}
-            </button>
-          </li>
-        ))}
+              <button
+                type="button"
+                className="w-full"
+                onClick={() => setActiveTab(key)}
+                onKeyDown={() => setActiveTab(key)}
+              >
+                {title}
+              </button>
+            </li>
+          )
+        )}
       </ul>
       {activeTab === 'simulation-configuration' && (
-        <SimulationConfigurationTab simulation={experimentSetup} />
+        <SimulationConfigurationTab type={type} simulation={experimentSetup} />
       )}
 
       {activeTab === 'results' && <ResultsTab recordings={experimentSetup.simulation} />}

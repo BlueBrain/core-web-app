@@ -22,6 +22,7 @@ import { atlasESView, nexus } from '@/config';
 import { DataType } from '@/constants/explore-section/list-views';
 import { MEModelResource } from '@/types/me-model';
 import { fetchLinkedMandEModels } from '@/api/explore-section/resources';
+import { SynaptomeModelResource } from '@/types/explore-section/delta-model';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
@@ -80,7 +81,75 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>
           linkedEModel,
         };
       }
+      if (
+        ensureArray(resource['@type']).includes(DataType.SingleNeuronSynaptomeSimulation) &&
+        'used' in resource &&
+        ensureArray(resource.used['@type']).includes('SingleNeuronSynaptome')
+      ) {
+        const synaptomeModelId = resource.used['@id'];
+        const linkedsynaptomeModelModel = await fetchResourceById<SynaptomeModelResource>(
+          synaptomeModelId,
+          session,
+          {
+            ...(synaptomeModelId.startsWith(nexus.defaultIdBaseUrl)
+              ? {}
+              : {
+                  org: info.org,
+                  project: info.project,
+                }),
+          }
+        );
+        const meModelId = linkedsynaptomeModelModel.used['@id'];
+        const linkedMeModel = await fetchResourceById<MEModelResource>(meModelId, session, {
+          ...(meModelId.startsWith(nexus.defaultIdBaseUrl)
+            ? {}
+            : {
+                org: info.org,
+                project: info.project,
+              }),
+        });
 
+        const { linkedMModel, linkedEModel } = await fetchLinkedMandEModels({
+          org: info.org,
+          project: info.project,
+          meModel: linkedMeModel,
+        });
+
+        return {
+          ...resource,
+          linkedMeModel,
+          linkedMModel,
+          linkedEModel,
+        };
+      }
+      if (
+        ensureArray(resource['@type']).includes(DataType.SingleNeuronSimulation) &&
+        'used' in resource &&
+        ensureArray(resource.used['@type']).includes('MEModel')
+      ) {
+        const meModelId = resource.used['@id'];
+        const linkedMeModel = await fetchResourceById<MEModelResource>(meModelId, session, {
+          ...(meModelId.startsWith(nexus.defaultIdBaseUrl)
+            ? {}
+            : {
+                org: info.org,
+                project: info.project,
+              }),
+        });
+
+        const { linkedMModel, linkedEModel } = await fetchLinkedMandEModels({
+          org: info.org,
+          project: info.project,
+          meModel: linkedMeModel,
+        });
+
+        return {
+          ...resource,
+          linkedMeModel,
+          linkedMModel,
+          linkedEModel,
+        };
+      }
       return resource;
     }),
   isEqual

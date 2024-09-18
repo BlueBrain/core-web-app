@@ -16,6 +16,10 @@ import { useSimulation } from '@/hooks/useSimulation';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { DeltaResource } from '@/types/explore-section/resources';
+import { SingleNeuronSimulation, SynaptomeSimulation } from '@/types/nexus';
+import { MEModelResource } from '@/types/me-model';
+import { EModel, NeuronMorphology } from '@/types/e-model';
 
 type Props = {
   params: {
@@ -24,6 +28,13 @@ type Props = {
     simulationType: 'single-neuron-simulation' | 'synaptome-simulation';
   };
 };
+
+export type SimulationWithLinkedData = DeltaResource &
+  (SynaptomeSimulation | SingleNeuronSimulation) & {
+    linkedMeModel?: MEModelResource;
+    linkedMModel?: NeuronMorphology;
+    linkedEModel?: EModel;
+  };
 
 export default function SimulationDetailPage({ params }: Props) {
   const info = useResourceInfoFromPath();
@@ -79,35 +90,43 @@ export default function SimulationDetailPage({ params }: Props) {
         //   )
         // }
       >
-        {() => (
-          <>
-            {meModel ? (
-              <ModelDetails
-                type={params.simulationType}
-                name={
-                  params.simulationType === 'synaptome-simulation'
-                    ? synaptomeModel?.name ?? ''
-                    : meModel.name
-                }
-                meModel={meModel}
-              />
-            ) : (
-              <Spin />
-            )}
-            {simulationConfig ? (
-              <ExperimentSetup
-                type={params.simulationType}
-                experimentSetup={simulationConfig}
-                meModel={meModel}
-              />
-            ) : (
-              <div className="flex h-full min-h-96 w-full flex-col items-center justify-center gap-3">
-                <Spin indicator={<LoadingOutlined />} size="large" />
-                <h2 className="font-light text-primary-9">Loading simulation configuration ...</h2>
-              </div>
-            )}
-          </>
-        )}
+        {(data: SimulationWithLinkedData) => {
+          return (
+            <>
+              {data.linkedMeModel && data.linkedMModel && data.linkedEModel ? (
+                <ModelDetails
+                  virtualLabId={params.virtualLabId}
+                  projectId={params.projectId}
+                  type={params.simulationType}
+                  name={
+                    params.simulationType === 'synaptome-simulation'
+                      ? synaptomeModel?.name ?? ''
+                      : data.linkedMeModel.name
+                  }
+                  meModel={data.linkedMeModel}
+                  mModel={data.linkedMModel}
+                  eModel={data.linkedEModel}
+                />
+              ) : (
+                <Spin />
+              )}
+              {simulationConfig ? (
+                <ExperimentSetup
+                  type={params.simulationType}
+                  experimentSetup={simulationConfig}
+                  meModel={meModel}
+                />
+              ) : (
+                <div className="flex h-full min-h-96 w-full flex-col items-center justify-center gap-3">
+                  <Spin indicator={<LoadingOutlined />} size="large" />
+                  <h2 className="font-light text-primary-9">
+                    Loading simulation configuration ...
+                  </h2>
+                </div>
+              )}
+            </>
+          );
+        }}
       </Detail>
     </div>
   );

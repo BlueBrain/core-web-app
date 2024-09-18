@@ -15,6 +15,7 @@ import { MEModel, MEModelResource } from '@/types/me-model';
 import { createResource, fetchResourceById, updateResource } from '@/api/nexus';
 import { composeUrl } from '@/util/nexus';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
+import { nexus } from '@/config';
 
 type MEModelDetails = {
   description: string;
@@ -118,7 +119,17 @@ export const initializeSummaryAtom = atom<
   const session = get(sessionAtom);
 
   if (!session) return;
-  const meModel = await fetchResourceById<MEModelResource>(meModelId, session, { org, project });
+  const meModel = await fetchResourceById<MEModelResource>(
+    meModelId,
+    session,
+    meModelId.startsWith(nexus.defaultIdBaseUrl)
+      ? {}
+      : {
+          org,
+          project,
+        }
+  );
+
   const usedEModel = meModel.hasPart.find((r) => r['@type'] === 'EModel');
   const usedMModel = meModel.hasPart.find((r) => r['@type'] === 'NeuronMorphology');
 
