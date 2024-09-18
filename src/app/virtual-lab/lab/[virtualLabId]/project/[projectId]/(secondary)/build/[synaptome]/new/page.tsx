@@ -4,7 +4,7 @@ import { ConfigProvider, Form, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { LoadingOutlined } from '@ant-design/icons';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import { Content, Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
@@ -25,6 +25,7 @@ import { useSessionStorage } from '@/hooks/useSessionStorage';
 
 import useSynaptomeModel from '@/components/simulate/single-neuron/hooks/useSynaptomeModel';
 import SideMenu from '@/components/SideMenu';
+import { selectedSimulationScopeAtom } from '@/state/simulate';
 
 type Props = {
   params: {
@@ -42,7 +43,7 @@ function Synaptome({ params: { virtualLabId, projectId } }: Props) {
     record: ExploreESHit<ExploreResource>;
     selectedRows: Array<ExploreESHit<ExploreResource>> | null;
   } | null>(`me-model/${virtualLabId}/${projectId}`, null);
-
+  const scope = useAtomValue(selectedSimulationScopeAtom);
   const [configStep, setConfigStep] = useState<SynaptomeModelConfigSteps>('basic-config');
   const setSelectedRows = useSetAtom(selectedRowsAtom({ dataType: DataType.CircuitMEModel }));
   const queryParams = useSearchParams();
@@ -95,6 +96,12 @@ function Synaptome({ params: { virtualLabId, projectId } }: Props) {
     <div className="grid h-screen max-h-screen w-full grid-cols-[min-content_auto] overflow-hidden bg-white">
       <SideMenu
         links={[
+          {
+            key: 'scope',
+            href: '#',
+            content: <>{scope.replace('-', ' ')}</>,
+            styles: 'text-primary-5 hover:!text-primary-5 cursor-default',
+          },
           {
             key: LinkItemKey.Build,
             href: `${labProjectUrl}/build`,
