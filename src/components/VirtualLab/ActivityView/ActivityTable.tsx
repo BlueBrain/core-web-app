@@ -1,10 +1,9 @@
 import { ConfigProvider, Table } from 'antd';
-import { useEffect, useState, ReactNode, useMemo } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import { useParams } from 'next/navigation';
 import { atom, useAtom } from 'jotai';
 import memoizeOne from 'memoize-one';
 import { LoadingOutlined } from '@ant-design/icons';
-import StatusHeader from './StatusHeader';
 
 import { ActivityColumn, ActivityRecord, Status } from './types';
 import timeElapsedFromToday from '@/util/date';
@@ -142,18 +141,19 @@ export default function ActivityTable() {
   const virtualLabId = params.virtualLabId as string;
   const [dataSource, setDataSource] = useAtom(getAtom(virtualLabId, projectId));
 
-  const errorCount = useMemo(() => {
-    return dataSource?.filter((r) => r.status === 'error')?.length;
-  }, [dataSource]);
+  // Hidden for SFN
+  // const errorCount = useMemo(() => {
+  //   return dataSource?.filter((r) => r.status === 'error')?.length;
+  // }, [dataSource]);
 
-  const modelBuildsCount = useMemo(() => {
-    return dataSource?.filter((r) => r.activity === 'Build')?.length;
-  }, [dataSource]);
+  // const modelBuildsCount = useMemo(() => {
+  //   return dataSource?.filter((r) => r.activity === 'Build')?.length;
+  // }, [dataSource]);
 
-  const analysisRuningCount = useMemo(() => {
-    return dataSource?.filter((r) => r.activity === 'Build - Analysis' && r.status === 'running')
-      ?.length;
-  }, [dataSource]);
+  // const analysisRuningCount = useMemo(() => {
+  //   return dataSource?.filter((r) => r.activity === 'Build - Analysis' && r.status === 'running')
+  //     ?.length;
+  // }, [dataSource]);
 
   useEffect(() => {
     async function fetchResource() {
@@ -187,7 +187,7 @@ export default function ActivityTable() {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <StatusHeader error={errorCount} build={modelBuildsCount} running={analysisRuningCount} />
+      {/* HIDDEN FOR SFN <StatusHeader error={errorCount} build={modelBuildsCount} running={analysisRuningCount} /> */}
       <ConfigProvider
         theme={{
           hashed: false,
