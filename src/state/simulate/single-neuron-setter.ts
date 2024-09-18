@@ -34,6 +34,7 @@ import { MEModel } from '@/types/me-model';
 import {
   SingleNeuronModelSimulationConfig,
   SimulationPayload,
+  isSimulationError,
 } from '@/types/simulation/single-neuron';
 import { SimulationType } from '@/types/simulation/common';
 import { isJSON } from '@/util/utils';
@@ -282,7 +283,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
           current: { title: 'Results', status: 'finish' },
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       captureException(error, {
         tags: { section: 'simulation', type: 'simulationType' },
         extra: {
@@ -298,11 +299,11 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
           },
         },
       });
-
       set(simulationStatusAtom, {
         status: 'error',
-        description:
-          'We are having trouble running the simulation, please wait a few moments, and try again',
+        description: error.cause
+          ? `${error}`
+          : 'We are having trouble running the simulation, please wait a few moments, and try again',
       });
       set(simulateStepTrackerAtom, {
         steps: get(simulateStepTrackerAtom).steps.map((p) => ({
@@ -316,6 +317,13 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
     function mergeJsonBuffer(part: string) {
       if (isJSON(part)) {
         const jsonData = JSON.parse(part) as SimulationPlotResponse;
+        if (isSimulationError(jsonData)) {
+          throw new Error(
+            jsonData.details ??
+              'Simulation encountered an error, please be sure that the configuration is correct and try again',
+            { cause: 'BluenaasError' }
+          );
+        }
         const newPlot: PlotDataEntry = {
           x: jsonData.t,
           y: jsonData.v,

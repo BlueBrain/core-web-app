@@ -149,3 +149,13 @@ export type ProtocolDetails = {
     };
   };
 };
+
+type SimulationError = {
+  details: string;
+  message: string;
+  error_code: string;
+};
+
+export const isSimulationError = (obj: Object): obj is SimulationError => {
+  return 'details' in obj && 'message' in obj && 'error_code' in obj;
+};

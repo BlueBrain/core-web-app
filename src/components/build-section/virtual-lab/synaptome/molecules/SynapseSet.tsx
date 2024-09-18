@@ -216,7 +216,16 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
     config?.exclusion_rules?.some((p) => !p.distance_soma_gte && !p.distance_soma_lte) &&
     !displayExclusionRules;
 
-  const onVisualizationError = async (response: Response) => {
+  const onVisualizationError = async (response?: Response) => {
+    if (!response) {
+      notifyError(
+        GENERATE_SYNAPSES_FAIL.replace('$$', (index + 1).toString()),
+        undefined,
+        'topRight'
+      );
+      return;
+    }
+
     try {
       const errorDetails = await response.json();
       notifyError(errorDetails.details, undefined, 'topRight');
