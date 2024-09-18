@@ -107,7 +107,7 @@ export default function ModelDetails({
               )}
               {type === 'synaptome-simulation' && (
                 <Field
-                  label="M-ype"
+                  label="M-Type"
                   value={meModel.mType ?? mModel.mType ?? DisplayMessages.NO_DATA_STRING}
                 />
               )}

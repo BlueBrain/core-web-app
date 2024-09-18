@@ -3,10 +3,12 @@
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
+import { useAtomValue } from 'jotai';
 import SideMenu from '@/components/SideMenu';
 import { LinkItemKey, Content, Label } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
+import { selectedSimulationScopeAtom } from '@/state/simulate';
 
 type Props = {
   children: ReactNode;
@@ -20,11 +22,18 @@ export default function SimulateSingleNeuronEditLayout({ children, params }: Pro
   const labUrl = generateLabUrl(params.virtualLabId);
 
   const labProjectUrl = `${labUrl}/project/${params.projectId}`;
+  const scope = useAtomValue(selectedSimulationScopeAtom);
 
   return (
     <div className="grid h-screen grid-cols-[max-content_auto] grid-rows-1 bg-white">
       <SideMenu
         links={[
+          {
+            key: 'scope',
+            href: '#',
+            content: <>{scope.replace('-', ' ')}</>,
+            styles: 'text-primary-5 hover:!text-primary-5 cursor-default',
+          },
           {
             key: LinkItemKey.Simulate,
             href: `${labProjectUrl}/simulate`,
