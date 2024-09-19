@@ -10,6 +10,7 @@ import {
   DataType,
   DataTypeToNewSimulationPage,
   DataTypeToNexusType,
+  DataTypeToViewModelPage,
 } from '@/constants/explore-section/list-views';
 import { Btn } from '@/components/Btn';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
@@ -18,7 +19,7 @@ import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { ExploreDataScope } from '@/types/explore-section/application';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
 import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
-import { detailUrlBuilder } from '@/util/common';
+import { detailUrlBuilder, to64 } from '@/util/common';
 import { ensureArray } from '@/util/nexus';
 
 import GenericButton from '@/components/Global/GenericButton';
@@ -48,6 +49,25 @@ export default function NewSimulation({
         const baseBuildUrl = `${vlProjectUrl}/simulate/${simulatePagePath}/new`;
         router.push(`${detailUrlBuilder(baseBuildUrl, model)}`);
       }
+    }
+  };
+
+  const navigateToDetailPage = (
+    basePath: string,
+    record: ExploreESHit<ExploreSectionResource>,
+    dataType: DataType
+  ) => {
+    switch (dataType) {
+      case DataType.CircuitMEModel:
+      case DataType.SingleNeuronSynaptome: {
+        const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
+        const pathId = `${to64(`${record._source.project.label}!/!${record._id}`)}`;
+        const baseExploreUrl = `${vlProjectUrl}/${DataTypeToViewModelPage[dataType]}`;
+        router.push(`${baseExploreUrl}/${pathId}`);
+        break;
+      }
+      default:
+        break;
     }
   };
 
@@ -95,6 +115,7 @@ export default function NewSimulation({
                 virtualLabInfo={{ virtualLabId, projectId }}
                 selectionType="radio"
                 renderButton={() => null}
+                onCellClick={navigateToDetailPage}
               />
             </div>
 

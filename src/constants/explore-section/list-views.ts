@@ -34,6 +34,11 @@ export const DataTypeToNewSimulationPage: Record<string, string> = {
   [DataTypeToNexusType.CircuitMEModel]: 'single-neuron',
 };
 
+export const DataTypeToViewModelPage: Record<string, string> = {
+  [DataType.SingleNeuronSynaptome]: 'explore/interactive/model/synaptome',
+  [DataType.CircuitMEModel]: 'explore/interactive/model/me-model',
+};
+
 export const DEFAULT_CHECKLIST_RENDER_LENGTH = 8;
 export const PAGE_SIZE = 30;
 export const PAGE_NUMBER = 1;
