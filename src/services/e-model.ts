@@ -5,7 +5,6 @@ import { ensureArray } from '@/util/nexus';
 import {
   AllFeatureKeys,
   ECode,
-  MechanismForUI,
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
   FeatureCategory,
@@ -164,12 +163,6 @@ export function convertFeaturesForUI(features: AllFeatureKeys[]): FeatureParamet
     ) as FeatureItem<SpikeEventFeatureKeys>[],
     Voltage: getFeaturesFromCategory('Voltage', features) as FeatureItem<VoltageFeatureKeys>[],
   };
-}
-
-export function convertMechanismsForUI(
-  mechanismsGroupedByLocation: MechanismForUI
-): MechanismForUI {
-  return mechanismsGroupedByLocation;
 }
 
 export function mergeEModelsAndOptimizations(

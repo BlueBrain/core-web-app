@@ -33,7 +33,6 @@ import {
   convertMorphologyForUI,
   convertTraceForUI,
   convertFeaturesForUI,
-  convertMechanismsForUI,
 } from '@/services/e-model';
 import {
   getEModelOptimizationConfigQuery,
@@ -325,7 +324,7 @@ export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (
     type EModelMechanismsMapping = Record<ETypeName, MechanismForUI>;
     const payload = await fetchJsonFileById<EModelMechanismsMapping>(eTypeMechanismMapId, session);
 
-    return convertMechanismsForUI(payload[eType]);
+    return payload[eType];
   }
 
   const eModelConfigurationPayload = await get(eModelConfigurationPayloadAtom);
@@ -335,7 +334,7 @@ export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (
   const mechanismsByLocation = groupBy(eModelConfigurationPayload.mechanisms, 'location');
 
   const data = { processed: mechanismsByLocation, raw: {} } as MechanismForUI;
-  return convertMechanismsForUI(data);
+  return data;
 });
 
 /* --------------------- ExtractionTargetsConfiguration --------------------- */
