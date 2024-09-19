@@ -4,6 +4,7 @@ import { Suspense, useEffect } from 'react';
 import { UseQueryStateReturn, parseAsString, useQueryState, Options } from 'nuqs';
 import { useSetAtom } from 'jotai';
 
+import Link from 'next/link';
 import { Analysis, Configuration, Simulation } from '.';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail from '@/components/explore-section/Detail';
@@ -18,6 +19,12 @@ import SectionTabs, {
 import If from '@/components/ConditionalRenderer/If';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import {
+  DataTypeToNewSimulationPage,
+  DataTypeToNexusType,
+} from '@/constants/explore-section/list-views';
+import { to64 } from '@/util/common';
 
 type Params = {
   projectId: string;
@@ -45,12 +52,28 @@ export default function MEModelDetailView({ params, showViewMode = false }: Prop
     setInitializeSummary(id, org, project);
   }, [setInitializeSummary, id, org, project]);
 
+  const getSimulationId = (meModelId: string) => {
+    const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
+    const basePath = `${vlProjectUrl}/simulate/${DataTypeToNewSimulationPage[DataTypeToNexusType.CircuitMEModel]}/new`;
+    return `${basePath}/${to64(`${params.projectId}!/!${meModelId}`)}`;
+  };
+
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail
         fields={ME_MODEL_FIELDS}
         commonFields={MODEL_DATA_COMMON_FIELDS}
         showViewMode={showViewMode}
+        extraHeaderAction={
+          id && (
+            <Link
+              className="flex h-11 items-center gap-2 rounded-none border border-gray-300 px-8 shadow-none"
+              href={getSimulationId(id)}
+            >
+              Simulate
+            </Link>
+          )
+        }
       >
         {() => (
           <>

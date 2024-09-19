@@ -4,6 +4,7 @@ import { Spin } from 'antd';
 import { Suspense, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 
+import Link from 'next/link';
 import {
   MODEL_DATA_COMMON_FIELDS,
   SYNATOME_MODEL_FIELDS,
@@ -18,6 +19,12 @@ import useSynaptomeModel from '@/components/simulate/single-neuron/hooks/useSyna
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import Detail from '@/components/explore-section/Detail';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import {
+  DataTypeToNewSimulationPage,
+  DataTypeToNexusType,
+} from '@/constants/explore-section/list-views';
+import { to64 } from '@/util/common';
 
 type Props = {
   params: {
@@ -59,10 +66,30 @@ export default function SynaptomeModelDetailPage({ params: { virtualLabId, proje
     );
   }
 
+  const getSimulationId = (synaptomeModelId: string) => {
+    const vlProjectUrl = generateVlProjectUrl(virtualLabId, projectId);
+    const basePath = `${vlProjectUrl}/simulate/${DataTypeToNewSimulationPage[DataTypeToNexusType.SingleNeuronSynaptome]}/new`;
+    return `${basePath}/${to64(`${projectId}!/!${synaptomeModelId}`)}`;
+  };
+
   return (
     <div className="secondary-scrollbar h-screen w-full overflow-y-auto">
       <Suspense fallback={<CentralLoadingSpinner />}>
-        <Detail showViewMode fields={SYNATOME_MODEL_FIELDS} commonFields={MODEL_DATA_COMMON_FIELDS}>
+        <Detail
+          showViewMode
+          fields={SYNATOME_MODEL_FIELDS}
+          commonFields={MODEL_DATA_COMMON_FIELDS}
+          extraHeaderAction={
+            model && (
+              <Link
+                className="flex h-11 items-center gap-2 rounded-none border border-gray-300 px-8 shadow-none"
+                href={getSimulationId(model['@id'])}
+              >
+                Simulate
+              </Link>
+            )
+          }
+        >
           {(data: SynaptomeModelResource) => {
             return (
               <div>
