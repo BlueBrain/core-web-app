@@ -4,7 +4,10 @@ import { useMemo, useState } from 'react';
 import { Button, Form, Input, Select } from 'antd';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-import { brainRegionsWithRepresentationAtom } from '@/state/brain-regions';
+import {
+  brainRegionsWithRepresentationAtom,
+  setSelectedBrainRegionAtom,
+} from '@/state/brain-regions';
 import { meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 import { selectedEModelIdAtom, selectedMModelIdAtom } from '@/state/virtual-lab/build/me-model';
@@ -23,6 +26,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
   const contributors = useAtomValue(virtualLabProjectUsersAtomFamily({ projectId, virtualLabId }));
   const [isFormValid, setIsFormValid] = useState(false);
   const brainRegions = useAtomValue(brainRegionsWithRepresentationAtom);
+  const setBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const [form] = Form.useForm();
   const router = useRouter();
 
@@ -46,6 +50,11 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
     const brainRegion = brainRegions?.find((br) => br.id === values.brainRegion);
 
     if (values.brainRegion && !brainRegion) return;
+
+    // if a brain region is selected and found, set it as selected brain region on sidebar
+    if (brainRegion) {
+      setBrainRegion(brainRegion.id, brainRegion.title, brainRegion.leaves || []);
+    }
 
     setMEModelDetails({
       name: values.name,
