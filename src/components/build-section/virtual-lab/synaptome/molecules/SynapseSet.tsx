@@ -194,7 +194,12 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
 
   const onTargetChange = (newTarget?: keyof typeof sectionTargetMapping) => {
     if (newTarget === 'soma') {
-      form.setFieldValue(['synapses', index], { ...config, formula: undefined, target: newTarget });
+      form.setFieldValue(['synapses', index], {
+        ...config,
+        formula: undefined,
+        target: newTarget,
+        soma_synapse_count: 50,
+      });
     }
     if (config?.target === 'soma' && newTarget !== 'soma') {
       form.setFieldValue(['synapses', index], {
@@ -417,7 +422,6 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
                   <InputNumber
                     size="large"
                     className="w-full border-0 border-b-[1.8px] border-primary-8 text-base font-bold text-primary-8"
-                    defaultValue={50}
                     min={0}
                     max={1000}
                   />
