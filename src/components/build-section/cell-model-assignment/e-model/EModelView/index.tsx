@@ -1,6 +1,6 @@
-import { Divider } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
 
+import { StandardFallback } from './ErrorMessageLine';
 import ExemplarMorphology from './ExemplarMorphology';
 import ExperimentalTraces from './ExperimentalTraces';
 import FeatureSelectionContainer from './FeatureSelectionContainer';
@@ -13,16 +13,13 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
 export default function EModelView({ showTitle = true }: { showTitle?: boolean }) {
   return (
-    <>
+    <div className="flex flex-col gap-12">
       {showTitle && (
-        <>
-          <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-            <DefaultLoadingSuspense>
-              <EModelTitle />
-            </DefaultLoadingSuspense>
-          </ErrorBoundary>
-          <Divider />
-        </>
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <DefaultLoadingSuspense>
+            <EModelTitle />
+          </DefaultLoadingSuspense>
+        </ErrorBoundary>
       )}
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -31,31 +28,27 @@ export default function EModelView({ showTitle = true }: { showTitle?: boolean }
         </DefaultLoadingSuspense>
       </ErrorBoundary>
 
-      <Divider />
-
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
-          <ExemplarMorphology />
+          <ErrorBoundary
+            fallback={<StandardFallback type="error">Exemplar morphology</StandardFallback>}
+          >
+            <ExemplarMorphology />
+          </ErrorBoundary>
         </DefaultLoadingSuspense>
       </ErrorBoundary>
 
-      <Divider />
-
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <DefaultLoadingSuspense>
+      <DefaultLoadingSuspense>
+        <ErrorBoundary fallback={<StandardFallback type="info">Exemplar traces</StandardFallback>}>
           <ExperimentalTraces />
-        </DefaultLoadingSuspense>
-      </ErrorBoundary>
-
-      <Divider />
+        </ErrorBoundary>
+      </DefaultLoadingSuspense>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
           <FeatureSelectionContainer />
         </DefaultLoadingSuspense>
       </ErrorBoundary>
-
-      <Divider />
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
@@ -64,10 +57,8 @@ export default function EModelView({ showTitle = true }: { showTitle?: boolean }
       </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <DefaultLoadingSuspense>
-          <WorkflowAttributes />
-        </DefaultLoadingSuspense>
+        <WorkflowAttributes />
       </ErrorBoundary>
-    </>
+    </div>
   );
 }

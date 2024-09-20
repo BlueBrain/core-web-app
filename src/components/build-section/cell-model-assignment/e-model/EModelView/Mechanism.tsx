@@ -1,6 +1,9 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 
+import { StandardFallback } from './ErrorMessageLine';
+import Header from './Header';
+
 import {
   eModelEditModeAtom,
   eModelMechanismsAtom,
@@ -24,9 +27,15 @@ export default function Mechanism() {
     }));
   }, [eModelEditMode, mechanisms, setEModelUIConfig]);
 
+  const title = 'Mechanisms';
+
+  if (!mechanisms) {
+    return <StandardFallback type="error">{title}</StandardFallback>;
+  }
+
   return (
-    <div className="text-primary-8">
-      <span className="text-2xl font-bold">Mechanisms</span>
+    <div className="flex flex-col gap-4">
+      <Header>{title}</Header>
       <MechanismTable mechanismCollection={mechanisms} />
     </div>
   );
@@ -43,7 +52,7 @@ function MechanismTable({ mechanismCollection }: MechanismTableProps) {
     (mechanismCollection?.processed?.[location] as EModelConfigurationMechanism[]) || [null];
 
   return (
-    <div className="flex flex-wrap justify-between gap-8">
+    <div className="grid grid-cols-10">
       {locations.map((location) => (
         <div key={location} className="flex flex-col">
           <div className="my-4 flex items-center gap-2 text-gray-400">

@@ -29,7 +29,6 @@ export default function DefaultEModelTable<T extends SupportedDataTypes>({
     <ConfigProvider theme={theme}>
       <Table<T>
         size="small"
-        className="mb-6 mt-6"
         dataSource={dataSource}
         pagination={{ hideOnSinglePage: true }}
         rowKey="@id"

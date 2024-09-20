@@ -4,9 +4,10 @@ import { ColumnsType } from 'antd/es/table';
 import { Divider, Popover } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 
+import { StandardFallback } from './ErrorMessageLine';
 import DefaultEModelTable from './DefaultEModelTable';
+import Header from './Header';
 import PickTraces from './PickTraces';
-import { WarningMessageBox } from './ErrorMessageLine';
 import {
   eModelEditModeAtom,
   eModelUIConfigAtom,
@@ -97,8 +98,6 @@ export default function ExperimentalTraces() {
     });
   };
 
-  const traces = eModelEditMode ? eModelUIConfig?.traces : experimentalTraces;
-
   const deleteColumn = {
     title: '',
     key: 'action',
@@ -118,28 +117,36 @@ export default function ExperimentalTraces() {
 
   const columns = [previewColumn, ...defaultColumns, ...(eModelEditMode ? [deleteColumn] : [])];
 
+  const title = 'Exemplar traces';
+
+  const traces = eModelEditMode ? eModelUIConfig?.traces : experimentalTraces;
+
+  if (!traces) {
+    <StandardFallback type="info">{title}</StandardFallback>;
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-2xl font-bold text-primary-8">Exemplar traces</div>
-      {traces?.length ? (
-        <DefaultEModelTable dataSource={traces} columns={columns} />
-      ) : (
-        <WarningMessageBox message="Information not available" />
-      )}
-      {eModelEditMode && (
+      <Header>{title}</Header>
+      {traces?.length && (
         <>
-          <GenericButton
-            className="mt-2 border-primary-7 text-primary-7"
-            text="Add trace"
-            onClick={() => {
-              setOpenPicker(true);
-            }}
-          />
-          <PickTraces
-            isOpen={openPicker}
-            onCancel={() => setOpenPicker(false)}
-            onOk={() => setOpenPicker(false)}
-          />
+          <DefaultEModelTable dataSource={traces} columns={columns} />
+          {eModelEditMode && (
+            <>
+              <GenericButton
+                className="mt-2 border-primary-7 text-primary-7"
+                text="Add trace"
+                onClick={() => {
+                  setOpenPicker(true);
+                }}
+              />
+              <PickTraces
+                isOpen={openPicker}
+                onCancel={() => setOpenPicker(false)}
+                onOk={() => setOpenPicker(false)}
+              />
+            </>
+          )}
         </>
       )}
     </div>

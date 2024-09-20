@@ -1,7 +1,10 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { CheckCircleFilled } from '@ant-design/icons';
 
+import { InfoMessageBox, StandardFallback } from './ErrorMessageLine';
 import FeatureSelectionItem from './FeatureSelectionItem';
+import Header from './Header';
+
 import {
   featureParametersAtom,
   featureSelectedPresetAtom,
@@ -13,25 +16,35 @@ import GenericButton from '@/components/Global/GenericButton';
 export default function FeatureSelectionContainer() {
   const featureParameters = useAtomValue(featureParametersAtom);
 
-  if (!featureParameters) return null;
+  if (!featureParameters) {
+    return <InfoMessageBox message="No information available" />;
+  }
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <PresetSelector />
 
-      <FeatureSelectionItem featureCategory="Spike shape" featureGroup={featureParameters} />
-      <FeatureSelectionItem featureCategory="Spike event" featureGroup={featureParameters} />
-      <FeatureSelectionItem featureCategory="Voltage" featureGroup={featureParameters} />
-    </>
+      <div className="border border-neutral-3 p-4">
+        <FeatureSelectionItem featureCategory="Spike shape" featureGroup={featureParameters} />
+        <FeatureSelectionItem featureCategory="Spike event" featureGroup={featureParameters} />
+        <FeatureSelectionItem featureCategory="Voltage" featureGroup={featureParameters} />
+      </div>
+    </div>
   );
 }
 
 function PresetSelector() {
   const [featureSelectedPreset, setFeatureSelectedPreset] = useAtom(featureSelectedPresetAtom);
 
+  const title = 'Optimization target';
+
+  if (!presetNames) {
+    return <StandardFallback type="info">{title}</StandardFallback>;
+  }
+
   return (
-    <>
-      <div className="my-4 text-xl font-bold text-primary-8">Optimization target</div>
+    <div className="flex flex-col gap-4">
+      <Header>{title}</Header>
 
       <div className="flex gap-4">
         {presetNames.map((presetName) => {
@@ -60,7 +73,7 @@ function PresetSelector() {
         })}
       </div>
 
-      <div className="my-4 text-primary-8">
+      <div className="text-primary-8">
         <div>DESCRIPTION</div>
         <div>
           Optimization target selects the target stimulation protocols (e-codes) and electrical
@@ -70,6 +83,6 @@ function PresetSelector() {
           validation steps of e-model building use these targets.
         </div>
       </div>
-    </>
+    </div>
   );
 }

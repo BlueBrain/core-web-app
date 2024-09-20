@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 
+import Header from './Header';
+
 import {
   eModelEditModeAtom,
   eModelUIConfigAtom,
@@ -44,41 +46,73 @@ export default function SimulationParameters() {
     parameters || {}
   ) as SimulationParameterKeys[] satisfies SimulationParameterKeys[];
 
+  const requiredParameterKeys: Array<SimulationParameterKeys> = [
+    'Temperature (°C)',
+    'Initial voltage',
+    'Ra',
+  ];
+
   if (!parameters) return null;
 
   return (
-    <>
-      <div className="my-4 text-2xl font-bold text-primary-8">Simulation parameters</div>
-      <div className="flex h-[75px] flex-col flex-wrap gap-2">
-        {paramKeys.map((paramKey) => (
-          <div
-            key={paramKey}
-            className="flex w-[200px] items-center justify-between text-primary-7"
-          >
-            <Item
-              name={paramKey}
-              value={parameters[paramKey]}
-              readOnly={!eModelEditMode}
-              onChange={onParamChange}
-            />
-          </div>
-        ))}
+    <div className="flex flex-col gap-4">
+      <Header>Simulation parameters</Header>
+      <div className="grid grid-cols-3 gap-2">
+        {paramKeys.map((paramKey) => {
+          const isRequired = requiredParameterKeys.find((requiredKey) => requiredKey === paramKey);
+
+          return (
+            <div
+              key={paramKey}
+              className="flex w-[200px] items-center justify-between text-primary-7"
+            >
+              <Item
+                error={isRequired && !parameters[paramKey]}
+                name={paramKey}
+                value={parameters[paramKey]}
+                readOnly={!eModelEditMode}
+                onChange={onParamChange}
+              />
+            </div>
+          );
+        })}
       </div>
-    </>
+    </div>
   );
 }
 
 type ItemProps = {
+  error?: boolean;
   name: SimulationParameterKeys;
   value: number;
   readOnly: boolean;
   onChange: (name: SimulationParameterKeys, value: number) => void;
 };
 
-function Item({ name, value, readOnly, onChange }: ItemProps) {
+function Item({ error, name, value, readOnly, onChange }: ItemProps) {
+  const label = <span className="grow">{name}</span>;
+
+  if (readOnly && error) {
+    return (
+      <>
+        {label}
+        <div className="font-bold text-error">No information available</div>
+      </>
+    );
+  }
+
+  if (readOnly && !value) {
+    return (
+      <>
+        {label}
+        <div className="font-bold text-neutral-4">No information available</div>
+      </>
+    );
+  }
+
   return (
     <>
-      <span className="grow">{name}</span>
+      {label}
       {readOnly ? (
         <div className="font-bold">{value}</div>
       ) : (

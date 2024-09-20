@@ -4,8 +4,9 @@ import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import DefaultEModelTable from './DefaultEModelTable';
+import Header from './Header';
 import PickMorphology from './PickMorphology';
-import ErrorMessageLine from './ErrorMessageLine';
+import ErrorMessageLine, { StandardFallback } from './ErrorMessageLine';
 import {
   eModelEditModeAtom,
   eModelUIConfigAtom,
@@ -99,6 +100,13 @@ export default function ExemplarMorphology() {
   const columns = [previewColumn, ...defaultColumns, ...(eModelEditMode ? [deleteColumn] : [])];
 
   let displayMorphologyError = null;
+
+  const title = 'Exemplar morphology';
+
+  if (!morphologies) {
+    return <StandardFallback type="error">{title}</StandardFallback>;
+  }
+
   if (exemplarMorphologyAsList.length > 0 && morphologies && morphologies.length !== 1) {
     if (morphologies.length > 1) {
       displayMorphologyError = 'Too many morphologies selected. Keep only one.';
@@ -108,8 +116,8 @@ export default function ExemplarMorphology() {
   }
 
   return (
-    <>
-      <div className="text-2xl font-bold text-primary-8">Exemplar morphology</div>
+    <div className="flex flex-col gap-4">
+      <Header>{title}</Header>
 
       <DefaultEModelTable<ExemplarMorphologyDataType>
         dataSource={morphologies || []}
@@ -134,6 +142,6 @@ export default function ExemplarMorphology() {
           />
         </>
       )}
-    </>
+    </div>
   );
 }
