@@ -40,6 +40,8 @@ export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
       Field.BrainRegion,
       Field.MType,
       Field.EType,
+      Field.CreatedBy,
+      Field.CreationDate,
     ],
 
     curated: false,

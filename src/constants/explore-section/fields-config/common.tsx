@@ -171,7 +171,14 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
   [Field.CreatedAt]: RegistrationDateConfig,
   [Field.CreatedBy]: {
     title: 'Created by',
-    filter: FilterTypeEnum.Text,
+    esTerms: {
+      flat: {
+        filter: 'createdBy',
+        sort: 'createdBy.keyword',
+        aggregation: 'createdBy.keyword',
+      },
+    },
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: (resource) => (
         <span className="capitalize">{resource?._createdBy.split('/').reverse()[0]}</span>
