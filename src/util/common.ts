@@ -61,7 +61,7 @@ export const detailUrlWithinLab = (
   resourceType: BookmarksSupportedTypes
 ) => {
   if (bookmarkTab === BookmarkTabsName.SIMULATIONS) {
-    return `${generateVlProjectUrl(labId, labProjectId)}/simulate/${resourceType}/view/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
+    return `${generateVlProjectUrl(labId, labProjectId)}/explore/simulate/${resourceType}/view/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
   }
   return `${generateVlProjectUrl(labId, labProjectId)}${bookmarkTab === BookmarkTabsName.EXPERIMENTS ? BASE_EXPERIMENTAL_EXPLORE_PATH : BASE_MODEL_EXPLORE_PATH}${resourceType}/${to64(`${resourceProjectLabel}!/!${resourceId}`)}`;
 };
