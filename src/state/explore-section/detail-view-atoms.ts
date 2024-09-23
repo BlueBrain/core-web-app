@@ -67,7 +67,6 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>
                 project: info.project,
               }),
         });
-
         const { linkedMModel, linkedEModel } = await fetchLinkedMandEModels({
           org: info.org,
           project: info.project,

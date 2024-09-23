@@ -10,6 +10,7 @@ import { DisplayMessages } from '@/constants/display-messages';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { to64 } from '@/util/common';
 import { getOrgAndProjectFromProjectId } from '@/util/nexus';
+import { getEtype, getMtype } from '@/util/modelMEtypes';
 
 export function MEModelConfiguration({
   meModel,
@@ -71,6 +72,9 @@ type ModelDetails = {
 };
 
 function MeModelDetails({ meModel, eModel, mModel }: ModelDetails) {
+  const mType = getMtype(meModel, mModel) ?? DisplayMessages.NO_DATA_STRING;
+  const eType = getEtype(meModel, eModel) ?? DisplayMessages.NO_DATA_STRING;
+
   return (
     <div className="mt-4 grid grid-cols-[max-content_max-content] gap-4 gap-x-12 text-primary-8">
       <div className="col-span-1">
@@ -89,13 +93,11 @@ function MeModelDetails({ meModel, eModel, mModel }: ModelDetails) {
       </div>
       <div className="col-span-1">
         <div className="font-thin uppercase text-slate-600">E-Type</div>
-        <div className="line-clamp-1">{eModel.eType || DisplayMessages.NO_DATA_STRING}</div>
+        <div className="line-clamp-1">{eType}</div>
       </div>
       <div className="col-span-2">
         <div className="font-thin uppercase text-slate-600">M-Type</div>
-        <div className="line-clamp-1">
-          {meModel.mType ?? (mModel.mType || DisplayMessages.NO_DATA_STRING)}
-        </div>
+        <div className="line-clamp-1">{mType}</div>
       </div>
     </div>
   );

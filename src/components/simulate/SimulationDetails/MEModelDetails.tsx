@@ -11,6 +11,7 @@ import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 import { to64 } from '@/util/common';
 
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
+import { getEtype, getMtype } from '@/util/modelMEtypes';
 
 type Props = {
   name: string;
@@ -45,6 +46,9 @@ export default function ModelDetails({
     const baseExploreUrl = `${vlProjectUrl}/explore/interactive/model/me-model`;
     return `${baseExploreUrl}/${to64(`${virtualLabId}/${projectId}!/!${meModel['@id']}`)}`;
   };
+
+  const mType = getMtype(meModel, mModel) ?? DisplayMessages.NO_DATA_STRING;
+  const eType = getEtype(meModel, eModel) ?? DisplayMessages.NO_DATA_STRING;
 
   return (
     <div>
@@ -105,16 +109,8 @@ export default function ModelDetails({
                   value={meModel.eModel ?? eModel.eModel ?? DisplayMessages.NO_DATA_STRING}
                 />
               )}
-              {type === 'synaptome-simulation' && (
-                <Field
-                  label="M-Type"
-                  value={meModel.mType ?? mModel.mType ?? DisplayMessages.NO_DATA_STRING}
-                />
-              )}
-              <Field
-                label="E-Type"
-                value={meModel.eType ?? eModel.eType ?? DisplayMessages.NO_DATA_STRING}
-              />
+              {type === 'synaptome-simulation' && <Field label="M-Type" value={mType} />}
+              <Field label="E-Type" value={eType} />
             </div>
           </div>
         </div>

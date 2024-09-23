@@ -11,7 +11,7 @@ import { Experiment } from '@/types/explore-section/es-experiment';
 import { VirtualLabInfo } from '@/types/virtual-lab/common';
 import { getOrgAndProjectFromProjectId } from '@/util/nexus';
 import { fetchResourceById } from '@/api/nexus';
-import { MEModelResource } from '@/types/me-model';
+import { MEModel, MEModelResource } from '@/types/me-model';
 import { nexus } from '@/config';
 import authFetch, { getSession } from '@/authFetch';
 import { EModel, NeuronMorphology } from '@/types/e-model';
@@ -158,11 +158,24 @@ export async function fetchLinkedModel({
       const meModelId: string | null = getPath(model, path);
       if (meModelId) {
         if (cache.has(meModelId)) {
+          const meMmodel = cache.get(meModelId);
           finalResult.push({
             ...model,
             _source: {
               ...model._source,
-              [linkedProperty]: cache.get(meModelId),
+              [linkedProperty]: meMmodel,
+              ...(linkedProperty === 'linkedMeModel'
+                ? {
+                    linkedMModel: cache.get(
+                      meMmodel?.hasPart.find((p: MEModel) => p['@type'] === 'NeuronMorphology')?.[
+                        '@id'
+                      ]!
+                    ),
+                    linkedEModel: cache.get(
+                      meMmodel?.hasPart.find((p: MEModel) => p['@type'] === 'EModel')?.['@id']!
+                    ),
+                  }
+                : {}),
             },
           });
         } else {
@@ -184,6 +197,8 @@ export async function fetchLinkedModel({
               project,
               meModel: linkedModel as MEModelResource,
             }));
+            if (linkedMModel) cache.set(linkedMModel['@id'], linkedMModel);
+            if (linkedEModel) cache.set(linkedEModel['@id'], linkedEModel);
           }
 
           cache.set(meModelId, linkedModel);

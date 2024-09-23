@@ -6,10 +6,11 @@ import { EModelResource, Model, SynaptomeModelResource } from '@/types/explore-s
 import { formatNumber } from '@/util/common';
 import { ESeModel, ESmeModel } from '@/types/explore-section/es';
 import { selectorFnBasic } from '@/util/explore-section/listing-selectors';
+import { getEtype, getMtype } from '@/util/modelMEtypes';
+import { MEModel } from '@/types/me-model';
 
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import MorphPreviewFromId from '@/components/build-section/virtual-lab/me-model/MorphPreviewFromId';
-import { MEModel } from '@/types/me-model';
 
 export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
   [Field.EModelMorphology]: {
@@ -206,11 +207,15 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     render: {
       deltaResourceViewFn: (resource) => {
         const { linkedEModel, linkedMeModel } = resource as SynaptomeModelResource;
-        return selectorFnBasic(linkedEModel?.eType || linkedMeModel?.eType);
+        const eType = getEtype(linkedMeModel, linkedEModel);
+
+        return selectorFnBasic(eType);
       },
       esResourceViewFn: (_t, r) => {
-        const { linkedEModel } = r._source as SynaptomeModelResource;
-        return selectorFnBasic(linkedEModel?.eType || linkedEModel?.eType);
+        const { linkedMeModel, linkedEModel } = r._source as SynaptomeModelResource;
+        const eType = getEtype(linkedMeModel, linkedEModel);
+
+        return selectorFnBasic(eType);
       },
     },
     vocabulary: {
@@ -225,12 +230,16 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
     filter: null,
     render: {
       deltaResourceViewFn: (resource) => {
-        const { linkedMModel, linkedMeModel } = resource as SynaptomeModelResource;
-        return selectorFnBasic(linkedMModel?.mType || linkedMeModel?.mType);
+        const { linkedMeModel, linkedMModel } = resource as SynaptomeModelResource;
+        const mType = getMtype(linkedMeModel, linkedMModel);
+
+        return selectorFnBasic(mType);
       },
       esResourceViewFn: (_t, r) => {
-        const { linkedMModel, linkedMeModel } = r._source as SynaptomeModelResource;
-        return selectorFnBasic(linkedMModel?.mType || linkedMeModel?.mType);
+        const { linkedMeModel, linkedMModel } = r._source as SynaptomeModelResource;
+        const mType = getMtype(linkedMeModel, linkedMModel);
+
+        return selectorFnBasic(mType);
       },
     },
     vocabulary: {
