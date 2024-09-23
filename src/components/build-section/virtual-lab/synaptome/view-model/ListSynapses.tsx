@@ -3,9 +3,14 @@
 import { Empty, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
+import {
+  sectionTargetMapping,
+  SectionTargetMappingKeys,
+} from '@/components/build-section/virtual-lab/synaptome/molecules/constants';
+import { getSimulationColor, SYNPASE_CODE_TO_TYPE } from '@/constants/simulate/single-neuron';
 import { useModelConfiguration } from '@/hooks/useModelConfiguration';
 import { SynaptomeConfigDistribution } from '@/types/synaptome';
-import { getSimulationColor, SYNPASE_CODE_TO_TYPE } from '@/constants/simulate/single-neuron';
+
 import ConfigItem from '@/components/build-section/virtual-lab/synaptome/molecules/ConfigItem';
 
 export default function SynapseGroupList({ modelUrl }: { modelUrl: string }) {
@@ -44,7 +49,12 @@ export default function SynapseGroupList({ modelUrl }: { modelUrl: string }) {
               <div className="flex w-full flex-col gap-5 border border-gray-300 p-6">
                 <ConfigItem {...{ label: 'name', value: name }} />
                 <div className="grid grid-cols-2 gap-2">
-                  <ConfigItem {...{ label: 'target', value: target }} />
+                  <ConfigItem
+                    {...{
+                      label: 'target',
+                      value: sectionTargetMapping[target as SectionTargetMappingKeys],
+                    }}
+                  />
                   <ConfigItem
                     {...{ label: 'type', value: type ? SYNPASE_CODE_TO_TYPE[type] : undefined }}
                   />

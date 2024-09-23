@@ -39,7 +39,10 @@ export default function useSynaptomeSimulationConfig() {
         ...(state || []),
         {
           ...defaultSynapseConfig,
-          color: sample(SIMULATION_COLORS) ?? SIMULATION_COLORS[state.length],
+          color:
+            defaultSynapseConfig.color ??
+            sample(SIMULATION_COLORS) ??
+            SIMULATION_COLORS[state.length],
         },
       ]);
     }

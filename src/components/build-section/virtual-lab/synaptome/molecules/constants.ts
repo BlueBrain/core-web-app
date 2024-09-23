@@ -2,9 +2,9 @@ import { SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
 
 export const CREATE_SYNAPTOME_SUCCESS =
-  'The synaptome has been successfully created. Please note the new synaptome can take upto 5 seconds to appear in the explore tables. ';
+  'The Synaptome model has been successfully created. It may take up to 5 seconds for the new model to appear in the list of records under both the Explore and Build sections.';
 export const CREATE_SYNAPTOME_SIMULATION_SUCCESS =
-  'Simulation results saved successfully. Please note the new synaptome simulation can take upto 5 seconds to appear in the explore tables. ';
+  'Simulation results has been successfully saved. It may take up to 5 seconds for for the simulation to appear in the list of records under Simulate section.';
 
 export const CREATE_SYNAPTOME_FAIL =
   'Failed to process your synaptome addition request. Please review the form and try again or contact support.';
@@ -31,9 +31,12 @@ export const DEFAULT_SYNAPSE_VALUE: SingleSynaptomeConfig = {
 export const sectionTargetMapping = {
   dend: 'Dendrite',
   soma: 'Soma',
-  apic: 'Apical',
-  basal: 'Basal',
+  apic: 'Apical dendrite',
+  basal: 'Basal dendrite',
+  axon: 'Axon',
 };
+
+export type SectionTargetMappingKeys = keyof typeof sectionTargetMapping;
 
 export const synapseTypeMapping = {
   110: 'Excitatory Synapses',

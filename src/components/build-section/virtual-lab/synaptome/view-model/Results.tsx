@@ -3,7 +3,6 @@ import { ErrorBoundary } from '@sentry/nextjs';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 
-import { SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
 import { getSimulationsPerModelQuery } from '@/queries/es';
 import { SynaptomeSimulation } from '@/types/nexus';
 import { getSession } from '@/authFetch';
@@ -106,7 +105,7 @@ export default function Results({ params, modelId }: { params: LocationParams; m
                         <div
                           className="flex items-center justify-center px-4 py-2 text-base text-white"
                           style={{
-                            backgroundColor: SIMULATION_COLORS[ind],
+                            backgroundColor: c.color,
                           }}
                         >
                           {ind + 1}

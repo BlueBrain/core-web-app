@@ -1,6 +1,6 @@
 import { Form, InputNumber } from 'antd';
 
-import { SynapseConfig } from '@/types/simulation/single-neuron';
+import { SynapseConfig, UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 
 const SYNAPTIC_INPUT_FIELDS: Array<Omit<ConfigInputProps, 'onChange' | 'index' | 'formName'>> = [
   {
@@ -33,15 +33,7 @@ type ConfigInputProps = {
   unit?: string;
   min: number;
   max: number;
-  onChange: ({
-    id,
-    key,
-    newValue,
-  }: {
-    id: number;
-    key: keyof SynapseConfig;
-    newValue: number | null;
-  }) => void;
+  onChange: (change: UpdateSynapseSimulationProperty) => void;
 };
 
 function ConfigInput({ formName, name, text, min, max, index, unit, onChange }: ConfigInputProps) {
@@ -71,15 +63,7 @@ function ConfigInput({ formName, name, text, min, max, index, unit, onChange }: 
 type Props = {
   index: number;
   formName: string;
-  onChange: ({
-    id,
-    key,
-    newValue,
-  }: {
-    id: number;
-    key: keyof SynapseConfig;
-    newValue: number | null;
-  }) => void;
+  onChange: (change: UpdateSynapseSimulationProperty) => void;
 };
 
 export default function ConfigInputList({ index, formName, onChange }: Props) {

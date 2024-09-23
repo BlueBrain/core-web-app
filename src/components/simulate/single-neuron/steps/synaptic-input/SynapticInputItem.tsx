@@ -15,7 +15,6 @@ import useNotification from '@/hooks/notifications';
 import CustomPopover from '@/components/simulate/single-neuron/molecules/Popover';
 
 import { SingleSynaptomeConfig, SynaptomeConfigDistribution } from '@/types/synaptome';
-import { UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
 import {
   sectionTargetMapping,
   synapseTypeMapping,
@@ -29,9 +28,10 @@ import { getSession } from '@/authFetch';
 import { getSynaptomePlacement } from '@/api/bluenaas';
 import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
 import { classNames } from '@/util/utils';
-import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 import { calculateRangeOutput } from '@/constants/simulate/single-neuron';
 import { Switch } from '@/components/common/Switch';
+import { UpdateSynapseSimulationProperty } from '@/types/simulation/single-neuron';
+import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
 
 type Props = {
   index: number;
@@ -56,11 +56,12 @@ export default function SynapticInputItem({
   const [visualizeLoading, setLoadingVisualize] = useState(false);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
   const synapseSimulationAtomState = useAtomValue(synaptomeSimulationConfigAtom);
-  const config = synapseSimulationAtomState[index];
   const synapseWithFrequencyStep = synapseSimulationAtomState.findIndex((s) =>
     Array.isArray(s.frequency)
   );
   const abortController = useRef(new AbortController());
+
+  const { color } = selectedSynapticInputPlacementConfig;
 
   const onVisualizationError = () => {
     notifyError(
@@ -124,7 +125,7 @@ export default function SynapticInputItem({
         .flatMap((p) => p.synapses)
         .map((o) => o.coordinates);
 
-      const mesh = createBubblesInstanced(synapsePositions, new Color(config.color));
+      const mesh = createBubblesInstanced(synapsePositions, new Color(color));
 
       sendDisplaySynapses3DEvent(`${index}`, mesh);
 
@@ -170,10 +171,7 @@ export default function SynapticInputItem({
       >
         <div className="flex w-full items-center justify-between gap-2">
           <div className="flex items-center gap-4">
-            <div
-              className="px-6 py-3 font-bold text-white"
-              style={{ backgroundColor: config?.color }}
-            >
+            <div className="px-6 py-3 font-bold text-white" style={{ backgroundColor: color }}>
               {index + 1}
             </div>
             <span className="font-light text-primary-8">Synaptic input</span>

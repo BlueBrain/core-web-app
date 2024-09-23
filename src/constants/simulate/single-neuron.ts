@@ -171,7 +171,7 @@ export const getDefaultSynapseConfig = (
     return {
       id: synapsePlacementConfig[0].id,
       configId: crypto.randomUUID(),
-      color: '#ffffff',
+      color: synapsePlacementConfig[0].color,
       delay: 100,
       duration: 2000,
       frequency: 20,

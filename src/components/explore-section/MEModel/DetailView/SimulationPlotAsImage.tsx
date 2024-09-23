@@ -75,7 +75,7 @@ export default function SimulationPlotAsImage({
         const url = await Plotly.toImage(
           {
             data: plotData,
-            layout: makePlotLayout({ title: title ?? '', yTitle: yTitle ?? 'Voltage [mv]' }),
+            layout: makePlotLayout({ title: title ?? '', yTitle: yTitle ?? 'Voltage [mV]' }),
           },
           {
             format: 'webp',

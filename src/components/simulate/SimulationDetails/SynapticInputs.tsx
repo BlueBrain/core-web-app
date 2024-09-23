@@ -29,7 +29,7 @@ function Field({
 
 export default function SynapticInputs({ synapses }: Props) {
   return (
-    <div className="flex flex-wrap">
+    <div className="flex flex-wrap gap-2">
       {synapses.map((synapse, index) => (
         // Same synaptic group (id) can be used multiple times in simulation. Therefore, appending index to key to create unique values
         <div

@@ -24,14 +24,20 @@ export default function SynapticInputs() {
     );
     return synaptomeModel?.synapses.find((s) => s.id === simConfigForForm?.id);
   };
-
   const setAtomProperty = ({ id, key, newValue }: UpdateSynapseSimulationProperty) => {
+    let color = placementConfigForForm(id)?.color!;
+    if (key === 'id') {
+      color = synaptomeModel?.synapses.find(
+        (sc: SingleSynaptomeConfig) => sc.id === newValue
+      )?.color!;
+    }
     setSynapseSimState(
       synapseSimulationAtomState.map((s, ind) =>
         ind === id
           ? {
               ...s,
               [key]: newValue,
+              color,
             }
           : s
       )

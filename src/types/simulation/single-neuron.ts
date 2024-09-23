@@ -128,6 +128,14 @@ export type UpdateSynapseSimulationProperty = {
   newValue: number | string | number[] | null;
 };
 
+export type UpdateSynapseSimulationProperties = {
+  id: number;
+  entries: Array<{
+    key: keyof SynapseConfig;
+    newValue: number | string | null | number[];
+  }>;
+};
+
 export type ProtocolDetails = {
   description: string;
   name: StimulusModule;

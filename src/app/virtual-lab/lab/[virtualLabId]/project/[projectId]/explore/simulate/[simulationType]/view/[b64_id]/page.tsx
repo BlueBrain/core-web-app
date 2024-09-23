@@ -69,7 +69,7 @@ export default function SimulationDetailPage({ params }: Props) {
         extraLinks={[
           {
             key: LinkItemKey.Explore,
-            href: `${vlProjectUrl}/explore`,
+            href: `${vlProjectUrl}/explore/interactive`,
             content: 'Explore',
             styles: 'rounded-full bg-primary-5 py-3 text-primary-9 w-2/3',
           },

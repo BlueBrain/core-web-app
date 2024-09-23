@@ -28,7 +28,7 @@ export default function ResultsTab({ recordings }: Props) {
                     data={value.map((v, i) => ({ ...v, line: { color: SIMULATION_COLORS[i] } }))}
                     className="min-h-[320px] w-full"
                     plotConfig={{
-                      yAxisTitle: 'Voltage [mv]',
+                      yAxisTitle: 'Voltage [mV]',
                       showDefaultLegends: true,
                     }}
                   />

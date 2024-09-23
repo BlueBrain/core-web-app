@@ -60,7 +60,7 @@ export default function Results() {
               isLoading={isLoading}
               className="min-h-[320px] w-full"
               plotConfig={{
-                yAxisTitle: 'Voltage [mv]',
+                yAxisTitle: 'Voltage [mV]',
                 showDefaultLegends: true,
               }}
             />

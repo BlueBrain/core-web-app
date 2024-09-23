@@ -220,7 +220,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
       selectedRowsAtom.setShouldRemove(() => true); // set function to remove all
       selectedRowsAtom.setShouldRemove(null); // clear function
       sendResetSynapses3DEvent();
-      notifySuccess(CREATE_SYNAPTOME_SUCCESS, undefined, 'topRight');
+      notifySuccess(CREATE_SYNAPTOME_SUCCESS, 2, 'topRight');
       removeSessionValue();
       setLoading(false);
 
