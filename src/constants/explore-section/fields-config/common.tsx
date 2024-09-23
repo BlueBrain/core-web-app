@@ -123,7 +123,6 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
         return previewRender(source);
       },
     },
-    sorter: false,
     vocabulary: {
       plural: 'previews',
       singular: 'preview',
@@ -173,7 +172,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
     title: 'Created by',
     esTerms: {
       flat: {
-        filter: 'createdBy',
+        filter: 'createdBy.keyword',
         sort: 'createdBy.keyword',
         aggregation: 'createdBy.keyword',
       },

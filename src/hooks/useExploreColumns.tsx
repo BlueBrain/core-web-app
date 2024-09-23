@@ -159,7 +159,7 @@ export default function useExploreColumns(
     () =>
       keys.reduce((acc, key) => {
         const term = EXPLORE_FIELDS_CONFIG[key];
-
+        const isSortable = term?.esTerms?.flat?.sort !== undefined;
         return [
           ...acc,
           {
@@ -174,13 +174,13 @@ export default function useExploreColumns(
               'text-primary-7 cursor-pointer before:!content-none',
               term?.className
             ),
-            sorter: term?.sorter ?? true,
+            sorter: isSortable,
             ellipsis: true,
             width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
             render: term?.render?.esResourceViewFn,
             onHeaderCell: () => ({
               handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
-              onClick: () => sorterES(key),
+              onClick: () => isSortable && sorterES(key),
               showsortertooltip: {
                 title: term.description ? term.description : term.title,
               },

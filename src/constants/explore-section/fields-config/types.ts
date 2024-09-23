@@ -27,7 +27,6 @@ export type ExploreFieldConfig<T> = {
     esResourceViewFn?: (value: any, record: any, index?: number) => ReactNode | any;
     deltaResourceViewFn?: (resource: T) => ReactNode | any;
   };
-  sorter?: boolean;
   vocabulary: {
     plural: string;
     singular: string;
