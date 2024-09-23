@@ -15,7 +15,7 @@ function getBackgroundImage(srcSet = '') {
   return `image-set(${imageSet})`;
 }
 
-const imgSrc = `${basePath}/images/virtual-lab/flopped_obp_hippocampus.png`;
+const imgSrc = `${basePath}/images/virtual-lab/obp_hippocampus_original.webp`;
 
 export default function WrapperBanner({ children }: { children: ReactNode }) {
   const {
@@ -27,7 +27,12 @@ export default function WrapperBanner({ children }: { children: ReactNode }) {
     width: 4096,
   });
   const backgroundImage = getBackgroundImage(srcSet);
-  const style = { backgroundImage, backgroundPositionX: '55vw', backgroundSize: '145%' };
+  const style = {
+    backgroundImage,
+    backgroundPositionX: '55vw',
+    backgroundSize: '145%',
+    transform: 'scaleX(-1)',
+  };
 
   return (
     <div
