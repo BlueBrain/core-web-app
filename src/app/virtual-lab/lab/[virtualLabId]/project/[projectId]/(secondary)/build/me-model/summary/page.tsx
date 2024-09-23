@@ -53,7 +53,7 @@ export default function MEModelSummaryPage({
     <div className="flex h-full flex-col gap-10 p-10">
       <div className="text-2xl font-bold text-primary-8">Single Neuron</div>
       <MorphologyCard />
-      <EModelCard />
+      <EModelCard selectedEModel={selectedEModel} />
 
       <AnalysisPreview />
 

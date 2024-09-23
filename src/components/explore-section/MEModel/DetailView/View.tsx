@@ -81,7 +81,7 @@ export default function MEModelDetailView({ params, showViewMode = false }: Prop
             <div className="w-full flex-1">
               <Suspense fallback={<CentralLoadingSpinner />}>
                 <If id="configuration" condition={activeTab === 'configuration'}>
-                  <Configuration />
+                  <Configuration meModelId={id} org={org} project={project} />
                 </If>
                 <If id="analysis" condition={activeTab === 'analysis'}>
                   <Analysis />

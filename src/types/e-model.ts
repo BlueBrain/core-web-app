@@ -164,6 +164,7 @@ export interface EModelConfiguration extends EModelCommonProps {
   uses: {
     '@id': string;
     '@type': NeuronMorphologyType | SubCellularModelScriptType;
+    name?: string; // Seems to apply only to @type === NeuronMorphology
   }[];
   distribution: Distribution;
 }

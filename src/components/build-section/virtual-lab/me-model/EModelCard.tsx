@@ -2,7 +2,10 @@ import { useAtomValue } from 'jotai';
 import { Empty } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 
-import { selectedEModelAtom } from '@/state/virtual-lab/build/me-model';
+import {
+  selectedEModelAtom,
+  selectedEModelConfigurationAtom,
+} from '@/state/virtual-lab/build/me-model';
 import { classNames } from '@/util/utils';
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import { EModel } from '@/types/e-model';
@@ -12,10 +15,14 @@ import { ModelTypeNames } from '@/constants/explore-section/data-types/model-dat
 import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import Link from '@/components/Link';
 
+import { useUnwrappedValue } from '@/hooks/hooks';
+
 const subtitleStyle = 'uppercase font-thin text-slate-600';
 
-export default function EModelCard() {
-  const selectedEModel = useAtomValue(selectedEModelAtom);
+export default function EModelCard({ selectedEModel }: { selectedEModel?: EModel }) {
+  // const selectedEModel = useAtomValue(selectedEModelAtom);
+  const selectedEModelConfiguration = useUnwrappedValue(selectedEModelConfigurationAtom);
+
   const { virtualLabId, projectId } = useParams<{
     virtualLabId?: string;
     projectId?: string;
@@ -66,19 +73,26 @@ export default function EModelCard() {
         <div className="flex-grow">
           <div className={subtitleStyle}>NAME</div>
           <div className="my-1 text-3xl font-bold text-primary-8">{selectedEModel.name}</div>
-          <Details emodel={selectedEModel} />
+          <Details
+            emodel={selectedEModel}
+            exemplarMorphology={
+              selectedEModelConfiguration?.uses.find(
+                ({ '@type': type }) => type === 'NeuronMorphology'
+              )?.name
+            }
+          />
         </div>
       </div>
     </div>
   );
 }
 
-function Details({ emodel }: { emodel: EModel }) {
+function Details({ emodel, exemplarMorphology }: { emodel: EModel; exemplarMorphology?: string }) {
   return (
     <div className="mt-4 grid grid-cols-3 gap-4 text-primary-8">
       <div>
         <div className={subtitleStyle}>Examplar morphology</div>
-        <div>{DisplayMessages.NO_DATA_STRING}</div>
+        <div>{exemplarMorphology}</div>
       </div>
 
       <div>

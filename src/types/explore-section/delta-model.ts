@@ -30,6 +30,7 @@ export type EModelResource = ModelResource & {
     '@type': 'Generation';
     activity: Activity;
   };
+  hasPart: Array<IdWithType>;
   iteration: string;
   mtype: string;
   objectOfStudy: IdWithLabel & {

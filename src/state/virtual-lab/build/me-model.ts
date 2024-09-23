@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import esb from 'elastic-builder';
 
 import { MEModelMorphologyType, MEModelSection } from '@/types/virtual-lab/build/me-model';
-import { EModel, NeuronMorphology } from '@/types/e-model';
+import { EModel, EModelConfiguration, EModelWorkflow, NeuronMorphology } from '@/types/e-model';
 import sessionAtom from '@/state/session';
 import { fetchResourceById } from '@/api/nexus';
 import { MEModelResource } from '@/types/me-model';
@@ -17,7 +17,7 @@ import { Experiment } from '@/types/explore-section/es-experiment';
  * @param query
  * @returns
  */
-const retrieveESResourceByID = (id: string) => {
+const retrieveESResourceByID = async (id: string) => {
   const query = esb
     .requestBodySearch()
     .query(esb.boolQuery().must(esb.termQuery('@id', id)))
@@ -82,6 +82,55 @@ export const selectedMModelAtom = atom<Promise<NeuronMorphology | undefined>>(as
 export const selectedEModelIdAtom = atom<string | null>(null);
 
 // Retrieving the resource using ES in order to access org/project
+export const selectedEModelWorkflowAtom = atom(async (get) => {
+  // Note/TODO: There seems to be some confusion going-on here with regard to Nexus types being used where ES types should be used.
+  const resource = (await get(selectedEModelResourceAtom)) as
+    | (Omit<EModel, 'generation'> & { generation: { followedWorkflow: string } })
+    | undefined;
+
+  if (!resource) return;
+
+  const session = get(sessionAtom);
+  const org = await get(selectedEModelOrgAtom);
+  const project = await get(selectedEModelProjectAtom);
+
+  if (!session || !org || !project || !resource.generation.followedWorkflow) return;
+
+  const followedWorkflow = await fetchResourceById<EModelWorkflow>(
+    resource.generation.followedWorkflow,
+    session,
+    { org, project }
+  );
+
+  return followedWorkflow;
+});
+
+export const selectedEModelConfigurationAtom = atom(async (get) => {
+  const followedWorkflow = await get(selectedEModelWorkflowAtom);
+
+  if (!followedWorkflow) return;
+
+  const { '@id': eModelConfigurationId } = followedWorkflow.hasPart.find(
+    ({ '@type': type }) => type === 'EModelConfiguration'
+  ) ?? { '@id': undefined };
+
+  if (!eModelConfigurationId) return;
+
+  const session = get(sessionAtom);
+  const org = await get(selectedEModelOrgAtom);
+  const project = await get(selectedEModelProjectAtom);
+
+  if (!session || !org || !project) return;
+
+  const eModelConfiguration = await fetchResourceById<EModelConfiguration>(
+    eModelConfigurationId,
+    session,
+    { org, project }
+  );
+
+  return eModelConfiguration;
+});
+
 export const selectedEModelResourceAtom = atom(async (get) => {
   const eModelId = get(selectedEModelIdAtom);
   if (!eModelId) return;
