@@ -82,3 +82,7 @@
 .SwitchThumb[data-disabled=''] {
   background-color: var(--custom-switch-color-disabled);
 }
+
+.SwitchThumb[data-disabled=''][data-state='checked'] {
+  background-color: var(--custom-switch-color-back);
+}

@@ -4,6 +4,8 @@ import { useAtomValue } from 'jotai';
 import isEqual from 'lodash/isEqual';
 import dynamic from 'next/dynamic';
 
+import { WarningFilled } from '@ant-design/icons';
+import CustomPopover from '../../molecules/Popover';
 import { useCurrentInjectionSimulationConfig } from '@/state/simulate/categories';
 import { StimulusModule } from '@/types/simulation/single-neuron';
 import {
@@ -14,6 +16,8 @@ import {
 } from '@/constants/simulate/single-neuron';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
+import { classNames } from '@/util/utils';
+import { Switch } from '@/components/common/Switch';
 
 const StimuliPreviewPlot = dynamic(() => import('../../visualization/StimuliPreviewPlot'), {
   ssr: false,
@@ -119,6 +123,7 @@ export default function AmperageRange({
   const synapseIdxWithFrequencyRange =
     synapsesConfig?.findIndex((synConfig) => Array.isArray(synConfig.frequency)) ?? -1;
 
+  const disableStepper = synapseIdxWithFrequencyRange !== -1;
   const [amperageState, dispatch] = useReducer(rangeReducer, {
     ...getInitialAmperageState(DEFAULT_PROTOCOL),
   });
@@ -126,10 +131,9 @@ export default function AmperageRange({
   const { setAmplitudes } = useCurrentInjectionSimulationConfig();
   useEffect(() => {
     if (isEqual(amperageState.computed, amplitudes)) return;
-    const variableFrequencyExists = synapseIdxWithFrequencyRange !== -1;
     setAmplitudes({
       id: stimulationId,
-      newValue: variableFrequencyExists ? amperageState.computed[0] : amperageState.computed,
+      newValue: disableStepper ? amperageState.computed[0] : amperageState.computed,
     });
   }, [
     amperageState.computed,
@@ -137,7 +141,7 @@ export default function AmperageRange({
     amplitudes,
     setAmplitudes,
     stimulationId,
-    synapseIdxWithFrequencyRange,
+    disableStepper,
   ]);
 
   useEffect(() => {
@@ -146,7 +150,7 @@ export default function AmperageRange({
 
   useEffect(() => {
     // If user sets a synapse with frequency range, automatically convert amplitude to a constant value
-    if (synapseIdxWithFrequencyRange !== -1) {
+    if (disableStepper) {
       dispatch({
         type: 'constant-value',
         payload: PROTOCOL_DETAILS[protocol].defaults.current.min,
@@ -154,16 +158,60 @@ export default function AmperageRange({
     } else {
       dispatch({ type: 'reset-for-protocol', payload: protocol });
     }
-  }, [synapseIdxWithFrequencyRange, protocol]);
+  }, [disableStepper, protocol]);
+
+  const disableStepperContent = (
+    <div className="text-left">
+      You can only set one stepper across all the synaptic inputs and in the simulation protocols.
+      <div className="mt-8">
+        <h4 className="text-primary-3">Active stepper location</h4>
+        <p>Synaptic inputs [{synapseIdxWithFrequencyRange + 1}]</p>
+      </div>
+    </div>
+  );
+  const amperageCannotBeConstant = (
+    <div className="text-left">
+      Since no synaptic inputs have a stepper, current should have steps.
+    </div>
+  );
 
   return (
     <>
-      <div className="mb-3 mt-8 text-left text-base">
+      <div className="mb-3 mt-8 flex items-center justify-between text-left text-base">
         <span className="ml-2 uppercase text-gray-400">Amperage</span>
         {amperageState.error && (
           <i className="ml-2 text-base font-light text-error">{amperageState.error}</i>
         )}
+
+        <div className="flex">
+          {disableStepper && (
+            <CustomPopover message={disableStepperContent} when="hover">
+              <div className="mr-2  text-sm text-primary-9">
+                <WarningFilled className="mr-2" />
+                Stepper already assigned
+              </div>
+            </CustomPopover>
+          )}
+
+          <CustomPopover
+            message={disableStepper ? disableStepperContent : amperageCannotBeConstant}
+            when="hover"
+          >
+            <div className="flex">
+              <span
+                className={classNames(
+                  'mr-2 text-sm font-light text-primary-9',
+                  disableStepper && '!text-gray-400'
+                )}
+              >
+                Has steps
+              </span>
+              <Switch value={!disableStepper} disabled onChange={() => {}} />
+            </div>
+          </CustomPopover>
+        </div>
       </div>
+
       {synapseIdxWithFrequencyRange !== -1 ? (
         <div className="text-left">
           <InputNumber
