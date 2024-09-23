@@ -18,6 +18,7 @@ import { ExperimentTypeNames } from '@/constants/explore-section/data-types/expe
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { BookmarksSupportedTypes } from '@/types/virtual-lab/bookmark';
 import { SimulationTypeNames } from '@/types/simulation/single-neuron';
+import useNotification from '@/hooks/notifications';
 
 export default function DetailHeaderName({
   detail,
@@ -37,9 +38,10 @@ export default function DetailHeaderName({
   );
   const simCampMatch = path?.match(/\/explore\/simulation-campaigns\/[a-zA-Z0-9=]*/g);
   const isSimCampDetail = simCampMatch && path === simCampMatch[0];
-
+  const notification = useNotification();
   const session = useAtomValue(sessionAtom);
   const [fetching, setFetching] = useState<boolean>(false);
+  const hasDistribution = 'distribution' in detail && detail.distribution !== undefined;
 
   const { virtualLabId, projectId, experimentType, modelType, simulationType, synaptome } =
     useParams<{
@@ -68,6 +70,11 @@ export default function DetailHeaderName({
     }
     return [];
   }, [latestRevision, url]);
+
+  const errorOnDownload = () => {
+    setFetching(false);
+    notification.error('Resource could not be downloaded');
+  };
 
   return (
     <div className="flex flex-col text-primary-7">
@@ -111,9 +118,11 @@ export default function DetailHeaderName({
             <Button
               type="text"
               className="flex items-center gap-2 text-primary-7 hover:!bg-transparent"
+              // disabling download button if currently fetching or if resource does not have a distribution
+              disabled={fetching || !hasDistribution}
               onClick={() => {
                 setFetching(true);
-                fetchArchive([detail._self], session, () => setFetching(false));
+                fetchArchive([detail._self], session, () => setFetching(false), errorOnDownload);
               }}
             >
               Download

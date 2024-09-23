@@ -61,14 +61,21 @@ function postNexusArchive(resources: FileMetadata[], session: Session) {
 export default async function fetchArchive(
   resourceIds: string[],
   session: Session,
-  callback: () => void
+  successCallback: () => void,
+  errorCallback: () => void
 ) {
   if (!session) return null;
 
   return Promise.all(resourceIds.map((selfId) => fetchDistribution(selfId, session)))
     .then((responses) => responses.flat())
     .then((resources) => postNexusArchive(resources, session))
-    .then((response) => response.blob())
+    .then((response) => {
+      if (!response.ok) {
+        throw Error('Error fetching archive');
+      }
+      return response.blob();
+    })
     .then(FileSaver.saveAs)
-    .then(callback);
+    .then(successCallback)
+    .catch(errorCallback);
 }

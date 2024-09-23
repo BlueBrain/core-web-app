@@ -28,6 +28,9 @@ export function ExploreDownloadButton({
             () => {
               setFetching(false);
               clearSelectedRows();
+            },
+            () => {
+              setFetching(false);
             }
           );
         }
