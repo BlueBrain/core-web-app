@@ -29,6 +29,7 @@ export interface SwitchProps {
    * Main color.
    */
   color?: string;
+  disabled?: boolean;
 }
 
 export function Switch({
@@ -40,6 +41,7 @@ export function Switch({
   labelForTrue,
   background = '#fff',
   color = '#003a8c',
+  disabled = false,
 }: SwitchProps) {
   const id = useId();
   return (
@@ -70,6 +72,7 @@ export function Switch({
           className={styles.SwitchRoot}
           checked={value}
           onCheckedChange={onChange}
+          disabled={disabled}
         >
           <RadixSwitch.Thumb className={styles.SwitchThumb} />
         </RadixSwitch.Root>

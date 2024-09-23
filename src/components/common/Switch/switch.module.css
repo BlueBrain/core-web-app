@@ -9,6 +9,7 @@
   --custom-padding: 0.2em;
   --custom-switch-color-back: #fff;
   --custom-switch-color-front: #003a8c;
+  --custom-switch-color-disabled: #8c8c8c;
   cursor: pointer;
 }
 
@@ -70,4 +71,14 @@
 .SwitchThumb[data-state='checked'] {
   transform: translateX(calc(var(--custom-width) - var(--custom-padding) - var(--size)));
   background-color: var(--custom-switch-color-back);
+}
+
+.SwitchRoot[data-disabled=''] {
+  border: 1px solid var(--custom-switch-color-disabled);
+  filter: grayscale(0);
+  cursor: not-allowed;
+}
+
+.SwitchThumb[data-disabled=''] {
+  background-color: var(--custom-switch-color-disabled);
 }

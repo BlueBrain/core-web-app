@@ -3,7 +3,7 @@ import { Popover, PopoverProps } from 'antd';
 import { classNames } from '@/util/utils';
 
 type Props = {
-  message: string;
+  message: React.ReactNode;
   children: React.ReactNode;
   when?: PopoverProps['trigger'];
   placement?: PopoverProps['placement'];

@@ -4,6 +4,7 @@ import {
   EyeInvisibleOutlined,
   EyeOutlined,
   LoadingOutlined,
+  WarningFilled,
 } from '@ant-design/icons';
 import { Button, Form, InputNumber, Select, SelectProps } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
@@ -56,6 +57,9 @@ export default function SynapticInputItem({
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
   const synapseSimulationAtomState = useAtomValue(synaptomeSimulationConfigAtom);
   const config = synapseSimulationAtomState[index];
+  const synapseWithFrequencyStep = synapseSimulationAtomState.findIndex((s) =>
+    Array.isArray(s.frequency)
+  );
   const abortController = useRef(new AbortController());
 
   const onVisualizationError = () => {
@@ -244,7 +248,12 @@ export default function SynapticInputItem({
           </Form.Item>
         </div>
         <ConfigInputList index={index} formName={formName} onChange={onChange} />
-        <FrequencyFormItem index={index} formName={formName} onChange={onChange} />
+        <FrequencyFormItem
+          index={index}
+          formName={formName}
+          onChange={onChange}
+          simIndexWithVariableFrequency={synapseWithFrequencyStep}
+        />
       </div>
     </div>
   );
@@ -256,9 +265,11 @@ function FrequencyFormItem({
   index,
   formName,
   onChange,
+  simIndexWithVariableFrequency,
 }: {
   index: number;
   formName: string;
+  simIndexWithVariableFrequency: number;
   onChange: (change: UpdateSynapseSimulationProperty) => void;
 }) {
   const [constantOrSteps, setConstantOrStep] = useState<'constant' | 'step'>('constant');
@@ -267,6 +278,9 @@ function FrequencyFormItem({
     stop: number;
     step: number;
   } | null>(null);
+
+  const disableFrequencyStepper =
+    simIndexWithVariableFrequency !== -1 && simIndexWithVariableFrequency !== index;
 
   const onSwitchChange = (hasSteps: boolean) => {
     if (hasSteps) {
@@ -314,6 +328,15 @@ function FrequencyFormItem({
     return stepFrequencies;
   }, [stepFrequencyState]);
 
+  const disableStepperContent = (
+    <div className="text-left">
+      You can only set one stepper across all the synaptic inputs and in the simulation protocols.
+      <div className="mt-8">
+        <h4 className="text-primary-3">Active stepper location</h4>
+        <p>Synaptic inputs [{simIndexWithVariableFrequency + 1}]</p>
+      </div>
+    </div>
+  );
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -322,10 +345,26 @@ function FrequencyFormItem({
         </div>
 
         <div className="flex">
-          <span className="mr-2 text-sm font-light text-primary-9">Has steps</span>
+          {disableFrequencyStepper && (
+            <CustomPopover message={disableStepperContent} when="hover">
+              <div className="mr-2  text-sm text-primary-9">
+                <WarningFilled className="mr-2" />
+                Stepper already assigned
+              </div>
+            </CustomPopover>
+          )}
+          <span
+            className={classNames(
+              'mr-2 text-sm font-light text-primary-9',
+              disableFrequencyStepper && '!text-gray-400'
+            )}
+          >
+            Has steps
+          </span>
           <Switch
             value={constantOrSteps === 'step'}
             onChange={(hasSteps) => onSwitchChange(hasSteps)}
+            disabled={disableFrequencyStepper}
           />
         </div>
       </div>
