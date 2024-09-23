@@ -175,7 +175,7 @@ export const getDefaultSynapseConfig = (
       delay: 100,
       duration: 2000,
       frequency: 20,
-      weightScalar: 2,
+      weightScalar: 1,
     };
   }
   return null;

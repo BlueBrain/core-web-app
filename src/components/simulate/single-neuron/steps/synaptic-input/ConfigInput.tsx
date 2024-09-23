@@ -20,8 +20,8 @@ const SYNAPTIC_INPUT_FIELDS: Array<Omit<ConfigInputProps, 'onChange' | 'index' |
   {
     name: 'weightScalar',
     text: 'Weight scalar',
-    min: 0,
-    max: Infinity,
+    min: 0.001,
+    max: 1000,
   },
 ];
 
