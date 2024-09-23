@@ -1,9 +1,10 @@
-import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import useNeuronViewerEvents from './hooks/events-hook';
 import useNeuronViewerActions from './hooks/actions-hook';
 import NeuronLoader from './plugins/NeuronLoader';
+import { DendrogramSwitch } from './DendrogramSwitch';
 import Renderer, { NeuronViewerConfig } from '@/services/bluenaas-single-cell/renderer';
 import useMorphology from '@/hooks/useMorphology';
 
@@ -48,6 +49,7 @@ export default function NeuronViewer({
   useLabels,
   actions,
 }: Props) {
+  const [mode, setMode] = useState<'2d' | '3d'>('3d');
   const labelsCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
@@ -142,6 +144,7 @@ export default function NeuronViewer({
         useActions,
         renderer: rendererRef,
       })}
+      <DendrogramSwitch className="absolute bottom-0 left-0" value={mode} onChange={setMode} />
     </div>
   );
 }

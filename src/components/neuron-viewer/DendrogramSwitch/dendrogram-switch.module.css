@@ -1,0 +1,33 @@
+.main {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1em;
+  color: #fffd;
+  margin: 1em;
+}
+
+.main > button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 1em;
+  height: 2em;
+  border-radius: 999vmax;
+  background-color: #333;
+  color: #fffe;
+  overflow: hidden;
+}
+
+.main > button > div {
+  padding: 0 1em;
+  display: grid;
+  place-items: center;
+  border-radius: 999vmax;
+}
+
+.selected {
+  background-color: #fff;
+  color: #333;
+  font-weight: bold;
+}
