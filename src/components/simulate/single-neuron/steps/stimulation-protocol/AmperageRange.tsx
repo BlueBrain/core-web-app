@@ -183,33 +183,35 @@ export default function AmperageRange({
           <i className="ml-2 text-base font-light text-error">{amperageState.error}</i>
         )}
 
-        <div className="flex">
-          {disableStepper && (
-            <CustomPopover message={disableStepperContent} when="hover">
-              <div className="mr-2  text-sm text-primary-9">
-                <WarningFilled className="mr-2" />
-                Stepper already assigned
+        {synapsesConfig?.length ? (
+          <div className="flex">
+            {disableStepper && (
+              <CustomPopover message={disableStepperContent} when="hover">
+                <div className="mr-2  text-sm text-primary-9">
+                  <WarningFilled className="mr-2" />
+                  Stepper already assigned
+                </div>
+              </CustomPopover>
+            )}
+
+            <CustomPopover
+              message={disableStepper ? disableStepperContent : amperageCannotBeConstant}
+              when="hover"
+            >
+              <div className="flex">
+                <span
+                  className={classNames(
+                    'mr-2 text-sm font-light text-primary-9',
+                    disableStepper && '!text-gray-400'
+                  )}
+                >
+                  Has steps
+                </span>
+                <Switch value={!disableStepper} disabled onChange={() => {}} />
               </div>
             </CustomPopover>
-          )}
-
-          <CustomPopover
-            message={disableStepper ? disableStepperContent : amperageCannotBeConstant}
-            when="hover"
-          >
-            <div className="flex">
-              <span
-                className={classNames(
-                  'mr-2 text-sm font-light text-primary-9',
-                  disableStepper && '!text-gray-400'
-                )}
-              >
-                Has steps
-              </span>
-              <Switch value={!disableStepper} disabled onChange={() => {}} />
-            </div>
-          </CustomPopover>
-        </div>
+          </div>
+        ) : null}
       </div>
 
       {synapseIdxWithFrequencyRange !== -1 ? (
