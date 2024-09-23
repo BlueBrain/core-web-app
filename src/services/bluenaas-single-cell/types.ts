@@ -60,6 +60,7 @@ export type PlotDataEntry = {
   name: string;
   recording?: string;
   amplitude?: number;
+  frequency?: number;
   line?: { color: string };
   visible?: boolean;
 };

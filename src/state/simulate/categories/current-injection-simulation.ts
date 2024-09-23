@@ -99,7 +99,7 @@ export default function useCurrentInjectionSimulationConfig() {
     );
   }
 
-  function setAmplitudes({ id, newValue }: { id: number; newValue: Array<number> }) {
+  function setAmplitudes({ id, newValue }: { id: number; newValue: Array<number> | number }) {
     const stimConfig = findConfig(id);
 
     const updatedStimulus: CurrentInjectionSimulationConfig = {

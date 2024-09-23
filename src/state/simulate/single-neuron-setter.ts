@@ -215,7 +215,6 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
         return acc;
       }, {})
     );
-
     const recordFromUniq = uniqBy(recordFromConfig, (item) =>
       values(pick(item, ['section', 'offset']))
         .map(String)
@@ -331,6 +330,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
           name: jsonData.stimulus_name,
           recording: jsonData.recording_name,
           amplitude: jsonData.amplitude,
+          frequency: jsonData.frequency,
         };
 
         const currentRecording = get(genericSingleNeuronSimulationPlotDataAtom)![
@@ -341,12 +341,11 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
           const updatedPlot = {
             ...get(genericSingleNeuronSimulationPlotDataAtom),
             [jsonData.recording_name]:
-              !currentRecording.length ||
-              !currentRecording.find((o) => o.amplitude === newPlot.amplitude)
+              !currentRecording.length || !currentRecording.find((o) => o.name === newPlot.name)
                 ? [...currentRecording, newPlot]
                 : updateArray({
                     array: currentRecording,
-                    keyfn: (item) => item.amplitude === newPlot.amplitude,
+                    keyfn: (item) => item.name === newPlot.name,
                     newVal: (value) => ({
                       ...value,
                       x: [...value.x, ...newPlot.x],

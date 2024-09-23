@@ -18,4 +18,5 @@ export type SimulationPlotResponse = {
   stimulus_name: string;
   recording_name: string;
   amplitude: number;
+  frequency?: number;
 };

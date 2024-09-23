@@ -18,13 +18,6 @@ const SYNAPTIC_INPUT_FIELDS: Array<Omit<ConfigInputProps, 'onChange' | 'index' |
     max: 3000,
   },
   {
-    name: 'frequency',
-    text: 'frequency',
-    unit: 'Hz',
-    min: 0,
-    max: Infinity,
-  },
-  {
     name: 'weightScalar',
     text: 'Weight scalar',
     min: 0,
@@ -91,7 +84,7 @@ type Props = {
 
 export default function ConfigInputList({ index, formName, onChange }: Props) {
   return (
-    <div className="grid grid-flow-col items-center justify-center gap-4">
+    <div className="grid grid-flow-col items-center gap-4">
       {SYNAPTIC_INPUT_FIELDS.map(({ name, text, min, max, unit }) => (
         <ConfigInput
           key={`config-${formName}-${index}-${name}`}

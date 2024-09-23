@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DeleteOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
-import { Button, Form, Select, SelectProps } from 'antd';
+import { Button, Form, InputNumber, Select, SelectProps } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import { Color } from 'three';
 
@@ -29,6 +29,8 @@ import { getSynaptomePlacement } from '@/api/bluenaas';
 import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
 import { classNames } from '@/util/utils';
 import { synaptomeSimulationConfigAtom } from '@/state/simulate/categories/synaptome-simulation-config';
+import { calculateRangeOutput } from '@/constants/simulate/single-neuron';
+import { Switch } from '@/components/common/Switch';
 
 type Props = {
   index: number;
@@ -212,7 +214,7 @@ export default function SynapticInputItem({
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-6 border border-neutral-4 p-6">
+      <div className="flex w-full flex-col gap-6 border border-neutral-4 p-6">
         <div className="flex flex-col">
           <div className="mb-2 text-left text-lg uppercase text-neutral-4">synapse group</div>
           <Form.Item
@@ -242,6 +244,184 @@ export default function SynapticInputItem({
           </Form.Item>
         </div>
         <ConfigInputList index={index} formName={formName} onChange={onChange} />
+        <FrequencyFormItem index={index} formName={formName} onChange={onChange} />
+      </div>
+    </div>
+  );
+}
+
+const defaultStepFrequencies = { start: 5, stop: 20, step: 3 };
+
+function FrequencyFormItem({
+  index,
+  formName,
+  onChange,
+}: {
+  index: number;
+  formName: string;
+  onChange: (change: UpdateSynapseSimulationProperty) => void;
+}) {
+  const [constantOrSteps, setConstantOrStep] = useState<'constant' | 'step'>('constant');
+  const [stepFrequencyState, setStepFrequencyState] = useState<{
+    start: number;
+    stop: number;
+    step: number;
+  } | null>(null);
+
+  const onSwitchChange = (hasSteps: boolean) => {
+    if (hasSteps) {
+      setConstantOrStep('step');
+      setStepFrequencyState({ ...defaultStepFrequencies });
+      onChange({
+        id: index,
+        key: 'frequency',
+        newValue: calculateRangeOutput(
+          defaultStepFrequencies.start,
+          defaultStepFrequencies.stop,
+          defaultStepFrequencies.step
+        ),
+      });
+    } else {
+      setConstantOrStep('constant');
+      setStepFrequencyState(null);
+      onChange({
+        id: index,
+        key: 'frequency',
+        newValue: 20,
+      });
+    }
+  };
+
+  const onFrequencyStepChange = (start: number, stop: number, step: number) => {
+    setStepFrequencyState({ start, stop, step });
+    onChange({
+      id: index,
+      key: 'frequency',
+      newValue: calculateRangeOutput(start, stop, step),
+    });
+  };
+
+  const calculatedFrequencies = useMemo(() => {
+    if (!stepFrequencyState) {
+      return null;
+    }
+
+    const stepFrequencies = calculateRangeOutput(
+      stepFrequencyState.start,
+      stepFrequencyState.stop,
+      stepFrequencyState.step
+    );
+    return stepFrequencies;
+  }, [stepFrequencyState]);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div className="mb-2 text-left text-base font-light uppercase text-neutral-4">
+          Frequency <span className="normal-case">[Hz]</span>
+        </div>
+
+        <div className="flex">
+          <span className="mr-2 text-sm font-light text-primary-9">Has steps</span>
+          <Switch
+            value={constantOrSteps === 'step'}
+            onChange={(hasSteps) => onSwitchChange(hasSteps)}
+          />
+        </div>
+      </div>
+
+      <div className="text-left">
+        {constantOrSteps === 'constant' ? (
+          <Form.Item
+            name={[formName, 'frequency']}
+            rules={[{ required: true, message: 'Required field' }]}
+          >
+            <InputNumber
+              className="!rounded-sm border !border-neutral-4 font-bold [&_.ant-input-number-input]:!text-base [&_.ant-input-number-input]:!text-primary-8"
+              min={0}
+              onChange={(newValue) =>
+                onChange({
+                  id: index,
+                  key: 'frequency',
+                  newValue,
+                })
+              }
+            />
+          </Form.Item>
+        ) : (
+          <div className="mt-2 flex justify-between">
+            <div className="flex items-center text-sm">
+              <div>
+                <span className="font-bold text-primary-8">Start</span>
+                <InputNumber
+                  required
+                  defaultValue={stepFrequencyState!.start}
+                  onChange={(v) =>
+                    v !== null &&
+                    stepFrequencyState &&
+                    onFrequencyStepChange(v, stepFrequencyState.stop, stepFrequencyState.step)
+                  }
+                  placeholder="end"
+                  min={0}
+                  step={1}
+                  size="small"
+                  className="min-w-18 mx-2 h-8 [&_.ant-input-number-input]:!pr-8 [&_.ant-input-number-input]:!text-right [&_.ant-input-number-input]:!font-bold [&_.ant-input-number-input]:!text-primary-8"
+                />
+                <span className="text-gray-400">[Hz]</span>
+              </div>
+              <hr className="mx-4 w-8 border border-gray-200" />
+              <div>
+                <span className="font-bold text-primary-8">Stop</span>
+                <InputNumber
+                  required
+                  placeholder="end"
+                  defaultValue={stepFrequencyState!.stop}
+                  onChange={(v) =>
+                    v &&
+                    stepFrequencyState &&
+                    onFrequencyStepChange(stepFrequencyState.start, v, stepFrequencyState.step)
+                  }
+                  min={1}
+                  step={1}
+                  size="small"
+                  className="min-w-18 mx-2 h-8 [&_.ant-input-number-input]:!pr-8 [&_.ant-input-number-input]:!text-right [&_.ant-input-number-input]:!font-bold [&_.ant-input-number-input]:!text-primary-8"
+                />
+                <span className="text-gray-400">[Hz]</span>
+              </div>
+            </div>
+
+            <div className="flex items-center text-sm">
+              <span className="font-bold text-primary-8">N° of steps</span>
+              <InputNumber
+                required
+                placeholder="step size"
+                step={1}
+                min={1}
+                defaultValue={stepFrequencyState!.step}
+                onChange={(v) =>
+                  v &&
+                  stepFrequencyState &&
+                  onFrequencyStepChange(stepFrequencyState.start, stepFrequencyState.stop, v)
+                }
+                size="small"
+                className="mx-2 h-8 min-w-10 [&_.ant-input-number-handler-wrap]:!opacity-100 [&_.ant-input-number-input]:!pr-8 [&_.ant-input-number-input]:!text-right [&_.ant-input-number-input]:!font-bold [&_.ant-input-number-input]:!text-primary-8"
+              />
+            </div>
+          </div>
+        )}
+        {calculatedFrequencies && (
+          <div>
+            <div className="mb-2 mt-4 text-left text-base font-light uppercase text-neutral-4">
+              Output values
+            </div>
+
+            {calculatedFrequencies.map((f) => (
+              <span className="mx-2 text-sm " key={f}>
+                {f}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

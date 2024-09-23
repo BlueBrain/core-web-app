@@ -68,7 +68,7 @@ export type SynapseConfig = {
   configId: string;
   delay: number;
   duration: number;
-  frequency: number;
+  frequency: number | number[];
   weightScalar: number;
   color: string;
 };
@@ -85,7 +85,7 @@ export type SynapseModelSimConfig = SimulationConfiguration & {
 export type StimulusConfig = {
   stimulusType: StimulusType;
   stimulusProtocol: StimulusModule | null;
-  amplitudes: number[];
+  amplitudes: number[] | number;
 };
 
 export interface SingleNeuronModelSimulationConfig {
@@ -125,7 +125,7 @@ export const isSynaptomModel = (model: ModelResource | null): model is Synaptome
 export type UpdateSynapseSimulationProperty = {
   id: number;
   key: keyof SynapseConfig;
-  newValue: number | string | null;
+  newValue: number | string | number[] | null;
 };
 
 export type ProtocolDetails = {
