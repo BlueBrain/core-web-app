@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, use, useCallback, useEffect, useRef, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import useNeuronViewerEvents from './hooks/events-hook';
@@ -13,6 +13,7 @@ import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { DEFAULT_CURRENT_INJECTION_CONFIG } from '@/constants/simulate/single-neuron';
 import { recordingSourceForSimulationAtom } from '@/state/simulate/categories/recording-source-for-simulation';
 import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
+import { useDendrogram } from '@/services/dendrogram';
 
 type Props = {
   modelSelfUrl: string;
@@ -50,6 +51,8 @@ export default function NeuronViewer({
   actions,
 }: Props) {
   const [mode, setMode] = useState<'2d' | '3d'>('3d');
+  const [ready, setReady] = useState(false);
+  const dendrogram = useDendrogram(modelSelfUrl);
   const labelsCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
@@ -73,6 +76,7 @@ export default function NeuronViewer({
         const prunedMorph = rendererRef.current.removeNoDiameterSection(morphology);
         rendererRef.current.addMorphology(prunedMorph);
         setSectionsAndSegments(prunedMorph);
+        setReady(true);
       }
     },
     [setSectionsAndSegments]
@@ -85,6 +89,14 @@ export default function NeuronViewer({
       rendererRef.current = renderer;
     }
   }, []);
+
+  useEffect(() => {
+    const renderer = rendererRef.current;
+    if (!renderer) return;
+
+    if (mode === '3d') renderer.transitionTo3D();
+    else renderer.transitionToDendrogram(dendrogram);
+  }, [ready, mode, dendrogram]);
 
   const { loading } = useMorphology({
     modelSelfUrl,
@@ -121,7 +133,7 @@ export default function NeuronViewer({
 
   return (
     <div className="relative h-full w-full">
-      {loading && (
+      {(loading || !dendrogram) && (
         <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
           <NeuronLoader text="Loading Neuron" />
         </div>
@@ -144,7 +156,12 @@ export default function NeuronViewer({
         useActions,
         renderer: rendererRef,
       })}
-      <DendrogramSwitch className="absolute bottom-0 left-0" value={mode} onChange={setMode} />
+      <DendrogramSwitch
+        className="absolute bottom-0 left-0"
+        visible={ready}
+        value={mode}
+        onChange={setMode}
+      />
     </div>
   );
 }

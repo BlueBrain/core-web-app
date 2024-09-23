@@ -34,7 +34,7 @@ export default function CustomZoomer({ renderer, placement = 'left' }: Props) {
   const onZoomOut = () => {
     const activeRenderer = renderer.current;
     if (activeRenderer) {
-      const currentZoom = Math.max(value - 0.1, 1);
+      const currentZoom = Math.max(value - 0.1, 0.1);
       activeRenderer._camera.zoom = currentZoom;
       activeRenderer._camera.updateProjectionMatrix();
       setValue(currentZoom);

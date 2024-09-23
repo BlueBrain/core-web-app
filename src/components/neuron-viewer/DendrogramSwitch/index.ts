@@ -1,1 +1,1 @@
-export * from "./DendrogramSwitch"
+export * from './DendrogramSwitch';

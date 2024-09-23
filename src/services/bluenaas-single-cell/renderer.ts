@@ -1,6 +1,6 @@
-import throttle from 'lodash/throttle';
-import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
+import isEqual from 'lodash/isEqual';
+import throttle from 'lodash/throttle';
 import {
   AmbientLight,
   Color,
@@ -17,6 +17,7 @@ import {
   Object3D,
   PerspectiveCamera,
   PointLight,
+  Quaternion,
   Raycaster,
   Scene,
   SphereGeometry,
@@ -27,13 +28,16 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import RendererCtrl from './renderer-ctrl';
-import type { Morphology, SecMarkerConfig } from './types';
-import { createSegMarkerMesh, createSegmentMesh, NeuronSegementInfo } from './renderer-utils';
+import { getSegmentColor } from './colors';
+import { buildDendrogram } from './dendrogram';
 import { Labels } from './labels';
+import RendererCtrl from './renderer-ctrl';
+import { createSegMarkerMesh, createSegmentMesh, NeuronSegementInfo } from './renderer-utils';
+import type { Morphology, SecMarkerConfig } from './types';
 
-import { basePath } from '@/config';
 import { SynapsesMesh } from '@/components/neuron-viewer/hooks/events';
+import { basePath } from '@/config';
+import { Dendrogram } from '@/services/dendrogram';
 
 const FOG_COLOR = 0xffffff;
 const FOG_NEAR = 1;
@@ -84,34 +88,6 @@ function disposeMesh(mesh: Mesh | LineSegments) {
     mesh.material.dispose();
   }
 }
-
-const SOMA_COLOR = 0xf5f5f5;
-const AXON_COLOR = 0x5c81ff;
-const DEND_COLOR = 0xfe395b;
-const APIC_COLOR = 0xa922a8;
-const SPINE_COLOR = 0xff9900;
-const EXC_COLOR = 0xff0000;
-const INH_COLOR = 0x6699ff;
-
-const getColor = (name: string) => {
-  let color = 0x888888;
-  if (/^soma/.test(name)) {
-    color = SOMA_COLOR;
-  } else if (/^axon/.test(name)) {
-    color = AXON_COLOR;
-  } else if (/^dend/.test(name)) {
-    color = DEND_COLOR;
-  } else if (/^apic/.test(name)) {
-    color = APIC_COLOR;
-  } else if (/^spine/.test(name)) {
-    color = SPINE_COLOR;
-  } else if (/^exc/.test(name)) {
-    color = EXC_COLOR;
-  } else if (/^inh/.test(name)) {
-    color = INH_COLOR;
-  }
-  return color;
-};
 
 function getElementOffset(element: HTMLElement): { x: number; y: number } {
   const elBoundingRect = element.getBoundingClientRect();
@@ -237,6 +213,30 @@ export default class NeuronViewerRenderer {
     this.controls.addEventListener('change', this.labels.paint);
     this.initEventHandlers();
     this.startRenderLoop();
+  }
+
+  /**
+   * Prepare the meshes for a 3D view.
+   * Will only work after a call to `addMorphology()`.
+   */
+  public transitionTo3D() {
+    const { morphology } = this;
+    if (!morphology) return;
+
+    console.log('3D:', morphology);
+  }
+
+  /**
+   * Prepare the mehes for a Dendrogram view (flat 2D view).
+   * Will only work after a call to `addMorphology()`.
+   */
+  public transitionToDendrogram(dendrogram: Dendrogram | null) {
+    if (!dendrogram || !this.morphology) return;
+
+    console.log('Dendrogram:', dendrogram);
+    const group = buildDendrogram(dendrogram);
+    this.morphObj.clear().add(group);
+    this.camera.setRotationFromQuaternion(new Quaternion());
   }
 
   private initEventHandlers() {
@@ -450,7 +450,7 @@ export default class NeuronViewerRenderer {
 
       for (let segIdx = 0; segIdx < sec.diam.length; segIdx += 1) {
         const openEnded = !/^spine/.test(secName);
-        const color = getColor(secName);
+        const color = getSegmentColor(secName);
         const mesh = createSegmentMesh(sec, segIdx, openEnded, color);
 
         const name = `${secName}_${segIdx}`;
