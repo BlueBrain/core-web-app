@@ -17,7 +17,7 @@ import { Experiment } from '@/types/explore-section/es-experiment';
  * @param query
  * @returns
  */
-const retrieveESResourceByID = (id: string) => {
+const retrieveESResourceByID = async (id: string) => {
   const query = esb
     .requestBodySearch()
     .query(esb.boolQuery().must(esb.termQuery('@id', id)))
@@ -89,13 +89,13 @@ export const selectedEModelResourceAtom = atom(async (get) => {
   return await retrieveESResourceByID(eModelId);
 });
 
-const selectedEModelOrgAtom = atom(async (get) => {
+export const selectedEModelOrgAtom = atom(async (get) => {
   const resource = await get(selectedEModelResourceAtom);
   if (!resource) return;
   return getOrgFromSelfUrl(resource._self);
 });
 
-const selectedEModelProjectAtom = atom(async (get) => {
+export const selectedEModelProjectAtom = atom(async (get) => {
   const resource = await get(selectedEModelResourceAtom);
   if (!resource) return;
   return getProjectFromSelfUrl(resource._self);
