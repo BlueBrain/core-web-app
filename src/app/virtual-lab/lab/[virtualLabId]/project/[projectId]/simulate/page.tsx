@@ -25,6 +25,8 @@ import BookmarkButton from '@/components/explore-section/BookmarkButton';
 import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/simulation-data-types';
 import { isSimulation } from '@/types/virtual-lab/bookmark';
 import { Btn } from '@/components/Btn';
+import { classNames } from '@/util/utils';
+import Styles from './Styles.module.scss';
 
 export default function VirtualLabProjectSimulatePage({
   params,
@@ -101,7 +103,7 @@ export default function VirtualLabProjectSimulatePage({
               controlsVisible={false}
               style={{ background: 'bg-white' }}
               containerClass="flex flex-col grow"
-              tableClass="overflow-y-auto grow"
+              tableClass={classNames('overflow-y-auto grow', Styles.table)}
               onCellClick={navigateToDetailPage}
             />
           </div>
