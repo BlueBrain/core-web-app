@@ -4,7 +4,7 @@ import { SingleSynaptomeConfig } from '@/types/synaptome';
 export const CREATE_SYNAPTOME_SUCCESS =
   'The Synaptome model has been successfully created. It may take up to 5 seconds for the new model to appear in the list of records under both the Explore and Build sections.';
 export const CREATE_SYNAPTOME_SIMULATION_SUCCESS =
-  'Simulation results has been successfully saved. It may take up to 5 seconds for for the simulation to appear in the list of records under Simulate section.';
+  'Simulation results have been successfully saved. It may take up to 5 seconds for the simulation to appear in the list of records under the Simulate section.';
 
 export const CREATE_SYNAPTOME_FAIL =
   'Failed to process your synaptome addition request. Please review the form and try again or contact support.';
