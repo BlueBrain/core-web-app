@@ -26,12 +26,16 @@ export type NeuronSegementInfo = {
   [key: string]: any;
 };
 
+export interface SegmentMesh extends Mesh<CylinderGeometry, MeshLambertMaterial> {
+  userData: NeuronSegementInfo;
+}
+
 export function createSegmentMesh(
   sec: NeuronSectionInfo,
   segIdx: number,
   openEnded: boolean,
   color: number
-) {
+): SegmentMesh {
   const v = new Vector3(sec.xcenter[segIdx], sec.ycenter[segIdx], sec.zcenter[segIdx]);
 
   const axis = new Vector3(sec.xdirection[segIdx], sec.ydirection[segIdx], sec.zdirection[segIdx]);
@@ -53,14 +57,14 @@ export function createSegmentMesh(
   );
   const material = new MeshLambertMaterial({ color, side: DoubleSide });
 
-  const mesh = new Mesh(geometry, material);
+  const mesh = new Mesh(geometry, material) as SegmentMesh;
   mesh.userData = {
     segIdx,
     section: sec.name,
     section_nseg: sec.nseg,
     offset: sec.neuron_segments_offset[segIdx],
     distance_from_soma: sec.segment_distance_from_soma[segIdx].toFixed(2),
-  } as NeuronSegementInfo;
+  };
 
   mesh.scale.setY(scaleLength);
   mesh.setRotationFromQuaternion(rotQuat);

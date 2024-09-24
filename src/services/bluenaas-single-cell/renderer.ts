@@ -29,10 +29,14 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { getSegmentColor } from './colors';
-import { buildDendrogram } from './dendrogram';
+import { buildDendrogram } from './dendrogram-renderer/dendrogram';
 import { Labels } from './labels';
 import RendererCtrl from './renderer-ctrl';
-import { createSegMarkerMesh, createSegmentMesh, NeuronSegementInfo } from './renderer-utils';
+import {
+  createSegMarkerMesh,
+  createSegmentMesh,
+  NeuronSegementInfo as NeuronSegmentInfo,
+} from './renderer-utils';
 import type { Morphology, SecMarkerConfig } from './types';
 
 import { SynapsesMesh } from '@/components/neuron-viewer/hooks/events';
@@ -56,7 +60,7 @@ export type SynapseBubblesMesh = Mesh<InstancedBufferGeometry, MeshPhongMaterial
 
 export type NeuronViewerClickData = {
   type: string;
-  data: NeuronSegementInfo;
+  data: NeuronSegmentInfo;
   position: {
     x: number;
     y: number;
@@ -65,7 +69,7 @@ export type NeuronViewerClickData = {
 
 export type NeuronViewerHoverData = {
   type: string;
-  data: NeuronSegementInfo;
+  data: NeuronSegmentInfo;
   position: {
     x: number;
     y: number;
@@ -147,6 +151,8 @@ export default class NeuronViewerRenderer {
   private animationFrameHandle: number | null = null;
 
   private synapses: Array<SynapsesMesh> = [];
+
+  private readonly neuroSegmentInfo = new Map<string, NeuronSegmentInfo>();
 
   constructor(container: HTMLDivElement, config: NeuronViewerConfig) {
     this.labels = new Labels(() => ({
@@ -234,7 +240,7 @@ export default class NeuronViewerRenderer {
     if (!dendrogram || !this.morphology) return;
 
     console.log('Dendrogram:', dendrogram);
-    const group = buildDendrogram(dendrogram);
+    const group = buildDendrogram(dendrogram, this.neuroSegmentInfo);
     this.morphObj.clear().add(group);
     this.camera.setRotationFromQuaternion(new Quaternion());
   }
@@ -278,7 +284,7 @@ export default class NeuronViewerRenderer {
     if (!clickedMesh) return;
     this.config.onClick({
       type: clickedMesh.name,
-      data: clickedMesh.userData as NeuronSegementInfo,
+      data: clickedMesh.userData as NeuronSegmentInfo,
       position: {
         x: e.clientX,
         y: e.clientY,
@@ -336,7 +342,7 @@ export default class NeuronViewerRenderer {
 
     this.config.onHover?.({
       type: 'morphSection',
-      data: hoverData.mesh?.userData as NeuronSegementInfo,
+      data: hoverData.mesh?.userData as NeuronSegmentInfo,
       position: hoverData.position ?? null,
     });
 
@@ -350,7 +356,7 @@ export default class NeuronViewerRenderer {
 
     this.config.onHoverEnd?.({
       type: 'morphSection',
-      data: mesh.userData as NeuronSegementInfo,
+      data: mesh.userData as NeuronSegmentInfo,
       position,
     });
 
@@ -452,12 +458,11 @@ export default class NeuronViewerRenderer {
         const openEnded = !/^spine/.test(secName);
         const color = getSegmentColor(secName);
         const mesh = createSegmentMesh(sec, segIdx, openEnded, color);
-
         const name = `${secName}_${segIdx}`;
         mesh.name = name;
-
+        // We store the user data to resuse them with the dendrogram display.
+        this.neuroSegmentInfo.set(name, mesh.userData);
         allSegNames.push(name);
-
         this.morphObj.add(mesh);
       }
     });
