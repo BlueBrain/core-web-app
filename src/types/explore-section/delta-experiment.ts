@@ -53,7 +53,7 @@ export type ExperimentalTrace = ExperimentResource & {
   dateCreated: TypeWithDate;
   distribution: Distribution | Distribution[];
   identifier: string;
-  image: Image[];
+  image: Image[] | Image;
   license: IdWithType;
   note: string;
   objectOfStudy: IdWithLabel;

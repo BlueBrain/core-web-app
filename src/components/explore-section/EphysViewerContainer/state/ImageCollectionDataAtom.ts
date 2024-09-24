@@ -10,6 +10,7 @@ import { chainPredicates, hasImage, isFile, not } from '@/util/explore-section/n
 import uniqueArrayOfObjectsByKey from '@/util/explore-section/arrays';
 import { ExperimentalTrace } from '@/types/explore-section/delta-experiment';
 import { EPhysImageItem } from '@/types/explore-section/resources';
+import { ensureArray } from '@/util/nexus';
 
 const MAX_BYTES_TO_PREVIEW = 3000000;
 
@@ -116,7 +117,7 @@ export default function createImageCollectionDataAtom(
       }
     };
 
-    const promises = resource.image
+    const promises = ensureArray(resource.image)
       .filter(imageShouldBeProcessed)
       .map((imageItem) => processImageCollection(imageItem));
 
