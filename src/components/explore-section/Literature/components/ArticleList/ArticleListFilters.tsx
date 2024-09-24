@@ -1,5 +1,3 @@
-'use client';
-
 import { CloseOutlined } from '@ant-design/icons';
 import { ConfigProvider, Drawer } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
