@@ -88,7 +88,9 @@ export default function MeModelsListing({
         configStep !== 'me-model-config' && 'hidden'
       )}
     >
-      <input name="modelUrl" aria-hidden hidden defaultValue={getFieldValue('modelUrl')} />
+      <Form.Item name="modelUrl" hidden>
+        <input name="modelUrl" aria-hidden hidden defaultValue={getFieldValue('modelUrl')} />
+      </Form.Item>
       <div className="mb-4">
         <h1 className="text-xl font-bold text-primary-8">
           Select a single neuron model to build a synaptome model

@@ -1,11 +1,14 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Form, Button, Space, InputNumber } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtom, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import sample from 'lodash/sample';
+import isNil from 'lodash/isNil';
+import { z } from 'zod';
+
 import SynapseSet from './SynapseSet';
 import {
   CREATE_SYNAPTOME_CONFIG_FAIL,
@@ -41,6 +44,7 @@ import { Entity } from '@/types/nexus';
 import { useSessionStorage } from '@/hooks/useSessionStorage';
 import { ExploreESHit, ExploreResource } from '@/types/explore-section/es';
 import { SIMULATION_COLORS } from '@/constants/simulate/single-neuron';
+import { validateFormula } from '@/api/bluenaas/validateSynapseGenerationFormula';
 
 const label = (text: string) => (
   <span className="text-base font-semibold text-primary-8">{text}</span>
@@ -52,12 +56,75 @@ type Props = {
   project: string;
 };
 
+const ExclusionRule = z
+  .object({
+    id: z.string(),
+    distance_soma_gte: z.number().nullish(),
+    distance_soma_lte: z.number().nullish(),
+  })
+  .refine(
+    (data) => {
+      if (!isNil(data.distance_soma_gte) || !isNil(data.distance_soma_lte)) return true;
+      return false;
+    },
+    {
+      message: 'At least one of distance_soma_gte or distance_soma_lte must be provided',
+      path: ['distance_soma_gte', 'distance_soma_lte'],
+    }
+  );
+
+const SynapseSchema = z
+  .object({
+    name: z.string(),
+    target: z.string().optional(),
+    type: z.number().refine((val) => val === 110 || val === 10, {
+      message: 'Type must be either 110 or 10',
+    }),
+    formula: z.string().min(1).optional(),
+    soma_synapse_count: z.number().optional(),
+    seed: z.number(),
+    exclusion_rules: z.array(ExclusionRule).nullable(),
+  })
+  .superRefine((synapse, ctx) => {
+    if (synapse.target !== 'soma' && isNil(synapse.formula)) {
+      return ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'formula should be provided when target is different then "soma"',
+        path: ['formula'],
+      });
+    }
+    if (synapse.target === 'soma' && isNil(synapse.soma_synapse_count)) {
+      return ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'soma_synapse_count must be a valid number when target is "soma"',
+        path: ['soma_synapse_count'],
+      });
+    }
+  })
+  .superRefine(async (synapse, ctx) => {
+    if (synapse.formula) {
+      return validateFormula(synapse.formula).then((v) => {
+        if (!v) {
+          return ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'formula is not valid',
+            path: ['formula'],
+          });
+        }
+      });
+    }
+  });
+
+const ListSynapsesSchema = z.array(SynapseSchema);
+
 export default function SynaptomeConfigurationForm({ org, project, resource }: Props) {
   const { push: navigate } = useRouter();
   const [loading, setLoading] = useState(false);
+  const [synapsesHasErrors, setSynapsesHasErrors] = useState<Array<(string | number)[]>>([]);
   const { error: notifyError, success: notifySuccess } = useNotification();
   const form = Form.useFormInstance<SynaptomeModelConfiguration>();
   const seed = Form.useWatch<number>('seed', form);
+  const watchedSynapses = Form.useWatch<number>('synapses', form);
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
   const { removeSessionValue } = useSessionStorage<{
     name: string;
@@ -231,6 +298,17 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
     }
   };
 
+  useEffect(() => {
+    (async () => {
+      const { success, error } = await ListSynapsesSchema.safeParseAsync(watchedSynapses);
+      if (success) {
+        setSynapsesHasErrors([]);
+      } else if (error) {
+        setSynapsesHasErrors(error.issues.map((p) => p.path));
+      }
+    })();
+  }, [watchedSynapses]);
+
   return (
     <div className="relative mb-20 h-full w-full">
       <div className="sticky top-0 mb-5 flex items-center justify-between gap-2">
@@ -270,6 +348,7 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
                     index,
                     removeGroup,
                     modelId: resource._self,
+                    disableApplyChanges: synapsesHasErrors.some((p) => p.includes(index)),
                   }}
                 />
               );
@@ -292,9 +371,9 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
             type="submit"
             className={classNames(
               'flex items-center justify-between gap-2 bg-primary-8 px-12 py-4 text-white',
-              'disabled:bg-gray-100 disabled:text-primary-8'
+              'disabled:bg-gray-100 disabled:text-gray-400'
             )}
-            disabled={loading}
+            disabled={loading || Boolean(synapsesHasErrors.length)}
             onClick={onConfigurationSubmission}
           >
             {loading && <LoadingOutlined />}

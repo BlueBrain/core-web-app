@@ -27,7 +27,7 @@ export default function NeuronMeshInjectionRecordingPopover({
   return (
     <div
       ref={ref}
-      className="fixed max-w-max border border-orange-400 bg-black p-4 text-white opacity-80 shadow-lg backdrop-blur-sm"
+      className="fixed z-30 max-w-max border border-orange-400 bg-black p-4 text-white opacity-80 shadow-lg backdrop-blur-sm"
       style={{
         left: x - 113, // 113 is half of the container
         top: y + 8,

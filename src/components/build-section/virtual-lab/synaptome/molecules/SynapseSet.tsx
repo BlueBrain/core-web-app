@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useMemo, useReducer, useRef, useState } from 'react';
 import { Form, Input, Select, Button, FormListFieldData, InputNumber } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import {
@@ -10,12 +10,12 @@ import {
   InfoCircleFilled,
   PlusCircleOutlined,
 } from '@ant-design/icons';
-import { z } from 'zod';
+import { Color } from 'three';
+
 import isEqual from 'lodash/isEqual';
 import groupBy from 'lodash/groupBy';
 import findIndex from 'lodash/findIndex';
 
-import { Color } from 'three';
 import { GENERATE_SYNAPSES_FAIL, sectionTargetMapping } from './constants';
 import { classNames } from '@/util/utils';
 import { SingleSynaptomeConfig } from '@/types/synaptome';
@@ -24,17 +24,19 @@ import {
   sendDisplaySynapses3DEvent,
   sendRemoveSynapses3DEvent,
 } from '@/components/neuron-viewer/hooks/events';
+import { validateFormula } from '@/api/bluenaas/validateSynapseGenerationFormula';
+import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
+import { SettingAdjustment } from '@/components/icons/SettingAdjustment';
+import { secNamesAtom } from '@/state/simulate/single-neuron';
+import { getSynaptomePlacement } from '@/api/bluenaas';
+import { getSession } from '@/authFetch';
 
 import useNotification from '@/hooks/notifications';
-import { getSession } from '@/authFetch';
-import { getSynaptomePlacement, validateSynapseGenerationFormula } from '@/api/bluenaas';
-import { createBubblesInstanced } from '@/services/bluenaas-single-cell/renderer-utils';
-import { secNamesAtom } from '@/state/simulate/single-neuron';
-import { SettingAdjustment } from '@/components/icons/SettingAdjustment';
 
 type Props = {
   modelId: string;
   index: number;
+  disableApplyChanges: boolean;
   field: FormListFieldData;
   removeGroup: (index: number | number[]) => void;
 };
@@ -43,91 +45,26 @@ const label = (text: string) => (
   <span className={classNames('text-base font-bold capitalize text-gray-500')}>{text}</span>
 );
 
-const validateFormula = async (value: string) => {
-  try {
-    const session = await getSession();
-    if (session) {
-      const result = await validateSynapseGenerationFormula(value, session.accessToken);
-      return result;
-    }
-  } catch (error) {
-    return false;
-  }
-};
-
-const SynapseGroupValidationSchema = z
-  .object({
-    name: z.string(),
-    target: z.string().nullish(),
-    type: z.union([z.literal(110), z.literal(10)]),
-    distribution: z.union([z.literal('linear'), z.literal('exponential'), z.literal('formula')]),
-    formula: z.string().nullish(),
-    soma_synapse_count: z.number().nullish(),
-    exclusion_rules: z
-      .array(
-        z.object({
-          distance_soma_gte: z.number().nullish(),
-          distance_soma_lte: z.number().nullish(),
-        })
-      )
-      .nullish()
-      .superRefine((values, ctx) => {
-        values?.forEach((v, i) => {
-          if (!v.distance_soma_gte && !v.distance_soma_lte) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: `Exclusion rule ${i + 1} required to have either gte, lte or both`,
-              path: [`exclusion_rules[${i + 1}]`],
-            });
-          }
-        });
-      }),
-  })
-  .superRefine((values, ctx) => {
-    if (values.distribution === 'formula' && values.target !== 'soma' && !values.formula) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Formula required when distribution is equal to formula',
-        path: ['formula'],
-      });
-    }
-  })
-  .superRefine((values, ctx) => {
-    if (values.target === 'soma' && !values.soma_synapse_count) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Synapse count is required when target is soma',
-        path: ['soma_synapse_count'],
-      });
-    }
-  })
-  .superRefine((values, ctx) => {
-    if (values.formula) {
-      return validateFormula(values.formula).then((v) => {
-        if (!v) {
-          return ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'formula is not valid',
-            path: ['formula'],
-          });
-        }
-      });
-    }
-  });
-
-export default function SynapseSet({ modelId, index, field, removeGroup }: Props) {
+export default function SynapseSet({
+  modelId,
+  index,
+  field,
+  removeGroup,
+  disableApplyChanges,
+}: Props) {
+  const { error: notifyError } = useNotification();
+  const form = Form.useFormInstance();
   const secNames = useAtomValue(secNamesAtom);
   const [synapseVis, setSynapseVis] = useState(false);
   const [visualizeLoading, setLoadingVisualize] = useState(false);
-  const [disableApplyChanges, setDisableApplyChanges] = useState(false);
 
   const [synapsesPlacement, setSynapsesPlacementAtom] = useAtom(synapsesPlacementAtom);
   const [displayExclusionRules, toggleDisplayExclusionRules] = useReducer((val) => !val, false);
   const [displayFormulaHelp, toggleFormulaHelp] = useReducer((val) => !val, false);
-  const { error: notifyError } = useNotification();
-  const form = Form.useFormInstance();
+
   const synapses = Form.useWatch<Array<SingleSynaptomeConfig>>('synapses', form);
   const seed = Form.useWatch<number>('seed', form);
+
   const config = synapses?.[index];
   const configRef = useRef(config);
 
@@ -184,8 +121,8 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
           ...(config?.exclusion_rules ?? []),
           {
             id,
-            gte: undefined,
-            lte: undefined,
+            distance_soma_gte: undefined,
+            distance_soma_lte: undefined,
           },
         ],
       });
@@ -295,13 +232,6 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      const result = await SynapseGroupValidationSchema.safeParseAsync(config);
-      setDisableApplyChanges(!result.success || visualizeLoading);
-    })();
-  }, [config, visualizeLoading]);
-
   return (
     <div className="w-full">
       <div
@@ -327,7 +257,10 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             onClick={onHideSynapse}
             disabled={!synapseVis}
             title="Show synapses"
-            className="flex cursor-pointer items-center justify-center gap-1"
+            className={classNames(
+              'cursor-pointer items-center justify-center gap-1',
+              isAlreadyVisualized ? 'flex' : 'hidden'
+            )}
           >
             <EyeInvisibleOutlined
               className={classNames(
@@ -521,7 +454,12 @@ export default function SynapseSet({ modelId, index, field, removeGroup }: Props
             type="button"
           >
             <div className="text-left text-lg font-medium">
-              Filter synapses
+              Filter synapses{' '}
+              {Boolean(synapses?.at(field.name)?.exclusion_rules?.length) && (
+                <span className="text-sm font-light text-gray-500">
+                  ({synapses?.at(field.name)?.exclusion_rules?.length})
+                </span>
+              )}
               {exclusionRuleNotFilled && (
                 <p className="text-sm font-light text-pink-700">
                   Some exclusion rules are missing.

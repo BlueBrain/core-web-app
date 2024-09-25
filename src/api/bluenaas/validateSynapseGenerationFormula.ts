@@ -1,3 +1,4 @@
+import { getSession } from '@/authFetch';
 import { blueNaasUrl } from '@/config';
 
 export default async function validateSynapseGenerationFormula(
@@ -19,4 +20,16 @@ export default async function validateSynapseGenerationFormula(
     return await response.json();
   }
   throw new Error('Formula validation failed');
+}
+
+export async function validateFormula(value: string) {
+  try {
+    const session = await getSession();
+    if (session) {
+      const result = await validateSynapseGenerationFormula(value, session.accessToken);
+      return result;
+    }
+  } catch (error) {
+    return false;
+  }
 }

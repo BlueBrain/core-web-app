@@ -24,7 +24,7 @@ export const DEFAULT_SYNAPSE_VALUE: SingleSynaptomeConfig = {
   formula: undefined,
   seed: undefined,
   exclusion_rules: null,
-  soma_synapse_count: undefined,
+  soma_synapse_count: 50,
   color: SIMULATION_COLORS[0],
 };
 
