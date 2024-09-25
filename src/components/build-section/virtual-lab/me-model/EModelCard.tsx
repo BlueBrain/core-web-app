@@ -47,7 +47,6 @@ export default function EModelCard({ exemplarMorphology, reselectLink = false }:
 
   return (
     <ModelCard
-      exemplarMorphology={exemplarMorphology}
       model={selectedEModel}
       modelType="E-Model"
       selectUrl="configure/e-model"
