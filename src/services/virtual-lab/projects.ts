@@ -3,7 +3,7 @@ import { virtualLabApi } from '@/config';
 import { Project, ProjectResponse } from '@/types/virtual-lab/projects';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
-import authFetch from '@/authFetch';
+import authFetch, { authFetchRetryOnError } from '@/authFetch';
 import { assertVLApiResponse } from '@/util/utils';
 
 export async function getVirtualLabProjects(
@@ -17,7 +17,7 @@ export async function getVirtualLabProjects(
     url.search = params.toString();
   }
 
-  const response = await authFetch(url);
+  const response = await authFetchRetryOnError(url);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
@@ -28,7 +28,7 @@ export async function getVirtualLabProjectDetails(
   virtualLabId: string,
   projectId: string
 ): Promise<ProjectResponse> {
-  const response = await authFetch(
+  const response = await authFetchRetryOnError(
     `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}`
   );
 
@@ -41,15 +41,10 @@ export async function getVirtualLabProjectDetails(
 
 export async function getVirtualLabProjectUsers(
   virtualLabId: string,
-  projectId: string,
-  token: string
+  projectId: string
 ): Promise<UsersResponse> {
-  const response = await fetch(
-    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}/users`,
-    {
-      method: 'GET',
-      headers: createApiHeaders(token),
-    }
+  const response = await authFetchRetryOnError(
+    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}/users`
   );
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
@@ -57,13 +52,8 @@ export async function getVirtualLabProjectUsers(
   return response.json();
 }
 
-export async function getUsersProjects(
-  token: string
-): Promise<VlmResponse<VirtualLabAPIListData<Project>>> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/projects`, {
-    method: 'GET',
-    headers: createApiHeaders(token),
-  });
+export async function getUsersProjects(): Promise<VlmResponse<VirtualLabAPIListData<Project>>> {
+  const response = await authFetchRetryOnError(`${virtualLabApi.url}/virtual-labs/projects`);
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }

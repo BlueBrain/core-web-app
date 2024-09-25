@@ -28,6 +28,7 @@
     "arrow-body-style": "off",
     "class-methods-use-this": "off",
     "consistent-return": "off",
+    "no-plusplus": "off",
     "import/order": [
       "error",
       {
