@@ -8,6 +8,7 @@ import uniqBy from 'lodash/uniqBy';
 import pick from 'lodash/pick';
 import values from 'lodash/values';
 import delay from 'lodash/delay';
+import sortBy from 'lodash/sortBy';
 
 import {
   genericSingleNeuronSimulationPlotDataAtom,
@@ -331,6 +332,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
           recording: jsonData.recording_name,
           amplitude: jsonData.amplitude,
           frequency: jsonData.frequency,
+          varyingKey: jsonData.varying_key,
         };
 
         const currentRecording = get(genericSingleNeuronSimulationPlotDataAtom)![
@@ -353,6 +355,12 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
                     }),
                   }),
           };
+
+          // Sort traces for each plot by `varyingKey` so that the legends appear in sorted order.
+          Object.keys(updatedPlot).forEach((recordingLocation) => {
+            updatedPlot[recordingLocation] = sortBy(updatedPlot[recordingLocation], ['varyingKey']);
+          });
+
           set(genericSingleNeuronSimulationPlotDataAtom, updatedPlot);
         }
       }

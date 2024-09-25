@@ -19,4 +19,5 @@ export type SimulationPlotResponse = {
   recording_name: string;
   amplitude: number;
   frequency?: number;
+  varying_key: number; // For current varying simulations, the varying_key will be = amplitude while for frequency varying simulation it will be = frequency
 };
