@@ -11,10 +11,11 @@ import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import ModelCard from '@/components/build-section/virtual-lab/me-model/ModelCard';
 
 type Props = {
+  exemplarMorphology?: string;
   reselectLink?: boolean;
 };
 
-export default function EModelCard({ reselectLink = false }: Props) {
+export default function EModelCard({ exemplarMorphology, reselectLink = false }: Props) {
   const selectedEModel = useAtomValue(selectedEModelAtom);
   const { virtualLabId, projectId } = useParams<{
     virtualLabId?: string;
@@ -46,6 +47,7 @@ export default function EModelCard({ reselectLink = false }: Props) {
 
   return (
     <ModelCard
+      exemplarMorphology={exemplarMorphology}
       model={selectedEModel}
       modelType="E-Model"
       selectUrl="configure/e-model"

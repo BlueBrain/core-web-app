@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic';
 
+import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
+
 const EModelDetailView = dynamic(
   () => import('@/components/explore-section/EModel/DetailView/View')
 );
@@ -14,7 +16,8 @@ const SynaptomeDetailView = dynamic(
 
 type Params = {
   params: {
-    modelType: string;
+    id: string;
+    modelType: ModelTypeNames;
     projectId: string;
     virtualLabId: string;
   };
