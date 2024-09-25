@@ -140,6 +140,7 @@ export default function ActivityTable() {
   const projectId = params.projectId as string;
   const virtualLabId = params.virtualLabId as string;
   const [dataSource, setDataSource] = useAtom(getAtom(virtualLabId, projectId));
+  const [error, setError] = useState<Error>();
 
   // Hidden for SFN
   // const errorCount = useMemo(() => {
@@ -160,30 +161,34 @@ export default function ActivityTable() {
       const session = await getSession();
       if (!session) return null;
 
-      const hits = await fetchEsResourcesByType(query, undefined, {
-        projectId,
-        virtualLabId,
-      });
+      try {
+        const hits = await fetchEsResourcesByType(query, undefined, {
+          projectId,
+          virtualLabId,
+        });
 
-      const results = (await Promise.all(
-        hits.hits
-          .map((h) => h._source)
-          .filter((r) => !r['@id'].includes('mmb-point-neuron-framework-model'))
-          .map((r) =>
-            fetchResourceById(r['@id'], session, {
-              org: virtualLabId,
-              project: projectId,
-            })
-          )
-      )) as Result[];
-
-      setDataSource(generateRowItems(results, { virtualLabId, projectId }));
-
+        const results = (await Promise.all(
+          hits.hits
+            .map((h) => h._source)
+            .filter((r) => !r['@id'].includes('mmb-point-neuron-framework-model'))
+            .map((r) =>
+              fetchResourceById(r['@id'], session, {
+                org: virtualLabId,
+                project: projectId,
+              })
+            )
+        )) as Result[];
+        setDataSource(generateRowItems(results, { virtualLabId, projectId }));
+      } catch (e: any) {
+        setError(new Error(e));
+      }
       setLoading(false);
     }
 
     fetchResource();
   }, [projectId, virtualLabId, setDataSource]);
+
+  if (error) throw error;
 
   return (
     <div className="flex h-full w-full flex-col">
