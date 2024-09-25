@@ -16,6 +16,7 @@ import { detailUrlWithinLab } from '@/util/common';
 import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { DisplayMessages } from '@/constants/display-messages';
+import { ensureArray } from '@/util/nexus';
 
 type Params = {
   params: {
@@ -63,16 +64,18 @@ function NewMEModelHeader({ projectId, virtualLabId }: Params['params']) {
       value: new Intl.DateTimeFormat('fr-CH').format(new Date()),
     },
     {
-      title: 'm-model',
+      title: 'm-type',
       value:
-        selectedMModel?.annotation?.find(({ '@type': type }) => type.includes('MTypeAnnotation'))
-          ?.hasBody.label || DisplayMessages.NO_DATA_STRING,
+        ensureArray(selectedMModel?.annotation)?.find(({ '@type': type }) =>
+          type.includes('MTypeAnnotation')
+        )?.hasBody.label || DisplayMessages.NO_DATA_STRING,
     },
     {
-      title: 'e-model',
+      title: 'e-type',
       value:
-        selectedEModel?.annotation?.find(({ '@type': type }) => type.includes('ETypeAnnotation'))
-          ?.hasBody.label || DisplayMessages.NO_DATA_STRING,
+        ensureArray(selectedEModel?.annotation)?.find(({ '@type': type }) =>
+          type.includes('ETypeAnnotation')
+        )?.hasBody.label || DisplayMessages.NO_DATA_STRING,
     },
   ];
 

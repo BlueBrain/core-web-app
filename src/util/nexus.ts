@@ -1,4 +1,6 @@
 import pickBy from 'lodash/pickBy';
+import isNil from 'lodash/isNil';
+
 import { nexus } from '@/config';
 import { Distribution, FileMetadata } from '@/types/nexus';
 import { metadataKeys, revParamRegexp } from '@/constants/nexus';
@@ -114,7 +116,8 @@ export function createDistribution(
   };
 }
 
-export function ensureArray<T>(value: T | T[]): T[] {
+export function ensureArray<T>(value: T | T[] | undefined): T[] {
+  if (isNil(value)) return [];
   return Array.isArray(value) ? value : [value].filter((v) => v !== undefined);
 }
 
