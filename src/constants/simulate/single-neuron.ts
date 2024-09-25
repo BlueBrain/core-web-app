@@ -226,5 +226,11 @@ export function calculateRangeOutput(start: number, end: number, step: number) {
     values = [...range(start, end, steps), end];
   }
 
-  return values.map((v) => round(v, 2));
+  return values.map((v) => roundToSignificantFigures(v, 4));
+}
+
+export function roundToSignificantFigures(num: number, sigFigs: number) {
+  if (num === 0) return 0;
+  const multiplier = 10 ** (sigFigs - Math.ceil(Math.log10(Math.abs(num))));
+  return round(num * multiplier) / multiplier;
 }
