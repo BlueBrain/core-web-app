@@ -1,9 +1,10 @@
 'use client';
 
-import { PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Modal, Select, Switch } from 'antd';
 import { useSetAtom } from 'jotai';
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import CreateVirtualLabButton from '../CreateVirtualLabButton';
 import { NewProjectModal } from '../projects/VirtualLabProjectList';
@@ -14,7 +15,7 @@ import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { useAtom } from '@/state/state';
 
-export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
+function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
   const [showOnlyLabs, setShowOnlyLabs] = useState<boolean>(false);
 
   const [, setNewProjectModalOpen] = useAtom<boolean>('new-project-modal-open');
@@ -104,3 +105,12 @@ export default function VirtualLabDashboard({ virtualLabs }: { virtualLabs: Virt
     </>
   );
 }
+
+export default dynamic(() => Promise.resolve(VirtualLabDashboard), {
+  ssr: false,
+  loading: () => (
+    <div className="flex flex-grow items-center justify-center text-3xl text-white">
+      <LoadingOutlined />
+    </div>
+  ),
+});
