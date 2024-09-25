@@ -85,7 +85,7 @@ export default function ReconstrucedMorphologyPage({ params }: Params) {
             className="fit-content sticky bottom-0 ml-auto w-fit bg-primary-8"
             onClick={() => onMorphPicked(selectedRows)}
           >
-            Select morphology
+            Select m-model
           </Btn>
         )}
       />

@@ -41,7 +41,7 @@ export default function ElectrophysiologyPage({ params }: Params) {
   };
 
   const vlProjectUrl = generateVlProjectUrl(params.virtualLabId, params.projectId);
-  const baseExploreUrl = `${vlProjectUrl}/explore/interactive/experimental/electrophysiology`;
+  const baseExploreUrl = `${vlProjectUrl}/explore/interactive/model/e-model`;
 
   const onCellClick: OnCellClick = (_basePath, record) => {
     router.push(detailUrlBuilder(baseExploreUrl, record));

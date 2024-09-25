@@ -1,21 +1,18 @@
 import { useAtomValue } from 'jotai';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 import { selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
-import { classNames } from '@/util/utils';
-import { NeuronMorphology } from '@/types/e-model';
-import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
-import { DataType } from '@/constants/explore-section/list-views';
-import { DisplayMessages } from '@/constants/display-messages';
-import { mTypeSelectorFn } from '@/util/explore-section/selector-functions';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 import { detailUrlWithinLab } from '@/util/common';
 import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
-import Link from '@/components/Link';
+import ModelCard from '@/components/build-section/virtual-lab/me-model/ModelCard';
+import { mTypeSelectorFn } from '@/util/explore-section/selector-functions';
 
-const subtitleStyle = 'uppercase font-thin text-slate-600';
+type Props = {
+  reselectLink?: boolean;
+};
 
-export default function MorphologyCard() {
+export default function MorphologyCard({ reselectLink = false }: Props) {
   const selectedMModel = useAtomValue(selectedMModelAtom);
   const { virtualLabId, projectId } = useParams<{
     virtualLabId?: string;
@@ -38,78 +35,22 @@ export default function MorphologyCard() {
     );
   };
 
-  const router = useRouter();
-
-  if (!selectedMModel)
-    return (
-      <button
-        type="button"
-        onClick={() => {
-          router.push('configure/morphology');
-        }}
-        className="flex h-48 w-full items-center rounded-lg border border-neutral-2 pl-32 text-4xl text-neutral-4 hover:bg-primary-7 hover:text-white"
-      >
-        Select morphology
-      </button>
-    );
+  const details = [
+    { label: 'Brain Region', value: selectedMModel?.brainLocation?.brainRegion?.label },
+    { label: 'Species', value: selectedMModel?.subject?.species?.label },
+    { label: 'License', value: selectedMModel?.license?.['@id'] },
+    { label: 'M-Type', value: selectedMModel ? mTypeSelectorFn(selectedMModel) : undefined },
+    { label: 'Age', value: undefined },
+  ];
 
   return (
-    <div className="w-full rounded-lg border p-10">
-      <div className="flex justify-between">
-        <div className={classNames('text-2xl', subtitleStyle)}>Morphology</div>
-        <Link href={generateDetailUrl()} target="_blank" className="font-bold text-primary-8">
-          More details
-        </Link>
-      </div>
-
-      <div className="mt-2 flex gap-10">
-        <div className="border border-black">
-          <CardVisualization
-            dataType={DataType.ExperimentalNeuronMorphology}
-            resource={selectedMModel}
-            height={200}
-            width={200}
-          />
-        </div>
-        <div className="flex-grow">
-          <div className={subtitleStyle}>NAME</div>
-          <div className="my-1 text-3xl font-bold text-primary-8">{selectedMModel.name}</div>
-          <MorphDetails morph={selectedMModel} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MorphDetails({ morph }: { morph: NeuronMorphology }) {
-  return (
-    <div className="mt-4 grid grid-cols-3 gap-4 text-primary-8">
-      <div>
-        <div className={subtitleStyle}>Brain Region</div>
-        <div>{morph.brainLocation?.brainRegion?.label || DisplayMessages.NO_DATA_STRING}</div>
-      </div>
-
-      <div>
-        <div className={subtitleStyle}>Species</div>
-        <div>{morph.subject?.species?.label || DisplayMessages.NO_DATA_STRING}</div>
-      </div>
-
-      <div>
-        <div className={subtitleStyle}>License</div>
-        <a href={morph.license?.['@id']} target="_blank">
-          Open 🔗
-        </a>
-      </div>
-
-      <div>
-        <div className={subtitleStyle}>M-Type</div>
-        <div>{mTypeSelectorFn(morph) || DisplayMessages.NO_DATA_STRING}</div>
-      </div>
-
-      <div>
-        <div className={subtitleStyle}>Age</div>
-        <div>{DisplayMessages.NO_DATA_STRING}</div>
-      </div>
-    </div>
+    <ModelCard
+      model={selectedMModel}
+      modelType="M-Model"
+      selectUrl="configure/morphology"
+      generateDetailUrl={generateDetailUrl}
+      modelDetails={details}
+      reselectLink={reselectLink}
+    />
   );
 }

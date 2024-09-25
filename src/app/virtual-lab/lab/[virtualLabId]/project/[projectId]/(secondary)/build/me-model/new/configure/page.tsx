@@ -167,8 +167,8 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
       <div className="m-10 flex flex-col gap-8">
         <NewMEModelHeader projectId={projectId} virtualLabId={virtualLabId} />
         <div className="flex flex-col gap-4">
-          <MorphologyCard />
-          <EModelCard />
+          <MorphologyCard reselectLink />
+          <EModelCard reselectLink />
         </div>
       </div>
       {validateTrigger}

@@ -116,7 +116,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
           </Form>
         </div>
         <div className="mr-10 flex-1 text-primary-7">
-          <div className="uppercase text-neutral-4">Contributors</div>
+          <div className="uppercase text-neutral-4">Created by</div>
           <div className="mt-2">
             <ul>{contributors?.map(({ id, name }) => <li key={id}>{name}</li>)}</ul>
           </div>
