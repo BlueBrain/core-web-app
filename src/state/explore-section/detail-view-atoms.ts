@@ -53,7 +53,20 @@ export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>
               rev: info.rev,
             }
       );
+      // TODO: refactor constructing linkedModel
+      if (ensureArray(resource['@type']).includes('MEModel')) {
+        const { linkedMModel, linkedEModel } = await fetchLinkedMandEModels({
+          org: info.org,
+          project: info.project,
+          meModel: resource as unknown as MEModelResource,
+        });
 
+        return {
+          ...resource,
+          linkedMModel,
+          linkedEModel,
+        };
+      }
       if (
         ensureArray(resource['@type']).includes(DataType.SingleNeuronSynaptome) &&
         'used' in resource

@@ -95,12 +95,7 @@ export default function ModelDetails({
               {type === 'synaptome-simulation' && <Field label="ME-Model" value={meModel.name} />}
               {type === 'single-neuron-simulation' && <Field label="M-Model" value={mModel.name} />}
               <Field label="Brain Region" value={meModel.brainLocation?.brainRegion.label ?? ''} />
-              {type === 'single-neuron-simulation' && (
-                <Field
-                  label="M-Type"
-                  value={meModel.mType ?? mModel.mType ?? DisplayMessages.NO_DATA_STRING}
-                />
-              )}
+              {type === 'single-neuron-simulation' && <Field label="M-Type" value={mType} />}
             </div>
             <div className="flex flex-col gap-2">
               {type === 'single-neuron-simulation' && (

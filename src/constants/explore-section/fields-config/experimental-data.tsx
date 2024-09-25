@@ -38,6 +38,8 @@ import { SynapticPosition, SynapticType } from '@/types/explore-section/misc';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DisplayMessages } from '@/constants/display-messages';
+import { getEtypeFromEModel, getMtypeFromMModel } from '@/util/modelMEtypes';
+import { EModel, NeuronMorphology } from '@/types/e-model';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExperiment> = {
   [Field.License]: {
@@ -83,10 +85,14 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
     filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.eType?.label),
-      deltaResourceViewFn: (resource) =>
-        eTypeSelectorFn(
+      deltaResourceViewFn: (resource) => {
+        if ('linkedEModel' in resource) {
+          return selectorFnBasic(getEtypeFromEModel(resource.linkedEModel as EModel));
+        }
+        return eTypeSelectorFn(
           resource as ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
-        ),
+        );
+      },
     },
     vocabulary: {
       plural: 'E-Types',
@@ -105,11 +111,17 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
     title: 'M-Type',
     filter: FilterTypeEnum.CheckList,
     render: {
-      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.mType?.label),
-      deltaResourceViewFn: (resource) =>
-        mTypeSelectorFn(
+      esResourceViewFn: (_t, r) => {
+        return selectorFnBasic(r._source?.mType?.label);
+      },
+      deltaResourceViewFn: (resource) => {
+        if ('linkedMModel' in resource) {
+          return selectorFnBasic(getMtypeFromMModel(resource.linkedMModel as NeuronMorphology));
+        }
+        return mTypeSelectorFn(
           resource as ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
-        ),
+        );
+      },
     },
     vocabulary: {
       plural: 'M-Types',
