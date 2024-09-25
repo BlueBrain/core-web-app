@@ -19,6 +19,9 @@ type Props = {
 };
 
 export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Props) {
+  const url = usePathname().split('/');
+  const currentPage = url[url.length - 1] !== 'new' ? url[url.length - 1] : url[url.length - 2];
+
   const projectUsers = useLoadableValue(
     virtualLabProjectUsersAtomFamily({ virtualLabId, projectId })
   );
@@ -60,8 +63,6 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
     }
     return null;
   }, [bookmarks]);
-
-  const currentPage = usePathname().split('/').pop();
 
   const linkItems: LinkItem[] = [
     { key: LinkItemKey.Home, content: 'Project Home', href: 'home' },

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAtomValue } from 'jotai';
 import find from 'lodash/find';
 import flatMap from 'lodash/flatMap';
+import Link from '@/components/Link';
 
 import { ServerSideComponentProp } from '@/types/common';
 import {
@@ -22,7 +23,6 @@ import { SimulationScopeToModelType } from '@/types/virtual-lab/lab';
 import { detailUrlBuilder, to64 } from '@/util/common';
 import { ensureArray } from '@/util/nexus';
 
-import GenericButton from '@/components/Global/GenericButton';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
@@ -93,11 +93,12 @@ export default function NewSimulation({
             >
               Create a simulation
             </div>
-            <GenericButton
-              text="Cancel"
-              className="text-white hover:text-white"
+            <Link
+              className="flex h-12 items-center gap-2 rounded-none border border-white bg-none px-8 text-white shadow-none"
               href={simulatePage}
-            />
+            >
+              <span>Cancel</span>
+            </Link>
           </div>
           <div className="flex grow flex-col">
             {/* TODO: replace this list with items saved in Model Library */}
