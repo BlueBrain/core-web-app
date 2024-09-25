@@ -21,7 +21,7 @@ export function expandId(collapsedId: string) {
     : `${nexus.defaultIdBaseUrl}/${collapsedId}`;
 }
 
-type ApiGroupType = 'resource' | 'file' | 'view';
+type ApiGroupType = 'resource' | 'file' | 'view' | 'resolver';
 
 export type ComposeUrlParams = {
   schema?: string | null;
@@ -64,7 +64,7 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     `${apiGroupType}s`,
     org,
     project,
-    apiGroupType === 'resource' ? schema : null,
+    apiGroupType === 'resource' || apiGroupType === 'resolver' ? schema : null,
     uriEncodedId,
     source ? 'source' : null,
     viewType ? ViewTypeMap[viewType] : null,

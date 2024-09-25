@@ -235,6 +235,18 @@ export function fetchResourceById<T>(
   }).then<T>((res) => res.json());
 }
 
+export function fetchResourceByIdUsingResolver<T>(
+  id: string,
+  session: Session,
+  options?: ComposeUrlParams,
+  headerExtraOptions?: Record<string, string> | null
+) {
+  const url = composeUrl('resolver', id, options);
+  return fetch(url, {
+    headers: createHeaders(session.accessToken, headerExtraOptions),
+  }).then<T>((res) => res.json());
+}
+
 export function fetchResourceByUrl<T>(url: string, session: Session) {
   return fetch(url, {
     headers: createHeaders(session.accessToken),

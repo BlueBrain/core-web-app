@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Empty, Skeleton } from 'antd';
 
-import { fetchResourceById } from '@/api/nexus';
+import { fetchResourceByIdUsingResolver } from '@/api/nexus';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { NeuronMorphology } from '@/types/e-model';
@@ -24,7 +24,7 @@ export default function MorphPreviewFromId({ id, height, width }: Props) {
     if (!session || !id) return;
 
     setLoading(true);
-    fetchResourceById<NeuronMorphology>(id, session).then((r) => {
+    fetchResourceByIdUsingResolver<NeuronMorphology>(id, session).then((r) => {
       setMorph(r);
       setLoading(false);
     });
