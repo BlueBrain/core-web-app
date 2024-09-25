@@ -39,7 +39,7 @@ export default function EModelCard({ exemplarMorphology, reselectLink = false }:
   };
 
   const details = [
-    { label: 'Examplar morphology', value: undefined },
+    { label: 'Examplar morphology', value: exemplarMorphology },
     { label: 'Optimization target', value: undefined },
     { label: 'Brain Region', value: selectedEModel?.brainLocation?.brainRegion?.label },
     { label: 'E-Type', value: selectedEModel?.eType },
@@ -47,7 +47,6 @@ export default function EModelCard({ exemplarMorphology, reselectLink = false }:
 
   return (
     <ModelCard
-      exemplarMorphology={exemplarMorphology}
       model={selectedEModel}
       modelType="E-Model"
       selectUrl="configure/e-model"

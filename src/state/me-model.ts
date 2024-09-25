@@ -2,7 +2,7 @@ import isEqual from 'lodash/isEqual';
 import { Atom, atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
-import { fetchResourceById } from '@/api/nexus';
+import { fetchResourceById, fetchResourceByIdUsingResolver } from '@/api/nexus';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { EModelConfiguration, EModelWorkflow } from '@/types/e-model'; // TODO: Confirm these types
 import { EModelResource } from '@/types/explore-section/delta-model';
@@ -52,11 +52,9 @@ export const eModelFromMEModelFamily = atomFamily<
 
       if (!eModelId) return null;
 
-      console.log("eModelId", eModelId)
-
       const { projectId, virtualLabId } = resourceInfo;
 
-      const eModel = await fetchResourceById<EModelResource>(eModelId, session, {
+      const eModel = await fetchResourceByIdUsingResolver<EModelResource>(eModelId, session, {
         org: virtualLabId,
         project: projectId,
       });
@@ -79,7 +77,7 @@ export const eModelWorkflowFamily = atomFamily<
 
       const { projectId, virtualLabId } = resourceInfo;
 
-      console.log(eModel)
+      console.log(eModel);
 
       const { '@id': followedWorkflowId } = eModel.generation.activity.followedWorkflow;
 
