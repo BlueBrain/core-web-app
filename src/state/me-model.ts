@@ -41,11 +41,13 @@ export const eModelFromMEModelFamily = atomFamily<
   (resourceInfo) =>
     atom(async (get) => {
       const meModel = await get(mEModelFamily(resourceInfo));
+
       const session = get(sessionAtom);
 
       if (!meModel || !session) return null;
 
       const eModelPart = meModel.hasPart?.find(({ '@type': type }) => type === 'EModel');
+
       const { '@id': eModelId } = eModelPart ?? {};
 
       if (!eModelId) return null;
