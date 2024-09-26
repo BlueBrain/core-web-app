@@ -378,7 +378,7 @@ export interface NeuronMorphology extends Entity {
   ];
   contribution: ContributionEntity;
   distribution: Distribution[];
-  objectOfStudy: EModelObjectOfStudy;
+  objectOfStudy?: EModelObjectOfStudy;
   name: string;
   description: string;
   brainLocation?: {

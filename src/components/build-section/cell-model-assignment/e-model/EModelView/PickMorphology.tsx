@@ -5,10 +5,10 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { DataType } from '@/constants/explore-section/list-views';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/useRowSelection';
 import { eModelUIConfigAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
-import { convertMorphologyForUI } from '@/services/e-model';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
 import { ExploreDataScope } from '@/types/explore-section/application';
+import { convertESMorphologyForUI } from '@/services/e-model';
 
 type Props = {
   isOpen: boolean;
@@ -28,7 +28,7 @@ export default function PickMorphology({ isOpen, onCancel, onOk }: Props) {
       const savedMorphs = oldAtomData?.morphologies?.length ? [...oldAtomData.morphologies] : [];
       const savedMorphIds = savedMorphs.map((t) => t['@id']);
       const newRows = selectedRows.filter((row) => !savedMorphIds.includes(row._source['@id']));
-      const selectedMorphs = newRows.map((row) => convertMorphologyForUI(row._source));
+      const selectedMorphs = newRows.map((row) => convertESMorphologyForUI(row._source));
 
       return {
         ...oldAtomData,

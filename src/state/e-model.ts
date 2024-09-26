@@ -3,12 +3,12 @@ import { Atom, atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
 import { fetchResourceById, fetchResourceByIdUsingResolver } from '@/api/nexus';
-import { EModelConfiguration, EModelWorkflow } from '@/types/e-model'; // TODO: Confirm these types
+import { EModelConfiguration, EModelWorkflow, ExemplarMorphologyDataType } from '@/types/e-model'; // TODO: Confirm these types
 import { EModelResource } from '@/types/explore-section/delta-model';
 
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import sessionAtom from '@/state/session';
-import { convertMorphologyForUI } from '@/services/e-model';
+import { convertDeltaMorphologyForUI } from '@/services/e-model';
 
 export type ModelResourceInfo = {
   eModelId: string;
@@ -89,7 +89,7 @@ export const eModelConfigurationFamily = atomFamily<
 
 export const eModelExemplarMorphologyFamily = atomFamily<
   Omit<ModelResourceInfo, 'eModelId'> & { eModelId?: string },
-  Atom<Promise<ReconstructedNeuronMorphology | null>>
+  Atom<Promise<ExemplarMorphologyDataType | null>>
 >(
   (resourceInfo) =>
     atom(async (get) => {
@@ -114,7 +114,7 @@ export const eModelExemplarMorphologyFamily = atomFamily<
           session
         );
 
-      return convertMorphologyForUI(exemplarMorphology);
+      return convertDeltaMorphologyForUI(exemplarMorphology);
     }),
   isEqual
 );

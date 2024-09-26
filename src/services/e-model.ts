@@ -10,7 +10,6 @@ import {
   FeatureCategory,
   FeatureItem,
   FeatureParameterGroup,
-  NeuronMorphology,
   SimulationParameter,
   SpikeEventFeatureKeys,
   SpikeShapeFeatureKeys,
@@ -25,8 +24,11 @@ import {
   voltageFeatures,
   featureDescriptionsMap,
 } from '@/constants/cell-model-assignment/e-model';
-import { ExperimentalTrace } from '@/types/explore-section/es-experiment';
-import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
+import {
+  ExperimentalTrace as ESExperimentalTrace,
+  ReconstructedNeuronMorphology as ESReconstructedNeuronMorphology,
+} from '@/types/explore-section/es-experiment';
+import { ReconstructedNeuronMorphology as DeltaReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import { DisplayMessages } from '@/constants/display-messages';
 
 export function convertRemoteParamsForUI(
@@ -54,10 +56,42 @@ export function convertRemoteParamsForUI(
   };
 }
 
-export function convertMorphologyForUI(
-  remoteMorphology: NeuronMorphology | ReconstructedNeuronMorphology
+export function convertDeltaMorphologyForUI(
+  remoteMorphology: DeltaReconstructedNeuronMorphology
 ): ExemplarMorphologyDataType {
-  const swcDistribution = remoteMorphology.distribution.find(
+  const swcDistribution = ensureArray(remoteMorphology.distribution).find(
+    (d) => d.encodingFormat === 'application/swc'
+  );
+  if (!swcDistribution) throw new Error('No swc in distribution');
+  const commonProps = {
+    '@id': remoteMorphology['@id'],
+    '@type': remoteMorphology['@type'],
+    name: remoteMorphology.name,
+    description: remoteMorphology?.description || DisplayMessages.NO_DATA_STRING,
+    isPlaceholder: remoteMorphology['@type'].includes('SynthesizedNeuronMorphology'),
+    distribution: swcDistribution,
+  };
+
+  return {
+    ...commonProps,
+    brainLocation:
+      remoteMorphology?.brainLocation?.brainRegion?.label || DisplayMessages.NO_DATA_STRING,
+    mType:
+      ensureArray(remoteMorphology?.annotation).find(({ hasBody }) =>
+        ensureArray(hasBody['@type']).includes('MType')
+      )?.hasBody.label || DisplayMessages.NO_DATA_STRING,
+    contributor:
+      ensureArray(remoteMorphology.contribution)
+        .filter((contributor) => contributor.agent.name)
+        .map((contributor) => contributor.agent.name)
+        .join(' - ') || DisplayMessages.NO_DATA_STRING,
+  };
+}
+
+export function convertESMorphologyForUI(
+  remoteMorphology: ESReconstructedNeuronMorphology
+): ExemplarMorphologyDataType {
+  const swcDistribution = ensureArray(remoteMorphology.distribution).find(
     (d) => d.encodingFormat === 'application/swc'
   );
   if (!swcDistribution) throw new Error('No swc in distribution');
@@ -71,20 +105,6 @@ export function convertMorphologyForUI(
     distribution: swcDistribution,
   };
 
-  if ('objectOfStudy' in remoteMorphology) {
-    // morph from e-model pipeline - NeuronMorphology
-    return {
-      ...commonProps,
-      brainLocation:
-        remoteMorphology?.brainLocation?.brainRegion?.label || DisplayMessages.NO_DATA_STRING,
-      mType:
-        remoteMorphology?.annotation.find(({ hasBody }) =>
-          ensureArray(hasBody['@type']).includes('MType')
-        ).hasBody.label || DisplayMessages.NO_DATA_STRING,
-      contributor: DisplayMessages.NO_DATA_STRING,
-    };
-  }
-
   return {
     // morph from search table - ReconstructedNeuronMorphology
     ...commonProps,
@@ -94,7 +114,7 @@ export function convertMorphologyForUI(
   };
 }
 
-export function convertTraceForUI(trace: Trace | ExperimentalTrace): ExperimentalTracesDataType {
+export function convertTraceForUI(trace: Trace | ESExperimentalTrace): ExperimentalTracesDataType {
   const commonProps = {
     '@id': trace['@id'],
     '@type': trace['@type'],
