@@ -89,13 +89,13 @@ export const selectedEModelResourceAtom = atom(async (get) => {
   return await retrieveESResourceByID(eModelId);
 });
 
-export const selectedEModelOrgAtom = atom(async (get) => {
+const selectedEModelOrgAtom = atom(async (get) => {
   const resource = await get(selectedEModelResourceAtom);
   if (!resource) return;
   return getOrgFromSelfUrl(resource._self);
 });
 
-export const selectedEModelProjectAtom = atom(async (get) => {
+const selectedEModelProjectAtom = atom(async (get) => {
   const resource = await get(selectedEModelResourceAtom);
   if (!resource) return;
   return getProjectFromSelfUrl(resource._self);
