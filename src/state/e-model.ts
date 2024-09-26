@@ -50,7 +50,8 @@ export const eModelWorkflowFamily = atomFamily<
 
       const followedWorkflow = await fetchResourceByIdUsingResolver<EModelWorkflow>(
         followedWorkflowId,
-        session
+        session,
+        { org: resourceInfo.virtualLabId, project: resourceInfo.projectId }
       );
 
       return followedWorkflow;
@@ -79,7 +80,8 @@ export const eModelConfigurationFamily = atomFamily<
 
       const eModelConfiguration = await fetchResourceByIdUsingResolver<EModelConfiguration>(
         eModelConfigurationId,
-        session
+        session,
+        { org: resourceInfo.virtualLabId, project: resourceInfo.projectId }
       );
 
       return eModelConfiguration;
@@ -111,7 +113,8 @@ export const eModelExemplarMorphologyFamily = atomFamily<
       const exemplarMorphology =
         await fetchResourceByIdUsingResolver<ReconstructedNeuronMorphology>(
           exemplarMorphologyId,
-          session
+          session,
+          { org: resourceInfo.virtualLabId, project: resourceInfo.projectId }
         );
 
       return convertDeltaMorphologyForUI(exemplarMorphology);

@@ -9,6 +9,7 @@ import ModelCard from '@/components/build-section/virtual-lab/me-model/ModelCard
 import { mTypeSelectorFn } from '@/util/explore-section/selector-functions';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import { DataType } from '@/constants/explore-section/list-views';
+import { DisplayMessages } from '@/constants/display-messages';
 
 type Props = {
   reselectLink?: boolean;
@@ -40,7 +41,16 @@ export default function MorphologyCard({ reselectLink = false }: Props) {
   const details = [
     { label: 'Brain Region', value: selectedMModel?.brainLocation?.brainRegion?.label },
     { label: 'Species', value: selectedMModel?.subject?.species?.label },
-    { label: 'License', value: selectedMModel?.license?.['@id'] },
+    {
+      label: 'License',
+      value: selectedMModel?.license?.['@id'] ? (
+        <a href={selectedMModel?.license?.['@id']} target="_blank">
+          Open 🔗
+        </a>
+      ) : (
+        DisplayMessages.NO_DATA_STRING
+      ),
+    },
     { label: 'M-Type', value: selectedMModel ? mTypeSelectorFn(selectedMModel) : undefined },
     { label: 'Age', value: undefined },
   ];

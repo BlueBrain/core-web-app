@@ -9,7 +9,7 @@ const subtitleStyle = 'uppercase font-thin text-slate-600';
 
 type Detail = {
   label: string;
-  value: string | undefined;
+  value: string | ReactNode | undefined;
 };
 
 type ModelDetailsProps = {

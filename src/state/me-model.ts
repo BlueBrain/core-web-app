@@ -45,7 +45,7 @@ export const eModelFromMEModelFamily = atomFamily<
 
       if (!meModel || !session) return null;
 
-      const eModelPart = meModel.hasPart.find(({ '@type': type }) => type === 'EModel');
+      const eModelPart = meModel.hasPart?.find(({ '@type': type }) => type === 'EModel');
       const { '@id': eModelId } = eModelPart ?? {};
 
       if (!eModelId) return null;
