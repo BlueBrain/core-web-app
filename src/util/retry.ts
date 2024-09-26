@@ -3,14 +3,14 @@ import { captureException, captureMessage } from '@sentry/nextjs';
 type RetryParams = {
   readonly retries?: number;
   readonly delaySecs?: number;
-  readonly shouldRetryOnException?: boolean;
+  readonly shouldRetryOnException?: (e: any) => boolean;
   readonly shouldRetryOnError?: (status: number) => boolean;
 };
 
 const RETRY_DEFAULT = 3;
 const DELAY_SECS_DEFAULT = 1;
 const DEFAULT_SHOULD_RETRY_ON_ERROR = () => false; // By default don't retry on errors
-const DEFAULT_SHOULD_RETRY_ON_EXCEPTION = true; // By default retry on exceptions
+const DEFAULT_SHOULD_RETRY_ON_EXCEPTION = (e: any) => !(e instanceof DOMException); // By default don't retry on DOMException (inc AbortError)
 
 const RETRY_DEFAULTS: RetryParams = {
   retries: RETRY_DEFAULT,
@@ -42,7 +42,7 @@ export function retry<Fn extends (...args: any[]) => Promise<Response>>({
             return res as ReturnType<Fn>;
           }
         } catch (error) {
-          if (tryCount === tries - 1 || !shouldRetryOnException) {
+          if (tryCount === tries - 1 || !shouldRetryOnException(error)) {
             throw error; // Throw on last retry if an error occurs
           } else {
             captureException(error);
