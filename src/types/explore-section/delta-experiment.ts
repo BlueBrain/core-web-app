@@ -61,6 +61,7 @@ export type ExperimentalTrace = ExperimentResource & {
 };
 
 export type ReconstructedNeuronMorphology = ExperimentResource & {
+  annotation: Annotation | Annotation[];
   atlasRelease: IdWithType<string[]>;
   dateCreated: TypeWithDate;
   derivation: Derivation | Derivation[];

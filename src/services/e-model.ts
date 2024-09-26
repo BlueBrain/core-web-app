@@ -25,10 +25,8 @@ import {
   voltageFeatures,
   featureDescriptionsMap,
 } from '@/constants/cell-model-assignment/e-model';
-import {
-  ExperimentalTrace,
-  ReconstructedNeuronMorphology,
-} from '@/types/explore-section/es-experiment';
+import { ExperimentalTrace } from '@/types/explore-section/es-experiment';
+import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import { DisplayMessages } from '@/constants/display-messages';
 
 export function convertRemoteParamsForUI(
@@ -79,8 +77,11 @@ export function convertMorphologyForUI(
       ...commonProps,
       brainLocation:
         remoteMorphology?.brainLocation?.brainRegion?.label || DisplayMessages.NO_DATA_STRING,
-      mType: DisplayMessages.NO_DATA_STRING,
-      contributor: remoteMorphology?.contribution?.agent?.name || DisplayMessages.NO_DATA_STRING,
+      mType:
+        remoteMorphology?.annotation.find(({ hasBody }) =>
+          ensureArray(hasBody['@type']).includes('MType')
+        ).hasBody.label || DisplayMessages.NO_DATA_STRING,
+      contributor: DisplayMessages.NO_DATA_STRING,
     };
   }
 

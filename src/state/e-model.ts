@@ -8,6 +8,7 @@ import { EModelResource } from '@/types/explore-section/delta-model';
 
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import sessionAtom from '@/state/session';
+import { convertMorphologyForUI } from '@/services/e-model';
 
 export type ModelResourceInfo = {
   eModelId: string;
@@ -113,7 +114,7 @@ export const eModelExemplarMorphologyFamily = atomFamily<
           session
         );
 
-      return exemplarMorphology;
+      return convertMorphologyForUI(exemplarMorphology);
     }),
   isEqual
 );

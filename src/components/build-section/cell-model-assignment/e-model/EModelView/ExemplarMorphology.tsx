@@ -38,18 +38,18 @@ const defaultColumns: ColumnsType<ExemplarMorphologyDataType> = [
   },
   {
     title: 'BRAIN LOCATION',
-    dataIndex: 'brainLocation.brainRegion.label',
-    key: 'brainLocation.brainRegion.label',
+    dataIndex: 'brainLocation',
+    key: 'brainLocation',
   },
   {
     title: 'M-TYPE',
     dataIndex: 'mType',
-    key: 'annotation.hasType.label',
+    key: 'mType',
   },
   {
     title: 'CONTRIBUTOR',
     dataIndex: 'contributor',
-    key: 'contribution',
+    key: 'contributor',
   },
 ];
 
@@ -78,8 +78,6 @@ export default function ExemplarMorphology({ params }: { params: Params }) {
   );
 
   const exemplarMorphology = eModelExemplarMorphology;
-
-  console.log(exemplarMorphology)
 
   const eModelEditMode = useAtomValue(eModelEditModeAtom);
   const [eModelUIConfig, setEModelUIConfig] = useAtom(eModelUIConfigAtom);
