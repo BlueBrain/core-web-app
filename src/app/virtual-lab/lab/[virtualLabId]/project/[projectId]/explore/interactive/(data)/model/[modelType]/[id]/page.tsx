@@ -26,7 +26,7 @@ type Params = {
 export default function DetailPage({ params }: Params) {
   switch (params.modelType) {
     case 'e-model':
-      return <EModelDetailView />;
+      return <EModelDetailView params={params} />;
     case 'me-model':
       return <MEModelDetailView params={params} />;
     case 'synaptome':

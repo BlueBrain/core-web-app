@@ -5,59 +5,31 @@ import { atomFamily } from 'jotai/utils';
 import { fetchResourceById, fetchResourceByIdUsingResolver } from '@/api/nexus';
 import { EModelConfiguration, EModelWorkflow } from '@/types/e-model'; // TODO: Confirm these types
 import { EModelResource } from '@/types/explore-section/delta-model';
-import { MEModelResource } from '@/types/me-model'; // TODO: Confirm this type
 
+import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import sessionAtom from '@/state/session';
 
 export type ModelResourceInfo = {
-  meModelId: string;
+  eModelId: string;
   projectId: string;
   virtualLabId: string;
 };
 
-export const mEModelFamily = atomFamily<ModelResourceInfo, Atom<Promise<MEModelResource | null>>>(
+export const eModelFamily = atomFamily<ModelResourceInfo, Atom<Promise<EModelResource | null>>>(
   (resourceInfo) =>
     atom(async (get) => {
-      const { meModelId, projectId, virtualLabId } = resourceInfo;
+      const { eModelId, projectId, virtualLabId } = resourceInfo;
 
       const session = get(sessionAtom);
 
       if (!session) return null;
 
-      const model = await fetchResourceById<MEModelResource>(meModelId, session, {
-        org: virtualLabId,
+      const model = await fetchResourceById<EModelResource>(eModelId, session, {
         project: projectId,
+        org: virtualLabId,
       });
 
       return model;
-    }),
-  isEqual
-);
-
-export const eModelFromMEModelFamily = atomFamily<
-  ModelResourceInfo,
-  Atom<Promise<EModelResource | null>>
->(
-  (resourceInfo) =>
-    atom(async (get) => {
-      const meModel = await get(mEModelFamily(resourceInfo));
-      const session = get(sessionAtom);
-
-      if (!meModel || !session) return null;
-
-      const eModelPart = meModel.hasPart.find(({ '@type': type }) => type === 'EModel');
-      const { '@id': eModelId } = eModelPart ?? {};
-
-      if (!eModelId) return null;
-
-      const { projectId, virtualLabId } = resourceInfo;
-
-      const eModel = await fetchResourceByIdUsingResolver<EModelResource>(eModelId, session, {
-        org: virtualLabId,
-        project: projectId,
-      });
-
-      return eModel;
     }),
   isEqual
 );
@@ -68,22 +40,16 @@ export const eModelWorkflowFamily = atomFamily<
 >(
   (resourceInfo) =>
     atom(async (get) => {
-      const eModel = await get(eModelFromMEModelFamily(resourceInfo));
+      const eModel = await get(eModelFamily(resourceInfo));
       const session = get(sessionAtom);
 
       if (!eModel || !session) return null;
-
-      const { projectId, virtualLabId } = resourceInfo;
 
       const { '@id': followedWorkflowId } = eModel.generation.activity.followedWorkflow;
 
       const followedWorkflow = await fetchResourceByIdUsingResolver<EModelWorkflow>(
         followedWorkflowId,
-        session,
-        {
-          org: virtualLabId,
-          project: projectId,
-        }
+        session
       );
 
       return followedWorkflow;
@@ -110,18 +76,44 @@ export const eModelConfigurationFamily = atomFamily<
 
       if (!eModelConfigurationId) return null;
 
-      const { projectId, virtualLabId } = resourceInfo;
-
       const eModelConfiguration = await fetchResourceByIdUsingResolver<EModelConfiguration>(
         eModelConfigurationId,
-        session,
-        {
-          org: virtualLabId,
-          project: projectId,
-        }
+        session
       );
 
       return eModelConfiguration;
+    }),
+  isEqual
+);
+
+export const eModelExemplarMorphologyFamily = atomFamily<
+  Omit<ModelResourceInfo, 'eModelId'> & { eModelId?: string },
+  Atom<Promise<ReconstructedNeuronMorphology | null>>
+>(
+  (resourceInfo) =>
+    atom(async (get) => {
+      if (!resourceInfo.eModelId) return null;
+
+      const eModelConfiguration = await get(
+        eModelConfigurationFamily(resourceInfo as ModelResourceInfo)
+      );
+      const session = get(sessionAtom);
+
+      if (!eModelConfiguration || !session) return null;
+
+      const exemplarMorphologyId = eModelConfiguration.uses.find(
+        ({ '@type': type }) => type === 'NeuronMorphology'
+      )?.['@id'];
+
+      if (!exemplarMorphologyId) return null;
+
+      const exemplarMorphology =
+        await fetchResourceByIdUsingResolver<ReconstructedNeuronMorphology>(
+          exemplarMorphologyId,
+          session
+        );
+
+      return exemplarMorphology;
     }),
   isEqual
 );

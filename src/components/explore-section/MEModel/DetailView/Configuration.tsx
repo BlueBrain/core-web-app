@@ -19,7 +19,7 @@ export default function Configuration({
 
   const eModelConfiguration = useUnwrappedValue(
     eModelConfigurationFamily({
-      modelId: meModelId,
+      meModelId,
       modelType,
       projectId,
       virtualLabId,

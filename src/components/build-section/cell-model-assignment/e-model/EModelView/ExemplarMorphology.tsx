@@ -7,14 +7,20 @@ import DefaultEModelTable from './DefaultEModelTable';
 import Header from './Header';
 import PickMorphology from './PickMorphology';
 import ErrorMessageLine, { StandardFallback } from './ErrorMessageLine';
+
 import {
   eModelEditModeAtom,
   eModelUIConfigAtom,
-  exemplarMorphologyAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { useUnwrappedValue } from '@/hooks/hooks';
 import { ExemplarMorphologyDataType } from '@/types/e-model';
 import GenericButton from '@/components/Global/GenericButton';
 import { previewRender } from '@/constants/explore-section/fields-config/common';
+import { eModelExemplarMorphologyFamily } from '@/state/e-model';
+import { detailFamily } from '@/state/explore-section/detail-view-atoms';
+import { from64 } from '@/util/common';
+
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 const nameRenderFn = (name: string) => <div className="font-bold">{name}</div>;
 
@@ -32,23 +38,49 @@ const defaultColumns: ColumnsType<ExemplarMorphologyDataType> = [
   },
   {
     title: 'BRAIN LOCATION',
-    dataIndex: 'brainLocation',
-    key: 'brainLocation',
+    dataIndex: 'brainLocation.brainRegion.label',
+    key: 'brainLocation.brainRegion.label',
   },
   {
     title: 'M-TYPE',
     dataIndex: 'mType',
-    key: 'mType',
+    key: 'annotation.hasType.label',
   },
   {
     title: 'CONTRIBUTOR',
     dataIndex: 'contributor',
-    key: 'contributor',
+    key: 'contribution',
   },
 ];
 
-export default function ExemplarMorphology() {
-  const exemplarMorphology = useAtomValue(exemplarMorphologyAtom);
+type Params = {
+  id: string;
+  projectId: string;
+  virtualLabId: string;
+};
+
+export default function ExemplarMorphology({ params }: { params: Params }) {
+  const { id } = params;
+
+  const [orgProj] = from64(id).split('!/!');
+  const [org, proj] = orgProj.split('/');
+
+  const info = useResourceInfoFromPath();
+
+  const detail = useUnwrappedValue(detailFamily(info));
+
+  const eModelExemplarMorphology = useUnwrappedValue(
+    eModelExemplarMorphologyFamily({
+      eModelId: detail?.['@id'],
+      projectId: proj,
+      virtualLabId: org,
+    })
+  );
+
+  const exemplarMorphology = eModelExemplarMorphology;
+
+  console.log(exemplarMorphology)
+
   const eModelEditMode = useAtomValue(eModelEditModeAtom);
   const [eModelUIConfig, setEModelUIConfig] = useAtom(eModelUIConfigAtom);
   const [openPicker, setOpenPicker] = useState(false);

@@ -7,7 +7,6 @@ import Link from 'next/link';
 
 import { Analysis, Configuration, Simulation } from '.';
 
-import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import {
   DataTypeToNewSimulationPage,
   DataTypeToNexusType,
@@ -34,7 +33,6 @@ import { to64 } from '@/util/common';
 
 type Params = {
   id: string;
-  modelType: ModelTypeNames;
   projectId: string;
   virtualLabId: string;
 };
