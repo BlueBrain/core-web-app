@@ -9,9 +9,9 @@ import { from64 } from '@/util/common';
 export default function Configuration({
   params,
 }: {
-  params: Omit<ModelResourceInfo, 'modelId'> & { id: string };
+  params: Omit<ModelResourceInfo, 'meModelId'> & { id: string };
 }) {
-  const { modelType, virtualLabId, projectId, id: labProjectMeModelCombo } = params;
+  const { virtualLabId, projectId, id: labProjectMeModelCombo } = params;
 
   const [, meModelIdWithWeirdThingOnEnd] = from64(labProjectMeModelCombo).split('!/!');
 
@@ -20,7 +20,6 @@ export default function Configuration({
   const eModelConfiguration = useUnwrappedValue(
     eModelConfigurationFamily({
       meModelId,
-      modelType,
       projectId,
       virtualLabId,
     })

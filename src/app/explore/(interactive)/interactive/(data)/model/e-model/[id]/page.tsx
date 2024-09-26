@@ -24,7 +24,13 @@ export default function EModelDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <If id="configuration" condition={activeTab === 'configuration'}>
-        <Configuration />
+        <Configuration
+          params={{
+            id: '',
+            projectId: '',
+            virtualLabId: '',
+          }}
+        />
       </If>
       <If id="analysis" condition={activeTab === 'analysis'}>
         <Analysis />
