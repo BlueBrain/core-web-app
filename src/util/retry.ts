@@ -4,10 +4,10 @@ type RetryParams = {
   readonly retries?: number;
   readonly delaySecs?: number;
   readonly shouldRetryOnException?: (e: any) => boolean;
-  readonly shouldRetryOnError?: (status: number) => boolean;
+  readonly shouldRetryOnError?: (requestInit: RequestInit, res: Response) => boolean;
 };
 
-const RETRY_DEFAULT = 3;
+const RETRY_DEFAULT = 2;
 const DELAY_SECS_DEFAULT = 1;
 const DEFAULT_SHOULD_RETRY_ON_ERROR = () => false; // By default don't retry on errors
 const DEFAULT_SHOULD_RETRY_ON_EXCEPTION = (e: any) => !(e instanceof DOMException); // By default don't retry on DOMException (inc AbortError)
@@ -38,7 +38,7 @@ export function retry<Fn extends (...args: any[]) => Promise<Response>>({
         try {
           res = await fn(...args);
 
-          if (res.ok || !shouldRetryOnError(res.status) || tryCount === tries - 1) {
+          if (res.ok || !shouldRetryOnError(args[1] ?? {}, res) || tryCount === tries - 1) {
             return res as ReturnType<Fn>;
           }
         } catch (error) {
@@ -49,7 +49,7 @@ export function retry<Fn extends (...args: any[]) => Promise<Response>>({
           }
         }
 
-        const delay = delaySecs * 2 ** tryCount * 1000; // Exponential backoff
+        const delay = Math.random() * delaySecs * 2 ** tryCount * 1000; // Exponential backoff with full-jitter
 
         captureMessage(`Request failed, retrying`, {
           extra: {
