@@ -38,18 +38,18 @@ const defaultColumns: ColumnsType<ExemplarMorphologyDataType> = [
   },
   {
     title: 'BRAIN LOCATION',
-    dataIndex: 'brainLocation',
-    key: 'brainLocation',
+    dataIndex: 'brainLocation.brainRegion.label',
+    key: 'brainLocation.brainRegion.label',
   },
   {
     title: 'M-TYPE',
     dataIndex: 'mType',
-    key: 'mType',
+    key: 'annotation.hasType.label',
   },
   {
     title: 'CONTRIBUTOR',
     dataIndex: 'contributor',
-    key: 'contributor',
+    key: 'contribution',
   },
 ];
 
