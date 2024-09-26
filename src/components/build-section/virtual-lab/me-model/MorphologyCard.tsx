@@ -7,6 +7,8 @@ import { detailUrlWithinLab } from '@/util/common';
 import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import ModelCard from '@/components/build-section/virtual-lab/me-model/ModelCard';
 import { mTypeSelectorFn } from '@/util/explore-section/selector-functions';
+import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
+import { DataType } from '@/constants/explore-section/list-views';
 
 type Props = {
   reselectLink?: boolean;
@@ -50,6 +52,18 @@ export default function MorphologyCard({ reselectLink = false }: Props) {
       selectUrl="configure/morphology"
       generateDetailUrl={generateDetailUrl}
       modelDetails={details}
+      thumbnail={
+        selectedMModel && (
+          <div className="border border-black">
+            <CardVisualization
+              dataType={DataType.ExperimentalNeuronMorphology}
+              resource={selectedMModel}
+              height={200}
+              width={200}
+            />
+          </div>
+        )
+      }
       reselectLink={reselectLink}
     />
   );

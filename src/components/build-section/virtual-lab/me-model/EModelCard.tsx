@@ -51,6 +51,7 @@ export default function EModelCard({ reselectLink = false }: Props) {
       selectUrl="configure/e-model"
       generateDetailUrl={generateDetailUrl}
       modelDetails={details}
+      thumbnail={selectedEModel && <EModelThumbnail emodel={selectedEModel} />}
       reselectLink={reselectLink}
     />
   );
