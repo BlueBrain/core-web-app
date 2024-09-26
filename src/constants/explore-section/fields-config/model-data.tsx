@@ -84,7 +84,11 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
         const { _source: source } = record;
 
         const morphId = (source as ESmeModel)?.memodel?.neuronMorphology?.['@id'] || '';
-        return <MorphPreviewFromId id={morphId} height={116} width={184} />;
+        const org = (source as ESmeModel)?.project.label.split('/')[0] || '';
+        const project = (source as ESmeModel)?.project.label.split('/')[1] || '';
+        return (
+          <MorphPreviewFromId id={morphId} org={org} project={project} height={116} width={184} />
+        );
       },
     },
     vocabulary: {
