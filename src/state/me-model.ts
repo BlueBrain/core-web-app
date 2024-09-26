@@ -77,11 +77,9 @@ export const eModelWorkflowFamily = atomFamily<
 
       const { projectId, virtualLabId } = resourceInfo;
 
-      console.log(eModel);
-
       const { '@id': followedWorkflowId } = eModel.generation.activity.followedWorkflow;
 
-      const followedWorkflow = await fetchResourceById<EModelWorkflow>(
+      const followedWorkflow = await fetchResourceByIdUsingResolver<EModelWorkflow>(
         followedWorkflowId,
         session,
         {
@@ -116,7 +114,7 @@ export const eModelConfigurationFamily = atomFamily<
 
       const { projectId, virtualLabId } = resourceInfo;
 
-      const eModelConfiguration = await fetchResourceById<EModelConfiguration>(
+      const eModelConfiguration = await fetchResourceByIdUsingResolver<EModelConfiguration>(
         eModelConfigurationId,
         session,
         {
