@@ -2,13 +2,22 @@ import isEqual from 'lodash/isEqual';
 import { Atom, atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
-import { fetchResourceById, fetchResourceByIdUsingResolver } from '@/api/nexus';
-import { EModelConfiguration, EModelWorkflow, ExemplarMorphologyDataType } from '@/types/e-model'; // TODO: Confirm these types
+import { fetchResourceById, fetchResourceByIdUsingResolver, queryES } from '@/api/nexus';
+import {
+  EModelConfiguration,
+  EModelWorkflow,
+  ExemplarMorphologyDataType,
+  ExperimentalTracesDataType,
+  ExtractionTargetsConfiguration,
+  Trace,
+} from '@/types/e-model'; // TODO: Confirm these types
 import { EModelResource } from '@/types/explore-section/delta-model';
 
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import sessionAtom from '@/state/session';
-import { convertDeltaMorphologyForUI } from '@/services/e-model';
+import { convertDeltaMorphologyForUI, convertTraceForUI } from '@/services/e-model';
+import { ensureArray } from '@/util/nexus';
+import { getEntityListByIdsQuery } from '@/queries/es';
 
 export type ModelResourceInfo = {
   eModelId: string;
@@ -25,7 +34,7 @@ export const eModelFamily = atomFamily<ModelResourceInfo, Atom<Promise<EModelRes
 
       if (!session) return null;
 
-      const model = await fetchResourceById<EModelResource>(eModelId, session, {
+      const model = await fetchResourceByIdUsingResolver<EModelResource>(eModelId, session, {
         project: projectId,
         org: virtualLabId,
       });
@@ -118,6 +127,75 @@ export const eModelExemplarMorphologyFamily = atomFamily<
         );
 
       return convertDeltaMorphologyForUI(exemplarMorphology);
+    }),
+  isEqual
+);
+
+const eModelExtractionTargetsConfigurationIdAtom = atomFamily<
+  ModelResourceInfo,
+  Atom<Promise<string | null>>
+>(
+  (resourceInfo) =>
+    atom(async (get) => {
+      const eModelWorkflow = await get(eModelWorkflowFamily(resourceInfo));
+
+      if (!eModelWorkflow) return null;
+
+      const extractionTargetsConfiguration = ensureArray(eModelWorkflow.hasPart).find(
+        (part) => part['@type'] === 'ExtractionTargetsConfiguration'
+      );
+
+      if (!extractionTargetsConfiguration)
+        throw new Error('No ExtractionTargetsConfiguration found on EModelWorkflow');
+
+      return extractionTargetsConfiguration['@id'];
+    }),
+  isEqual
+);
+
+const eModelExtractionTargetsConfigurationAtom = atomFamily<
+  ModelResourceInfo,
+  Atom<Promise<ExtractionTargetsConfiguration | null>>
+>((resourceInfo) =>
+  atom(async (get) => {
+    const session = get(sessionAtom);
+    const eModelExtractionTargetsConfigurationId = await get(
+      eModelExtractionTargetsConfigurationIdAtom(resourceInfo)
+    );
+
+    if (!session || !eModelExtractionTargetsConfigurationId) return null;
+
+    return fetchResourceById<ExtractionTargetsConfiguration>(
+      eModelExtractionTargetsConfigurationId,
+      session
+    );
+  })
+);
+
+export const experimentalTracesAtomFamily = atomFamily<
+  ModelResourceInfo,
+  Atom<Promise<ExperimentalTracesDataType[] | null>>
+>(
+  (resourceInfo) =>
+    atom(async (get) => {
+      const session = get(sessionAtom);
+      const eModelExtractionTargetsConfiguration = await get(
+        eModelExtractionTargetsConfigurationAtom(resourceInfo)
+      );
+
+      if (!eModelExtractionTargetsConfiguration || !session) return null;
+
+      const traceIds = ensureArray(eModelExtractionTargetsConfiguration.uses).map(
+        (trace) => trace['@id']
+      );
+
+      const tracesQuery = getEntityListByIdsQuery('Trace', traceIds);
+
+      const traces = await queryES<Trace>(tracesQuery, session, {
+        project: 'lnmce',
+      });
+
+      return traces.map((trace) => convertTraceForUI(trace));
     }),
   isEqual
 );
