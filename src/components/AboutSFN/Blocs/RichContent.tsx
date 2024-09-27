@@ -1,4 +1,8 @@
+'use client';
+
 import Image from 'next/image';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 import slugify from '@/util/slugify';
 
@@ -7,16 +11,32 @@ export default function RichContent({
   subtitle,
   paragraphs,
   image,
+  setActiveSection,
   id,
 }: {
   title: string;
   subtitle: string;
   paragraphs: string[];
   image: string;
+  setActiveSection: (section: string) => void;
   id: string;
 }) {
+  const { ref, inView } = useInView({
+    threshold: 0.5,
+  });
+
+  useEffect(() => {
+    if (inView) {
+      setActiveSection(id);
+    }
+  }, [inView, id, setActiveSection]);
+
   return (
-    <div className="relative flex flex-col" id={slugify(id)}>
+    <div
+      className="relative flex min-h-screen w-full flex-col px-[16vw] py-[20vh] md:snap-start"
+      id={slugify(id)}
+      ref={ref}
+    >
       <header className="mb-12 flex flex-col uppercase leading-[0.9] tracking-[0.1em]">
         <h2 className="mb-3 text-[100px] font-bold">{title}</h2>
         <h3 className="text-3xl uppercase text-primary-3">{subtitle}</h3>

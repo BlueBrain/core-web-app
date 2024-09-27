@@ -10,9 +10,11 @@ export default function SingleAnchorLink({
   href,
   label,
   className,
+  isVisible,
 }: {
   href: string;
   label: string;
+  isVisible: boolean;
   className?: string;
 }) {
   const [isMouseHover, setIsMouseHover] = useState<boolean>(false);
@@ -29,13 +31,13 @@ export default function SingleAnchorLink({
       <div
         className={classNames(
           'relative block h-3 w-3 rounded-full transition-colors duration-200 ease-linear',
-          isMouseHover ? 'bg-white' : 'bg-primary-5'
+          isMouseHover || isVisible ? 'bg-white' : 'bg-primary-5'
         )}
       />
       <h6
         className={classNames(
-          'font-sans text-base font-normal transition-opacity duration-300 ease-linear',
-          isMouseHover ? 'opacity-100' : 'opacity-0'
+          'relative font-sans text-sm font-normal uppercase tracking-wider transition-opacity duration-300 ease-linear',
+          isMouseHover || isVisible ? 'opacity-100' : 'opacity-0'
         )}
       >
         {label}
