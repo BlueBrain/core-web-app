@@ -11,7 +11,19 @@ import WorkflowAttributes from './WorkflowAttributes';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
-export default function EModelView({ showTitle = true }: { showTitle?: boolean }) {
+type Params = {
+  id: string;
+  projectId: string;
+  virtualLabId: string;
+};
+
+export default function EModelView({
+  params,
+  showTitle = true,
+}: {
+  params: Params;
+  showTitle?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-12">
       {showTitle && (
@@ -33,7 +45,7 @@ export default function EModelView({ showTitle = true }: { showTitle?: boolean }
           <ErrorBoundary
             fallback={<StandardFallback type="error">Exemplar morphology</StandardFallback>}
           >
-            <ExemplarMorphology />
+            <ExemplarMorphology params={params} />
           </ErrorBoundary>
         </DefaultLoadingSuspense>
       </ErrorBoundary>

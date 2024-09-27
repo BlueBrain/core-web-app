@@ -2,9 +2,9 @@ import { atom } from 'jotai';
 import esb from 'elastic-builder';
 
 import { MEModelMorphologyType, MEModelSection } from '@/types/virtual-lab/build/me-model';
-import { EModel, NeuronMorphology } from '@/types/e-model';
+import { EModel, EModelConfiguration, EModelWorkflow, NeuronMorphology } from '@/types/e-model';
 import sessionAtom from '@/state/session';
-import { fetchResourceById } from '@/api/nexus';
+import { fetchResourceById, fetchResourceByIdUsingResolver } from '@/api/nexus';
 import { MEModelResource } from '@/types/me-model';
 import { getIdFromSelfUrl, getOrgFromSelfUrl, getProjectFromSelfUrl } from '@/util/nexus';
 import authFetch from '@/authFetch';
@@ -17,7 +17,7 @@ import { Experiment } from '@/types/explore-section/es-experiment';
  * @param query
  * @returns
  */
-const retrieveESResourceByID = (id: string) => {
+const retrieveESResourceByID = async (id: string) => {
   const query = esb
     .requestBodySearch()
     .query(esb.boolQuery().must(esb.termQuery('@id', id)))
@@ -110,6 +110,60 @@ export const selectedEModelAtom = atom<Promise<EModel | undefined>>(async (get) 
 
   return fetchResourceById<EModel>(eModelId, session, { org, project });
 });
+
+export const selectedEModelWorkflowAtom = atom<Promise<EModelWorkflow | undefined>>(async (get) => {
+  const session = get(sessionAtom);
+  const org = await get(selectedEModelOrgAtom);
+  const project = await get(selectedEModelProjectAtom);
+  const selectedEModel = await get(selectedEModelAtom);
+
+  if (!session || !org || !project || !selectedEModel) return;
+
+  const selectedEModelWorkflowId = selectedEModel?.generation.activity.followedWorkflow['@id'];
+
+  if (!selectedEModelWorkflowId) return;
+
+  const selectedEModelWorkflow = await fetchResourceByIdUsingResolver<EModelWorkflow>(
+    selectedEModelWorkflowId,
+    session,
+    {
+      org,
+      project,
+    }
+  );
+
+  return selectedEModelWorkflow;
+});
+
+export const selectedEModelConfigurationAtom = atom<Promise<EModelConfiguration | undefined>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const org = await get(selectedEModelOrgAtom);
+    const project = await get(selectedEModelProjectAtom);
+    const selectedEModelWorkflow = await get(selectedEModelWorkflowAtom);
+
+    if (!session || !org || !project || !selectedEModelWorkflow) return;
+
+    const selectedEModelConfigurationPart = selectedEModelWorkflow.hasPart.find(
+      ({ '@type': type }) => type === 'EModelConfiguration'
+    );
+
+    const { '@id': selectedEModelConfigurationId } = selectedEModelConfigurationPart ?? {};
+
+    if (!selectedEModelConfigurationId) return;
+
+    const selectedEModelConfiguration = await fetchResourceByIdUsingResolver<EModelConfiguration>(
+      selectedEModelConfigurationId,
+      session,
+      {
+        org,
+        project,
+      }
+    );
+
+    return selectedEModelConfiguration;
+  }
+);
 
 // ME-model
 

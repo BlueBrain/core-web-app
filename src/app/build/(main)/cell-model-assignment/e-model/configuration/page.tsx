@@ -9,6 +9,7 @@ import CloneConfigButton from '@/components/build-section/cell-model-assignment/
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 import EditConfigButton from '@/components/build-section/cell-model-assignment/e-model/EditConfigButton';
 import { useSessionAtomValue } from '@/hooks/hooks';
+import { nexus } from '@/config';
 
 const baseBannerStyle = 'flex h-full items-center justify-center text-4xl';
 
@@ -27,7 +28,13 @@ export default function ConfigurationPage() {
     body = (
       <div>
         <div className="h-[80vh] overflow-auto p-6">
-          <EModelView />
+          <EModelView
+            params={{
+              id: selectedEModel.id,
+              projectId: nexus.project,
+              virtualLabId: nexus.org,
+            }}
+          />
         </div>
         {selectedEModel.isOptimizationConfig ? <EditConfigButton /> : <CloneConfigButton />}
       </div>

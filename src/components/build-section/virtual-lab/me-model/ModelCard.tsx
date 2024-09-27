@@ -5,11 +5,11 @@ import { DisplayMessages } from '@/constants/display-messages';
 import Link from '@/components/Link';
 import { EModel, NeuronMorphology } from '@/types/e-model';
 
-const subtitleStyle = 'uppercase font-thin text-slate-600';
+const subtitleStyle = 'uppercase font-thin text-neutral-4';
 
 type Detail = {
   label: string;
-  value: string | undefined;
+  value: string | ReactNode | undefined;
 };
 
 type ModelDetailsProps = {
