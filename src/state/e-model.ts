@@ -79,7 +79,7 @@ export const eModelConfigurationFamily = atomFamily<
 
       if (!followedWorkflow || !session) return null;
 
-      const eModelConfigurationPart = followedWorkflow.hasPart.find(
+      const eModelConfigurationPart = ensureArray(followedWorkflow.hasPart).find(
         ({ '@type': type }) => type === 'EModelConfiguration'
       );
 

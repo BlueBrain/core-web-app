@@ -10,7 +10,7 @@ import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { ExperimentalTracesDataType } from '@/types/e-model';
 import { previewRender } from '@/constants/explore-section/fields-config/common';
 import { eCodesDocumentationUrl } from '@/constants/cell-model-assignment/e-model';
-import ErrorMessageLine from '@/components/build-section/cell-model-assignment/e-model/EModelView/ErrorMessageLine';
+import { InfoMessageBox } from '@/components/build-section/cell-model-assignment/e-model/EModelView/ErrorMessageLine';
 
 type Params = {
   id: string;
@@ -91,14 +91,13 @@ export default function ExemplarTraces({ params }: { params: Params }) {
       key: 'subjectSpecies',
     },
   ];
-
   return (
     <>
       <div className="text-2xl font-bold text-primary-8">Exemplar Traces</div>
       {eModelExemplarTraces ? (
         <DefaultEModelTable dataSource={eModelExemplarTraces} columns={columns} />
       ) : (
-        <ErrorMessageLine />
+        <InfoMessageBox message="No information available" />
       )}
     </>
   );
