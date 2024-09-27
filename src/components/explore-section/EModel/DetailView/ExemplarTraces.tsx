@@ -1,4 +1,4 @@
-import { Divider, Popover } from 'antd';
+import { Divider, Popover, Spin } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { GlobalOutlined } from '@ant-design/icons';
 
@@ -10,7 +10,6 @@ import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { ExperimentalTracesDataType } from '@/types/e-model';
 import { previewRender } from '@/constants/explore-section/fields-config/common';
 import { eCodesDocumentationUrl } from '@/constants/cell-model-assignment/e-model';
-import { InfoMessageBox } from '@/components/build-section/cell-model-assignment/e-model/EModelView/ErrorMessageLine';
 
 type Params = {
   id: string;
@@ -94,10 +93,11 @@ export default function ExemplarTraces({ params }: { params: Params }) {
   return (
     <>
       <div className="text-2xl font-bold text-primary-8">Exemplar Traces</div>
+
       {eModelExemplarTraces ? (
         <DefaultEModelTable dataSource={eModelExemplarTraces} columns={columns} />
       ) : (
-        <InfoMessageBox message="No information available" />
+        <Spin />
       )}
     </>
   );

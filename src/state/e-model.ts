@@ -1,23 +1,25 @@
+import esb from 'elastic-builder';
 import isEqual from 'lodash/isEqual';
 import { Atom, atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
-import { fetchResourceById, fetchResourceByIdUsingResolver, queryES } from '@/api/nexus';
+import { fetchResourceById, fetchResourceByIdUsingResolver } from '@/api/nexus';
 import {
   EModelConfiguration,
   EModelWorkflow,
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
   ExtractionTargetsConfiguration,
-  Trace,
 } from '@/types/e-model'; // TODO: Confirm these types
 import { EModelResource } from '@/types/explore-section/delta-model';
 
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import sessionAtom from '@/state/session';
-import { convertDeltaMorphologyForUI, convertTraceForUI } from '@/services/e-model';
+import { convertDeltaMorphologyForUI, convertESTraceForUI } from '@/services/e-model';
 import { ensureArray } from '@/util/nexus';
-import { getEntityListByIdsQuery } from '@/queries/es';
+import { API_SEARCH } from '@/constants/explore-section/queries';
+import { createHeaders } from '@/util/utils';
+import { ExperimentalTrace } from '@/types/explore-section/es-experiment';
 
 export type ModelResourceInfo = {
   eModelId: string;
@@ -188,14 +190,22 @@ export const experimentalTracesAtomFamily = atomFamily<
       const traceIds = ensureArray(eModelExtractionTargetsConfiguration.uses).map(
         (trace) => trace['@id']
       );
+      const tracesQuery = new esb.BoolQuery().filter([
+        esb.boolQuery().must(esb.termQuery('deprecated', false)),
+        esb.boolQuery().must(esb.termsQuery('@id', traceIds)),
+      ]);
 
-      const tracesQuery = getEntityListByIdsQuery('Trace', traceIds);
-
-      const traces = await queryES<Trace>(tracesQuery, session, {
-        project: 'lnmce',
-      });
-
-      return traces.map((trace) => convertTraceForUI(trace));
+      const traces = await fetch(
+        `${API_SEARCH}?addProject=${resourceInfo.virtualLabId}/${resourceInfo.projectId}`,
+        {
+          method: 'POST',
+          headers: createHeaders(session.accessToken),
+          body: JSON.stringify({ size: 1000, query: tracesQuery.toJSON() }),
+        }
+      )
+        .then((res) => res.json())
+        .then<ExperimentalTrace[]>((res) => res.hits.hits.map((hit: any) => hit._source));
+      return traces.map((trace) => convertESTraceForUI(trace));
     }),
   isEqual
 );
