@@ -64,14 +64,13 @@ export default function MorphologyCard({ reselectLink = false }: Props) {
       modelDetails={details}
       thumbnail={
         selectedMModel && (
-          <div className="border border-black">
-            <CardVisualization
-              dataType={DataType.ExperimentalNeuronMorphology}
-              resource={selectedMModel}
-              height={200}
-              width={200}
-            />
-          </div>
+          <CardVisualization
+            className="border border-neutral-3"
+            dataType={DataType.ExperimentalNeuronMorphology}
+            resource={selectedMModel}
+            height={200}
+            width={200}
+          />
         )
       }
       reselectLink={reselectLink}
