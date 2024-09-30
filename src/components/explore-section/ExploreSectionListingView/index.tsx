@@ -83,35 +83,39 @@ export default function DefaultListView({
           virtualLabInfo={virtualLabInfo}
           className="relative"
         >
-          {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
-            <>
-              <FilterControls
-                filters={filters}
-                displayControlPanel={displayControlPanel}
-                dataType={dataType}
-                setDisplayControlPanel={setDisplayControlPanel}
-                className="sticky top-0 px-4 py-5"
-              >
-                <NumericResultsInfo
+          {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => {
+            return (
+              <>
+                <FilterControls
+                  filters={filters}
+                  displayControlPanel={displayControlPanel}
                   dataType={dataType}
-                  dataScope={dataScope}
-                  virtualLabInfo={virtualLabInfo}
+                  setDisplayControlPanel={setDisplayControlPanel}
+                  className="sticky top-0 px-4 py-5"
+                >
+                  <NumericResultsInfo
+                    dataType={dataType}
+                    dataScope={dataScope}
+                    virtualLabInfo={virtualLabInfo}
+                  />
+                </FilterControls>
+                <ExploreSectionTable
+                  columns={columns.filter(({ key }) =>
+                    (activeColumns || []).includes(key as string)
+                  )}
+                  dataContext={{ virtualLabInfo, dataScope, dataType }}
+                  dataSource={dataSource}
+                  loading={data.state === 'loading'}
+                  onCellClick={onCellClick}
+                  renderButton={renderButton}
+                  selectionType={selectionType}
+                  scrollable={tableScrollable}
+                  controlsVisible={controlsVisible}
+                  onRowsSelected={onRowsSelected}
                 />
-              </FilterControls>
-              <ExploreSectionTable
-                columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
-                dataContext={{ virtualLabInfo, dataScope, dataType }}
-                dataSource={dataSource}
-                loading={data.state === 'loading'}
-                onCellClick={onCellClick}
-                renderButton={renderButton}
-                selectionType={selectionType}
-                scrollable={tableScrollable}
-                controlsVisible={controlsVisible}
-                onRowsSelected={onRowsSelected}
-              />
-            </>
-          )}
+              </>
+            );
+          }}
         </WithControlPanel>
       </div>
     </div>
