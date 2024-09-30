@@ -1,5 +1,6 @@
 import lodashFind from 'lodash/find';
 import mergeWith from 'lodash/mergeWith';
+import uniq from 'lodash/uniq';
 import { ensureArray } from '@/util/nexus';
 
 import {
@@ -27,6 +28,7 @@ import {
 import {
   ExperimentalTrace as ESExperimentalTrace,
   ReconstructedNeuronMorphology as ESReconstructedNeuronMorphology,
+  ExperimentalTrace,
 } from '@/types/explore-section/es-experiment';
 import { ReconstructedNeuronMorphology as DeltaReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import { DisplayMessages } from '@/constants/display-messages';
@@ -111,6 +113,25 @@ export function convertESMorphologyForUI(
     brainLocation: remoteMorphology?.brainRegion?.label || DisplayMessages.NO_DATA_STRING,
     mType: remoteMorphology?.mType?.label || DisplayMessages.NO_DATA_STRING,
     contributor: remoteMorphology?.contributors?.map((c) => c.label).join(' '),
+  };
+}
+
+export function convertESTraceForUI(trace: ExperimentalTrace): ExperimentalTracesDataType {
+  const commonProps = {
+    '@id': trace['@id'],
+    '@type': trace['@type'],
+    cellName: trace.name,
+    distribution: trace.distribution,
+  };
+
+  return {
+    // trace from search table
+    ...commonProps,
+    mType: DisplayMessages.NO_DATA_STRING,
+    eType: trace.eType.label || DisplayMessages.NO_DATA_STRING,
+    description: DisplayMessages.NO_DATA_STRING,
+    eCodes: uniq(trace.image.map((s) => s.stimulusType as ECode)),
+    subjectSpecies: trace.subjectSpecies.label || DisplayMessages.NO_DATA_STRING,
   };
 }
 
