@@ -1,20 +1,43 @@
 import { useAtomValue, useSetAtom } from 'jotai';
+import { loadable } from 'jotai/utils';
 import { useEffect } from 'react';
 
 import { StandardFallback } from './ErrorMessageLine';
 import Header from './Header';
 
+import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
+
 import {
   eModelEditModeAtom,
-  eModelMechanismsAtom,
   eModelUIConfigAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { eModelMechanismsAtomFamily } from '@/state/e-model';
+import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { EModelConfigurationMechanism, MechanismForUI, MechanismLocation } from '@/types/e-model';
 import { mechanismLocations } from '@/constants/cell-model-assignment/e-model';
 import DocumentationIcon from '@/components/icons/Documentation';
+import { useUnwrappedValue } from '@/hooks/hooks';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
-export default function Mechanism() {
-  const mechanisms = useAtomValue(eModelMechanismsAtom);
+type Params = {
+  id: string;
+  projectId: string;
+  virtualLabId: string;
+};
+
+export default function Mechanism({ params }: { params: Params }) {
+  const info = useResourceInfoFromPath();
+  const detail = useUnwrappedValue(detailFamily(info));
+  const mechanisms = useAtomValue(
+    loadable(
+      eModelMechanismsAtomFamily({
+        eModelId: detail?.['@id'] || '',
+        projectId: params.projectId,
+        virtualLabId: params.virtualLabId,
+      })
+    )
+  );
+
   const eModelEditMode = useAtomValue(eModelEditModeAtom);
   const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
 
@@ -29,16 +52,32 @@ export default function Mechanism() {
 
   const title = 'Mechanisms';
 
-  if (!mechanisms) {
-    return <StandardFallback type="error">{title}</StandardFallback>;
+  if (mechanisms.state === 'loading') {
+    return (
+      <div className="flex flex-col gap-4">
+        <Header>{title}</Header>
+        <CentralLoadingSpinner />
+      </div>
+    );
   }
 
-  return (
-    <div className="flex flex-col gap-4">
-      <Header>{title}</Header>
-      <MechanismTable mechanismCollection={mechanisms} />
-    </div>
-  );
+  if (mechanisms.state === 'hasError') {
+    return (
+      <div className="flex flex-col gap-4">
+        <Header>{title}</Header>
+        <StandardFallback type="error">{title}</StandardFallback>;
+      </div>
+    );
+  }
+
+  if (mechanisms.state === 'hasData') {
+    return (
+      <div className="flex flex-col gap-4">
+        <Header>{title}</Header>
+        <MechanismTable mechanismCollection={mechanisms.data} />
+      </div>
+    );
+  }
 }
 
 type MechanismTableProps = {

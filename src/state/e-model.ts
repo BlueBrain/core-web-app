@@ -1,15 +1,18 @@
 import esb from 'elastic-builder';
+import groupBy from 'lodash/groupBy';
 import isEqual from 'lodash/isEqual';
 import { Atom, atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
-import { fetchResourceById, fetchResourceByIdUsingResolver } from '@/api/nexus';
+import { fetchJsonFileByUrl, fetchResourceById, fetchResourceByIdUsingResolver } from '@/api/nexus';
 import {
   EModelConfiguration,
+  EModelConfigurationPayload,
   EModelWorkflow,
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
   ExtractionTargetsConfiguration,
+  MechanismForUI,
 } from '@/types/e-model'; // TODO: Confirm these types
 import { EModelResource } from '@/types/explore-section/delta-model';
 
@@ -206,6 +209,56 @@ export const experimentalTracesAtomFamily = atomFamily<
         .then((res) => res.json())
         .then<ExperimentalTrace[]>((res) => res.hits.hits.map((hit: any) => hit._source));
       return traces.map((trace) => convertESTraceForUI(trace));
+    }),
+  isEqual
+);
+
+export const eModelConfigurationDistributionFamily = atomFamily<
+  ModelResourceInfo,
+  Atom<Promise<EModelConfigurationPayload | null>>
+>(
+  (resourceInfo) =>
+    atom(async (get) => {
+      const session = get(sessionAtom);
+      const eModelConfiguration = await get(eModelConfigurationFamily(resourceInfo));
+
+      if (!session || !eModelConfiguration) return null;
+
+      const contentUrl = ensureArray(eModelConfiguration.distribution).find(
+        ({ encodingFormat }) => encodingFormat === 'application/json'
+      )?.contentUrl;
+
+      if (!contentUrl) return null;
+
+      const json = await fetchJsonFileByUrl<EModelConfigurationPayload>(contentUrl, session);
+
+      return json;
+    }),
+  isEqual
+);
+
+// TODO:
+// This whole MechanismForUI stuff is kind of garbage.
+// Should be thrown-out.
+// Same for convertDeltaMorphologyForUI and convertESTraceForUI.
+export const eModelMechanismsAtomFamily = atomFamily<
+  ModelResourceInfo,
+  Atom<Promise<MechanismForUI | null>>
+>(
+  (resourceInfo) =>
+    atom(async (get) => {
+      const session = get(sessionAtom);
+      const configurationDistribution = await get(
+        eModelConfigurationDistributionFamily(resourceInfo)
+      );
+
+      if (!session || !configurationDistribution) return null;
+
+      const { mechanisms } = configurationDistribution;
+
+      const mechanismsByLocation = groupBy(mechanisms, 'location');
+
+      return { processed: mechanismsByLocation, raw: {} } as MechanismForUI;
     }),
   isEqual
 );

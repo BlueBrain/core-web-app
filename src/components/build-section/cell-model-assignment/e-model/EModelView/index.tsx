@@ -64,7 +64,7 @@ export default function EModelView({
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
-          <Mechanism />
+          <Mechanism params={params} />
         </DefaultLoadingSuspense>
       </ErrorBoundary>
 
