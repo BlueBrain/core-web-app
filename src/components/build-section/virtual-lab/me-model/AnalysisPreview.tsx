@@ -5,14 +5,13 @@ import { PDFViewerContainer } from '@/components/explore-section/common/pdf/PDFV
 import { AnalysisFileType } from '@/components/explore-section/common/pdf/types';
 import { composeUrl, ensureArray } from '@/util/nexus';
 import { FileDistribution } from '@/types/explore-section/delta-properties';
-import { nexus } from '@/config';
 
 const categoryMap: Record<string, string> = {
-  [`${nexus.defaultIdBaseUrl}/traces`]: AnalysisFileType.Traces,
-  [`${nexus.defaultIdBaseUrl}/scores`]: AnalysisFileType.Scores,
-  [`${nexus.defaultIdBaseUrl}/parameters_distribution`]: AnalysisFileType.Distribution,
-  [`${nexus.defaultIdBaseUrl}/thumbnail`]: AnalysisFileType.Thumbnail,
-  [`${nexus.defaultIdBaseUrl}/currentscape`]: AnalysisFileType.Currentscape,
+  traces: AnalysisFileType.Traces,
+  scores: AnalysisFileType.Scores,
+  parameters_distribution: AnalysisFileType.Distribution,
+  thumbnail: AnalysisFileType.Thumbnail,
+  currentscape: AnalysisFileType.Currentscape,
 };
 
 export default function AnalysisPreview() {
@@ -22,18 +21,19 @@ export default function AnalysisPreview() {
   if (!image || meModelResource?.status !== 'done') {
     return (
       <div className="flex h-full items-center justify-center text-4xl font-bold text-primary-9">
-        ME-Model analysis are being generated
+        No ME-Model analysis yet
       </div>
     );
   }
 
   const distributions = ensureArray(image).map((i) => {
-    let encodingFormat = 'application/pdf';
+    const encodingFormat = i.about?.includes('thumbnail') ? 'image/png' : 'application/pdf';
 
-    if (i.about?.includes('thumbnail')) {
-      encodingFormat = 'application/png';
-    }
-    const name = i.about ? categoryMap[i.about] : 'unknown.pdf';
+    const category = i.about?.split('/').at(-1);
+    const name = category ? categoryMap[category] : 'unknown.pdf';
+
+    const [org, project] = i['@id'].split('/').slice(-3, -1);
+
     return {
       ...i,
       '@type': 'DataDownload',
@@ -42,7 +42,7 @@ export default function AnalysisPreview() {
         unitCode: 'bytes',
         value: 0,
       },
-      contentUrl: composeUrl('file', i['@id']),
+      contentUrl: composeUrl('file', i['@id'], { org, project }),
       encodingFormat,
       atLocation: {} as FileDistribution['atLocation'],
     } satisfies FileDistribution;

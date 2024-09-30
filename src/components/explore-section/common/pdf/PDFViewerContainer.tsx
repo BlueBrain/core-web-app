@@ -24,20 +24,28 @@ interface Props {
   distributions: AnalysisPDF[];
 }
 
+const VIEWABLE_FORMATS = ['application/pdf', 'image/png'];
+
+const isViewable = (distribution: AnalysisPDF) => {
+  return VIEWABLE_FORMATS.includes(distribution.encodingFormat);
+};
+
 export function PDFViewerContainer({ distributions }: Props) {
   const [type, setType] = useState<AnalysisType>(AnalysisType.All);
   const [analyses] = useAnalyses('EModel');
   const [analysis, setAnalysis] = useState('');
 
-  const filteredDistributions = distributions.filter((distribution) =>
+  const viewableDistributions = distributions.filter(isViewable);
+
+  const currentDistributions = viewableDistributions.filter((distribution) =>
     matchesType(distribution, type)
   );
 
-  const groupedDistributions = groupBy(filteredDistributions, (distribution: AnalysisPDF) =>
+  const groupedDistributions = groupBy(currentDistributions, (distribution: AnalysisPDF) =>
     nameToType(distribution.name ?? distribution.label)
   );
 
-  const groupedDistributionsAll = groupBy(distributions, (distribution: AnalysisPDF) =>
+  const groupedDistributionsAll = groupBy(viewableDistributions, (distribution: AnalysisPDF) =>
     nameToType(distribution.name ?? distribution.label)
   );
 
@@ -89,7 +97,7 @@ export function PDFViewerContainer({ distributions }: Props) {
                 <span className="pl-1 text-neutral-4">
                   (
                   {option === AnalysisType.All
-                    ? distributions.length
+                    ? currentDistributions.length
                     : groupedDistributionsAll[option]?.length || 0}
                   )
                 </span>
@@ -130,7 +138,7 @@ export function PDFViewerContainer({ distributions }: Props) {
           {type !== AnalysisType.Custom ? (
             <div className="flex gap-x-16" style={{ minWidth: 'min-content' }}>
               {Object.entries(groupedDistributions).map(([pdfType, groupedDistribution]) => (
-                <div style={{ minWidth: '30%' }} key={pdfType}>
+                <div style={{ minWidth: '30%', flexGrow: 1 }} key={pdfType}>
                   {groupedDistribution.map((pdf, index) => {
                     return (
                       <DynamicPDFViewer
@@ -164,7 +172,7 @@ export function PDFViewerContainer({ distributions }: Props) {
 const matchesType = (distribution: AnalysisPDF, type: AnalysisType) => {
   if (
     distribution.encodingFormat !== 'application/pdf' &&
-    distribution.encodingFormat !== 'application/png'
+    distribution.encodingFormat !== 'image/png'
   ) {
     return false;
   }
