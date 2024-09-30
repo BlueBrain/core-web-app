@@ -37,9 +37,9 @@ export default function SliderChevronsNavigation({
         <ChevronLeft fill={chevronColor('prev')} className="h-auto w-4 md:w-2" />
       </button>
 
-      <div className="relative flex flex-row items-center gap-x-6 text-2xl md:gap-x-4 md:text-base">
+      <div className="relative flex w-full flex-1 flex-row items-center gap-x-6 text-2xl md:gap-x-4 md:text-base">
         {activeItem + 1}
-        <div className="relative block h-1 w-44 bg-primary-7 md:h-px ">
+        <div className="relative block h-1 w-full bg-primary-7 md:h-px ">
           <div
             className="block h-full bg-white transition-width duration-300 ease-in-out"
             style={{ width: `${progressiveLineWidth}%` }}

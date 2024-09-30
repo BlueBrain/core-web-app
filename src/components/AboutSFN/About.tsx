@@ -19,13 +19,19 @@ import {
   ORIGIN_BLOCK,
   SIMULATION_NEUROSCIENCE_BLOCK,
 } from '@/constants/about/about-content';
+import { classNames } from '@/util/utils';
 
 export default function AboutSFN() {
   const [activeSection, setActiveSection] = useState<string>('introduction');
-
+  const [showSteps, setShowSteps] = useState(true);
   return (
-    <div className="relative flex h-screen w-screen flex-col overflow-x-hidden pt-[20vh] md:w-full md:snap-y md:snap-mandatory md:pt-0">
-      <InternalNavigation activeSection={activeSection} />
+    <div
+      className={classNames(
+        'relative flex h-screen w-screen flex-col overflow-x-hidden pt-[20vh]',
+        'md:w-full md:snap-y md:snap-mandatory md:snap-center md:pt-0'
+      )}
+    >
+      <InternalNavigation activeSection={activeSection} show={showSteps} />
       <Introduction id="introduction" setActiveSection={setActiveSection} />
       <MediaMix
         layout="left"
@@ -69,7 +75,7 @@ export default function AboutSFN() {
         setActiveSection={setActiveSection}
         id="complementing"
       />
-      <Footer />
+      <Footer onShowSteps={setShowSteps} />
     </div>
   );
 }

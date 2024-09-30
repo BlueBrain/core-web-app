@@ -33,22 +33,28 @@ export default function RichContent({
 
   return (
     <div
-      className="relative flex min-h-screen w-full flex-col px-[16vw] py-[20vh] md:snap-start"
+      className="relative flex min-h-screen w-full flex-col px-[10vw] py-8 md:snap-start md:px-[16vw] md:py-[20vh]"
       id={slugify(id)}
       ref={ref}
     >
       <header className="mb-12 flex flex-col uppercase leading-[0.9] tracking-[0.1em]">
-        <h2 className="mb-3 text-[100px] font-bold">{title}</h2>
+        <h2 className="mb-3 text-4xl font-bold md:text-6xl xl:text-8xl">{title}</h2>
         <h3 className="text-3xl uppercase text-primary-3">{subtitle}</h3>
       </header>
       <div className="flex flex-row gap-x-10 font-sans text-xl font-light leading-normal">
-        <div className="relative top-4 h-px w-56 bg-white" />
+        <div className="relative top-4 hidden h-px w-56 bg-white md:block" />
         {paragraphs.map((paragraph: string, index: number) => (
           <p key={`paragraph_${index + 1}`}>{paragraph}</p>
         ))}
       </div>
-      <div className="w-full">
-        <Image width={1920} height={1080} src={image} alt="placeholder image" />
+      <div className="mt-4 w-full">
+        <Image
+          width={1920}
+          height={1080}
+          src={image}
+          alt={title}
+          className="aspect-video object-fill object-center"
+        />
       </div>
     </div>
   );

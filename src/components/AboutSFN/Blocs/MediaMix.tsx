@@ -25,7 +25,7 @@ export default function MediaMix({
   id: string;
 }) {
   const { ref, inView } = useInView({
-    threshold: 0.5,
+    threshold: 1,
   });
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function MediaMix({
   return (
     <div
       className={classNames(
-        'relative flex w-full items-center px-8 py-[20vh] md:min-h-screen md:snap-start md:px-[16vw]',
+        'relative flex w-full items-center px-8 py-8 md:min-h-screen md:snap-start md:px-[16vw] md:py-[20vh]',
         layout === 'left' ? 'flex-row' : 'flex-row-reverse'
       )}
       id={slugify(id)}
@@ -51,12 +51,14 @@ export default function MediaMix({
       >
         <Image
           src={image}
-          alt="placeholder image"
+          alt={title}
           width={800}
           height={800}
           className={classNames(
-            'transition-all duration-700 ease-in-out',
-            inView ? 'scale-125 opacity-100' : 'scale-100 opacity-0'
+            'object-contain object-center',
+            inView
+              ? 'scale-125 transform opacity-100 transition-all duration-100 ease-in-out'
+              : 'scale-100 opacity-0'
           )}
         />
       </div>

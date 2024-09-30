@@ -45,8 +45,9 @@ export default function DownloadDocument({
         />
       )}
       <div
-        className="relative flex w-full items-center justify-center px-8 py-[14vh] md:min-h-screen md:snap-start md:px-[16vw]"
+        className="relative flex w-full items-center justify-center px-8 py-8 md:min-h-screen md:snap-start md:px-[10vw] md:py-[14vh] xl:px-[12vw]"
         ref={ref}
+        id={id}
       >
         <div
           className={classNames(

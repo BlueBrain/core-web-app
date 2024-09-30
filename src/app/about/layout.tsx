@@ -26,11 +26,11 @@ export default function AboutPageLayout({ children }: Props) {
         gabarito.className
       )}
     >
-      <nav className="fixed z-[200] flex w-full items-center justify-between px-6 py-6 md:px-12 md:py-8">
+      <nav className="fixed z-[200] flex w-full items-center justify-between px-6 py-6 backdrop-blur md:px-12 md:py-8">
         <OBPLogo color="text-white" />
         <LoginButton label="Log in" link="/log-in" type="link" />
       </nav>
-      <div className="relative z-10">{children}</div>
+      <div className="relative">{children}</div>
     </div>
   );
 }

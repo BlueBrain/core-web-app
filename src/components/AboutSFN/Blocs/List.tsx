@@ -31,7 +31,10 @@ export default function List({
 
   return (
     <div
-      className="relative flex w-full flex-col px-8 py-[10vh] md:grid md:min-h-screen md:snap-start md:grid-cols-2 md:self-center md:px-[16vw] md:py-[20vh]"
+      className={classNames(
+        'relative flex w-full flex-col md:grid md:snap-start ',
+        'px-8 py-8 md:min-h-screen md:grid-cols-2 md:gap-10 md:self-center md:px-[14vw] md:py-[20vh]'
+      )}
       id={slugify(id)}
       ref={ref}
     >

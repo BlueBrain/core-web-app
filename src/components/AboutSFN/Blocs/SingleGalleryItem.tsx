@@ -10,18 +10,19 @@ export default function SingleGalleryItem({
   image: string;
 }) {
   return (
-    <div className="relative flex w-full flex-col justify-center">
-      <div className="relative flex h-[36vh] w-full items-center justify-center overflow-hidden">
+    <div className="relative flex w-full flex-col justify-center md:flex md:flex-col md:gap-4 xl:flex">
+      <div className="relative flex h-[30vh] w-full items-center justify-center overflow-hidden px-8 xl:h-[36vh]">
         <Image
+          fill
           src={image}
-          alt="placeholder image"
-          width={800}
-          height={800}
-          className="h-auto w-full object-fill"
+          alt={title}
+          className="aspect-square h-auto w-full md:object-contain xl:object-fill"
         />
       </div>
-      <aside className="relative right-0 flex w-full flex-col gap-y-3 bg-primary-9 p-12 md:absolute md:w-[32vw]">
-        <h4 className="text-5xl font-black uppercase tracking-[0.06em]">{title}</h4>
+      <aside className="relative right-0 flex w-full flex-col gap-y-3 bg-primary-9 p-12 md:pl-0 md:pt-0 xl:absolute xl:w-[32vw]  xl:p-12">
+        <h4 className="text-3xl font-black uppercase tracking-[0.06em] md:text-4xl xl:text-5xl">
+          {title}
+        </h4>
         <p className="font-sans text-xl font-light leading-normal">{paragraph}</p>
       </aside>
     </div>

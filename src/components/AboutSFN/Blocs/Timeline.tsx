@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import SliderChevronsNavigation from '../Buttons/SliderChevronsNavigation';
+import { classNames } from '@/util/utils';
 
 export type TimelineProps = {
   title: string;
@@ -45,11 +46,13 @@ export default function Timeline({
 
   return (
     <div
-      className="relative flex w-full flex-col justify-center gap-x-20 px-8 py-[20vh] md:min-h-screen md:snap-start md:flex-row md:px-[8vw]"
+      className={classNames(
+        'relative flex w-full flex-col justify-center gap-x-20',
+        'px-8 pb-8 pt-16 md:min-h-screen md:snap-start md:flex-row md:px-[8vw] md:py-[20vh]'
+      )}
       id={id}
       ref={ref}
     >
-      {/* LEFT BLOCK */}
       <div className="relative flex w-full items-center justify-center md:h-[80vh] md:w-1/2">
         <Image
           width={800}
@@ -60,12 +63,11 @@ export default function Timeline({
         />
       </div>
 
-      {/* RIGHT BLOCK */}
-      <div className="relative -top-12 flex h-full w-full flex-col items-start justify-center md:top-0 md:w-1/2">
+      <div className="relative -top-20 flex h-full w-full flex-col items-start justify-center md:top-0 md:w-1/2">
         <h3 className="mb-4 font-title text-4xl font-bold uppercase tracking-widest md:text-5xl">
           {content[activeKeyPoint].title}
         </h3>
-        {/* Data information */}
+
         <aside className="flex w-full flex-row border border-solid border-primary-7 bg-primary-9 px-4 font-sans text-xl font-semibold text-primary-2 md:w-auto md:text-base">
           <div className="w-1/2 py-2 md:w-auto">{content[activeKeyPoint].neurons} neurons</div>
           {content[activeKeyPoint].synapses && (
@@ -85,26 +87,17 @@ export default function Timeline({
             </>
           )}
         </aside>
-        <div className="mt-6 flex flex-row gap-x-4 md:hidden">
+        <div className="mt-6 flex w-full flex-row gap-x-4">
           <SliderChevronsNavigation
             activeItem={activeKeyPoint}
             totalItems={content.length}
             setActiveItem={handleItemChange}
           />
         </div>
-        {/* Description */}
+
         <p className="my-8 font-sans text-2xl font-light leading-normal text-primary-1 md:text-lg">
           {content[activeKeyPoint].description}
         </p>
-
-        {/* DESKTOP version */}
-        <div className="hidden flex-row gap-x-4 md:flex">
-          <SliderChevronsNavigation
-            activeItem={activeKeyPoint}
-            totalItems={content.length}
-            setActiveItem={handleItemChange}
-          />
-        </div>
       </div>
     </div>
   );
