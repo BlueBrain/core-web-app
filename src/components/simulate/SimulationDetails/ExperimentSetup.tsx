@@ -36,7 +36,7 @@ type Props = {
 export default function ExperimentSetupTab({ experimentSetup, type, meModel }: Props) {
   const [activeTab, setActiveTab] = useState<TabKeys>('simulation-configuration');
   return (
-    <div>
+    <div className="flex flex-1 flex-col">
       <h1 className="mb-3 mt-6 text-3xl font-bold text-primary-8">Experiment Setup</h1>
       <ul className="flex w-full items-center justify-center">
         {(type === 'synaptome-simulation' ? TABS.filter((p) => p.key !== 'analysis') : TABS).map(
