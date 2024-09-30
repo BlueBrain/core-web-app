@@ -1,4 +1,5 @@
-import { Button, ConfigProvider, Form, Input } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider, Form, Input, Tooltip } from 'antd';
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { Step, VirtualLabWithOptionalId } from './types';
 import { useAtom } from '@/state/state';
@@ -145,7 +146,14 @@ export default function InformationForm({
 
           <Form.Item
             name="entity"
-            label="ENTITY"
+            label={
+              <span>
+                NAME OF AFFILIATED ENTITY
+                <Tooltip title="(Organization, University, Company)">
+                  <InfoCircleOutlined className="ml-2" />
+                </Tooltip>
+              </span>
+            }
             rules={[
               {
                 required: true,
