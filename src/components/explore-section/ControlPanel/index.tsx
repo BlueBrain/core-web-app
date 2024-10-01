@@ -76,8 +76,8 @@ function createFilterItemComponent(
       case FilterTypeEnum.DateRange:
         return (
           <DateRange
+            filter={filter}
             onChange={(values: GteLteValue) => updateFilterValues(filter.field, values)}
-            value={filterValues[filter.field] as GteLteValue}
           />
         );
 
