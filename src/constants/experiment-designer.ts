@@ -23,8 +23,8 @@ export const stimulusTypeParams: StimulusTypeDropdown = {
   value: 'current_clamp',
   options: [
     { label: 'Current clamp', value: 'current_clamp' },
-    { label: 'Voltage clamp', value: 'voltage_clamp' },
-    { label: 'Conductance', value: 'conductance' },
+    // { label: 'Voltage clamp', value: 'voltage_clamp' },
+    // { label: 'Conductance', value: 'conductance' },
   ],
 };
 
