@@ -3,8 +3,8 @@ import { captureException, captureMessage } from '@sentry/nextjs';
 type RetryParams = {
   readonly retries?: number;
   readonly delaySecs?: number;
+  readonly shouldRetryOnError?: (status: number) => boolean;
   readonly shouldRetryOnException?: (e: any) => boolean;
-  readonly shouldRetryOnError?: (requestInit: RequestInit, res: Response) => boolean;
 };
 
 const RETRY_DEFAULT = 4;
@@ -38,7 +38,7 @@ export function retry<Fn extends (...args: any[]) => Promise<Response>>({
         try {
           res = await fn(...args);
 
-          if (res.ok || !shouldRetryOnError(args[1] ?? {}, res) || tryCount === tries - 1) {
+          if (res.ok || !shouldRetryOnError(res.status) || tryCount === tries - 1) {
             return res as ReturnType<Fn>;
           }
         } catch (error) {
