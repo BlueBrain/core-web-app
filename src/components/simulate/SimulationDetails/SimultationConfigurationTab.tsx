@@ -3,6 +3,7 @@ import { Collapse } from 'antd';
 import ConditionsDetails from './ConditionsDetails';
 import SynapticInputs from './SynapticInputs';
 import StimulationDetails from './StimulationDetails';
+import RecordingLocations from './RecordingLocations';
 import { SimulationPayload } from '@/types/simulation/single-neuron';
 import { SimulationType } from '@/types/simulation/common';
 
@@ -37,6 +38,11 @@ export default function SimulationConfigurationTab({ simulation, type }: Props) 
         />
       ),
     },
+    {
+      key: 'recording-locations',
+      label: <h4 className="text-xl font-bold text-primary-8">Recordings</h4>,
+      children: <RecordingLocations recordingLocations={simulation.config.recordFrom} />,
+    },
   ];
 
   const items =
@@ -48,7 +54,12 @@ export default function SimulationConfigurationTab({ simulation, type }: Props) 
     <Collapse
       ghost
       bordered={false}
-      defaultActiveKey={['conditions-config', 'synaptic-inputs', 'stimulation-config']}
+      defaultActiveKey={[
+        'conditions-config',
+        'synaptic-inputs',
+        'stimulation-config',
+        'recording-locations',
+      ]}
       expandIconPosition="end"
       expandIcon={CollapseIcon}
       items={items}

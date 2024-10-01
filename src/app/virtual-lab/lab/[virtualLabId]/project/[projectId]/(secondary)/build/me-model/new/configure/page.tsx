@@ -9,7 +9,11 @@ import MorphologyCard from '@/components/build-section/virtual-lab/me-model/Morp
 import EModelCard from '@/components/build-section/virtual-lab/me-model/EModelCard';
 // import { usePendingValidationModal } from '@/components/build-section/virtual-lab/me-model/pending-validation-modal-hook';
 import { createMEModelAtom, meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
-import { selectedEModelAtom, selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
+import {
+  selectedEModelAtom,
+  selectedEModelConfigurationAtom,
+  selectedMModelAtom,
+} from '@/state/virtual-lab/build/me-model';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 import { classNames } from '@/util/utils';
 import { detailUrlWithinLab } from '@/util/common';
@@ -95,6 +99,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
   const router = useRouter();
   const selectedMModel = useAtomValue(selectedMModelAtom);
   const selectedEModel = useAtomValue(selectedEModelAtom);
+  const selectedEModelConfiguration = useAtomValue(selectedEModelConfigurationAtom);
   const createMEModel = useSetAtom(createMEModelAtom);
   const [meModelCreating, setMeModelCreating] = useState<boolean>(false);
 
@@ -168,7 +173,14 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
         <NewMEModelHeader projectId={projectId} virtualLabId={virtualLabId} />
         <div className="flex flex-col gap-4">
           <MorphologyCard reselectLink />
-          <EModelCard reselectLink />
+          <EModelCard
+            exemplarMorphology={
+              selectedEModelConfiguration?.uses.find(
+                ({ '@type': type }) => type === 'NeuronMorphology'
+              )?.name
+            }
+            reselectLink
+          />
         </div>
       </div>
       {validateTrigger}

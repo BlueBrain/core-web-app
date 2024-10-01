@@ -2,7 +2,14 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
-const FREE_ACCESS_PAGES = ['/', '/log-in', '/getting-started', '/about*', '/images*'];
+const FREE_ACCESS_PAGES = [
+  '/',
+  '/log-in',
+  '/getting-started',
+  '/about*',
+  '/images*',
+  '/api/marketing',
+];
 
 /* Don't allow arbitrary regex to avoid accidentally leaking protected pages
 Only two patterns allowed, exact match or /path* which matches the path

@@ -17,7 +17,13 @@ import {
 } from '@/components/explore-section/EModel/DetailView';
 import If from '@/components/ConditionalRenderer/If';
 
-export default function EModelDetailView() {
+type Params = {
+  id: string;
+  projectId: string;
+  virtualLabId: string;
+};
+
+export default function EModelDetailView({ params }: { params: Params }) {
   const [activeTab] = useQueryState(
     'tab',
     parseAsString.withDefault(EMODEL_TABS.at(0)!.key)
@@ -32,7 +38,7 @@ export default function EModelDetailView() {
             <div className="w-full flex-1">
               <Suspense fallback={<CentralLoadingSpinner />}>
                 <If id="configuration" condition={activeTab === 'configuration'}>
-                  <Configuration />
+                  <Configuration params={params} />
                 </If>
                 <If id="analysis" condition={activeTab === 'analysis'}>
                   <Analysis />

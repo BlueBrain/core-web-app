@@ -17,7 +17,7 @@ import { SIMULATION_CONFIG_FILE_NAME_BASE } from '@/state/simulate/single-neuron
 import { getSession } from '@/authFetch';
 import { classNames } from '@/util/utils';
 
-const subtitleStyle = 'font-thin text-slate-600';
+const subtitleStyle = 'font-thin text-neutral-4';
 type GenericSimulation = SingleNeuronSimulation | SynaptomeSimulation;
 
 type Props<T> = {

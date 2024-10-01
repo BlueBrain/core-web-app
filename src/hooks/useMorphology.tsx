@@ -5,6 +5,7 @@ import { Morphology } from '@/services/bluenaas-single-cell/types';
 import { getSession } from '@/authFetch';
 import { isJSON } from '@/util/utils';
 import getMorphology from '@/api/bluenaas/getMorphology';
+import { isBluenaasError } from '@/types/simulation/single-neuron';
 
 export default function useMorphology({
   modelSelfUrl,
@@ -15,6 +16,7 @@ export default function useMorphology({
 }) {
   const mountedRef = useRef(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const readMorphology = useCallback(async (): Promise<Morphology | null> => {
     const session = await getSession();
@@ -35,7 +37,13 @@ export default function useMorphology({
         const decodedChunk = decoder.decode(value, { stream: true });
         data += decodedChunk;
         if (isJSON(data)) {
-          return JSON.parse(data);
+          const parsedJson = JSON.parse(data);
+          if (isBluenaasError(parsedJson)) {
+            throw new Error(parsedJson.details ?? 'Morpholoy generation failed.', {
+              cause: 'BluenaasError',
+            });
+          }
+          return parsedJson;
         }
       }
       return null;
@@ -47,14 +55,20 @@ export default function useMorphology({
     mountedRef.current = true;
 
     async function start() {
+      setError(null);
       if (mountedRef.current) {
         setLoading(true);
-        const morphology = await readMorphology();
-        mountedRef.current = false;
-        if (morphology) {
-          callback(morphology);
+        try {
+          const morphology = await readMorphology();
+          mountedRef.current = false;
+          if (morphology) {
+            callback(morphology);
+          }
+        } catch (err) {
+          setError(`${err}`);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       }
     }
 
@@ -65,5 +79,5 @@ export default function useMorphology({
     };
   }, [callback, readMorphology, mountedRef]);
 
-  return { loading };
+  return { loading, error };
 }

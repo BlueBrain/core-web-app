@@ -6,6 +6,8 @@ export const BluePyEModelCmd = {
   RUN_ANALYSIS: 'run_analysis',
 };
 
-export type WSResponses = `${Lowercase<keyof typeof BluePyEModelCmd>}_done`;
+type BluePyEModelCmdKeys = Lowercase<keyof typeof BluePyEModelCmd>;
+
+export type WSResponses = `${BluePyEModelCmdKeys}_done` | `${BluePyEModelCmdKeys}_error`;
 
 export default class Ws extends WsCommon<WSResponses> {}

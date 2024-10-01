@@ -1,14 +1,15 @@
+import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { classNames } from '@/util/utils';
 import { DisplayMessages } from '@/constants/display-messages';
 import Link from '@/components/Link';
 import { EModel, NeuronMorphology } from '@/types/e-model';
 
-const subtitleStyle = 'uppercase font-thin text-slate-600';
+const subtitleStyle = 'uppercase font-thin text-neutral-4';
 
 type Detail = {
   label: string;
-  value: string | undefined;
+  value: string | ReactNode | undefined;
 };
 
 type ModelDetailsProps = {
@@ -21,6 +22,7 @@ type Props = {
   selectUrl: string;
   generateDetailUrl: () => string;
   modelDetails: Detail[];
+  thumbnail: ReactNode;
   reselectLink?: boolean;
 };
 
@@ -30,6 +32,7 @@ export default function ModelCard({
   selectUrl,
   generateDetailUrl,
   modelDetails,
+  thumbnail,
   reselectLink = false,
 }: Props) {
   const router = useRouter();
@@ -65,6 +68,7 @@ export default function ModelCard({
       </div>
 
       <div className="mt-2 flex gap-10">
+        {thumbnail}
         <div className="flex-grow">
           <div className={subtitleStyle}>NAME</div>
           <div className="my-1 text-3xl font-bold text-primary-8">{model.name}</div>

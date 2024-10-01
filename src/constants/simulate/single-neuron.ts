@@ -33,7 +33,7 @@ export const stimulusTypeParams: StimulusDropdownInfo & {
 export const PROTOCOL_DETAILS: Record<StimulusModule, ProtocolDetails> = {
   idrest: {
     name: 'idrest',
-    label: 'IDREST',
+    label: 'Step (Suprathreshold)',
     description: `This protocol is a sequence of depolarizing square pulses. The aim is to get as many APs as possible and make cell firing up to saturation. The firing properties, such as mean AP frequency and interspike intervals, bursting number, etc., are calculated to determine the cell's e-type (electrical firing type).`,
     usedBy: ['current_clamp'],
 
@@ -78,7 +78,7 @@ export const PROTOCOL_DETAILS: Record<StimulusModule, ProtocolDetails> = {
 
   iv: {
     name: 'iv',
-    label: 'IV',
+    label: 'Step (Subthreshold)',
     description:
       'This protocol is used to check the passive properties and the voltage sag. A sequence of current steps, from hyperpolarization to small depolarization, is injected. It is mainly used to calculate the Input resistance of the cell.',
     usedBy: ['current_clamp'],
@@ -101,7 +101,7 @@ export const PROTOCOL_DETAILS: Record<StimulusModule, ProtocolDetails> = {
 
   fire_pattern: {
     name: 'fire_pattern',
-    label: 'FIRE_PATTERN',
+    label: 'Step (Fire Pattern)',
     description: `This protocol involves injecting a few long-duration, small and high suprathreshold currents. This protocol and IDREST are used to check cells' electrical firing type (e-type), e.g., continuous, bursting, stuttering and irregular firing.`,
     usedBy: ['current_clamp'],
     defaults: {

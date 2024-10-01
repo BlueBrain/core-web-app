@@ -19,7 +19,8 @@ export default function LoginButton({
   action?: () => void;
   className?: string;
 }) {
-  const globalStyle = 'flex h-16 w-44 items-center bg-primary-8 pl-6 text-base';
+  const globalStyle =
+    'relative flex h-16 md:h-16 w-32 md:w-44 items-center bg-primary-8 pl-6 text-base';
 
   const [isMouseHover, setIsMouseHover] = useState<boolean>(false);
 

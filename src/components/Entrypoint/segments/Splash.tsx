@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import Image from 'next/image';
-
+import Link from 'next/link';
 import { ArrowRightOutlined } from '@ant-design/icons';
+
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 
@@ -51,7 +51,7 @@ export function OBPLogo({
         className
       )}
     >
-      <div className="flex flex-col text-nowrap text-4xl font-bold">
+      <div className="flex flex-col text-nowrap text-2xl font-bold md:text-4xl">
         <span className="text-brand">Blue Brain</span>
         <span>Open Platform</span>
       </div>
