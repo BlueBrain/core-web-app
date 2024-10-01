@@ -49,7 +49,12 @@ export default function Gallery({
       ref={ref}
     >
       <header className="mb-4 flex flex-col px-8 uppercase tracking-[0.1em] md:mb-12 md:px-0">
-        <h2 className="mb-4 text-5xl font-bold leading-[0.86] md:text-6xl xl:text-8xl">{title}</h2>
+        <h2
+          lang="en"
+          className="mb-4 hyphens-manual whitespace-pre-line text-5xl font-bold leading-[0.86] md:hyphens-none md:text-6xl xl:text-8xl"
+        >
+          {title}
+        </h2>
         <h3 className="text-xl font-normal uppercase text-primary-3 md:text-3xl">{subtitle}</h3>
       </header>
       <SingleGalleryItem

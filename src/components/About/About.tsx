@@ -34,23 +34,23 @@ const ABOUT_ARTICLES: Array<AboutSection> = [
         title: 'Adapting to Change',
         text: `
             Neuroplasticity, also known as brain plasticity, is the ability of the brain to reorganize itself by forming new neural connections throughout life.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. 
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
             Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Aenean lacinia bibendum nulla sed consectetur.
-            Nulla vitae elit libero, a pharetra augue. Maecenas sed diam eget risus varius blandit sit amet non magna. 
-            Aenean lacinia bibendum nulla sed consectetur. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. 
+            Nulla vitae elit libero, a pharetra augue. Maecenas sed diam eget risus varius blandit sit amet non magna.
+            Aenean lacinia bibendum nulla sed consectetur. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
             Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Etiam porta sem malesuada magna mollis euismod.
             Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean lacinia bibendum nulla sed consectetur.
-            Maecenas sed diam eget risus varius blandit sit amet non magna. Nullam id dolor id nibh ultricies vehicula ut id elit. 
-            Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. 
+            Maecenas sed diam eget risus varius blandit sit amet non magna. Nullam id dolor id nibh ultricies vehicula ut id elit.
+            Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum.
             Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
           `,
       },
       {
         title: 'The Power of Learning',
         text: `
-            Learning a new skill or acquiring knowledge can lead to structural changes in the brain. 
+            Learning a new skill or acquiring knowledge can lead to structural changes in the brain.
             Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue. 
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.
             Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
             Aenean lacinia bibendum nulla sed consectetur.
           `,
@@ -71,19 +71,19 @@ const ABOUT_ARTICLES: Array<AboutSection> = [
       {
         title: 'Chemical Messengers',
         text: `
-            Neurotransmitters play a crucial role in transmitting signals between nerve cells. 
+            Neurotransmitters play a crucial role in transmitting signals between nerve cells.
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue.
             Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean lacinia bibendum nulla sed consectetur.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. 
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
             Aenean lacinia bibendum nulla sed consectetur.
           `,
       },
       {
         title: 'Emotional Harmony',
         text: `
-            Maintaining a balance of neurotransmitters is essential for emotional stability. 
+            Maintaining a balance of neurotransmitters is essential for emotional stability.
             Maecenas sed diam eget risus varius blandit sit amet non magna. Aenean lacinia bibendum nulla sed consectetur.
-            Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. 
+            Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
             Cras mattis consectetur purus sit amet fermentum. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
           `,
         alt: 'Neurotransmitter Molecules',
@@ -103,20 +103,20 @@ const ABOUT_ARTICLES: Array<AboutSection> = [
       {
         title: 'Early Stages of Development',
         text: `
-            The human brain undergoes significant changes during the early stages of development. 
+            The human brain undergoes significant changes during the early stages of development.
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.
             Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
             Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean lacinia bibendum nulla sed consectetur.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. 
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
             Aenean lacinia bibendum nulla sed consectetur.
           `,
       },
       {
         title: 'Adolescence and Beyond',
         text: `
-            The adolescent brain continues to develop, shaping cognitive abilities and decision-making processes. 
+            The adolescent brain continues to develop, shaping cognitive abilities and decision-making processes.
             Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
-            Nulla vitae elit libero, a pharetra augue. Maecenas sed diam eget risus varius blandit sit amet non magna. 
+            Nulla vitae elit libero, a pharetra augue. Maecenas sed diam eget risus varius blandit sit amet non magna.
             Aenean lacinia bibendum nulla sed consectetur.
           `,
         alt: 'Brain Development Stages',
