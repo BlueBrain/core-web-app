@@ -3,9 +3,15 @@
 import { Suspense, useEffect } from 'react';
 import { UseQueryStateReturn, parseAsString, useQueryState, Options } from 'nuqs';
 import { useSetAtom } from 'jotai';
-
 import Link from 'next/link';
+
 import { Analysis, Configuration, Simulation } from '.';
+
+import {
+  DataTypeToNewSimulationPage,
+  DataTypeToNexusType,
+} from '@/constants/explore-section/list-views';
+
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail from '@/components/explore-section/Detail';
 import {
@@ -17,16 +23,16 @@ import SectionTabs, {
   EmodelTabKeys,
 } from '@/components/explore-section/EModel/DetailView/SectionTabs';
 import If from '@/components/ConditionalRenderer/If';
+
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+
 import { initializeSummaryAtom } from '@/state/virtual-lab/build/me-model-setter';
+
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
-import {
-  DataTypeToNewSimulationPage,
-  DataTypeToNexusType,
-} from '@/constants/explore-section/list-views';
 import { to64 } from '@/util/common';
 
 type Params = {
+  id: string;
   projectId: string;
   virtualLabId: string;
 };
@@ -81,7 +87,7 @@ export default function MEModelDetailView({ params, showViewMode = false }: Prop
             <div className="w-full flex-1">
               <Suspense fallback={<CentralLoadingSpinner />}>
                 <If id="configuration" condition={activeTab === 'configuration'}>
-                  <Configuration />
+                  <Configuration params={params} />
                 </If>
                 <If id="analysis" condition={activeTab === 'analysis'}>
                   <Analysis />

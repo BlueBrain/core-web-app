@@ -1,6 +1,7 @@
 import { Select, Form, Collapse, ConfigProvider } from 'antd';
 import { useAtomValue } from 'jotai';
 import { DownOutlined } from '@ant-design/icons';
+import get from 'lodash/get';
 
 import AmperageRange from './AmperageRange';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
@@ -174,9 +175,15 @@ function StimulationProtocol({ stimulationId }: FormItemProps) {
       <div className="ml-2 text-left uppercase text-gray-400">Protocol</div>
       <div className="ml-2 mt-4 flex items-baseline">
         <div className="mr-16 flex items-center uppercase ">
-          <SelectedIcon fill="white" className="mr-2" />{' '}
+          <SelectedIcon fill="white" className="mr-2" />
           <span className="font-bold text-primary-8">
-            {currentInjectionConfig[stimulationId].stimulus.stimulusProtocol}
+            {
+              get(
+                PROTOCOL_DETAILS,
+                currentInjectionConfig[stimulationId].stimulus.stimulusProtocol!,
+                null
+              )?.label
+            }
           </span>
         </div>
         <Form.Item

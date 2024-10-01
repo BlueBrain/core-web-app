@@ -12,6 +12,7 @@ import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { DEFAULT_CURRENT_INJECTION_CONFIG } from '@/constants/simulate/single-neuron';
 import { recordingSourceForSimulationAtom } from '@/state/simulate/categories/recording-source-for-simulation';
 import { currentInjectionSimulationConfigAtom } from '@/state/simulate/categories/current-injection-simulation';
+import useNotification from '@/hooks/notifications';
 
 type Props = {
   modelSelfUrl: string;
@@ -52,6 +53,7 @@ export default function NeuronViewer({
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
   const setSecNames = useSetAtom(secNamesAtom);
+  const { error: notifyError } = useNotification();
 
   const setSectionsAndSegments = useCallback(
     (morphology: Morphology) => {
@@ -84,10 +86,20 @@ export default function NeuronViewer({
     }
   }, []);
 
-  const { loading } = useMorphology({
+  const { loading, error } = useMorphology({
     modelSelfUrl,
     callback: runRenderer,
   });
+
+  if (error) {
+    notifyError(
+      `Morphology initialization error: ${error}`,
+      undefined,
+      'topRight',
+      undefined,
+      error
+    );
+  }
 
   useNeuronViewerEvents({
     useEvents,

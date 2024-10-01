@@ -61,6 +61,7 @@ export type ExperimentalTrace = ExperimentResource & {
 };
 
 export type ReconstructedNeuronMorphology = ExperimentResource & {
+  annotation?: Annotation | Annotation[];
   atlasRelease: IdWithType<string[]>;
   dateCreated: TypeWithDate;
   derivation: Derivation | Derivation[];
@@ -69,7 +70,7 @@ export type ReconstructedNeuronMorphology = ExperimentResource & {
   generation: Generation;
   identifier: string;
   license: IdWithType;
-  objectOfStudy: IdWithLabel;
+  objectOfStudy?: IdWithLabel;
   virus: string;
   version: number;
 };

@@ -30,7 +30,8 @@
     "**/*.tsx",
     "**/*.spec.tsx",
     "src/**/*.mjs",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/util/intersection-observer.jsx"
   ],
   "exclude": ["node_modules"]
 }
