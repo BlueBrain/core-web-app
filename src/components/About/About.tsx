@@ -72,19 +72,12 @@ const ABOUT_ARTICLES: Array<AboutSection> = [
         title: 'Chemical Messengers',
         text: `
             Neurotransmitters play a crucial role in transmitting signals between nerve cells.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue.
-            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean lacinia bibendum nulla sed consectetur.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
-            Aenean lacinia bibendum nulla sed consectetur.
           `,
       },
       {
         title: 'Emotional Harmony',
         text: `
             Maintaining a balance of neurotransmitters is essential for emotional stability.
-            Maecenas sed diam eget risus varius blandit sit amet non magna. Aenean lacinia bibendum nulla sed consectetur.
-            Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
-            Cras mattis consectetur purus sit amet fermentum. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
           `,
         alt: 'Neurotransmitter Molecules',
         image: `${basePath}/images/topological-neuron-synthesis.png`,
@@ -104,11 +97,6 @@ const ABOUT_ARTICLES: Array<AboutSection> = [
         title: 'Early Stages of Development',
         text: `
             The human brain undergoes significant changes during the early stages of development.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.
-            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean lacinia bibendum nulla sed consectetur.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
-            Aenean lacinia bibendum nulla sed consectetur.
           `,
       },
       {
@@ -116,8 +104,6 @@ const ABOUT_ARTICLES: Array<AboutSection> = [
         text: `
             The adolescent brain continues to develop, shaping cognitive abilities and decision-making processes.
             Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
-            Nulla vitae elit libero, a pharetra augue. Maecenas sed diam eget risus varius blandit sit amet non magna.
-            Aenean lacinia bibendum nulla sed consectetur.
           `,
         alt: 'Brain Development Stages',
         image: `${basePath}/images/topological-neuron-synthesis.png`,

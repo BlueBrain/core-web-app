@@ -1,8 +1,10 @@
 'use client';
 
-import UserInfoForm from './UserInfoForm';
+import { ConfigProvider, Modal } from 'antd';
 
+import UserInfoForm from './UserInfoForm';
 import { SingleDocumentProps } from '@/types/about/document-download';
+import { CloseIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 
 export default function FormDownloadDocument({
@@ -15,16 +17,31 @@ export default function FormDownloadDocument({
   setFormOpen: (value: boolean) => void;
 }) {
   return (
-    <>
-      <div className="fixed left-0 top-0 z-[5555] h-screen w-screen bg-primary-7 opacity-50 backdrop-blur-lg" />
-      <div
+    <ConfigProvider theme={{ hashed: false }}>
+      <Modal
+        mask
+        centered
+        destroyOnClose
+        maskClosable
+        open={formOpen}
+        onCancel={() => setFormOpen(false)}
+        title={null}
+        footer={null}
+        styles={{
+          mask: {
+            background: '#002766ba',
+          },
+          body: { padding: '20px' },
+        }}
+        closeIcon={<CloseIcon className="block h-auto w-4" />}
         className={classNames(
-          'fixed left-1/2 top-1/2 z-[99999] flex h-screen w-screen  -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-[rgba(0,39,102,0.8)] text-primary-8 md:h-3/4 md:w-3/4 xl:h-2/3 xl:w-2/3',
-          formOpen ? 'pointer-events-auto' : 'pointer-events-none'
+          '!m-0 h-full w-full !max-w-full md:h-auto md:!w-[700px]',
+          '[&_.ant-modal-body]:flex [&_.ant-modal-body]:h-full [&_.ant-modal-body]:items-center [&_.ant-modal-body]:justify-center md:[&_.ant-modal-body]:h-auto',
+          '[&_.ant-modal-confirm-body]:!w-full [&_.ant-modal-confirm-paragraph]:max-w-full [&_.ant-modal-content]:h-full [&_.ant-modal-content]:!rounded-none'
         )}
       >
         <UserInfoForm content={content} setFormOpen={setFormOpen} />
-      </div>
-    </>
+      </Modal>
+    </ConfigProvider>
   );
 }

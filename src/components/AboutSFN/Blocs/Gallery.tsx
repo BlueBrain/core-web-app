@@ -44,14 +44,14 @@ export default function Gallery({
 
   return (
     <div
-      className="relative flex w-full flex-col py-[14vh] md:min-h-screen md:snap-start md:px-[16vw]"
+      className="relative flex w-full flex-col py-[15vh] md:min-h-screen md:snap-start md:px-[16vw]"
       id={slugify(id)}
       ref={ref}
     >
       <header className="mb-4 flex flex-col px-8 uppercase tracking-[0.1em] md:mb-12 md:px-0">
         <h2
           lang="en"
-          className="mb-4 hyphens-manual whitespace-pre-line text-5xl font-bold leading-[0.86] md:hyphens-none md:text-6xl xl:text-8xl"
+          className="mb-4 hyphens-manual whitespace-pre-line text-4xl font-bold leading-[0.86] md:hyphens-none md:text-5xl xl:text-5xl"
         >
           {title}
         </h2>

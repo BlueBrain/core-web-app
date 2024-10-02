@@ -8,6 +8,7 @@ const FREE_ACCESS_PAGES = [
   '/getting-started',
   '/about*',
   '/images*',
+  '/downloads*',
   '/api/marketing',
 ];
 
@@ -34,7 +35,8 @@ export async function middleware(request: NextRequest) {
   const { device } = userAgent(request);
 
   if (device.type === 'mobile') {
-    const allowedPathsRegex = /^\/_next\/(static|image)|^\/api|^\/images/;
+    const allowedPathsRegex = /^\/_next\/(static|image)|^\/api|^\/images|^\/downloads/;
+
     // If the URL matches the allowed paths, proceed to the next middleware or handler (for assets and static files)
     if (allowedPathsRegex.test(requestUrl)) {
       return NextResponse.next();
