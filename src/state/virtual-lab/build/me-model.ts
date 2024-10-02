@@ -55,15 +55,15 @@ export const selectedMModelResourceAtom = atom(async (get) => {
   return await retrieveESResourceByID(mModelId);
 });
 
-const selectedMModelOrgAtom = atom(async (get) => {
+export const selectedMModelOrgAtom = atom(async (get) => {
   const resource = await get(selectedMModelResourceAtom);
-  if (!resource) return;
+  if (!resource) return null;
   return getOrgFromSelfUrl(resource._self);
 });
 
-const selectedMModelProjectAtom = atom(async (get) => {
+export const selectedMModelProjectAtom = atom(async (get) => {
   const resource = await get(selectedMModelResourceAtom);
-  if (!resource) return;
+  if (!resource) return null;
   return getProjectFromSelfUrl(resource._self);
 });
 
