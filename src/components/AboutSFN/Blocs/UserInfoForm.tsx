@@ -40,7 +40,7 @@ export default function UserInfoForm({
 
       if (response.ok) {
         setStatus('success');
-        downloadFileByHref(content.url, 'Brochure.pdf');
+        downloadFileByHref(content.url, `${content.file}.pdf`);
         form.resetFields();
         setFormOpen(false);
       } else {
@@ -50,6 +50,7 @@ export default function UserInfoForm({
       setStatus('error');
     }
   };
+
   return (
     <Form
       form={form}

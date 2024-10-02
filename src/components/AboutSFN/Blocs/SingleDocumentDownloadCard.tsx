@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 
 import { SingleDocumentProps } from '@/types/about/document-download';
 import { classNames } from '@/util/utils';
+import downloadFileByHref from '@/util/downloadFileByHref';
 
 export default function SingleDocumentDownloadCard({
   content,
@@ -19,7 +19,10 @@ export default function SingleDocumentDownloadCard({
 }) {
   const [onMouseHover, setOnMouseHover] = useState<boolean>(false);
 
-  const handleClick = () => openModal(content);
+  const handleClick = () => {
+    if (content.access === 'restricted') openModal(content);
+    else downloadFileByHref(content.url, `${content.file}.pdf`);
+  };
 
   return (
     <div
@@ -58,28 +61,14 @@ export default function SingleDocumentDownloadCard({
             onMouseHover ? 'bottom-4' : '-bottom-32'
           )}
         >
-          {content.access === 'restricted' ? (
-            <button
-              type="button"
-              className="relative mt-4 flex w-full flex-col items-center bg-white py-8 font-sans text-lg uppercase leading-none tracking-wider text-primary-8 md:flex"
-              onClick={handleClick}
-            >
-              <span className="font-bold ">Download Brochure</span>
-              <span className="font-light">(PDF)</span>
-            </button>
-          ) : (
-            <Link
-              download
-              className="relative mt-4 flex w-full flex-col items-center bg-white py-8 font-sans text-lg uppercase leading-none tracking-wider text-primary-8 md:flex"
-              target="_blank"
-              rel="noopener noreferrer"
-              locale={false}
-              href={content.url}
-            >
-              <span className="font-bold ">Download Brochure</span>
-              <span className="font-light">(PDF)</span>
-            </Link>
-          )}
+          <button
+            type="button"
+            className="relative mt-4 flex w-full flex-col items-center bg-white py-8 font-sans text-lg uppercase leading-none tracking-wider text-primary-8 md:flex"
+            onClick={handleClick}
+          >
+            <span className="font-bold ">Download Brochure</span>
+            <span className="font-light">(PDF)</span>
+          </button>
         </div>
       </div>
     </div>

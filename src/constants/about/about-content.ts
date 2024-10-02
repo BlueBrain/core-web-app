@@ -184,8 +184,9 @@ export const DOWNLOADABLE_DOCUMENTS = [
     id: 'openPlatformBrochure',
     description:
       'The Blue Brain Open Platform offers the capability of exploring, building and simulating brain models. Discover a brief overview in this introduction to the platform.',
-    url: `${basePath}/downloads/open_blue_brain_platform_Introduction_no_restrictions.pdf`,
+    url: `${basePath}/downloads/open_blue_brain_platform_introduction.pdf`,
     access: 'public',
+    file: 'open_blue_brain_platform_introduction',
   },
   {
     name: 'Introduction to Digital Brain Models',
@@ -194,6 +195,7 @@ export const DOWNLOADABLE_DOCUMENTS = [
       'The Blue Brain Open Platform uses digital brain models developed by the Blue Brain Project. Learn about the different models in this brief overview.',
     url: `${basePath}/downloads/intro_to_digital_brains.pdf`,
     access: 'restricted',
+    file: 'intro_to_digital_brains',
   },
   {
     name: 'Biological Fidelity',
@@ -202,5 +204,6 @@ export const DOWNLOADABLE_DOCUMENTS = [
       'The Blue Brain Open Platform is a fully integrated tool for simulation neuroscience using a series of algorithms and models. In this overview, the structural and functional validations of the models are described.',
     url: `${basePath}/downloads/biological_fidelity_Model_validations.pdf`,
     access: 'restricted',
+    file: 'biological_fidelity_Model_validations',
   },
 ];
