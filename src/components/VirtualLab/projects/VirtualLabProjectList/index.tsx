@@ -1,8 +1,9 @@
 import { Button, ConfigProvider, Modal, Spin, Form } from 'antd';
 import { useState, useEffect } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import NewProjectModalForm from './NewProjectModalForm';
 import { selectedMembersAtom } from './shared';
@@ -13,7 +14,7 @@ import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import { useAtom } from '@/state/state';
 import { assertErrorMessage, classNames } from '@/util/utils';
-import { Project } from '@/types/virtual-lab/projects';
+import { basePath } from '@/config';
 
 function NewProjectModalFooter({
   close,
@@ -57,17 +58,15 @@ function NewProjectModalFooter({
   );
 }
 
-export function NewProjectModal({
-  onSuccess,
-  virtualLabId,
-}: {
-  onSuccess?: (newProject: Project) => void;
-  virtualLabId: string;
-}) {
+export function NewProjectModal({ virtualLabId }: { virtualLabId: string }) {
   const [open, setOpen] = useAtom<boolean>('new-project-modal-open');
   const [loading, setLoading] = useState(false);
   const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
   const includeMembers = useAtomValue(selectedMembersAtom);
+  const redirectUrl = (projectId: string) =>
+    `${basePath}/virtual-lab/lab/${virtualLabId}/project/${projectId}/home`;
+
+  const router = useRouter();
 
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -80,8 +79,8 @@ export function NewProjectModal({
       const res = await createProject({ name, description, includeMembers }, virtualLabId);
       form.resetFields();
       setOpen(false);
-      if (onSuccess) onSuccess(res.data.project);
       notification.success(`${res.data.project.name} has been created.`);
+      router.push(redirectUrl(res.data.project.id));
     } catch (e: any) {
       if ('errorFields' in e) return; // Input errors.
       notification.error(`Project creation failed: ${assertErrorMessage(e)}`); // Request Errors
@@ -150,7 +149,6 @@ function SearchProjects() {
 
 export default function VirtualLabProjectList({ id }: { id: string }) {
   const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
-  const setVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(id));
   const [, setNewProjectModalOpen] = useAtom<boolean>('new-project-modal-open');
 
   if (!virtualLabProjects) {
@@ -173,7 +171,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
               </div>
               <SearchProjects />
             </div>
-            <NewProjectModal onSuccess={setVirtualLabProjects} virtualLabId={id} />
+            <NewProjectModal virtualLabId={id} />
           </div>
           <div className="flex flex-col gap-4">
             {virtualLabProjects.results.map((project) => (
