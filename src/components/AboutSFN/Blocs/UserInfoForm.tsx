@@ -1,20 +1,17 @@
 import { useState } from 'react';
-import { z } from 'zod';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Form, Input } from 'antd';
 
-import FormInputBlock from './FormInputBlock';
 import downloadFileByHref from '@/util/downloadFileByHref';
-
 import { SingleDocumentProps } from '@/types/about/document-download';
-import { classNames, getZodErrorPath } from '@/util/utils';
-import { CloseIcon } from '@/components/icons';
+import { classNames } from '@/util/utils';
 import { basePath } from '@/config';
 
-const contactSchema = z.object({
-  firstName: z.string().min(4),
-  lastName: z.string().min(1),
-  email: z.string().email(),
-});
+type ContactData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+};
 
 export default function UserInfoForm({
   content,
@@ -23,112 +20,120 @@ export default function UserInfoForm({
   content: SingleDocumentProps;
   setFormOpen: (value: boolean) => void;
 }) {
+  const [form] = Form.useForm();
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [errors, setErrors] = useState<(string | number)[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (values: ContactData) => {
     setStatus('loading');
-    setErrors([]);
-    const formData = new FormData(e.currentTarget);
-    const firstName = String(formData.get('firstName'));
-    const lastName = String(formData.get('lastName'));
-    const email = String(formData.get('email'));
+    try {
+      const response = await fetch(`${basePath}/api/marketing`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+        }),
+      });
 
-    const { error, success } = await contactSchema.safeParseAsync({
-      firstName,
-      lastName,
-      email,
-    });
-
-    if (error) {
-      setErrors(getZodErrorPath(error));
-      setStatus('error');
-      return;
-    }
-
-    if (success) {
-      try {
-        const response = await fetch(`${basePath}/api/marketing`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            firstName,
-            lastName,
-            email,
-          }),
-        });
-
-        if (response.ok) {
-          setStatus('success');
-          downloadFileByHref(content.url, 'Brochure.pdf');
-          setFormOpen(false);
-        } else {
-          setStatus('error');
-        }
-      } catch (err) {
+      if (response.ok) {
+        setStatus('success');
+        downloadFileByHref(content.url, `${content.file}.pdf`);
+        form.resetFields();
+        setFormOpen(false);
+      } else {
         setStatus('error');
       }
+    } catch (err) {
+      setStatus('error');
     }
   };
+
   return (
-    <form
+    <Form
+      form={form}
       name="marketing-form"
-      className="relative z-[99999] flex h-full w-full flex-col justify-between bg-white p-10 md:p-12 xl:p-24"
-      onSubmit={handleSubmit}
+      className="relative flex h-full w-full flex-col justify-between bg-white"
+      layout="vertical"
+      requiredMark={false}
+      onFinish={handleSubmit}
     >
-      <button
-        type="button"
-        className="absolute right-6 top-6 bg-white p-4 text-primary-8"
-        onClick={() => setFormOpen(false)}
-        aria-label="Close form modal"
-      >
-        <CloseIcon className="block h-auto w-4" />
-      </button>
       <div className="relative flex flex-col gap-y-6">
         <header className="relative mb-8 flex w-full flex-col md:mb-4 xl:mb-8">
-          <div className="mb-2 text-4xl font-bold">Download {content.name}</div>
-          <p className="font-sans text-lg font-light leading-normal">{content.description}</p>
+          <div className="mb-2 text-4xl font-bold text-primary-8">Download {content.name}</div>
+          <p className="font-sans text-lg font-light leading-normal text-primary-8">
+            {content.description}
+          </p>
         </header>
         <div className="flex flex-col gap-y-8">
           <div className="relative contents w-full grid-cols-2 gap-x-12 font-sans xl:grid">
-            <FormInputBlock
-              isRequired
+            <Form.Item
+              label={
+                <span className="relative text-base font-light uppercase tracking-wide text-primary-8">
+                  First name
+                  <span className="text-red-600"> *</span>
+                </span>
+              }
+              rules={[{ required: true, message: 'Please provide the first name!' }]}
+              validateTrigger="onBlur"
               name="firstName"
-              label="First Name"
-              type="text"
-              placeholder="Enter your first name..."
-              error={errors.includes('firstName')}
-            />
-            <FormInputBlock
-              isRequired
+            >
+              <Input
+                type="text"
+                placeholder="First name"
+                size="large"
+                className="rounded-none border-0 !border-b border-neutral-3 !font-bold !text-primary-8  placeholder:!font-light"
+              />
+            </Form.Item>
+            <Form.Item
+              rules={[{ required: true, message: 'Please provide the last name!' }]}
+              validateTrigger="onBlur"
               name="lastName"
-              label="Last Name"
-              type="text"
-              placeholder="Enter your last name..."
-              error={errors.includes('lastName')}
-            />
+              label={
+                <span className="relative text-base font-light uppercase tracking-wide text-primary-8">
+                  Last name
+                  <span className="text-red-600"> *</span>
+                </span>
+              }
+            >
+              <Input
+                type="text"
+                placeholder="Last name"
+                size="large"
+                className="rounded-none border-0 !border-b border-neutral-3 !font-bold !text-primary-8  placeholder:!font-light"
+              />
+            </Form.Item>
           </div>
-          <FormInputBlock
-            isRequired
+          <Form.Item
+            rules={[{ required: true, message: 'Please provide an email!' }]}
+            validateTrigger="onBlur"
             name="email"
-            label="email"
-            type="email"
-            placeholder="Enter your email address..."
-            error={errors.includes('email')}
-          />
+            label={
+              <span className="relative text-base font-light uppercase tracking-wide text-primary-8">
+                Last name
+                <span className="text-red-600"> *</span>
+              </span>
+            }
+          >
+            <Input
+              type="email"
+              placeholder="obp@example.ch"
+              size="large"
+              className="rounded-none border-0 !border-b border-neutral-3 !font-light !text-primary-8  placeholder:!font-light"
+            />
+          </Form.Item>
         </div>
       </div>
       <div className="relative mt-4 flex flex-col gap-y-2 md:mt-10 xl:mt-4">
-        <p className="font-sans text-base font-light leading-normal">
+        <p className="font-sans text-base font-light leading-normal text-primary-8">
           By submitting this form, you agree to receive information from the Blue Brain Project.
         </p>
         <button
           type="submit"
           className={classNames(
-            'relative bg-primary-8 py-6 text-lg font-bold uppercase tracking-wider text-white',
+            'relative bg-primary-8 py-6 text-base font-bold uppercase tracking-wider text-white',
             'flex items-center justify-center gap-4'
           )}
         >
@@ -142,6 +147,6 @@ export default function UserInfoForm({
           </p>
         )}
       </div>
-    </form>
+    </Form>
   );
 }

@@ -47,20 +47,14 @@ export default function Timeline({
   return (
     <div
       className={classNames(
-        'relative flex w-full flex-col justify-center gap-x-20',
-        'px-8 pb-8 pt-16 md:min-h-screen md:snap-start md:flex-row md:px-[8vw] md:py-[20vh]'
+        'relative mt-20 flex w-full flex-col justify-center gap-x-20 md:mt-0',
+        'px-8 pb-8 pt-16 md:min-h-screen md:snap-start md:flex-row md:px-[8vw] md:py-[18vh]'
       )}
       id={id}
       ref={ref}
     >
-      <div className="relative flex w-full items-center justify-center md:h-[80vh] md:w-1/2">
-        <Image
-          width={800}
-          height={900}
-          src={content[activeKeyPoint].image}
-          alt={`Image of ${content[activeKeyPoint].title}`}
-          className="relative -top-[8vh] rotate-0 scale-105 transition-transform duration-500 ease-in-out hover:rotate-6 hover:scale-[1.25]"
-        />
+      <div className="relative hidden w-full items-center justify-center md:flex md:h-auto md:w-1/2">
+        <TimelineImage {...{ content, activeKeyPoint }} />
       </div>
 
       <div className="relative -top-20 flex h-full w-full flex-col items-start justify-center md:top-0 md:w-1/2">
@@ -94,11 +88,31 @@ export default function Timeline({
             setActiveItem={handleItemChange}
           />
         </div>
-
-        <p className="my-8 font-sans text-2xl font-light leading-normal text-primary-1 md:text-lg">
+        <div className="relative mt-10 flex h-[50vh] w-full items-center justify-center md:hidden">
+          <TimelineImage {...{ content, activeKeyPoint }} />
+        </div>
+        <p className="my-8 hyphens-auto text-justify font-sans text-2xl font-light leading-normal text-primary-1 md:text-lg">
           {content[activeKeyPoint].description}
         </p>
       </div>
     </div>
+  );
+}
+
+function TimelineImage({
+  content,
+  activeKeyPoint,
+}: {
+  content: TimelineProps[];
+  activeKeyPoint: number;
+}) {
+  return (
+    <Image
+      priority
+      fill
+      src={content[activeKeyPoint].image}
+      alt={`Image of ${content[activeKeyPoint].title}`}
+      className="relative aspect-square rotate-0 scale-105 object-contain transition-transform duration-500 ease-in-out hover:rotate-6 hover:scale-[1.25]"
+    />
   );
 }

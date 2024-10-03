@@ -51,10 +51,7 @@ export function OBPLogo({
         className
       )}
     >
-      <div className="flex flex-col text-nowrap text-2xl font-bold md:text-4xl">
-        <span className="text-brand">Blue Brain</span>
-        <span>Open Platform</span>
-      </div>
+      <Image priority width={192} height={61} alt="bbop" src={`${basePath}/images/logo.png`} />
     </Link>
   );
 }

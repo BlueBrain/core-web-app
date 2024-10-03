@@ -73,27 +73,6 @@ const content = [
       },
     ],
   },
-  {
-    title: 'More',
-    items: [
-      {
-        title: 'Link 1',
-        url: '#',
-      },
-      {
-        title: 'Link 2',
-        url: '#',
-      },
-      {
-        title: 'Link 3',
-        url: '#',
-      },
-      {
-        title: 'Link 4',
-        url: '#',
-      },
-    ],
-  },
 ];
 
 export default function Footer({

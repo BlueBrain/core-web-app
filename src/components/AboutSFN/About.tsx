@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useQueryState } from 'nuqs';
+
 import DownloadDocument from './Blocs/DownloadDocument';
 import Footer from './Blocs/Footer';
 import Gallery from './Blocs/Gallery';
@@ -24,11 +26,14 @@ import { classNames } from '@/util/utils';
 export default function AboutSFN() {
   const [activeSection, setActiveSection] = useState<string>('introduction');
   const [showSteps, setShowSteps] = useState(true);
+  const [warning] = useQueryState('warning', { clearOnDefault: true, defaultValue: '' });
+
   return (
     <div
       className={classNames(
-        'relative flex h-screen w-screen flex-col overflow-x-hidden pt-[20vh]',
-        'md:w-full md:snap-y md:snap-mandatory md:snap-center md:pt-0'
+        'relative flex h-screen w-screen flex-col overflow-x-hidden pt-36 md:pt-[117px]',
+        'md:w-full md:snap-y md:snap-mandatory md:snap-center md:pt-0',
+        warning === 'yes' ? 'pt-52 md:pt-36' : 'pt-36'
       )}
     >
       <InternalNavigation activeSection={activeSection} show={showSteps} />
@@ -61,7 +66,7 @@ export default function AboutSFN() {
         id="inshort"
       />
       <Gallery
-        title="Simulation neuroscience"
+        title="Simulation neuro&shy;science"
         subtitle="Discover the benefits"
         content={SIMULATION_NEUROSCIENCE_BLOCK}
         setActiveSection={setActiveSection}
