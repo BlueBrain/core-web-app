@@ -115,64 +115,66 @@ export const BBP_TIMELINE = [
   {
     title: 'microcircuits',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      'A cortical microcircuit model comprises all six cortical layers with a horizontal extent that captures the entire dendritic tree of the most central neurons. Neurons within have the same anatomical and physiological level of detail as single neuron models. All synapses between the contained neurons are included, plus more abstract models of thalamo-cortical axons that serve as user-controlled inputs. This setup can be used to study the local processing of thalamic inputs, and the roles of individual subpopulations during that process.',
     neurons: '31k',
     synapses: '37M',
-    image: `${basePath}/images/about/timeline/bbp_timeline_step-microcircuit.png`,
+    image: `${basePath}/images/about/timeline/bbp_timeline_step-microcircuit.webp`,
   },
   {
     title: 'thalamus',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      'This model of the thalamus comprises three thalamic nuclei. It is constructed in a volumetric atlas and hence takes the shape of the modeled regions into account. Neurons are placed according to experimentally measured cell densities. The entirety of the model can be simulated, or user-specified parts of it. The model can be used to study the anatomy and activity of this pivotal brain region.',
     neurons: '331k',
     synapses: '40M',
-    image: `${basePath}/images/about/timeline/bbp_timeline_step-thalamus.png`,
+    image: `${basePath}/images/about/timeline/bbp_timeline_step-thalamus.webp`,
   },
   {
     title: 'hippocampus',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      'This model of the CA1 regions of the rodent hippocampus is constructed in a volumetric atlas. It takes the shape of the modeled regions into account. Neurons within are placed according to experimentally measured cell densities. The entirety of the model, or only user-specified parts, can be simulated. The hippocampal CA1 model facilitates the study of both the anatomical structure and neural activity in this brain region.',
     neurons: '460k',
     synapses: '800M',
-    image: `${basePath}/images/about/timeline/bbp_timeline_step-hippocampus.png`,
+    image: `${basePath}/images/about/timeline/bbp_timeline_step-hippocampus.webp`,
   },
   {
-    title: 'somatosensory cortex',
+    title: 'Non Barrel Somatosensory Cortex',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      'This model of the non-barrel somatosensory regions of rodent cortex is constructed in a volumetric atlas and takes the shape of the modeled regions into account. Neurons are placed according to experimentally measured cell densities. Both the entirety or user-specified parts of the model can be simulated in order to facilitate the study of both the anatomical structure and neural activity in this brain region.',
     neurons: '1.7M',
     synapses: '4.7B',
-    image: `${basePath}/images/about/timeline/bbp_timeline_step-somatosensorycortex.png`,
+    image: `${basePath}/images/about/timeline/bbp_timeline_step-somatosensorycortex.webp`,
   },
   {
     title: 'Neocortex',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      'Building upon the somatosensory cortex model, this extends the model to cover all regions of the mouse neocortex. It can be analyzed or simulated in its entirety, or selected regions only; as such, it can be used to study the dynamic interactions between the various regions.',
     neurons: '10.7M',
     synapses: '88B',
-    image: `${basePath}/images/about/timeline/bbp_timeline_step-neocortex.png`,
+    image: `${basePath}/images/about/timeline/bbp_timeline_step-neocortex.webp`,
   },
   {
-    title: 'NGV system',
+    title: 'Neuro-glia vascular System',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      'This enhanced model of the neuro-glia-vascular system combines a microcircuit model with models of astrocytes in biological densities as well as blood vessels innervating the volume. The dynamic interactions between neurons, the astrocytes and the vascular system are also modeled and can be readily simulated to gain a deep insight into their functionalities.',
     neurons: '88K',
     astrocytes: '14K',
-    image: `${basePath}/images/about/timeline/bbp_timeline_step-ngv_system.png`,
+    image: `${basePath}/images/about/timeline/bbp_timeline_step-ngv_system.webp`,
   },
   {
-    title: 'Point neuron-based framework',
+    title: 'Whole Brain with Olfactory Bulb and Cerebellum',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-    neurons: '70M',
-    image: `${basePath}/images/about/timeline/bbp_timeline_step-point_neuron.png`,
-  },
-  {
-    title: 'Whole brain',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      'This extremely large model combines the neocortex model with models for the various other parts of the brain. The models for the olfactory bulb and cerebellum were constructed in collaboration with experts from the community to accurately capture their specific anatomy and their physiology.',
     neurons: '71.5M',
-    image: `${basePath}/images/about/timeline/bbp_timeline_step-whole_brain.png`,
+    image: `${basePath}/images/about/timeline/bbp_timeline_step-point_neuron.webp`,
+  },
+  {
+    title: 'Brain vascular system',
+    description:
+      'This version of the model of the neuro-glia-vascular system has been scaled up to encompass the whole brain.',
+    neurons: '71.5M',
+    image: `${basePath}/images/about/timeline/bbp_timeline_step-whole_brain_last.webp`,
+    width: 1200,
+    height: 675,
   },
 ];
 
@@ -182,23 +184,26 @@ export const DOWNLOADABLE_DOCUMENTS = [
     id: 'openPlatformBrochure',
     description:
       'The Blue Brain Open Platform offers the capability of exploring, building and simulating brain models. Discover a brief overview in this introduction to the platform.',
-    url: `${basePath}/downloads/BBOP_Users_Brochure_Capabilities_AA_Digital.pdf`,
+    url: `${basePath}/downloads/open_blue_brain_platform_introduction.pdf`,
     access: 'public',
+    file: 'open_blue_brain_platform_introduction',
   },
   {
     name: 'Introduction to Digital Brain Models',
     id: 'digitalBrainModels',
     description:
       'The Blue Brain Open Platform uses digital brain models developed by the Blue Brain Project. Learn about the different models in this brief overview.',
-    url: `${basePath}/downloads/BBOP_Users_Brochure_Capabilities_AA_Digital.pdf`,
+    url: `${basePath}/downloads/intro_to_digital_brains.pdf`,
     access: 'restricted',
+    file: 'intro_to_digital_brains',
   },
   {
     name: 'Biological Fidelity',
     id: 'biologicalFidelity',
     description:
       'The Blue Brain Open Platform is a fully integrated tool for simulation neuroscience using a series of algorithms and models. In this overview, the structural and functional validations of the models are described.',
-    url: `${basePath}/downloads/BBOP_Users_Brochure_Capabilities_AA_Digital.pdf`,
+    url: `${basePath}/downloads/biological_fidelity_Model_validations.pdf`,
     access: 'restricted',
+    file: 'biological_fidelity_Model_validations',
   },
 ];

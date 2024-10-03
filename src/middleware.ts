@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse, NextRequest, userAgent } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
@@ -8,6 +8,7 @@ const FREE_ACCESS_PAGES = [
   '/getting-started',
   '/about*',
   '/images*',
+  '/downloads*',
   '/api/marketing',
 ];
 
@@ -31,6 +32,23 @@ export async function middleware(request: NextRequest) {
   const session = await getToken<false, { accessTokenExpires: number }>({ req: request });
   const sessionValid = session && Date.now() < session.accessTokenExpires;
   const requestUrl = request.nextUrl.pathname;
+  const { device } = userAgent(request);
+
+  if (device.type === 'mobile') {
+    const allowedPathsRegex = /^\/_next\/(static|image)|^\/api|^\/images|^\/downloads/;
+
+    // If the URL matches the allowed paths, proceed to the next middleware or handler (for assets and static files)
+    if (allowedPathsRegex.test(requestUrl)) {
+      return NextResponse.next();
+    }
+    // Redirect to /about for any other url
+    if (!requestUrl.startsWith('/about')) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/about';
+      url.searchParams.set('warning', 'yes');
+      return NextResponse.redirect(url);
+    }
+  }
 
   // If the user is authenticated and wants to access the home page or log-in page
   // then redirect to the main page
