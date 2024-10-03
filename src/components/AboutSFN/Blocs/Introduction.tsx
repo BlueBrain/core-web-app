@@ -26,7 +26,7 @@ export default function Introduction({
   return (
     <div
       className={classNames(
-        'relative flex min-h-screen w-screen flex-col justify-center px-8 py-8 md:py-[20vh]',
+        'relative flex w-screen flex-col justify-start px-8 py-8 md:min-h-screen md:justify-center',
         'text-white md:w-full md:snap-start md:px-[16vw] md:py-[20vh]'
       )}
       id={id}

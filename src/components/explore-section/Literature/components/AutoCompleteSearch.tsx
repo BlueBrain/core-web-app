@@ -111,7 +111,7 @@ export default function AutoCompleteSearch({
           />
         )
       }
-      defaultValue={defaultValues}
+      value={defaultValues}
       className="min-w-[128px] rounded"
       variant="borderless"
       size="middle"

@@ -151,8 +151,8 @@ describe('GenerativeQAInput', () => {
     await selectSuggestion('Paper');
     await selectSuggestion('Journal Paper');
 
-    expectOptionsToBeSelected(['paper', 'journal paper'].map(startCase));
-    expectOptionsNotToBeSelected(['abstract'].map(startCase));
+    expectOptionsToBeSelected(['paper', 'journal-paper']);
+    expectOptionsNotToBeSelected(['abstract']);
   });
 
   test('shows journal suggestions even if user has not started typing', async () => {
@@ -379,7 +379,12 @@ describe('GenerativeQAInput', () => {
 
   const expectOptionsToBeSelected = (options: string[]) => {
     options.forEach((option) => {
-      expect(screen.getByText(option, { selector: selectedOptionsSelector })).toBeVisible();
+      expect(
+        // Exact match for "option" but ignore case.
+        screen.getByText(new RegExp(`^${option}$`, 'i'), {
+          selector: selectedOptionsSelector,
+        })
+      ).toBeVisible();
     });
   };
 

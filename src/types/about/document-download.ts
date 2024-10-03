@@ -4,4 +4,5 @@ export type SingleDocumentProps = {
   description: string;
   access: string;
   url: string;
+  file: string;
 };
