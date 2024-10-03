@@ -26,6 +26,8 @@ export function retry<Fn extends (...args: any[]) => Promise<Response>>({
   shouldRetryOnException = DEFAULT_SHOULD_RETRY_ON_EXCEPTION,
 }: RetryParams = RETRY_DEFAULTS) {
   const tries = Math.max(retries + 1, 1); // Ensure at least initial call
+  // Ensure minimum delay base
+  delaySecs = Math.max(delaySecs, DELAY_SECS_DEFAULT); // eslint-disable-line no-param-reassign
 
   return function decorator(fn: Fn) {
     // @ts-expect-error This is needed because Typescript can't infer that the return type of Fn must be assignable to Promise<Response>
