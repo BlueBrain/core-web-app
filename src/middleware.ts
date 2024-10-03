@@ -2,22 +2,22 @@ import { NextResponse, NextRequest, userAgent } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
-const FREE_ACCESS_PAGES = [
-  '/',
-  '/log-in',
-  '/getting-started',
-  '/about*',
+const FREE_ACCESS_PAGES = ['/', '/log-in', '/getting-started', '/about*'];
+const ASSETS = [
   '/images*',
   '/downloads*',
   '/api/marketing',
+  '/_next/static*',
+  '/favicon.ico',
+  '/api/auth*',
 ];
 
 /* Don't allow arbitrary regex to avoid accidentally leaking protected pages
 Only two patterns allowed, exact match or /path* which matches the path
 and all sub-routes
 */
-function isFreeAccessRoute(requestUrl: string) {
-  return FREE_ACCESS_PAGES.some((p) => {
+function isFreeAccessRoute(requestUrl: string, paths: string[]) {
+  return paths.some((p) => {
     if (p.endsWith('*')) {
       // Remove the trailing '*' to get the base path
       const basePath = p.slice(0, -1);
@@ -34,20 +34,17 @@ export async function middleware(request: NextRequest) {
   const requestUrl = request.nextUrl.pathname;
   const { device } = userAgent(request);
 
-  if (device.type === 'mobile') {
-    const allowedPathsRegex = /^\/_next\/(static|image)|^\/api|^\/images|^\/downloads/;
+  // Allow free access to assets
+  if (isFreeAccessRoute(requestUrl, ASSETS)) {
+    return NextResponse.next();
+  }
 
-    // If the URL matches the allowed paths, proceed to the next middleware or handler (for assets and static files)
-    if (allowedPathsRegex.test(requestUrl)) {
-      return NextResponse.next();
-    }
-    // Redirect to /about for any other url
-    if (!requestUrl.startsWith('/about')) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/about';
-      url.searchParams.set('warning', 'yes');
-      return NextResponse.redirect(url);
-    }
+  // Redirect to /about on mobile devices
+  if (device.type === 'mobile' && !requestUrl.startsWith('/about')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/about';
+    url.searchParams.set('warning', 'yes');
+    return NextResponse.redirect(url);
   }
 
   // If the user is authenticated and wants to access the home page or log-in page
@@ -59,7 +56,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Let them through if they're trying to access a public page
-  if (isFreeAccessRoute(requestUrl)) {
+  if (isFreeAccessRoute(requestUrl, FREE_ACCESS_PAGES)) {
     return NextResponse.next();
   }
 
