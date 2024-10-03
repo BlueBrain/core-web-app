@@ -2,7 +2,6 @@
 
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Modal, Select, Switch } from 'antd';
-import { useSetAtom } from 'jotai';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 
@@ -11,7 +10,6 @@ import { NewProjectModal } from '../projects/VirtualLabProjectList';
 import VirtualLabAndProject from './VirtualLabAndProject';
 import DashboardTotals from './DashboardTotals';
 
-import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { useAtom } from '@/state/state';
 
@@ -21,8 +19,6 @@ function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
   const [, setNewProjectModalOpen] = useAtom<boolean>('new-project-modal-open');
   const [projectLocationModalOpen, setProjectLocationModalOpen] = useState(false);
   const [virtualLabId, setVirtualLabId] = useState('');
-
-  const refreshVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(virtualLabId));
 
   return (
     <>
@@ -99,9 +95,7 @@ function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
           onChange={(v) => setVirtualLabId(v)}
         />
       </Modal>
-      {!!virtualLabId && (
-        <NewProjectModal onSuccess={refreshVirtualLabProjects} virtualLabId={virtualLabId} />
-      )}
+      {!!virtualLabId && <NewProjectModal virtualLabId={virtualLabId} />}
     </>
   );
 }
