@@ -2,7 +2,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import { StandardFallback } from './ErrorMessageLine';
 import ExemplarMorphology from './ExemplarMorphology';
-import FeatureSelectionContainer from './FeatureSelectionContainer';
 import Mechanism from './Mechanism';
 import SimulationParameters from './SimulationParameters';
 import EModelTitle from './EModelTitle';
@@ -55,12 +54,6 @@ export default function EModelView({
           <ExemplarTraces params={params} />
         </ErrorBoundary>
       </DefaultLoadingSuspense>
-
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <DefaultLoadingSuspense>
-          <FeatureSelectionContainer />
-        </DefaultLoadingSuspense>
-      </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
