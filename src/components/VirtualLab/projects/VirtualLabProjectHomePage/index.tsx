@@ -63,23 +63,24 @@ export default function VirtualLabProjectHomePage({
     virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId })
   );
 
-  if (!projectDetails) return <LoadingOutlined />;
-
-  return (
-    <div>
-      <WelcomeUserBanner title={projectDetails.name} />
-      <ProjectDetailBanner
-        createdAt={projectDetails.created_at}
-        description={projectDetails.description}
-        name={projectDetails.name}
-        projectId={projectId}
-        virtualLabId={virtualLabId}
-      />
-      <BudgetStatus />
+  if (projectDetails) {
+    return (
       <div>
-        <div className="my-10 text-lg font-bold uppercase">Members</div>
-        <VirtualLabUsersHorizontalList virtualLabId={virtualLabId} projectId={projectId} />
+        <WelcomeUserBanner title={projectDetails.name} />
+        <ProjectDetailBanner
+          createdAt={projectDetails.created_at}
+          description={projectDetails.description}
+          name={projectDetails.name}
+          projectId={projectId}
+          virtualLabId={virtualLabId}
+        />
+        <BudgetStatus />
+        <div>
+          <div className="my-10 text-lg font-bold uppercase">Members</div>
+          <VirtualLabUsersHorizontalList virtualLabId={virtualLabId} projectId={projectId} />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+  return null;
 }
