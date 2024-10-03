@@ -7,8 +7,8 @@ type RetryParams = {
   readonly shouldRetryOnException?: (e: any) => boolean;
 };
 
-const RETRY_DEFAULT = 4;
-const DELAY_SECS_DEFAULT = 0.5;
+const RETRY_DEFAULT = 3;
+const DELAY_SECS_DEFAULT = 1;
 const DEFAULT_SHOULD_RETRY_ON_ERROR = () => false; // By default don't retry on errors
 const DEFAULT_SHOULD_RETRY_ON_EXCEPTION = (e: any) => !(e instanceof DOMException); // By default don't retry on DOMException (inc AbortError)
 const DELAY_SECS_CAP = 10;
