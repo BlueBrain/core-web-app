@@ -13,7 +13,7 @@ type Props = {
 
 export default function NewProjectCTABanner({ title, subtitle, id }: Props) {
   const [, setNewProjectModalOpenAtom] = useAtom<boolean>('new-project-modal-open');
-  const href = `${basePath}/virtual-lab/lab/${id}/projects`;
+  const href = (projectId: string) => `${basePath}/virtual-lab/lab/${id}/project/${projectId}/home`;
 
   return (
     <>
@@ -24,8 +24,8 @@ export default function NewProjectCTABanner({ title, subtitle, id }: Props) {
       />
       <NewProjectModal
         virtualLabId={id}
-        onSuccess={() => {
-          window.location.href = href;
+        onSuccess={(project) => {
+          window.location.href = href(project.id);
         }}
       />
     </>

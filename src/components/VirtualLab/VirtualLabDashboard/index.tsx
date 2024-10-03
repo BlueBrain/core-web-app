@@ -100,7 +100,10 @@ function VirtualLabDashboard({ virtualLabs }: { virtualLabs: VirtualLab[] }) {
         />
       </Modal>
       {!!virtualLabId && (
-        <NewProjectModal onSuccess={refreshVirtualLabProjects} virtualLabId={virtualLabId} />
+        <NewProjectModal
+          onSuccess={(_) => refreshVirtualLabProjects()}
+          virtualLabId={virtualLabId}
+        />
       )}
     </>
   );

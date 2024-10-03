@@ -13,6 +13,7 @@ import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import { useAtom } from '@/state/state';
 import { assertErrorMessage, classNames } from '@/util/utils';
+import { Project } from '@/types/virtual-lab/projects';
 
 function NewProjectModalFooter({
   close,
@@ -60,7 +61,7 @@ export function NewProjectModal({
   onSuccess,
   virtualLabId,
 }: {
-  onSuccess?: () => void;
+  onSuccess?: (newProject: Project) => void;
   virtualLabId: string;
 }) {
   const [open, setOpen] = useAtom<boolean>('new-project-modal-open');
@@ -79,7 +80,7 @@ export function NewProjectModal({
       const res = await createProject({ name, description, includeMembers }, virtualLabId);
       form.resetFields();
       setOpen(false);
-      if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess(res.data.project);
       notification.success(`${res.data.project.name} has been created.`);
     } catch (e: any) {
       if ('errorFields' in e) return; // Input errors.
