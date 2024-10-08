@@ -21,6 +21,9 @@ import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { DisplayMessages } from '@/constants/display-messages';
 import { ensureArray } from '@/util/nexus';
+import { queryAtom } from '@/state/explore-section/list-view-atoms';
+import { ExploreDataScope } from '@/types/explore-section/application';
+import { DataType } from '@/constants/explore-section/list-views';
 
 type Params = {
   params: {
@@ -100,6 +103,14 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
   const selectedMModel = useAtomValue(selectedMModelAtom);
   const selectedEModel = useAtomValue(selectedEModelAtom);
   const selectedEModelConfiguration = useAtomValue(selectedEModelConfigurationAtom);
+  const refreshMeModels = useSetAtom(
+    queryAtom({
+      dataType: DataType.CircuitMEModel,
+      dataScope: ExploreDataScope.NoScope,
+      virtualLabInfo: { virtualLabId, projectId },
+    })
+  );
+
   const createMEModel = useSetAtom(createMEModelAtom);
   const [meModelCreating, setMeModelCreating] = useState<boolean>(false);
 
@@ -129,6 +140,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
         notification.success({
           message: 'ME-model created successfully',
         });
+        refreshMeModels();
         setMeModelCreating(false);
         router.push(redirectionUrl);
       })

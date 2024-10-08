@@ -55,15 +55,15 @@ export const selectedMModelResourceAtom = atom(async (get) => {
   return await retrieveESResourceByID(mModelId);
 });
 
-const selectedMModelOrgAtom = atom(async (get) => {
+export const selectedMModelOrgAtom = atom(async (get) => {
   const resource = await get(selectedMModelResourceAtom);
-  if (!resource) return;
+  if (!resource) return null;
   return getOrgFromSelfUrl(resource._self);
 });
 
-const selectedMModelProjectAtom = atom(async (get) => {
+export const selectedMModelProjectAtom = atom(async (get) => {
   const resource = await get(selectedMModelResourceAtom);
-  if (!resource) return;
+  if (!resource) return null;
   return getProjectFromSelfUrl(resource._self);
 });
 
@@ -89,13 +89,13 @@ export const selectedEModelResourceAtom = atom(async (get) => {
   return await retrieveESResourceByID(eModelId);
 });
 
-const selectedEModelOrgAtom = atom(async (get) => {
+export const selectedEModelOrgAtom = atom(async (get) => {
   const resource = await get(selectedEModelResourceAtom);
   if (!resource) return;
   return getOrgFromSelfUrl(resource._self);
 });
 
-const selectedEModelProjectAtom = atom(async (get) => {
+export const selectedEModelProjectAtom = atom(async (get) => {
   const resource = await get(selectedEModelResourceAtom);
   if (!resource) return;
   return getProjectFromSelfUrl(resource._self);
