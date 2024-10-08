@@ -1,0 +1,15 @@
+.table {
+    & > section {
+      height: 100%;
+  
+      :global(.ant-table-wrapper),
+      :global(.ant-spin-nested-loading),
+      :global(.ant-spin-container),
+      :global(.ant-table),
+      :global(.ant-table-container),
+      :global(.ant-table-content) {
+        height: 100%;
+      }
+    }
+  }
+  
