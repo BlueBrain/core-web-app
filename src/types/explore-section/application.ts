@@ -14,6 +14,7 @@ import { DataType } from '@/constants/explore-section/list-views';
 export enum ExploreDataScope {
   NoScope = 'NoScope',
   SelectedBrainRegion = 'SelectedBrainRegion',
+  Build = 'Build',
   BookmarkedResources = 'BookmarkedResources',
 }
 
