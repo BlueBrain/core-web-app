@@ -488,10 +488,14 @@ export const selectedBrainRegionWithDescendantsAndAncestorsAtom = atom<Promise<s
  * Keeps track of the hierarchy tree of the brain regions
  * It will be expanded based on region selected in useBrainRegionFromQuery hook.
  */
-export const brainRegionHierarchyStateAtom = atomWithDefault<NavValue | null>((get) => {
-  const selectedBrainRegion = get(selectedBrainRegionAtom);
-  return selectedBrainRegion ? null : defaultHierarchyTree;
-});
+export const brainRegionHierarchyStateFamily = atomFamily((key: string) =>
+  atomWithDefault<NavValue | null>((get) => {
+    const selectedBrainRegion = get(selectedBrainRegionFamily(key));
+    return selectedBrainRegion ? null : defaultHierarchyTree;
+  })
+);
+
+export const brainRegionHierarchyStateAtom = brainRegionHierarchyStateFamily('explore');
 
 brainRegionHierarchyStateAtom.debugLabel = 'brainRegionHierarchyStateAtom';
 brainRegionSidebarIsCollapsedAtom.debugLabel = 'brainRegionSidebarIsCollapsedAtom';
