@@ -6,7 +6,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import {
   brainRegionsWithRepresentationAtom,
-  setSelectedBrainRegionAtom,
+  setSelectedBrainRegionAtomGetter,
 } from '@/state/brain-regions';
 import { meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
@@ -26,7 +26,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
   const contributors = useAtomValue(virtualLabProjectUsersAtomFamily({ projectId, virtualLabId }));
   const [isFormValid, setIsFormValid] = useState(false);
   const brainRegions = useAtomValue(brainRegionsWithRepresentationAtom);
-  const setBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
+  const setBrainRegion = useSetAtom(setSelectedBrainRegionAtomGetter('build'));
   const [form] = Form.useForm();
   const router = useRouter();
 

@@ -20,7 +20,7 @@ export default function BuildMEModelLayout({ children }: GenericLayoutProps) {
   return (
     <div className="grid grid-cols-[min-content_auto] bg-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <BrainRegionsSidebar />
+        <BrainRegionsSidebar scope="build" />
       </ErrorBoundary>
 
       <div className="flex flex-col">
