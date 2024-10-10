@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { atomWithDefault, selectAtom } from 'jotai/utils';
+import { atomFamily, atomWithDefault, selectAtom } from 'jotai/utils';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
@@ -337,31 +337,35 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
   return getDistributions(session.accessToken);
 });
 
-export const selectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | null>((get) => {
-  const sectionName = get(sectionAtom);
-  if (!sectionName) return null;
+export const selectedBrainRegionFamily = atomFamily((_key: string) =>
+  atomWithDefault<SelectedBrainRegion | null>((get) => {
+    const sectionName = get(sectionAtom);
+    if (!sectionName) return null;
 
-  const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
-    DEFAULT_BRAIN_REGION_STORAGE_KEY
-  );
+    const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
+      DEFAULT_BRAIN_REGION_STORAGE_KEY
+    );
 
-  const isExplore = sectionName === 'explore';
+    const isExplore = sectionName === 'explore';
 
-  const searchParams = new URLSearchParams(window.location.search);
-  const brainRegionIdQueryParam = searchParams.get(brainRegionIdQueryParamKey);
-  if (brainRegionIdQueryParam && isExplore) {
-    if (
-      !initializationBrainRegion ||
-      initializationBrainRegion.value.id !== decodeURIComponent(brainRegionIdQueryParam)
-    ) {
-      // do not set initial value, wait until the brain region is
-      // set by the hook based on query param
-      return null;
+    const searchParams = new URLSearchParams(window.location.search);
+    const brainRegionIdQueryParam = searchParams.get(brainRegionIdQueryParamKey);
+    if (brainRegionIdQueryParam && isExplore) {
+      if (
+        !initializationBrainRegion ||
+        initializationBrainRegion.value.id !== decodeURIComponent(brainRegionIdQueryParam)
+      ) {
+        // do not set initial value, wait until the brain region is
+        // set by the hook based on query param
+        return null;
+      }
     }
-  }
 
-  return initializationBrainRegion ? initializationBrainRegion.value : null;
-});
+    return initializationBrainRegion ? initializationBrainRegion.value : null;
+  })
+);
+
+export const selectedBrainRegionAtom = selectedBrainRegionFamily('explore');
 
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
 export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
@@ -369,27 +373,29 @@ export const literatureSelectedBrainRegionAtom = atomWithDefault<SelectedBrainRe
   (get) => get(selectedBrainRegionAtom)
 );
 
-export const setSelectedBrainRegionAtom = atom(
-  null,
-  (
-    _get,
-    set,
-    selectedBrainRegionId: string,
-    selectedBrainRegionTitle: string,
-    selectedBrainRegionLeaves: string[] | null
-  ) => {
-    const brainRegion = {
-      id: selectedBrainRegionId,
-      title: selectedBrainRegionTitle,
-      leaves: selectedBrainRegionLeaves,
-    };
+export const setSelectedBrainRegionAtomGetter = (key: string) =>
+  atom(
+    null,
+    (
+      _get,
+      set,
+      selectedBrainRegionId: string,
+      selectedBrainRegionTitle: string,
+      selectedBrainRegionLeaves: string[] | null
+    ) => {
+      const brainRegion = {
+        id: selectedBrainRegionId,
+        title: selectedBrainRegionTitle,
+        leaves: selectedBrainRegionLeaves,
+      };
 
-    set(selectedBrainRegionAtom, brainRegion);
-    set(literatureSelectedBrainRegionAtom, brainRegion);
-    set(compositionHistoryAtom, []);
-    set(compositionHistoryIndexAtom, 0);
-  }
-);
+      set(selectedBrainRegionFamily(key), brainRegion);
+      set(literatureSelectedBrainRegionAtom, brainRegion);
+      set(compositionHistoryAtom, []);
+      set(compositionHistoryIndexAtom, 0);
+    }
+  );
+export const setSelectedBrainRegionAtom = setSelectedBrainRegionAtomGetter('explore');
 
 export const resetSelectedBrainRegionAtom = atom(null, (_get, set) => {
   set(selectedBrainRegionAtom, null);
