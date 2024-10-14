@@ -1,15 +1,20 @@
 import { Divider, Popover, Spin } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { GlobalOutlined } from '@ant-design/icons';
+import { ErrorBoundary } from 'react-error-boundary';
 
+import FeatureSelectionContainer from '@/components/build-section/cell-model-assignment/e-model/EModelView/FeatureSelectionContainer';
 import DefaultEModelTable from '@/components/build-section/cell-model-assignment/e-model/EModelView/DefaultEModelTable';
-import { useUnwrappedValue } from '@/hooks/hooks';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
-import { experimentalTracesAtomFamily } from '@/state/e-model';
-import { detailFamily } from '@/state/explore-section/detail-view-atoms';
-import { ExperimentalTracesDataType } from '@/types/e-model';
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
+
 import { previewRender } from '@/constants/explore-section/fields-config/common';
 import { eCodesDocumentationUrl } from '@/constants/cell-model-assignment/e-model';
+import { useUnwrappedValue } from '@/hooks/hooks';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { detailFamily } from '@/state/explore-section/detail-view-atoms';
+import { experimentalTracesAtomFamily } from '@/state/e-model';
+import { ExperimentalTracesDataType } from '@/types/e-model';
 
 type Params = {
   id: string;
@@ -95,7 +100,14 @@ export default function ExemplarTraces({ params }: { params: Params }) {
       <div className="text-2xl font-bold text-primary-8">Exemplar Traces</div>
 
       {eModelExemplarTraces ? (
-        <DefaultEModelTable dataSource={eModelExemplarTraces} columns={columns} />
+        <>
+          <DefaultEModelTable dataSource={eModelExemplarTraces} columns={columns} />
+          <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+            <DefaultLoadingSuspense>
+              <FeatureSelectionContainer />
+            </DefaultLoadingSuspense>
+          </ErrorBoundary>
+        </>
       ) : (
         <Spin />
       )}

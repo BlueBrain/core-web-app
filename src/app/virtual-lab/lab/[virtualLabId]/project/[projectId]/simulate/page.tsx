@@ -26,7 +26,7 @@ import { SIMULATION_DATA_TYPES } from '@/constants/explore-section/data-types/si
 import { isSimulation } from '@/types/virtual-lab/bookmark';
 import { Btn } from '@/components/Btn';
 import { classNames } from '@/util/utils';
-import Styles from './Styles.module.scss';
+import Styles from '@/styles/vlabs.module.scss';
 
 export default function VirtualLabProjectSimulatePage({
   params,
