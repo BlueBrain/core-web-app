@@ -2,7 +2,11 @@ import { useAtomValue } from 'jotai';
 import { useParams } from 'next/navigation';
 import { Empty } from 'antd';
 
-import { selectedEModelAtom } from '@/state/virtual-lab/build/me-model';
+import {
+  selectedEModelAtom,
+  selectedEModelOrgAtom,
+  selectedEModelProjectAtom,
+} from '@/state/virtual-lab/build/me-model';
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import { EModel } from '@/types/e-model';
 import { detailUrlWithinLab } from '@/util/common';
@@ -17,17 +21,20 @@ type Props = {
 
 export default function EModelCard({ exemplarMorphology, reselectLink = false }: Props) {
   const selectedEModel = useAtomValue(selectedEModelAtom);
+  const selectedEModelOrg = useAtomValue(selectedEModelOrgAtom);
+  const selectedEModelProject = useAtomValue(selectedEModelProjectAtom);
+
   const { virtualLabId, projectId } = useParams<{
     virtualLabId?: string;
     projectId?: string;
   }>();
 
   const generateDetailUrl = () => {
-    if (!selectedEModel) return '';
+    if (!selectedEModel || !selectedEModelOrg || !selectedEModelProject) return '';
     if (!virtualLabId || !projectId) return selectedEModel['@id'];
 
-    const idParts = selectedEModel['@id'].split('/');
-    const orgProj = `${idParts.at(-3)}/${idParts.at(-2)}`;
+    const orgProj = `${selectedEModelOrg}/${selectedEModelProject}`;
+
     return detailUrlWithinLab(
       virtualLabId,
       projectId,
