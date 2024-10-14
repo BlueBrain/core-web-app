@@ -33,8 +33,9 @@ async function authFetch(...args: Parameters<typeof fetch>): ReturnType<typeof f
   return fetch(...newArgs); // If there is an active session set Authorization and fetch
 }
 
-export default retry()(authFetch); // Only retry on exceptions
+export default retry()(authFetch); // Only retry on Network errors
 
 export const authFetchRetryOnError = retry({
-  shouldRetryOnError: (status: number) => status > 405,
-})(authFetch); // Retry on exceptions or error statuses > 405
+  shouldRetryOnError: (req, res) =>
+    res.status > 405 && req.method !== 'POST' && req.method !== 'PATCH',
+})(authFetch); // Retry on exceptions or error statuses > 405 for idempotent operations
