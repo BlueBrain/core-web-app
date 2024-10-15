@@ -17,6 +17,7 @@ import { activeColumnsAtom } from '@/state/explore-section/list-view-atoms';
 import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
 import { classNames } from '@/util/utils';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 export function FilterBtn({ disabled, children, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
@@ -41,6 +42,7 @@ export default function FilterControls({
   displayControlPanel,
   setDisplayControlPanel,
   dataType,
+  dataScope,
   filters,
   resourceId,
   disabled,
@@ -50,6 +52,7 @@ export default function FilterControls({
   displayControlPanel: boolean;
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   dataType: DataType;
+  dataScope?: ExploreDataScope;
   filters?: Filter[];
   resourceId?: string;
   disabled?: boolean;
@@ -79,7 +82,7 @@ export default function FilterControls({
       )}
     >
       <div className="w-max">{children}</div>
-      {!resourceId && <ExploreSectionNameSearch dataType={dataType} />}
+      {!resourceId && <ExploreSectionNameSearch dataType={dataType} dataScope={dataScope} />}
       <div className="inline-flex w-full place-content-end gap-2">
         {/* only show search input on listing views. resource id is present on detail views. */}
         <FilterBtn disabled={disabled} onClick={() => setDisplayControlPanel(!displayControlPanel)}>

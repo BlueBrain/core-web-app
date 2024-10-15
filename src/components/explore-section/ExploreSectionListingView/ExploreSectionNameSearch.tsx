@@ -15,6 +15,7 @@ import debounce from 'lodash/debounce';
 import { searchStringAtom } from '@/state/explore-section/list-view-atoms';
 import useForwardRef from '@/hooks/useForwardRef';
 import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreDataScope } from '@/types/explore-section/application';
 
 const Input = forwardRef(
   (
@@ -47,10 +48,13 @@ Input.displayName = 'Input';
 
 type SearchProps = {
   dataType: DataType;
+  dataScope?: ExploreDataScope;
 };
 
-export default function ExploreSectionNameSearch({ dataType }: SearchProps) {
-  const [searchStringAtomValue, setSearchStringAtomValue] = useAtom(searchStringAtom({ dataType }));
+export default function ExploreSectionNameSearch({ dataType, dataScope }: SearchProps) {
+  const [searchStringAtomValue, setSearchStringAtomValue] = useAtom(
+    searchStringAtom({ dataType, dataScope })
+  );
   const [searchStringLocalState, setSearchStringLocalState] = useState(searchStringAtomValue);
 
   const searchInput: RefObject<HTMLInputElement> = useRef(null);
