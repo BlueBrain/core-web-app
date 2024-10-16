@@ -56,9 +56,11 @@ export default function SimulationButton({
     }
 
     launchSimulation(
+      vLabId,
+      projectId,
       modelSelfUrl,
       simulationType,
-      experimentalSetupConfig.max_time ?? currentInjectionDuration
+      experimentalSetupConfig.maxTime ?? currentInjectionDuration
     );
   };
 

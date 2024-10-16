@@ -21,12 +21,12 @@ export default function ConditionsDetails({ conditions }: Props) {
     <div className="flex ">
       <div className="min-w-[200px]">
         <Field label="Temperature" value={`${conditions.celsius}`} unit="°C" />
-        <Field label="Simulation Duration" value={`${conditions.max_time}`} unit="ms" />
+        <Field label="Simulation Duration" value={`${conditions.maxTime}`} unit="ms" />
       </div>
 
       <div className="min-w-[200px]">
         <Field label="Initial voltage" value={`${conditions.vinit}`} unit="mV" />
-        <Field label="Time Step" value={`${conditions.time_step}`} unit="ms" />
+        <Field label="Time Step" value={`${conditions.timeStep}`} unit="ms" />
       </div>
 
       <div className="min-w-[200px]">

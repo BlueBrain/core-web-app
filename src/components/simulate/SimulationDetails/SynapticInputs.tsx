@@ -1,8 +1,8 @@
-import { SynapsesConfig } from '@/types/simulation/single-neuron';
+import { SynaptomeConfig } from '@/types/simulation/single-neuron';
 import { classNames } from '@/util/utils';
 
 type Props = {
-  synapses: SynapsesConfig;
+  synapses: SynaptomeConfig;
 };
 
 function Field({

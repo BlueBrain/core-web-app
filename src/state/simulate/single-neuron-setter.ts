@@ -34,15 +34,15 @@ import { EModel } from '@/types/e-model';
 import { MEModel } from '@/types/me-model';
 import {
   SingleNeuronModelSimulationConfig,
-  SimulationPayload,
-  isBluenaasError,
+  isBluenaasSimulationError,
+  StreamSimulationResponse,
 } from '@/types/simulation/single-neuron';
 import { SimulationType } from '@/types/simulation/common';
 import { isJSON } from '@/util/utils';
 import { getSession } from '@/authFetch';
-import { SimulationPlotResponse } from '@/types/simulation/graph';
 import { nexus } from '@/config';
 import { runGenericSingleNeuronSimulation } from '@/api/bluenaas/runSimulation';
+import { convertObjectKeystoSnakeCase } from '@/util/object-keys-format';
 import updateArray from '@/util/updateArray';
 
 export const SIMULATION_CONFIG_FILE_NAME_BASE = 'simulation-config';
@@ -96,14 +96,17 @@ export const createSingleNeuronSimulationAtom = atom<
     throw new Error('Model not found');
   }
 
-  const payload: SimulationPayload = {
-    simulation: simulationResult,
-    stimulus: stimulusResults,
-    config: singleNeuronSimulationConfig,
-  };
-
   const simulationConfigFile = await createJsonFileOnVlabProject(
-    payload,
+    {
+      simulation: Object.keys(simulationResult).reduce((prev, curr) => {
+        return {
+          ...prev,
+          [curr]: convertObjectKeystoSnakeCase(simulationResult[curr]),
+        };
+      }, {}),
+      stimulus: convertObjectKeystoSnakeCase(stimulusResults),
+      config: convertObjectKeystoSnakeCase(singleNeuronSimulationConfig),
+    },
     simulationType === 'single-neuron-simulation'
       ? `${SIMULATION_CONFIG_FILE_NAME_BASE}-single-neuron.json`
       : `${SIMULATION_CONFIG_FILE_NAME_BASE}-synaptome.json`,
@@ -168,21 +171,27 @@ export const createSingleNeuronSimulationAtom = atom<
   return null;
 });
 
-export const launchSimulationAtom = atom<null, [string, SimulationType, number], void>(
+export const launchSimulationAtom = atom<
+  null,
+  [string, string, string, SimulationType, number],
+  void
+>(
   null,
   async (
     get,
     set,
+    vlabId: string,
+    projectId: string,
     modelSelfUrl: string,
     simulationType: SimulationType,
-    simulationDuration: number
+    duration: number
   ) => {
     const session = await getSession();
     if (!session?.accessToken) {
       throw new Error('Session token should be valid');
     }
     const currentInjectionConfig = get(currentInjectionSimulationConfigAtom);
-    const synapsesConfig = get(synaptomeSimulationConfigAtom);
+    const synaptomeConfig = get(synaptomeSimulationConfigAtom);
     const recordFromConfig = get(recordingSourceForSimulationAtom);
     const conditionsConfig = get(simulationExperimentalSetupAtom);
 
@@ -193,7 +202,7 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
     } else if (simulationType === 'synaptome-simulation') {
       if (
         (!currentInjectionConfig || !currentInjectionConfig.length) &&
-        (!synapsesConfig || !synapsesConfig.length)
+        (!synaptomeConfig || !synaptomeConfig.length)
       ) {
         throw new Error('Cannot run simulation without valid configuration');
       }
@@ -224,6 +233,8 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
 
     try {
       const response = await runGenericSingleNeuronSimulation({
+        vlabId,
+        projectId,
         modelUrl: modelSelfUrl,
         token: session.accessToken,
         config: {
@@ -231,9 +242,9 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
           conditions: conditionsConfig,
           currentInjection:
             currentInjectionConfig.length > 0 ? currentInjectionConfig[0] : undefined,
-          synapses: simulationType === 'synaptome-simulation' ? synapsesConfig : undefined,
+          synaptome: simulationType === 'synaptome-simulation' ? synaptomeConfig : undefined,
           type: simulationType,
-          simulationDuration,
+          duration,
         },
       });
 
@@ -293,9 +304,9 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
             conditions: conditionsConfig,
             currentInjection:
               currentInjectionConfig.length > 0 ? currentInjectionConfig[0] : undefined,
-            synapses: simulationType === 'synaptome-simulation' ? synapsesConfig : undefined,
+            synapses: simulationType === 'synaptome-simulation' ? synaptomeConfig : undefined,
             type: simulationType,
-            simulationDuration,
+            duration,
           },
         },
       });
@@ -315,53 +326,69 @@ export const launchSimulationAtom = atom<null, [string, SimulationType, number],
     }
 
     function mergeJsonBuffer(part: string) {
-      if (isJSON(part)) {
-        const jsonData = JSON.parse(part) as SimulationPlotResponse;
-        if (isBluenaasError(jsonData)) {
+      if (part && isJSON(part)) {
+        const response = JSON.parse(part) as StreamSimulationResponse;
+
+        if (isBluenaasSimulationError(response)) {
           throw new Error(
-            jsonData.details ??
+            response.description ??
               'Simulation encountered an error, please be sure that the configuration is correct and try again',
             { cause: 'BluenaasError' }
           );
         }
-        const newPlot: PlotDataEntry = {
-          x: jsonData.t,
-          y: jsonData.v,
-          type: 'scatter',
-          name: jsonData.stimulus_name,
-          recording: jsonData.recording_name,
-          amplitude: jsonData.amplitude,
-          frequency: jsonData.frequency,
-          varyingKey: jsonData.varying_key,
-        };
-
-        const currentRecording = get(genericSingleNeuronSimulationPlotDataAtom)![
-          jsonData.recording_name
-        ];
-
-        if (currentRecording) {
-          const updatedPlot = {
-            ...get(genericSingleNeuronSimulationPlotDataAtom),
-            [jsonData.recording_name]:
-              !currentRecording.length || !currentRecording.find((o) => o.name === newPlot.name)
-                ? [...currentRecording, newPlot]
-                : updateArray({
-                    array: currentRecording,
-                    keyfn: (item) => item.name === newPlot.name,
-                    newVal: (value) => ({
-                      ...value,
-                      x: [...value.x, ...newPlot.x],
-                      y: [...value.y, ...newPlot.y],
-                    }),
-                  }),
+        if (response.event === 'init') {
+          // TODO: console.log('[notification] show to user that the task has been acquired by bluenaas')
+        }
+        if (response.event === 'info' && response.state === 'pending') {
+          // TODO: console.log('[notification] show to user that the task is waiting for worker to start')
+        }
+        if (response.event === 'info' && response.state === 'failure') {
+          // TODO: console.log('[notification] show to user that the task failed')
+        }
+        if (response.event === 'data' && response.data) {
+          const jsonData = response.data;
+          const newPlot: PlotDataEntry = {
+            x: jsonData.t,
+            y: jsonData.v,
+            type: 'scatter',
+            name: jsonData.label,
+            recording: jsonData.recording,
+            amplitude: jsonData.amplitude,
+            frequency: jsonData.frequency,
+            varyingKey: jsonData.varying_key,
+            varyingOrder: jsonData.varying_order,
           };
 
-          // Sort traces for each plot by `varyingKey` so that the legends appear in sorted order.
-          Object.keys(updatedPlot).forEach((recordingLocation) => {
-            updatedPlot[recordingLocation] = sortBy(updatedPlot[recordingLocation], ['varyingKey']);
-          });
+          const currentRecording = get(genericSingleNeuronSimulationPlotDataAtom)![
+            jsonData.recording
+          ];
 
-          set(genericSingleNeuronSimulationPlotDataAtom, updatedPlot);
+          if (currentRecording) {
+            const updatedPlot = {
+              ...get(genericSingleNeuronSimulationPlotDataAtom),
+              [jsonData.recording]:
+                !currentRecording.length || !currentRecording.find((o) => o.name === newPlot.name)
+                  ? [...currentRecording, newPlot]
+                  : updateArray({
+                      array: currentRecording,
+                      keyfn: (item) => item.name === newPlot.name,
+                      newVal: (value) => ({
+                        ...value,
+                        x: [...value.x, ...newPlot.x],
+                        y: [...value.y, ...newPlot.y],
+                      }),
+                    }),
+            };
+
+            // Sort traces for each plot by `varyingKey` so that the legends appear in sorted order.
+            Object.keys(updatedPlot).forEach((recordingLocation) => {
+              updatedPlot[recordingLocation] = sortBy(updatedPlot[recordingLocation], [
+                'varyingOrder',
+              ]);
+            });
+
+            set(genericSingleNeuronSimulationPlotDataAtom, updatedPlot);
+          }
         }
       }
     }

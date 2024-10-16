@@ -9,6 +9,7 @@ import { NexusMEModel } from '@/types/me-model';
 import { SingleNeuronSynaptomeResource } from '@/types/synaptome';
 import { ensureArray } from '@/util/nexus';
 import useNotification from '@/hooks/notifications';
+import { DeepSnakeCase, convertObjectKeystoCamelCase } from '@/util/object-keys-format';
 
 export function useSimulation({
   modelId,
@@ -81,11 +82,20 @@ export function useSimulation({
         setMeModel(meModelData);
 
         const distribution = ensureArray(simulationResourceObject.distribution)[0].contentUrl;
-        const simulationDistribution = await fetchJsonFileByUrl<SimulationPayload>(
+        const simulationDistribution = await fetchJsonFileByUrl<DeepSnakeCase<SimulationPayload>>(
           distribution,
           session
         );
-        setSimulationConfig(simulationDistribution);
+        setSimulationConfig({
+          simulation: Object.keys(simulationDistribution.simulation).reduce((prev, curr) => {
+            return {
+              ...prev,
+              [curr]: convertObjectKeystoCamelCase(simulationDistribution.simulation[curr]),
+            };
+          }, {}),
+          stimulus: convertObjectKeystoCamelCase(simulationDistribution.stimulus),
+          config: convertObjectKeystoCamelCase(simulationDistribution.config),
+        });
       } catch (error) {
         notifyError('Error while loading the resource details', undefined, 'topRight');
       }

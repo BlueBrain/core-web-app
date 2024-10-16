@@ -3,6 +3,7 @@ import {
   CurrentInjectionGraphResponse,
   CurrentInjectionGraphRequest,
 } from '@/types/simulation/graph';
+import { convertObjectKeystoSnakeCase } from '@/util/object-keys-format';
 
 export default async function getStimuliPlot(
   modelSelfUrl: string,
@@ -10,8 +11,9 @@ export default async function getStimuliPlot(
   config: CurrentInjectionGraphRequest,
   signal?: AbortSignal
 ): Promise<CurrentInjectionGraphResponse[]> {
+  const formattedConfig = convertObjectKeystoSnakeCase(config);
   const response = await fetch(
-    `${blueNaasUrl}/graph/direct-current-plot?model_id=${encodeURIComponent(modelSelfUrl)}`,
+    `${blueNaasUrl}/graph/direct-current-plot?model_self=${encodeURIComponent(modelSelfUrl)}`,
     {
       signal,
       method: 'post',
@@ -20,9 +22,7 @@ export default async function getStimuliPlot(
         authorization: `bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...config,
-      }),
+      body: JSON.stringify(formattedConfig),
     }
   );
   if (response.ok) {

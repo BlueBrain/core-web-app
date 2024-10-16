@@ -34,7 +34,7 @@ export type StimulusDropdownInfo = {
   value: string;
 };
 
-export type SynapsesConfig = SynapseConfig[];
+export type SynaptomeConfig = SynapseConfig[];
 export interface CurrentInjectionSimulationConfig {
   id: number;
   configId: string;
@@ -46,8 +46,8 @@ export type SimulationExperimentalSetup = {
   celsius: number;
   vinit: number;
   hypamp: number;
-  max_time: number;
-  time_step: number;
+  maxTime: number;
+  timeStep: number;
   seed: number;
 };
 
@@ -60,7 +60,7 @@ export interface SimulationConfiguration {
   recordFrom: RecordLocation[];
   currentInjection: CurrentInjectionSimulationConfig[];
   conditions: SimulationExperimentalSetup;
-  synapses?: SynapsesConfig;
+  synapses?: SynaptomeConfig;
 }
 
 export type SynapseConfig = {
@@ -79,7 +79,7 @@ export type SingleModelSimConfig = SimulationConfiguration & {
 };
 
 export type SynapseModelSimConfig = SimulationConfiguration & {
-  synapses: SynapsesConfig;
+  synapses: SynaptomeConfig;
 };
 
 export type StimulusConfig = {
@@ -164,6 +164,31 @@ type BluenaasError = {
   error_code: string;
 };
 
+type StreamSimulationEvent = 'init' | 'info' | 'data' | 'error';
+type StreamSimulationStatus = 'pending' | 'started' | 'success' | 'failure';
+
+type SimulationSteamData = {
+  label: string;
+  amplitude: number;
+  frequency: number;
+  recording: string;
+  varying_key: string;
+  varying_type: string;
+  varying_order: number;
+  t: Array<number>;
+  v: Array<number>;
+};
+
+export type StreamSimulationResponse = {
+  task_id: string;
+  description: string;
+  event: StreamSimulationEvent;
+  state: StreamSimulationStatus;
+  data: SimulationSteamData;
+};
+
 export const isBluenaasError = (obj: Object): obj is BluenaasError => {
   return 'details' in obj && 'message' in obj && 'error_code' in obj;
 };
+
+export const isBluenaasSimulationError = (obj: StreamSimulationResponse) => obj.event === 'error';

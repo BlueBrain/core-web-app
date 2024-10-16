@@ -61,9 +61,10 @@ export type PlotDataEntry = {
   recording?: string;
   amplitude?: number;
   frequency?: number;
-  line?: { color: string };
+  varyingKey?: string;
+  varyingOrder?: number;
   visible?: boolean;
-  varyingKey?: number;
+  line?: { color: string };
 };
 
 export type PlotData = PlotDataEntry[];
