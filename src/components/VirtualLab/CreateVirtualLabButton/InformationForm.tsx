@@ -1,6 +1,5 @@
-import { Button, ConfigProvider, Form, Input, FormProps } from 'antd';
+import { Button, ConfigProvider, Form, Input } from 'antd';
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
-import debounce from 'lodash/debounce';
 import { Step, VirtualLabWithOptionalId } from './types';
 import { useAtom } from '@/state/state';
 import { virtualLabApi } from '@/config';
