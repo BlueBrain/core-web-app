@@ -132,8 +132,8 @@ export const DEFAULT_SIMULATION_EXPERIMENTAL_SETUP: SimulationExperimentalSetup 
   celsius: 34,
   vinit: -73,
   hypamp: 0,
-  max_time: 2000,
-  time_step: 0.05,
+  maxTime: 2000,
+  timeStep: 0.05,
   seed: 100,
 };
 

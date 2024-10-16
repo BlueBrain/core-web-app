@@ -63,7 +63,7 @@ export type PlotDataEntry = {
   frequency?: number;
   line?: { color: string };
   visible?: boolean;
-  varyingKey?: number;
+  varyingKey?: string;
 };
 
 export type PlotData = PlotDataEntry[];

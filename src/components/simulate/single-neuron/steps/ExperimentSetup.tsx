@@ -41,14 +41,14 @@ const CONDITIONS_FIELDS: Array<Omit<SetupInputProps, 'onChange'>> = [
     max: 20,
   },
   {
-    name: 'max_time',
+    name: 'maxTime',
     text: 'Simulation duration',
     unit: 'ms',
     min: 0,
     max: 3000,
   },
   {
-    name: 'time_step',
+    name: 'timeStep',
     text: 'Time Step',
     unit: 'ms',
     min: 0.001,

@@ -9,7 +9,7 @@ export default async function getMorphology({
   token: string;
 }) {
   const response = await fetch(
-    `${blueNaasUrl}/morphology?model_id=${encodeURIComponent(modelId)}`,
+    `${blueNaasUrl}/morphology?model_self=${encodeURIComponent(modelId)}`,
     {
       method: 'get',
       headers: createHeaders(token, {

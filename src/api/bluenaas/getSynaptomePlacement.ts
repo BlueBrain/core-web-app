@@ -16,7 +16,7 @@ export default async function getSynapsesPlacement({
   signal?: AbortSignal;
 }) {
   const response = await fetch(
-    `${blueNaasUrl}/synaptome/generate-placement?model_id=${encodeURIComponent(modelId)}`,
+    `${blueNaasUrl}/synaptome/generate-placement?model_self=${encodeURIComponent(modelId)}`,
     {
       method: 'post',
       headers: createHeaders(token),
