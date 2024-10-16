@@ -138,6 +138,7 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
           ModelTypeNames.ME_MODEL
         );
         notification.success({
+          duration: 7,
           message: 'ME-model created successfully',
         });
         refreshMeModels();

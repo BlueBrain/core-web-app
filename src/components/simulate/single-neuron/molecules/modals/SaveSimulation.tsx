@@ -77,11 +77,11 @@ export default function SaveSimulationModal({
         projectId,
         simulationType
       );
-      successNotify(CREATE_SYNAPTOME_SIMULATION_SUCCESS, undefined, 'topRight');
+      successNotify(CREATE_SYNAPTOME_SIMULATION_SUCCESS, 7, 'topRight');
       refreshSimulations();
       navigate(generateSimulationDetailUrl(savedSimulation!['@id']));
     } catch (error) {
-      errorNotify('Un error encountered when saving simulation', undefined, 'topRight');
+      errorNotify('Un error encountered when saving simulation', 7, 'topRight');
     } finally {
       onClose?.();
       setLoading(false);
