@@ -3,7 +3,7 @@ import { Button, ConfigProvider, Form, Input, Tooltip } from 'antd';
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { Step, VirtualLabWithOptionalId } from './types';
 import { useAtom } from '@/state/state';
-
+import { classNames } from '@/util/utils';
 import styles from './InformationForm.module.css';
 
 const { TextArea } = Input;
@@ -149,7 +149,13 @@ export default function InformationForm({
             label={
               <span>
                 NAME OF AFFILIATED ENTITY
-                <Tooltip title="(Organization, University, Company)">
+                <Tooltip
+                  title="(Organization, University, Company)"
+                  overlayClassName={classNames(
+                    '[&_.ant-tooltip-inner]:bg-primary-8',
+                    '[&_.ant-tooltip-arrow:after]:bg-primary-8'
+                  )}
+                >
                   <InfoCircleOutlined className="ml-2" />
                 </Tooltip>
               </span>
