@@ -102,6 +102,7 @@ export default function InformationForm({
           <Form.Item
             name="name"
             label="VIRTUAL LAB'S NAME"
+            validateDebounce={300}
             rules={[
               {
                 required: true,

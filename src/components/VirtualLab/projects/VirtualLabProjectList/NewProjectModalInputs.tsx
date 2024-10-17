@@ -8,6 +8,7 @@ export default function NewProjectModalInputs({ vlabId }: { vlabId: string }) {
     <>
       <Form.Item
         className={styles.inputField}
+        validateDebounce={300}
         name="name"
         label="PROJECT NAME"
         style={{ borderBottom: 'solid 1px #69C0FF', position: 'relative' }}
