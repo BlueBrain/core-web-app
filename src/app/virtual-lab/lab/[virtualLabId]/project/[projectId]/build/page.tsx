@@ -24,6 +24,8 @@ import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { isModel } from '@/types/virtual-lab/bookmark';
+import { classNames } from '@/util/utils';
+import Styles from '@/styles/vlabs.module.scss';
 
 type Params = {
   params: {
@@ -162,7 +164,7 @@ export default function VirtualLabProjectBuildPage({ params }: Params) {
               selectionType="radio"
               style={{ background: 'bg-white' }}
               containerClass="grow bg-primary-9 flex flex-col"
-              tableClass="grow"
+              tableClass={classNames('grow', Styles.table)}
               onCellClick={navigateToDetailPage}
             />
 

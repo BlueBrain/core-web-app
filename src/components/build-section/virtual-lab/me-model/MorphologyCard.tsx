@@ -1,7 +1,11 @@
 import { useAtomValue } from 'jotai';
 import { useParams } from 'next/navigation';
 
-import { selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
+import {
+  selectedMModelAtom,
+  selectedMModelOrgAtom,
+  selectedMModelProjectAtom,
+} from '@/state/virtual-lab/build/me-model';
 import { ExperimentTypeNames } from '@/constants/explore-section/data-types/experiment-data-types';
 import { detailUrlWithinLab } from '@/util/common';
 import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
@@ -17,17 +21,18 @@ type Props = {
 
 export default function MorphologyCard({ reselectLink = false }: Props) {
   const selectedMModel = useAtomValue(selectedMModelAtom);
+  const selectedMModelOrg = useAtomValue(selectedMModelOrgAtom);
+  const selectedMModelProject = useAtomValue(selectedMModelProjectAtom);
   const { virtualLabId, projectId } = useParams<{
     virtualLabId?: string;
     projectId?: string;
   }>();
 
   const generateDetailUrl = () => {
-    if (!selectedMModel) return '';
+    if (!selectedMModel || !selectedMModelOrg || !selectedMModelProject) return '';
     if (!virtualLabId || !projectId) return selectedMModel['@id'];
 
-    const idParts = selectedMModel['@id'].split('/');
-    const orgProj = `${idParts.at(-3)}/${idParts.at(-2)}`;
+    const orgProj = `${selectedMModelOrg}/${selectedMModelProject}`;
     return detailUrlWithinLab(
       virtualLabId,
       projectId,

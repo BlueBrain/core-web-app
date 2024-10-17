@@ -64,8 +64,7 @@ export default function Mechanism({ params }: { params: Params }) {
   if (mechanisms.state === 'hasError') {
     return (
       <div className="flex flex-col gap-4">
-        <Header>{title}</Header>
-        <StandardFallback type="error">{title}</StandardFallback>;
+        <StandardFallback type="error">{title}</StandardFallback>
       </div>
     );
   }

@@ -10,6 +10,7 @@ import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectDetailsAtomFamily } from '@/state/virtual-lab/projects';
 
 import { classNames } from '@/util/utils';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 type SideMenuProps = {
   lab: LabItem;
@@ -18,7 +19,8 @@ type SideMenuProps = {
 };
 
 function ProjectLink({ project, lab }: { project: ProjectItem; lab: LabItem }) {
-  const projectInfo = useAtomValue(
+  // Unwrap prevents flashing due to triggering global Suspense
+  const projectInfo = useUnwrappedValue(
     virtualLabProjectDetailsAtomFamily({
       virtualLabId: lab.id,
       projectId: project.id,
