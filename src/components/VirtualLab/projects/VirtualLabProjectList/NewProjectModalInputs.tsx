@@ -23,7 +23,7 @@ export default function NewProjectModalInputs({ vlabId }: { vlabId: string }) {
               if (res.ok) {
                 const data = await res.json();
 
-                if (data.data.exists) {
+                if (data.data.exist) {
                   return Promise.reject(
                     new Error(`A virtual lab by the name ${name} already exists`)
                   );
