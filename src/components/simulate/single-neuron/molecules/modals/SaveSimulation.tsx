@@ -81,7 +81,7 @@ export default function SaveSimulationModal({
       refreshSimulations();
       navigate(generateSimulationDetailUrl(savedSimulation!['@id']));
     } catch (error) {
-      errorNotify('Un error encountered when saving simulation', 7, 'topRight');
+      errorNotify('An error encountered when saving simulation', 7, 'topRight');
     } finally {
       onClose?.();
       setLoading(false);
