@@ -23,6 +23,7 @@ export const SIMULATION_DATA_TYPES: { [key: string]: DataTypeConfig } = {
       Field.SingleNeuronSimulationRecordingLocation,
       Field.BrainRegion,
       Field.CreatedAt,
+      Field.CreatedBy,
     ],
     curated: false,
   },
