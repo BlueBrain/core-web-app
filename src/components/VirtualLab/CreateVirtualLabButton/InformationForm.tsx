@@ -3,6 +3,9 @@ import { Button, ConfigProvider, Form, Input, Tooltip } from 'antd';
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { Step, VirtualLabWithOptionalId } from './types';
 import { useAtom } from '@/state/state';
+import { virtualLabApi } from '@/config';
+
+import authFetch from '@/authFetch';
 import { classNames } from '@/util/utils';
 import styles from './InformationForm.module.css';
 
@@ -99,6 +102,7 @@ export default function InformationForm({
           <Form.Item
             name="name"
             label="VIRTUAL LAB'S NAME"
+            validateDebounce={300}
             rules={[
               {
                 required: true,
@@ -107,6 +111,22 @@ export default function InformationForm({
               {
                 max: 80,
                 message: 'Virtual lab name cannot exceed 80 characters!',
+              },
+              {
+                validator: async (_: any, name: string) => {
+                  const res = await authFetch(`${virtualLabApi.url}/virtual-labs/_check?q=${name}`);
+
+                  if (res.ok) {
+                    const data = await res.json();
+
+                    if (data.data.exists) {
+                      return Promise.reject(
+                        new Error(`A virtual lab by the name ${name} already exists`)
+                      );
+                    }
+                    return Promise.resolve();
+                  }
+                },
               },
             ]}
           >
