@@ -39,12 +39,13 @@ export default function BookmarkedResourcesTable({
 }: Props) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
+  const dataScope = ExploreDataScope.BookmarkedResources;
   const router = useRouter();
   const data = useAtomValue(
     loadable(
       dataAtom({
         dataType,
-        dataScope: ExploreDataScope.BookmarkedResources,
+        dataScope,
         virtualLabInfo: { virtualLabId: labId, projectId },
       })
     )
@@ -79,6 +80,7 @@ export default function BookmarkedResourcesTable({
                 filters={filters}
                 displayControlPanel={displayControlPanel}
                 dataType={dataType}
+                dataScope={dataScope}
                 setDisplayControlPanel={setDisplayControlPanel}
                 className="sticky top-0 px-4 py-5"
               />

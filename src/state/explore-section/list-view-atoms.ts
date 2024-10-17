@@ -123,7 +123,8 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
 export const queryAtom = atomFamily(
   ({ dataType, dataScope, virtualLabInfo }: DataAtomFamilyScopeType) =>
     atomWithRefresh<Promise<DataQuery | null>>(async (get) => {
-      const searchString = get(searchStringAtom({ dataType }));
+      const searchString = get(searchStringAtom({ dataType, dataScope }));
+
       const pageNumber = get(pageNumberAtom({ dataType }));
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
