@@ -167,7 +167,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
   },
   [Field.RegistrationDate]: RegistrationDateConfig,
   [Field.CreationDate]: CreationDateConfig,
-  [Field.CreatedAt]: RegistrationDateConfig,
+  [Field.CreatedAt]: CreationDateConfig,
   [Field.CreatedBy]: {
     title: 'Created by',
     esTerms: {
