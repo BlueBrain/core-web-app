@@ -116,7 +116,7 @@ export function NewProjectModal({ virtualLabId }: { virtualLabId: string }) {
       open={!!open}
       styles={{ mask: { backgroundColor: '#0050B3D9' } }}
     >
-      <NewProjectModalForm form={form} members={members} />
+      <NewProjectModalForm form={form} members={members} vlabId={virtualLabId} />
     </Modal>
   );
 }

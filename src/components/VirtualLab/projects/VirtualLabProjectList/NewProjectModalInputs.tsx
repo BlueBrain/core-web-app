@@ -1,7 +1,9 @@
 import { Form, Input } from 'antd';
+import authFetch from '@/authFetch';
+import { virtualLabApi } from '@/config';
 import styles from './new-project-modal-inputs.module.scss';
 
-export default function NewProjectModalInputs() {
+export default function NewProjectModalInputs({ vlabId }: { vlabId: string }) {
   return (
     <>
       <Form.Item
@@ -12,6 +14,24 @@ export default function NewProjectModalInputs() {
         rules={[
           { required: true, message: 'Please input the project name!' },
           { max: 80, message: 'Project name cannot exceed 80 characters' },
+          {
+            validator: async (_: any, name: string) => {
+              const res = await authFetch(
+                `${virtualLabApi.url}/virtual-labs/${vlabId}/projects/_check?q=${name}`
+              );
+
+              if (res.ok) {
+                const data = await res.json();
+
+                if (data.data.exists) {
+                  return Promise.reject(
+                    new Error(`A virtual lab by the name ${name} already exists`)
+                  );
+                }
+                return Promise.resolve();
+              }
+            },
+          },
         ]}
         required
       >
