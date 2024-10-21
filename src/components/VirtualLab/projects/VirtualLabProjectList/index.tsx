@@ -14,7 +14,6 @@ import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { useUnwrappedValue } from '@/hooks/hooks';
 import { useAtom } from '@/state/state';
 import { assertErrorMessage, classNames } from '@/util/utils';
-import { basePath } from '@/config';
 
 function NewProjectModalFooter({
   close,
@@ -64,7 +63,7 @@ export function NewProjectModal({ virtualLabId }: { virtualLabId: string }) {
   const members = useUnwrappedValue(virtualLabMembersAtomFamily(virtualLabId));
   const includeMembers = useAtomValue(selectedMembersAtom);
   const redirectUrl = (projectId: string) =>
-    `${basePath}/virtual-lab/lab/${virtualLabId}/project/${projectId}/home`;
+    `/virtual-lab/lab/${virtualLabId}/project/${projectId}/home`;
 
   const router = useRouter();
 
