@@ -52,7 +52,7 @@ export default function ElectrophysiologyPage({ params }: Params) {
       <div className="h-full px-10" id="explore-table-container-for-observable">
         <ExploreSectionListingView
           dataType={DataType.CircuitEModel}
-          dataScope={ExploreDataScope.Build}
+          dataScope={ExploreDataScope.BuildSelectedBrainRegion}
           onCellClick={onCellClick}
           selectionType="radio"
           virtualLabInfo={{ virtualLabId: params.virtualLabId, projectId: params.projectId }}

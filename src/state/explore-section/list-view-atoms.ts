@@ -138,7 +138,8 @@ export const queryAtom = atomFamily(
       ).map((b) => b.resourceId);
 
       const descendantIds: string[] =
-        dataScope === ExploreDataScope.SelectedBrainRegion || ExploreDataScope.Build
+        dataScope === ExploreDataScope.SelectedBrainRegion ||
+        ExploreDataScope.BuildSelectedBrainRegion
           ? (await get(
               selectedBrainRegionWithDescendantsAndAncestorsFamily(
                 dataScope === ExploreDataScope.SelectedBrainRegion ? 'explore' : 'build'
