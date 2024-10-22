@@ -287,13 +287,13 @@ export default function SynaptomeConfigurationForm({ org, project, resource }: P
       selectedRowsAtom.setShouldRemove(() => true); // set function to remove all
       selectedRowsAtom.setShouldRemove(null); // clear function
       sendResetSynapses3DEvent();
-      notifySuccess(CREATE_SYNAPTOME_SUCCESS, 2, 'topRight');
+      notifySuccess(CREATE_SYNAPTOME_SUCCESS, 7, 'topRight');
       removeSessionValue();
       setLoading(false);
 
       navigate(generateSynaptomeUrl(newSynaptomeModel));
     } catch (error) {
-      notifyError(CREATE_SYNAPTOME_FAIL, undefined, 'topRight', undefined, 'synaptome-config');
+      notifyError(CREATE_SYNAPTOME_FAIL, 7, 'topRight', undefined, 'synaptome-config');
       setLoading(false);
     }
   };
