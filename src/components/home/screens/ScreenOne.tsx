@@ -19,15 +19,15 @@ export function LargeButton() {
 
 export default function ScreenOne() {
   return (
-    <div className="relative flex h-screen w-screen snap-start flex-col items-center justify-center px-[16vw]">
-      <h1 className="relative z-10 w-full font-title text-8xl font-bold text-white">
+    <div className="relative flex h-screen w-screen snap-start snap-always flex-col items-center justify-center px-[16vw] text-white">
+      <h1 className="relative z-10 w-full font-title text-8xl font-bold">
         {'Virtual labs for\nexploring, building and\nsimulating the brain'}
       </h1>
 
       <div className="relative z-10 mt-10 grid w-full grid-cols-3 gap-x-4">
         {THREE_COLUMN_SCREEN_ONE.map((paragraph: string, index: number) => (
           <div
-            className="flex flex-col gap-y-2 font-title text-xl font-normal text-white"
+            className="flex flex-col gap-y-2 font-title text-xl font-normal"
             key={`Subtitle-${index + 1}`}
           >
             <div>{index + 1}</div>
