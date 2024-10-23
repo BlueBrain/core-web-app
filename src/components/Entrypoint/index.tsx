@@ -7,7 +7,9 @@ export default function Entrypoint({ errorCode }: { errorCode?: string }) {
   return (
     <div className="relative flex h-screen max-h-screen w-screen flex-col bg-primary-9">
       <Menu />
-      <ScreenOne />
+      <div className="snap-y snap-mandatory">
+        <ScreenOne />
+      </div>
       {errorCode && <AcceptInviteErrorDialog errorCode={errorCode} />}
     </div>
   );

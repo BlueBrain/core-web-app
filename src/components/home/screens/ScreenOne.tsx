@@ -1,6 +1,7 @@
 import { ArrowRightOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
+import { basePath } from '@/config';
 import { THREE_COLUMN_SCREEN_ONE } from '@/constants/home/content-home';
 
 export function LargeButton() {
@@ -18,12 +19,12 @@ export function LargeButton() {
 
 export default function ScreenOne() {
   return (
-    <div className="relative z-10 flex h-screen w-screen flex-col items-center justify-center px-[16vw]">
-      <h1 className="w-full font-title text-8xl font-bold text-white">
+    <div className="relative flex h-screen w-screen snap-start flex-col items-center justify-center px-[16vw]">
+      <h1 className="relative z-10 w-full font-title text-8xl font-bold text-white">
         {'Virtual labs for\nexploring, building and\nsimulating the brain'}
       </h1>
 
-      <div className="mt-10 grid w-full grid-cols-3 gap-x-4">
+      <div className="relative z-10 mt-10 grid w-full grid-cols-3 gap-x-4">
         {THREE_COLUMN_SCREEN_ONE.map((paragraph: string, index: number) => (
           <div
             className="flex flex-col gap-y-2 font-title text-xl font-normal text-white"
@@ -33,6 +34,12 @@ export default function ScreenOne() {
             <h2>{paragraph}</h2>
           </div>
         ))}
+      </div>
+
+      <div className="absolute left-0 top-0 z-0 h-screen w-screen">
+        <video autoPlay muted loop className="h-full w-full object-cover">
+          <source src={`${basePath}/video/VIDEO_1ST-SCREEN_HOME-Compressed.mp4`} type="video/mp4" />
+        </video>
       </div>
     </div>
   );
