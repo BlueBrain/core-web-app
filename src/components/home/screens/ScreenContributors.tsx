@@ -8,10 +8,29 @@ import { classNames } from '@/util/utils';
 import { useState } from 'react';
 
 export function SingleContributorCard({ name, link }: { name: string; link: string }) {
+  const [onMouseHover, setOnMouseHover] = useState(false);
+
   return (
-    <Link href={link} className="relative font-sans text-xl font-semibold text-white">
-      <div className="relative z-10">{name}</div>
-      <div className="absolute left-0 z-0 h-12 w-24 -translate-x-8 -translate-y-[32px] bg-primary-6" />
+    <Link
+      href={link}
+      className="relative font-sans text-xl font-semibold text-white"
+      onMouseOver={() => setOnMouseHover(true)}
+      onFocus={() => setOnMouseHover(true)}
+      onMouseOut={() => setOnMouseHover(false)}
+      onBlur={() => setOnMouseHover(false)}
+    >
+      <div
+        className="relative z-10 transition-all duration-300 ease-out-expo"
+        style={{ left: onMouseHover ? '-10px' : '0' }}
+      >
+        {name}
+      </div>
+      <div className="absolute left-0 z-0 h-12 w-24 -translate-x-8 -translate-y-[32px] bg-primary-6 transition-height duration-300 ease-out-expo">
+        <div
+          className="relative h-full w-1/2 bg-primary-8 transition-all duration-300 ease-out-expo"
+          style={{ width: onMouseHover ? '100%' : '0' }}
+        />
+      </div>
     </Link>
   );
 }
@@ -55,7 +74,13 @@ export default function ScreenContributors() {
   };
 
   const handleUnloadTwentyFiveLess = () => {
-    setDisplayedNameNumber(displayedNameNumber + 25);
+    setDisplayedNameNumber(displayedNameNumber - 25);
+
+    window.scrollBy({
+      top: -200,
+      left: 0,
+      behavior: 'smooth',
+    });
   };
 
   const handleCollapseAll = () => {
