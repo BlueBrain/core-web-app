@@ -38,9 +38,7 @@ export default function WithControlPanel({
 
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
 
-  const [filters, setFilters] = useAtom(
-    useMemo(() => unwrap(filtersAtom({ dataType })), [dataType])
-  );
+  const [filters, setFilters] = useAtom(filtersAtom({ dataType, dataScope }));
 
   const aggregations = useAtomValue(
     useMemo(
@@ -67,6 +65,7 @@ export default function WithControlPanel({
           setFilters={setFilters}
           toggleDisplay={() => setDisplayControlPanel(false)}
           dataType={dataType}
+          dataScope={dataScope}
         />
       )}
     </>

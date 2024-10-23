@@ -21,7 +21,7 @@ import { Filter, GteLteValue, ValueOrRangeFilter } from '@/components/Filter/typ
 import { CheckList, DateRange, defaultList, FilterGroup } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
-import { FilterValues } from '@/types/explore-section/application';
+import { ExploreDataScope, FilterValues } from '@/types/explore-section/application';
 import {
   activeColumnsAtom,
   filtersAtom,
@@ -36,6 +36,7 @@ export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
   dataType: DataType;
+  dataScope?: ExploreDataScope;
   aggregations?: Aggregations;
   filters: Filter[];
   setFilters: any;
@@ -156,6 +157,7 @@ export default function ControlPanel({
   children,
   toggleDisplay,
   dataType,
+  dataScope,
   aggregations,
   filters,
   setFilters,
@@ -167,7 +169,7 @@ export default function ControlPanel({
   );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});
-  const resetFilters = useResetAtom(filtersAtom({ dataType, resourceId }));
+  const resetFilters = useResetAtom(filtersAtom({ dataType, dataScope, resourceId }));
   const setSearchString = useSetAtom(searchStringAtom({ dataType }));
 
   const onToggleActive = (key: string) => {

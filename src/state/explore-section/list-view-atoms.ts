@@ -147,7 +147,7 @@ export const queryAtom = atomFamily(
             )) || []
           : [];
 
-      const filters = await get(filtersAtom({ dataType }));
+      const filters = await get(filtersAtom({ dataType, dataScope }));
 
       if (!filters) {
         return null;
