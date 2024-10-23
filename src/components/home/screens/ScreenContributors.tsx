@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { CONTRIBUTORS } from '@/constants/home/content-home';
 import { ContributorProps, CONTRIBUTORS_LIST } from '@/constants/home/contributors-list';
 import { classNames } from '@/util/utils';
-import { useState } from 'react';
 
 export function SingleContributorCard({ name, link }: { name: string; link: string }) {
   const [onMouseHover, setOnMouseHover] = useState(false);
