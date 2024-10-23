@@ -1,8 +1,9 @@
 'use client';
 
-import ScreenOne from '../home/screens/ScreenOne';
-import ScreenThree from '../home/screens/ScreenThree';
-import ScreenTwo from '../home/screens/ScreenTwo';
+import HeaderScreen from '../home/screens/HeaderScreen';
+import ScreenBBGithub from '../home/screens/ScreenBBGithub';
+import ScreenContributors from '../home/screens/ScreenContributors';
+import ScreenOpenData from '../home/screens/ScreenOpenData';
 import { AcceptInviteErrorDialog, Menu } from './segments';
 
 export default function Entrypoint({ errorCode }: { errorCode?: string }) {
@@ -10,9 +11,10 @@ export default function Entrypoint({ errorCode }: { errorCode?: string }) {
     <div className="relative flex w-screen flex-col bg-primary-9">
       <Menu />
       <div className="h-screen snap-y snap-mandatory overflow-x-hidden overflow-y-scroll">
-        <ScreenOne />
-        <ScreenTwo />
-        <ScreenThree />
+        <HeaderScreen />
+        <ScreenBBGithub />
+        <ScreenOpenData />
+        <ScreenContributors />
       </div>
       {errorCode && <AcceptInviteErrorDialog errorCode={errorCode} />}
     </div>

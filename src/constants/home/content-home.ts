@@ -21,7 +21,7 @@ export const SCREEN_TWO = {
 };
 
 export const BB_AWS = {
-  title: 'Discover our AWS Open data',
+  title: 'Why Blue Brain Github?',
   content: [
     {
       title: 'Title 1',
@@ -41,6 +41,22 @@ export const CONTRIBUTORS = {
   subtitle:
     "who advanced the Blue Brain Project scientifically over the years. We couldn't have done this without you!",
   contributors: [
+    {
+      name: 'Romy Aardse',
+      link: '#',
+    },
+    {
+      name: 'Marwan Abdellah',
+      link: '#',
+    },
+    {
+      name: 'M. Abdelaziz',
+      link: '#',
+    },
+    {
+      name: 'Shabbir S Abdul',
+      link: '#',
+    },
     {
       name: 'Romy Aardse',
       link: '#',

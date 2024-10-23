@@ -5,9 +5,9 @@ import { BB_AWS } from '@/constants/home/content-home';
 
 import { basePath } from '@/config';
 
-export default function ScreenThree() {
+export default function ScreenOpenData() {
   const { ref, inView } = useInView({
-    threshold: 0.5,
+    threshold: 0.8,
   });
 
   return (
@@ -31,10 +31,10 @@ export default function ScreenThree() {
         alt="Image of the hippocampus illustrating the Blue Brain Open Platform"
         width={1920}
         height={1080}
-        className="absolute left-0 top-0 z-0 h-full w-full object-cover"
+        className="absolute bottom-0 right-0 z-0 h-full w-full origin-bottom object-cover transition-all duration-300 ease-in-out"
         style={{
-          transform: inView ? 'scale(1)' : 'scale(0.7)',
-          opacity: inView ? 1 : 0,
+          transform: inView ? 'scale(1.05)' : 'scale(1)',
+          opacity: inView ? 1 : 0.6,
         }}
       />
     </div>

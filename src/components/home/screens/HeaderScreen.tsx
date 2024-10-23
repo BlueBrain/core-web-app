@@ -17,7 +17,7 @@ export function LargeButton() {
   );
 }
 
-export default function ScreenOne() {
+export default function HeaderScreen() {
   return (
     <div className="relative flex h-screen w-screen snap-start snap-always flex-col items-center justify-center px-[16vw] text-white">
       <h1 className="relative z-10 w-full font-title text-8xl font-bold">
