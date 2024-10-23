@@ -18,4 +18,5 @@ export type TitleComponentProps = {
   } | null;
   viewId: BrainViewId;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
+  scope?: string;
 };

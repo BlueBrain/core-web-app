@@ -77,7 +77,7 @@ export default function ReconstrucedMorphologyPage({ params }: Params) {
     <div className="h-full" id="explore-table-container-for-observable">
       <ExploreSectionListingView
         dataType={DataType.ExperimentalNeuronMorphology}
-        dataScope={ExploreDataScope.SelectedBrainRegion}
+        dataScope={ExploreDataScope.BuildSelectedBrainRegion}
         onCellClick={onCellClick}
         selectionType="radio"
         renderButton={({ selectedRows }) => (
