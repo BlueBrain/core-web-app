@@ -1,10 +1,10 @@
 'use client';
 
-import { Splash, Menu, AcceptInviteErrorDialog } from './segments';
+import { AcceptInviteErrorDialog, Menu, Splash } from './segments';
 
 export default function Entrypoint({ errorCode }: { errorCode?: string }) {
   return (
-    <div className="relative flex h-screen max-h-screen w-screen flex-col p-5">
+    <div className="relative flex h-screen max-h-screen w-screen flex-col bg-primary-9">
       <Splash />
       <Menu />
       {errorCode && <AcceptInviteErrorDialog errorCode={errorCode} />}

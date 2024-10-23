@@ -1,39 +1,41 @@
+import AddIcon from './AddIcon';
 import AngledArrowIcon from './AngledArrow';
 import ArrowDownOutlinedIcon from './ArrowDownOutlined';
 import ArrowLeftIcon from './ArrowLeft';
+import ArrowNorthEastIcon from './ArrowNorthEastIcon';
 import ArrowRightIcon from './ArrowRightIcon';
 import BrainIcon from './Brain';
 import BrainRegionIcon from './BrainRegion';
 import CheckIcon from './Check';
 import ChevronIcon from './Chevron';
 import EyeIcon from './EyeIcon';
+import EyeTargetIcon from './EyeTarget';
+import FileIcon from './File';
 import GripDotsVerticalIcon from './GripDotsVerticalIcon';
 import HomeIcon from './Home';
+import InteractiveViewIcon from './InteractiveView';
 import LinkIcon from './Link';
 import LockIcon from './LockIcon';
 import LockOpenIcon from './LockOpenIcon';
-import ResetIcon from './ResetIcon';
-import UndoIcon from './UndoIcon';
-import UserOutlinedIcon from './UserOutlined';
-import { ZoomInIcon, ZoomOutIcon } from './Zoom';
+import { MembersGroupIcon } from './MembersGroupIcon';
 import MissingData from './MissingData';
 import IconPlus from './Plus';
-import SettingsIcon from './Settings';
 import RangeIcon from './Range';
-import InteractiveViewIcon from './InteractiveView';
-import VirtualLabIcon from './VirtualLab';
-import FileIcon from './File';
-import AddIcon from './AddIcon';
-import EyeTargetIcon from './EyeTarget';
-import { MembersGroupIcon } from './MembersGroupIcon';
+import ResetIcon from './ResetIcon';
+import SettingsIcon from './Settings';
 import StatsEditIcon from './StatsEditIcon';
+import UndoIcon from './UndoIcon';
+import UserOutlinedIcon from './UserOutlined';
+import VirtualLabIcon from './VirtualLab';
+import { ZoomInIcon, ZoomOutIcon } from './Zoom';
 
 export {
   AddIcon,
   AngledArrowIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
   ArrowDownOutlinedIcon,
+  ArrowLeftIcon,
+  ArrowNorthEastIcon,
+  ArrowRightIcon,
   BrainIcon,
   BrainRegionIcon,
   CheckIcon,
@@ -43,20 +45,20 @@ export {
   FileIcon,
   GripDotsVerticalIcon,
   HomeIcon,
+  InteractiveViewIcon,
   LinkIcon,
   LockIcon,
   LockOpenIcon,
   MembersGroupIcon,
-  ResetIcon,
-  UndoIcon,
-  UserOutlinedIcon,
-  ZoomInIcon,
-  ZoomOutIcon,
   MissingData,
   IconPlus as PlusIcon,
+  RangeIcon,
+  ResetIcon,
   SettingsIcon,
   StatsEditIcon,
-  RangeIcon,
-  InteractiveViewIcon,
+  UndoIcon,
+  UserOutlinedIcon,
   VirtualLabIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
 };
