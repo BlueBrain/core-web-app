@@ -8,6 +8,9 @@ import BrainIcon from './Brain';
 import BrainRegionIcon from './BrainRegion';
 import CheckIcon from './Check';
 import ChevronIcon from './Chevron';
+import ChevronLeft from './ChevronLeft';
+import ChevronRight from './ChevronRight';
+import CloseIcon from './CloseIcon';
 import EyeIcon from './EyeIcon';
 import EyeTargetIcon from './EyeTarget';
 import FileIcon from './File';
@@ -40,6 +43,9 @@ export {
   BrainRegionIcon,
   CheckIcon,
   ChevronIcon,
+  ChevronLeft,
+  ChevronRight,
+  CloseIcon,
   EyeIcon,
   EyeTargetIcon,
   FileIcon,

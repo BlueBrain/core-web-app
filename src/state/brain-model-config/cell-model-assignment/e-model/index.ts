@@ -16,7 +16,6 @@ import {
   ExtractionTargetsConfiguration,
   FeatureParameterGroup,
   FeaturePresetName,
-  NeuronMorphology,
   SimulationParameter,
   Trace,
   EModelByETypeMappingType,
@@ -30,9 +29,9 @@ import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } fro
 import sessionAtom from '@/state/session';
 import {
   convertRemoteParamsForUI,
-  convertMorphologyForUI,
   convertTraceForUI,
   convertFeaturesForUI,
+  convertDeltaMorphologyForUI,
 } from '@/services/e-model';
 import {
   getEModelOptimizationConfigQuery,
@@ -48,6 +47,7 @@ import {
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { getInitializationValue } from '@/util/utils';
 import { ensureArray } from '@/util/nexus';
+import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 
 const initializationEModel = getInitializationValue<DefaultEModelType>(DEFAULT_E_MODEL_STORAGE_KEY);
 
@@ -106,7 +106,7 @@ export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | 
 
     if (!morphology) return null;
     try {
-      return convertMorphologyForUI(morphology);
+      return convertDeltaMorphologyForUI(morphology);
     } catch (e) {
       return null;
     }
@@ -291,20 +291,22 @@ export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] |
   }
 );
 
-export const eModelMorphologyAtom = atom<Promise<NeuronMorphology | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const eModelConfiguration = await get(eModelConfigurationAtom);
+export const eModelMorphologyAtom = atom<Promise<ReconstructedNeuronMorphology | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const eModelConfiguration = await get(eModelConfigurationAtom);
 
-  if (!session || !eModelConfiguration) return null;
+    if (!session || !eModelConfiguration) return null;
 
-  const morphologyId = eModelConfiguration.uses.find(
-    (usage) => usage['@type'] === 'NeuronMorphology'
-  )?.['@id'];
+    const morphologyId = eModelConfiguration.uses.find(
+      (usage) => usage['@type'] === 'NeuronMorphology'
+    )?.['@id'];
 
-  if (!morphologyId) return null;
+    if (!morphologyId) return null;
 
-  return fetchResourceById<NeuronMorphology>(morphologyId, session);
-});
+    return fetchResourceById<ReconstructedNeuronMorphology>(morphologyId, session);
+  }
+);
 
 export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (get) => {
   const session = get(sessionAtom);

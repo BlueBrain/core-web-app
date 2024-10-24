@@ -15,7 +15,11 @@ import TriangleIcon from '@/components/icons/Triangle';
 import { classNames } from '@/util/utils';
 import { getSession } from '@/authFetch';
 import { fetchResourceById } from '@/api/nexus';
-import { DataType, DataTypeToNexusType } from '@/constants/explore-section/list-views';
+import {
+  DataType,
+  DataTypeToNexusType,
+  DataTypeToViewModelPage,
+} from '@/constants/explore-section/list-views';
 import { DataQuery, fetchEsResourcesByType } from '@/api/explore-section/resources';
 import { to64 } from '@/util/common';
 import { MEModel } from '@/types/me-model';
@@ -256,13 +260,23 @@ function generateRowItems(
 
   const link = (r: ActivityRecord, id: string) => {
     if (r.usecase === 'Single cell') {
-      const url = buildUrl(vlabInfo.projectId, vlabInfo.virtualLabId, '/build/me-model/view', id);
+      const url = buildUrl(
+        vlabInfo.projectId,
+        vlabInfo.virtualLabId,
+        `/${DataTypeToViewModelPage[DataType.CircuitMEModel]}`,
+        id
+      );
       if (r.activity === 'Build - Analysis') return url + '?tab=analysis';
       if (r.activity === 'Simulate') return url + '?tab=simulation';
       return url;
     }
 
-    const url = buildUrl(vlabInfo.projectId, vlabInfo.virtualLabId, '/build/synaptome/view', id);
+    const url = buildUrl(
+      vlabInfo.projectId,
+      vlabInfo.virtualLabId,
+      `/${DataTypeToViewModelPage[DataType.SingleNeuronSynaptome]}`,
+      id
+    );
 
     if (r.activity === 'Simulate') return url + '?tab=simulation';
     return url;
