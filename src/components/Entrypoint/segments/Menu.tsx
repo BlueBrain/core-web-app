@@ -13,9 +13,6 @@ interface MenuItemProps {
 interface MenuButtonProps extends MenuItemProps {
   action?: <T, RT>(input: T) => RT;
 }
-// interface MenuLinkProps extends MenuItemProps {
-//   href: string;
-// }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function MenuButton({ bgcolor, title, action }: MenuButtonProps) {

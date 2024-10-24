@@ -24,7 +24,7 @@ export default function HeaderScreen() {
         {'Virtual labs for\nexploring, building and\nsimulating the brain'}
       </h1>
 
-      <div className="relative z-10 mt-10 grid w-full grid-cols-3 gap-x-4">
+      <div className="relative z-10 mt-10 grid w-full grid-cols-3 gap-x-12">
         {THREE_COLUMN_SCREEN_ONE.map((paragraph: string, index: number) => (
           <div
             className="flex flex-col gap-y-2 font-title text-xl font-normal"
