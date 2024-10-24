@@ -3,10 +3,12 @@ import { useEffect, useMemo } from 'react';
 import { unwrap } from 'jotai/utils';
 import { useQueryState } from 'nuqs';
 
+import { useUnwrappedValue } from './hooks';
 import {
-  brainRegionHierarchyStateAtom,
+  brainRegionHierarchyStateFamily,
   brainRegionsAtom,
   selectedBrainRegionAtom,
+  selectedBrainRegionFamily,
   setSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import { sectionAtom } from '@/state/application';
@@ -81,19 +83,14 @@ export function useSetBrainRegionToQuery() {
   }, [selectedBrainRegion, sectionName, setBrainRegionIdInQuery, brainRegionIdInQuery]);
 }
 
-export function useExpandRegionTree() {
+export function useExpandRegionTree(key = 'explore') {
   const sectionName = useAtomValue(sectionAtom);
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const brainRegions = useAtomValue(useMemo(() => unwrap(brainRegionsAtom), []));
-  const [brainRegionHierarchyState, setBrainRegionHierarchyState] = useAtom(
-    brainRegionHierarchyStateAtom
-  );
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionFamily(key));
+  const brainRegions = useUnwrappedValue(brainRegionsAtom);
+  const [, setBrainRegionHierarchyState] = useAtom(brainRegionHierarchyStateFamily(key));
 
   useEffect(() => {
-    // set brain region hierarchy
     if (!sectionName || !selectedBrainRegion || !brainRegions || !brainRegions.length) return;
-    // change only the first time
-    if (brainRegionHierarchyState) return;
 
     const ancestors = getAncestors(brainRegions, selectedBrainRegion.id);
 
@@ -102,11 +99,5 @@ export function useExpandRegionTree() {
     );
 
     setBrainRegionHierarchyState(brainRegionHierarchy ?? defaultHierarchyTree);
-  }, [
-    selectedBrainRegion,
-    brainRegions,
-    sectionName,
-    setBrainRegionHierarchyState,
-    brainRegionHierarchyState,
-  ]);
+  }, [selectedBrainRegion, brainRegions, sectionName, setBrainRegionHierarchyState]);
 }

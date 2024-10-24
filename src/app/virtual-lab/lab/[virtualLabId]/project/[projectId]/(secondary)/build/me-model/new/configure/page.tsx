@@ -9,7 +9,11 @@ import MorphologyCard from '@/components/build-section/virtual-lab/me-model/Morp
 import EModelCard from '@/components/build-section/virtual-lab/me-model/EModelCard';
 // import { usePendingValidationModal } from '@/components/build-section/virtual-lab/me-model/pending-validation-modal-hook';
 import { createMEModelAtom, meModelDetailsAtom } from '@/state/virtual-lab/build/me-model-setter';
-import { selectedEModelAtom, selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
+import {
+  selectedEModelAtom,
+  selectedEModelConfigurationAtom,
+  selectedMModelAtom,
+} from '@/state/virtual-lab/build/me-model';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 import { classNames } from '@/util/utils';
 import { detailUrlWithinLab } from '@/util/common';
@@ -17,6 +21,9 @@ import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import { ModelTypeNames } from '@/constants/explore-section/data-types/model-data-types';
 import { DisplayMessages } from '@/constants/display-messages';
 import { ensureArray } from '@/util/nexus';
+import { queryAtom } from '@/state/explore-section/list-view-atoms';
+import { ExploreDataScope } from '@/types/explore-section/application';
+import { DataType } from '@/constants/explore-section/list-views';
 
 type Params = {
   params: {
@@ -95,6 +102,15 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
   const router = useRouter();
   const selectedMModel = useAtomValue(selectedMModelAtom);
   const selectedEModel = useAtomValue(selectedEModelAtom);
+  const selectedEModelConfiguration = useAtomValue(selectedEModelConfigurationAtom);
+  const refreshMeModels = useSetAtom(
+    queryAtom({
+      dataType: DataType.CircuitMEModel,
+      dataScope: ExploreDataScope.NoScope,
+      virtualLabInfo: { virtualLabId, projectId },
+    })
+  );
+
   const createMEModel = useSetAtom(createMEModelAtom);
   const [meModelCreating, setMeModelCreating] = useState<boolean>(false);
 
@@ -122,8 +138,10 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
           ModelTypeNames.ME_MODEL
         );
         notification.success({
+          duration: 7,
           message: 'ME-model created successfully',
         });
+        refreshMeModels();
         setMeModelCreating(false);
         router.push(redirectionUrl);
       })
@@ -168,7 +186,14 @@ export default function NewMEModelPage({ params: { projectId, virtualLabId } }: 
         <NewMEModelHeader projectId={projectId} virtualLabId={virtualLabId} />
         <div className="flex flex-col gap-4">
           <MorphologyCard reselectLink />
-          <EModelCard reselectLink />
+          <EModelCard
+            exemplarMorphology={
+              selectedEModelConfiguration?.uses.find(
+                ({ '@type': type }) => type === 'NeuronMorphology'
+              )?.name
+            }
+            reselectLink
+          />
         </div>
       </div>
       {validateTrigger}

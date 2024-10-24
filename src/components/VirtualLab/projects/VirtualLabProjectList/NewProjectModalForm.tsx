@@ -11,9 +11,11 @@ import { VirtualLabMember } from '@/types/virtual-lab/members';
 const { Option } = Select;
 
 export default function NewProjectModalForm({
+  vlabId,
   form,
   members,
 }: {
+  vlabId: string;
   form: FormT;
   members?: VirtualLabMember[];
 }) {
@@ -69,7 +71,7 @@ export default function NewProjectModalForm({
           },
         }}
       >
-        <NewProjectModalInputs />
+        <NewProjectModalInputs vlabId={vlabId} />
         {members?.map((member) => (
           <div key={member.id} className="text-primary-8">
             <VirtualLabMemberIcon

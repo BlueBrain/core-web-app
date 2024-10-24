@@ -5,6 +5,7 @@ import { meModelAnalysisSvc } from '@/config';
 interface BluePyEModelConfig {
   onInit?: () => void;
   onAnalysisDone?: () => void;
+  onAnalysisError?: () => void;
 }
 
 export default class BluePyEModelCls {
@@ -29,6 +30,9 @@ export default class BluePyEModelCls {
         break;
       case 'run_analysis_done':
         this.config.onAnalysisDone?.();
+        break;
+      case 'run_analysis_error':
+        this.config.onAnalysisError?.();
         break;
       default:
         break;

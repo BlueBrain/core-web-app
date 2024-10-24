@@ -61,6 +61,9 @@ module.exports = {
         transparentBlack: 'rgba(0, 0, 0, 0.3)',
         brand: '#00d4fe',
       },
+      backgroundColor: {
+        'ocean-blue': 'radial-gradient(circle, rgba(77,194,237,1) 0%, rgba(33,36,77,1) 100%)',
+      },
       fontFamily: {
         sans: ['var(--font-titillium-web)', ...fontFamily.sans],
         title: ['var(--font-gabarito)', ...fontFamily.sans],
@@ -110,10 +113,12 @@ module.exports = {
       },
       boxShadow: {
         strongImage: '0px 22px 22px -16px rgba(0,0,0,0.36)',
+        superShadow: '0px 24px 60px 0px rgba(0,0,0,0.40)',
       },
       transitionTimingFunction: {
         'in-expo': 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
         'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
+        'out-back': 'cubic-bezier(0.680, -0.550, 0.265, 1.550);',
       },
       animation: {
         'slide-out': 'slide-out 2s ease-in-out',

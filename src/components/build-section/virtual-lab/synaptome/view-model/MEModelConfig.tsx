@@ -57,7 +57,7 @@ export function MEModelConfiguration({
         </div>
       </div>
       <div className="mt-12 flex-grow">
-        <div className="font-thin uppercase text-slate-600">NAME</div>
+        <div className="font-thin uppercase text-neutral-4">NAME</div>
         <div className="my-1 text-3xl font-bold text-primary-8">{meModel.name}</div>
         <MeModelDetails meModel={meModel} eModel={eModel} mModel={mModel} />
       </div>
@@ -78,25 +78,25 @@ function MeModelDetails({ meModel, eModel, mModel }: ModelDetails) {
   return (
     <div className="mt-4 grid grid-cols-[max-content_max-content] gap-4 gap-x-12 text-primary-8">
       <div className="col-span-1">
-        <div className="font-thin uppercase text-slate-600">m-model</div>
+        <div className="font-thin uppercase text-neutral-4">m-model</div>
         <div className="line-clamp-1">{mModel.name || DisplayMessages.NO_DATA_STRING}</div>
       </div>
       <div className="col-span-1">
-        <div className="font-thin uppercase text-slate-600">e-model</div>
+        <div className="font-thin uppercase text-neutral-4">e-model</div>
         <div className="line-clamp-1">{eModel.name || DisplayMessages.NO_DATA_STRING}</div>
       </div>
       <div className="col-span-1">
-        <div className="font-thin uppercase text-slate-600">Brain Region</div>
+        <div className="font-thin uppercase text-neutral-4">Brain Region</div>
         <div className="line-clamp-1">
           {meModel.brainLocation?.brainRegion?.label || DisplayMessages.NO_DATA_STRING}
         </div>
       </div>
       <div className="col-span-1">
-        <div className="font-thin uppercase text-slate-600">E-Type</div>
+        <div className="font-thin uppercase text-neutral-4">E-Type</div>
         <div className="line-clamp-1">{eType}</div>
       </div>
       <div className="col-span-2">
-        <div className="font-thin uppercase text-slate-600">M-Type</div>
+        <div className="font-thin uppercase text-neutral-4">M-Type</div>
         <div className="line-clamp-1">{mType}</div>
       </div>
     </div>

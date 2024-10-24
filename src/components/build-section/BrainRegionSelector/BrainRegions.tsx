@@ -14,13 +14,13 @@ import { BrainIcon } from '@/components/icons';
 import { Nav as BrainTreeNav, Search as BrainTreeSearch } from '@/components/BrainTree';
 import {
   brainRegionOntologyViewsAtom,
-  selectedBrainRegionAtom,
-  setSelectedBrainRegionAtom,
   brainRegionsAtom,
   brainRegionsAlternateTreeAtom,
   brainRegionSidebarIsCollapsedAtom,
-  brainRegionHierarchyStateAtom,
   resetSelectedBrainRegionAtom,
+  selectedBrainRegionFamily,
+  setSelectedBrainRegionAtomGetter,
+  brainRegionHierarchyStateFamily,
 } from '@/state/brain-regions';
 import { NavValue } from '@/state/brain-regions/types';
 import { BrainRegion } from '@/types/ontologies';
@@ -63,6 +63,7 @@ function NavTitle({
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
   viewId,
+  scope = 'explore',
 }: TitleComponentProps) {
   const section = useAtomValue(sectionAtom);
   if (!section) {
@@ -70,7 +71,7 @@ function NavTitle({
   }
 
   const brainRegionViews = useAtomValue(brainRegionOntologyViewsAtom);
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionFamily(scope));
   const brainRegions = useAtomValue(brainRegionsAtom);
   const navTitleRef = useRef<HTMLDivElement>(null);
   const [height, setTitleHeight] = useState<number>(0);
@@ -169,20 +170,22 @@ function NavTitle({
   );
 }
 
-export default function BrainRegions() {
+export default function BrainRegions({ scope = 'explore' }: { scope?: string }) {
   const brainRegionsTree = useAtomValue(useMemo(() => unwrap(brainRegionsAlternateTreeAtom), []));
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionFamily(scope));
+  const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtomGetter(scope));
   const [isCollapsed, setIsCollapsed] = useAtom(brainRegionSidebarIsCollapsedAtom);
   const [brainRegionHierarchyState, setBrainRegionHierarchyState] = useAtom<NavValue>(
-    brainRegionHierarchyStateAtom
+    brainRegionHierarchyStateFamily(scope)
   );
+
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const brainModelConfigId = useAtomValue(brainModelConfigIdAtom);
   const [localSelectedBrainModelConfigId, setLocalSelectedBrainModelConfigId] = useState('');
   const setResetAtlasVisualization = useResetAtom(atlasVisualizationAtom);
   const resetSelectedBrainRegion = useSetAtom(resetSelectedBrainRegionAtom);
-  useExpandRegionTree();
+
+  useExpandRegionTree(scope);
   useSetBrainRegionToQuery();
 
   useEffect(() => {
@@ -234,6 +237,7 @@ export default function BrainRegions() {
                   content={content}
                   selectedBrainRegion={selectedBrainRegion}
                   viewId={view}
+                  scope={scope}
                 />
               )}
             </BrainTreeNav>

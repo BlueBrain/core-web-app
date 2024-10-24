@@ -28,6 +28,7 @@ import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import ScopeSelector from '@/components/VirtualLab/ScopeSelector';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { classNames } from '@/util/utils';
+import Styles from '@/styles/vlabs.module.scss';
 
 export default function NewSimulation({
   params: { virtualLabId, projectId },
@@ -108,7 +109,7 @@ export default function NewSimulation({
               </div>
               <ExploreSectionListingView
                 containerClass="grow bg-primary-9 flex flex-col"
-                tableClass="grow mb-5"
+                tableClass={classNames('mb-5 grow', Styles.table)}
                 tableScrollable={false}
                 controlsVisible={false}
                 dataType={modelType}

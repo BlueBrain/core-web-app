@@ -7,6 +7,7 @@ import type { FormItemProps } from 'antd/lib/form/FormItem';
 import type { InputProps } from 'antd/lib/input/Input';
 import type { TextAreaProps } from 'antd/lib/input/TextArea';
 
+import capitalize from 'lodash/capitalize';
 import useNotification from '@/hooks/notifications';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
@@ -242,7 +243,9 @@ export default function FormPanel({
         .then(() => {
           const entries = Object.entries(values);
 
-          entries.forEach(([k, v]) => notification.success(`${k} was updated to ${v}.`));
+          entries.forEach(([k, v]) =>
+            notification.success(`${capitalize(k)} was updated to ${v}.`)
+          );
 
           setServerError(null); // Remove error
           setValidateStatus(null); // Reset validateStatus

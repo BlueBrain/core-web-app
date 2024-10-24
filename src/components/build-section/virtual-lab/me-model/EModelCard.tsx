@@ -2,7 +2,11 @@ import { useAtomValue } from 'jotai';
 import { useParams } from 'next/navigation';
 import { Empty } from 'antd';
 
-import { selectedEModelAtom } from '@/state/virtual-lab/build/me-model';
+import {
+  selectedEModelAtom,
+  selectedEModelOrgAtom,
+  selectedEModelProjectAtom,
+} from '@/state/virtual-lab/build/me-model';
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 import { EModel } from '@/types/e-model';
 import { detailUrlWithinLab } from '@/util/common';
@@ -11,22 +15,26 @@ import { BookmarkTabsName } from '@/types/virtual-lab/bookmark';
 import ModelCard from '@/components/build-section/virtual-lab/me-model/ModelCard';
 
 type Props = {
+  exemplarMorphology?: string;
   reselectLink?: boolean;
 };
 
-export default function EModelCard({ reselectLink = false }: Props) {
+export default function EModelCard({ exemplarMorphology, reselectLink = false }: Props) {
   const selectedEModel = useAtomValue(selectedEModelAtom);
+  const selectedEModelOrg = useAtomValue(selectedEModelOrgAtom);
+  const selectedEModelProject = useAtomValue(selectedEModelProjectAtom);
+
   const { virtualLabId, projectId } = useParams<{
     virtualLabId?: string;
     projectId?: string;
   }>();
 
   const generateDetailUrl = () => {
-    if (!selectedEModel) return '';
+    if (!selectedEModel || !selectedEModelOrg || !selectedEModelProject) return '';
     if (!virtualLabId || !projectId) return selectedEModel['@id'];
 
-    const idParts = selectedEModel['@id'].split('/');
-    const orgProj = `${idParts.at(-3)}/${idParts.at(-2)}`;
+    const orgProj = `${selectedEModelOrg}/${selectedEModelProject}`;
+
     return detailUrlWithinLab(
       virtualLabId,
       projectId,
@@ -38,7 +46,7 @@ export default function EModelCard({ reselectLink = false }: Props) {
   };
 
   const details = [
-    { label: 'Examplar morphology', value: undefined },
+    { label: 'Examplar morphology', value: exemplarMorphology },
     { label: 'Optimization target', value: undefined },
     { label: 'Brain Region', value: selectedEModel?.brainLocation?.brainRegion?.label },
     { label: 'E-Type', value: selectedEModel?.eType },
