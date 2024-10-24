@@ -2,6 +2,7 @@ import AddIcon from './AddIcon';
 import AngledArrowIcon from './AngledArrow';
 import ArrowDownOutlinedIcon from './ArrowDownOutlined';
 import ArrowLeftIcon from './ArrowLeft';
+import ArrowNorthEastIcon from './ArrowNorthEastIcon';
 import ArrowRightIcon from './ArrowRightIcon';
 import BrainIcon from './Brain';
 import BrainRegionIcon from './BrainRegion';
@@ -36,6 +37,7 @@ export {
   AngledArrowIcon,
   ArrowDownOutlinedIcon,
   ArrowLeftIcon,
+  ArrowNorthEastIcon,
   ArrowRightIcon,
   BrainIcon,
   BrainRegionIcon,

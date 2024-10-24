@@ -1,6 +1,6 @@
+import Link from 'next/link';
 import { Dispatch, SetStateAction } from 'react';
 import { useInView } from 'react-intersection-observer';
-import Link from 'next/link';
 
 import { OBPLogo } from '@/components/Entrypoint/segments/Splash';
 import { classNames } from '@/util/utils';
@@ -31,27 +31,6 @@ const content = [
       },
     ],
   },
-  // {
-  //   title: 'Contact',
-  //   items: [
-  //     {
-  //       title: 'Link 1',
-  //       url: '#',
-  //     },
-  //     {
-  //       title: 'Link 2',
-  //       url: '#',
-  //     },
-  //     {
-  //       title: 'Link 3',
-  //       url: '#',
-  //     },
-  //     {
-  //       title: 'Link 4',
-  //       url: '#',
-  //     },
-  //   ],
-  // },
   {
     title: 'Documentation',
     items: [
@@ -77,13 +56,17 @@ const content = [
 
 export default function Footer({
   onShowSteps,
+  className,
 }: {
-  onShowSteps: Dispatch<SetStateAction<boolean>>;
+  onShowSteps?: Dispatch<SetStateAction<boolean>>;
+  className?: string;
 }) {
   const { ref } = useInView({
     threshold: 0.5,
     onChange(inView) {
-      onShowSteps(!inView);
+      if (onShowSteps) {
+        onShowSteps(!inView);
+      }
     },
   });
 
@@ -91,8 +74,8 @@ export default function Footer({
     <div
       ref={ref}
       className={classNames(
-        'relative flex w-full snap-start flex-col items-start justify-between md:mt-[30vh]',
-        'gap-5 border-t border-solid border-primary-4 px-[14vw] pb-20 pt-32 xl:flex-row'
+        'relative flex w-full snap-start flex-col items-start justify-between gap-5 border-t border-solid border-primary-4 px-[14vw] pb-20 pt-32 md:mt-[30vh] xl:flex-row',
+        className
       )}
     >
       <OBPLogo color="text-white" className="mb-4 md:mb-0" />

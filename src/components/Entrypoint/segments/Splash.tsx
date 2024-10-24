@@ -5,24 +5,12 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 
-export function Background() {
-  return (
-    <Image
-      fill
-      priority
-      src={`${basePath}/images/obp_home_background.webp`}
-      alt="Open Brain Platform Full Brain"
-      className="absolute inset-0 bg-primary-9 object-cover"
-    />
-  );
-}
-
 function HeroText() {
   return (
     <div className="absolute top-1/2 z-20 -translate-y-1/2 items-center justify-center lg:left-10percent">
-      <div className="select-none whitespace-pre-line text-left text-2xl font-bold text-white xl:text-7xl 2xl:text-9xl">
+      <h1 className="select-none whitespace-pre-line text-left text-2xl font-bold text-white xl:text-7xl 2xl:text-9xl">
         {'Virtual labs for\nexploring, building and\nsimulating the brain'}
-      </div>
+      </h1>
       <Link
         className="mt-10 flex h-auto w-[500px] justify-between rounded-none border border-primary-7 bg-transparent py-8 text-sm font-bold"
         href="/log-in"
@@ -59,7 +47,6 @@ export function OBPLogo({
 export default function Splash() {
   return (
     <>
-      <Background />
       <HeroText />
     </>
   );

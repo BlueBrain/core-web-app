@@ -7,9 +7,10 @@ const ASSETS = [
   '/images*',
   '/downloads*',
   '/api/marketing',
-  '/_next/static*',
+  '/_next*',
   '/favicon.ico',
   '/api/auth*',
+  '/video*',
 ];
 
 /* Don't allow arbitrary regex to avoid accidentally leaking protected pages

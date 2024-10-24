@@ -1,9 +1,10 @@
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 
 import { OBPLogo } from './Splash';
-import { classNames } from '@/util/utils';
+
+import PrimaryButtonHome from '@/components/home/PrimaryButtonHome';
 import { basePath } from '@/config';
+import { classNames } from '@/util/utils';
 
 interface MenuItemProps {
   title: string;
@@ -11,9 +12,6 @@ interface MenuItemProps {
 }
 interface MenuButtonProps extends MenuItemProps {
   action?: <T, RT>(input: T) => RT;
-}
-interface MenuLinkProps extends MenuItemProps {
-  href: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,14 +24,6 @@ function MenuButton({ bgcolor, title, action }: MenuButtonProps) {
     <button type="button" aria-label={title} onClick={() => action?.(callbackUrl)}>
       <MenuItem {...{ bgcolor, title }} />
     </button>
-  );
-}
-
-function MenuLink({ bgcolor, title, href }: MenuLinkProps) {
-  return (
-    <Link href={href}>
-      <MenuItem {...{ bgcolor, title }} />
-    </Link>
   );
 }
 
@@ -54,13 +44,25 @@ function MenuItem({ title, bgcolor = defaultBgColor }: MenuItemProps) {
 
 export default function EntrypointMenu() {
   return (
-    <div className="absolute left-7 right-7 top-7 z-20 mx-auto grid w-[calc(100%-3.25rem)] grid-cols-[1fr_3fr]">
+    <div className="fixed z-50 flex w-full flex-row items-center justify-between px-6 pt-6">
       <OBPLogo />
-      <div className="absolute right-7 top-7 flex justify-between gap-1">
+      <div className="relative flex justify-between gap-1 ">
         {/* TODO: Re-enable hidden buttons after SfN */}
         {/* <MenuLink title="Getting Started" href="#" /> */}
-        <MenuLink title="About" href="/about" />
-        {/* <MenuLink title="Log in" href="/log-in" /> */}
+        <PrimaryButtonHome
+          label="BlueBrain Github"
+          url="https://github.com/BlueBrain"
+          hasIcon
+          theme="dark"
+        />
+        <PrimaryButtonHome
+          label="BlueBrain Open data"
+          url="https://registry.opendata.aws/"
+          hasIcon
+          theme="dark"
+        />
+        <PrimaryButtonHome label="About" url="/about" hasIcon={false} theme="dark" />
+        <PrimaryButtonHome label="Log in" url="/log-in" hasIcon={false} theme="light" />
       </div>
     </div>
   );
