@@ -1,3 +1,7 @@
+> [!WARNING]
+> The Blue Brain Project concluded in December 2024, so development has ceased under the BlueBrain GitHub organization.
+> Future development will take place at: https://github.com/openbraininstitute/core-web-app
+
 # Blue Brain Open Platform
 
 This is the repository for the Blue Brain Open Platform's core web application.
